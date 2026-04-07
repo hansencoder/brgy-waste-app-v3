@@ -87,8 +87,8 @@ CREATE TABLE IF NOT EXISTS mfa_tokens (
     INDEX (token)
 );
 
--- Note: Passwords inserted below use a mock bcrypt hash for 'Password@123'
--- Hash: $2y$10$OebkXJg1O.69r1AObA4VceB6uN8Cqf33Xy0E1uT8g8h6sQ.i3Nf3G
+-- Default admin accounts — Password for both is: Password@123
+-- Hash generated via: password_hash('Password@123', PASSWORD_BCRYPT)
 INSERT IGNORE INTO users (id, full_name, address, contact_number, email, password_hash, role, status) VALUES 
-(1, 'Barangay Captain', 'Barangay Hall', '09123456789', 'captain@dulongbayan.ph', '$2y$10$OebkXJg1O.69r1AObA4VceB6uN8Cqf33Xy0E1uT8g8h6sQ.i3Nf3G', 'captain', 'active'),
-(2, 'Barangay Secretary', 'Barangay Hall', '09123456788', 'secretary@dulongbayan.ph', '$2y$10$OebkXJg1O.69r1AObA4VceB6uN8Cqf33Xy0E1uT8g8h6sQ.i3Nf3G', 'secretary', 'active');
+(1, 'Barangay Captain', 'Barangay Hall', '09123456789', 'captain@dulongbayan.ph', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', 'captain', 'active'),
+(2, 'Barangay Secretary', 'Barangay Hall', '09123456788', 'secretary@dulongbayan.ph', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', 'secretary', 'active');

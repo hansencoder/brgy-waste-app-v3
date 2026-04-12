@@ -62,8 +62,8 @@
                 <?php foreach($data['reports'] as $r): ?>
                 <tr class="border-b even:bg-gray-50">
                     <td class="p-3 border"><?php echo $r['id']; ?></td>
-                    <td class="p-3 border"><?php echo date('M d, Y', strtotime($r['created_at'])); ?></td>
-                    <td class="p-3 border"><?php echo htmlspecialchars($r['full_name']); ?></td>
+                    <td class="p-3 border"><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></td>
+                    <td class="p-3 border"><?php echo htmlspecialchars($r['name']); ?></td>
                     <td class="p-3 border truncate w-1/3 text-xs"><?php echo htmlspecialchars($r['description']); ?></td>
                     <td class="p-3 border text-xs"><?php echo $r['latitude']; ?><br><?php echo $r['longitude']; ?></td>
                     <td class="p-3 border font-bold uppercase"><?php echo $r['status']; ?></td>

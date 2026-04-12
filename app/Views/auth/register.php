@@ -3,6 +3,40 @@
 
     <!-- Main Card -->
     <div class="bg-white rounded-[14px] p-8 max-w-[480px] w-full shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100">
+    
+        <?php if (!empty($data['success'])): ?>
+            <div class="flex flex-col items-center text-center py-6">
+                <!-- Icon -->
+                <div class="w-[60px] h-[60px] bg-[#eefaf2] rounded-full flex items-center justify-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </div>
+                
+                <h2 class="text-[20px] font-bold text-[#1b365d] mb-2 tracking-tight">Registration Submitted</h2>
+                <p class="text-[14px] text-slate-500 mb-8 leading-relaxed max-w-[90%] mx-auto font-medium">
+                    Your account is pending approval by the Barangay Secretary. You will receive a notification once approved.
+                </p>
+                
+                <a href="/brgy-waste-app-v3/public/auth" class="w-full inline-block bg-[#1b365d] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#1b365d]/20 hover:bg-[#142948] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#1b365d]/30 text-[14px] active:scale-[0.98]">
+                    Go to Login
+                </a>
+            </div>
+        <?php else: ?>
+        <div class="mb-6 -mt-1">
+            <a href="/brgy-waste-app-v3/public/" class="text-[13px] font-medium text-slate-400 hover:text-slate-600 flex items-center gap-1.5 transition-colors w-fit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Back
+            </a>
+        </div>
+
+        <div class="flex flex-col items-center mb-7">
+            <!-- Icon -->
+            <div class="w-14 h-14 bg-[#1b365d] rounded-2xl flex items-center justify-center mb-4 shadow-md shadow-[#1b365d]/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h2 class="text-[22px] font-bold text-[#1b365d] mb-1.5 tracking-tight">Create Account</h2>
+            <p class="text-[14px] text-slate-500 font-medium">Register as a resident of Barangay Dulong Bayan</p>
+        </div>
+
         <h2 class="text-[22px] font-bold text-[#1b365d] mb-6 tracking-tight">Create Your Account</h2>
 
         <?php if (!empty($data['error'])): ?>
@@ -12,21 +46,16 @@
             </div>
         <?php endif; ?>
 
-        <?php if (!empty($data['success'])): ?>
-            <div class="bg-[#1b365d]/10 border border-[#1b365d]/20 text-[#1b365d] px-4 py-3 mb-6 rounded-lg text-sm flex items-center gap-2" role="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
-                <p><?php echo htmlspecialchars($data['success'], ENT_QUOTES, 'UTF-8'); ?></p>
-            </div>
-        <?php endif; ?>
+        <!-- Old success alert removed in favor of full success screen -->
 
         <form action="/brgy-waste-app-v3/public/auth/register" method="POST" class="space-y-4" onsubmit="return validateRegisterForm()">
             <!-- CSRF Protection -->
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
 
             <div>
-                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="full_name">Full Name <span class="text-red-500">*</span></label>
+                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="name">Full Name <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <input type="text" id="full_name" name="full_name" required
+                    <input type="text" id="name" name="name" required
                         class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#1b365d]/10 focus:border-[#1b365d] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                         placeholder="Hans Flores"
                         oninput="this.value = this.value.replace(/[^a-zA-Z\s\-]/g, ''); validateInput(this)">
@@ -43,8 +72,8 @@
             </div>
 
             <div>
-                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="contact_number">Mobile Number <span class="text-red-500">*</span></label>
-                <input type="text" id="contact_number" name="contact_number" required pattern="^09\d{9}$" title="Standard format: 09XXXXXXXXX."
+                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="phone_number">Mobile Number <span class="text-red-500">*</span></label>
+                <input type="text" id="phone_number" name="phone_number" required pattern="^09\d{9}$" title="Standard format: 09XXXXXXXXX."
                     class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#1b365d]/10 focus:border-[#1b365d] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                     placeholder="09171234567"
                     maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateInput(this)">
@@ -71,8 +100,8 @@
                 </div>
                 
                 <!-- Password Strength & Rules -->
-                <div class="mt-3 text-[11px]">
-                    <div class="flex items-center gap-1.5 mb-2">
+                <div id="password-rules-container" class="mt-3 text-[11px] hidden transition-all duration-300">
+                    <div class="flex items-center gap-1.5 mb-2">  
                         <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                             <div id="pwd-strength-bar" class="h-full bg-red-400 w-0 transition-all duration-300"></div>
                         </div>
@@ -114,7 +143,7 @@
             
             <div class="pt-2">
                 <button type="submit" id="submitBtn" class="w-full bg-[#1b365d] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#1b365d]/20 hover:bg-[#142948] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#1b365d]/30 text-[14px] active:scale-[0.98]">
-                    Proceed to Verification
+                    Create Account
                 </button>
             </div>
         </form>
@@ -124,11 +153,14 @@
                 <a href="/brgy-waste-app-v3/public/auth" class="text-[#1b365d] font-bold hover:underline ml-0.5">Log in</a>
             </p>
         </div>
+        <?php endif; ?>
     </div>
     
+    <?php if (empty($data['success'])): ?>
     <div class="mt-8 text-center pb-8 text-[13px] text-slate-500 font-medium">
         <a href="#" class="hover:text-slate-700 transition-colors">Need help registering?</a>
     </div>
+    <?php endif; ?>
 </div>
 
 <script>
@@ -165,6 +197,13 @@
     let passwordIsValid = false;
 
     function checkPasswordStrength(val) {
+        const rulesContainer = document.getElementById('password-rules-container');
+        if (val.length > 0) {
+            rulesContainer.classList.remove('hidden');
+        } else {
+            rulesContainer.classList.add('hidden');
+        }
+
         const hasUpper = /[A-Z]/.test(val);
         const hasLower = /[a-z]/.test(val);
         const hasNumAndSpec = /[0-9]/.test(val) && /[\W_]/.test(val); 
@@ -246,7 +285,7 @@
 
     // --- On Form Submit ---
     function validateRegisterForm() {
-        const requiredIds = ['full_name', 'address', 'contact_number', 'email', 'password', 'confirm_password'];
+        const requiredIds = ['name', 'address', 'phone_number', 'email', 'password', 'confirm_password'];
         let valid = true;
 
         requiredIds.forEach(id => {

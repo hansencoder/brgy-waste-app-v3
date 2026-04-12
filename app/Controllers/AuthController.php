@@ -43,7 +43,7 @@ class AuthController extends Controller {
 
             $user = $this->userModel->findUserByEmail($email);
 
-            if ($user && password_verify($password, $user['password_hash'])) {
+            if ($user && password_verify($password, $user['password'])) {
                 if ($user['status'] == 'pending') {
                     return $this->view('auth/login', ['error' => 'Account is pending approval.']);
                 }
@@ -100,7 +100,7 @@ class AuthController extends Controller {
                 $user = $db->single();
                 
                 $_SESSION['user_role'] = $user['role'];
-                $_SESSION['user_name'] = $user['full_name'];
+                $_SESSION['user_name'] = $user['name'];
                 $_SESSION['last_activity'] = time();
 
                 $this->auditModel->logAction($user_id, 'Login successful', 'User', 'Successfully completed 2FA', 'success');
@@ -160,17 +160,17 @@ class AuthController extends Controller {
                 return $this->view('auth/register', $data);
             }
 
-            if (!preg_match("/^09\d{9}$/", $post['contact_number'])) {
+            if (!preg_match("/^09\d{9}$/", $post['phone_number'])) {
                 $data['error'] = "Invalid PH mobile number format. Standard format: 09XXXXXXXXX.";
                 return $this->view('auth/register', $data);
             }
 
             $hashed = password_hash($password, PASSWORD_BCRYPT);
-            
+
             $regData = [
-                'full_name' => trim($post['full_name']),
+                'name' => trim($post['name']),
                 'address' => trim($post['address']),
-                'contact_number' => trim($post['contact_number']),
+                'phone_number' => trim($post['phone_number']),
                 'email' => trim(strtolower($post['email'])),
                 'password' => $hashed
             ];

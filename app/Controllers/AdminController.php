@@ -64,15 +64,16 @@ class AdminController extends Controller {
         $reportModel = $this->model('Report');
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
-            $report_id = filter_var($_POST['report_id'], FILTER_VALIDATE_INT);
-            $action = $_POST['action'];
-            $remark = filter_var($_POST['remark'], FILTER_SANITIZE_STRING) ?: '';
+            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $report_id = filter_var($post['report_id'], FILTER_VALIDATE_INT);
+            $action = $post['action'];
+            $remark = filter_var($post['remark'], FILTER_SANITIZE_STRING) ?: '';
 
             if ($action == 'verify') {
-                $reportModel->updateReportStatus($report_id, 'verified', $remark);
+                $reportModel->updateReportStatus($report_id, 'verified', $_SESSION['user_id']);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Verified', "Report ID $report_id", "Verified report. Remark: $remark", 'success');
             } elseif ($action == 'resolve') {
-                $reportModel->updateReportStatus($report_id, 'resolved', $remark);
+                $reportModel->updateReportStatus($report_id, 'resolved', $_SESSION['user_id']);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Resolved', "Report ID $report_id", "Resolved report. Remark: $remark", 'success');
             } elseif ($action == 'delete') {
                 $reportModel->deleteReport($report_id);
@@ -106,7 +107,7 @@ class AdminController extends Controller {
                 $output = fopen('php://output', 'w');
                 fputcsv($output, array('ID', 'Date Submitted', 'Reporter Name', 'Email', 'Description', 'Status', 'Latitude', 'Longitude'));
                 foreach ($reports as $r) {
-                    fputcsv($output, array($r['id'], $r['created_at'], $r['full_name'], $r['email'], $r['description'], $r['status'], $r['latitude'], $r['longitude']));
+                    fputcsv($output, array($r['id'], $r['submission_date'], $r['name'], $r['email'], $r['description'], $r['status'], $r['latitude'], $r['longitude']));
                 }
                 fclose($output);
                 exit;
@@ -125,7 +126,7 @@ class AdminController extends Controller {
 
         // Get all logs
         $db = new Database();
-        $db->query("SELECT a.*, u.full_name as user_name FROM audit_logs a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC");
+        $db->query("SELECT a.*, u.name as user_name FROM audit_logs a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC");
         $data['logs'] = $db->resultSet();
         $this->view('admin/audit_logs', $data);
     }
@@ -134,19 +135,20 @@ class AdminController extends Controller {
         $db = new Database();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['user_role'] == 'secretary') {
-            if (!empty($_POST['title']) && !empty($_POST['message'])) {
-                $db->query("INSERT INTO notifications (type, title, message) VALUES ('announcement', :title, :message)");
+            if (!empty($_POST['title']) && !empty($_POST['content'])) {
+                $db->query("INSERT INTO announcements (title, content, created_by) VALUES (:title, :content, :created_by)");
                 $db->bind(':title', filter_var($_POST['title'], FILTER_SANITIZE_STRING));
-                $db->bind(':message', filter_var($_POST['message'], FILTER_SANITIZE_STRING));
+                $db->bind(':content', filter_var($_POST['content'], FILTER_SANITIZE_STRING));
+                $db->bind(':created_by', $_SESSION['user_id']);
                 $db->execute();
-                
+
                 $this->auditModel->logAction($_SESSION['user_id'], 'Post Announcement', 'Announcements', "Posted '{$_POST['title']}'", 'success');
                 header("Location: /brgy-waste-app-v3/public/admin/announcements");
                 exit;
             }
         }
 
-        $db->query("SELECT * FROM notifications WHERE type = 'announcement' ORDER BY created_at DESC");
+        $db->query("SELECT * FROM announcements ORDER BY created_at DESC");
         $data['announcements'] = $db->resultSet();
         $this->view('admin/announcements', $data);
     }

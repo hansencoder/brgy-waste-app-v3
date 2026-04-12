@@ -1,132 +1,649 @@
 <?php include '../app/Views/layouts/header.php'; ?>
-<nav class="bg-sidebar text-sidebar-foreground shadow-md border-b border-sidebar-border">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between h-16">
-            <div class="flex items-center space-x-4">
-                <span class="font-bold text-xl">Dulong Bayan Reporter</span>
-                <a href="/brgy-waste-app-v3/public/resident" class="px-3 py-2 rounded-md hover:bg-sidebar-accent/90">My Reports</a>
-                <a href="/brgy-waste-app-v3/public/resident/submit" class="px-3 py-2 rounded-md bg-sidebar-accent">Submit Report</a>
-                <a href="/brgy-waste-app-v3/public/resident/announcements" class="px-3 py-2 rounded-md hover:bg-sidebar-accent/90">Announcements</a>
-            </div>
-            <div class="flex items-center space-x-4">
-                <span class="text-sm">Hi, <?php echo $_SESSION['user_name']; ?></span>
-                <a href="/brgy-waste-app-v3/public/auth/logout" class="px-3 py-2 bg-destructive text-destructive-foreground hover:opacity-90 rounded-md text-sm font-semibold">Logout</a>
-            </div>
-        </div>
-    </div>
-</nav>
+<?php
+$fullName = $_SESSION['user_name'] ?? 'Juan Dela Cruz';
+$firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_name']))[0] : 'Juan';
+?>
 
-<div class="max-w-3xl mx-auto px-4 py-8 flex-grow">
-    <h1 class="text-3xl font-bold text-foreground mb-6">Submit Waste Report</h1>
+<div class="min-h-screen bg-[#f9fafb] w-full font-sans antialiased text-slate-800 flex flex-col">
 
-    <div class="bg-card rounded-xl border border-border shadow-lg p-6">
-        <?php if (!empty($data['error'])): ?>
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
-                <p><?php echo $data['error']; ?></p>
-            </div>
-        <?php endif; ?>
+    <!-- Top Navbar (Matching Dashboard) -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-[68px]">
+                <!-- Left: Logo -->
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#118B50] flex items-center justify-center text-white shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <span class="font-extrabold text-[#111827] text-lg tracking-tight">CivicLens</span>
+                </div>
 
-        <?php if (!empty($data['success'])): ?>
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded">
-                <p><?php echo $data['success']; ?></p>
-            </div>
-        <?php endif; ?>
+                <!-- Center: Nav Links -->
+                <div class="hidden md:flex items-center justify-center gap-1.5 flex-1">
+                    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg>
+                        Home
+                    </a>
+                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                        Reports
+                    </a>
+                    <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 bg-[#118B50] text-white px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] shadow-sm shadow-[#118B50]/20 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        Report
+                    </a>
+                    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                        News
+                    </a>
+                </div>
 
-        <form action="/brgy-waste-app-v3/public/resident/submit" method="POST" enctype="multipart/form-data" class="space-y-6">
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">1. Upload Photo (JPG, PNG. Max 5MB)</label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:bg-gray-50 transition cursor-pointer" onclick="document.getElementById('photo').click()">
-                    <div class="space-y-1 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <div class="flex text-sm text-gray-600 justify-center">
-                            <span class="relative cursor-pointer bg-card rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary pt-1">
-                                Upload a file
-                            </span>
+                <!-- Right: Profile -->
+                <div class="flex items-center gap-3 md:gap-5">
+                    <button class="relative p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden md:block">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                        <span class="absolute top-[6px] right-[7px] w-[9px] h-[9px] rounded-full bg-red-500 border-2 border-white"></span>
+                    </button>
+                    
+                    <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
+
+                    <div class="relative group cursor-pointer">
+                        <div class="flex items-center gap-2.5 pr-1 py-1 rounded-full hover:bg-slate-50 transition-colors">
+                            <div class="w-[34px] h-[34px] rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 text-slate-500 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <span class="text-[13px] font-bold text-slate-700 hidden sm:block"><?php echo htmlspecialchars($firstName); ?></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hidden sm:block"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 top-[100%] mt-1 w-48 bg-white border border-gray-100 rounded-[12px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all text-sm overflow-hidden z-50">
+                            <a href="#" class="block px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors">Settings</a>
+                            <div class="h-px bg-gray-100"></div>
+                            <a href="/brgy-waste-app-v3/public/auth/logout" class="block px-4 py-3 text-red-600 font-medium hover:bg-red-50 transition-colors">Logout</a>
                         </div>
                     </div>
                 </div>
-                <input id="photo" name="photo" type="file" class="hidden" accept="image/jpeg,image/png" required onchange="previewImage(event)">
-                <img id="preview" class="mt-4 hidden h-48 w-full object-cover rounded shadow" />
             </div>
+        </div>
+    </nav>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2" for="description">2. Description of the Waste Issue</label>
-                <textarea id="description" name="description" rows="4" required minlength="10" maxlength="500" placeholder="Describe what you see..."
-                    class="w-full px-4 py-3 rounded-lg border border-border focus:ring-2 focus:ring-primary outline-none bg-background"></textarea>
-                <p class="text-xs text-gray-500 mt-1">Between 10 and 500 characters.</p>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 flex-1 w-full flex flex-col mb-24 md:mb-0">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-[32px] font-extrabold text-[#111827] tracking-tight leading-tight mb-1">Submit Waste Report</h1>
+            <p class="text-[15px] text-slate-500 font-medium">Report waste issues in Barangay Dulong Bayan.</p>
+        </div>
+
+        <?php if (!empty($data['error'])): ?>
+            <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl shadow-sm mb-6 flex gap-3 text-[14px] font-medium items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <?php echo $data['error']; ?>
             </div>
+        <?php endif; ?>
+        <?php if (!empty($data['success'])): ?>
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl shadow-sm mb-6 flex gap-3 text-[14px] font-medium items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <?php echo $data['success']; ?>
+            </div>
+        <?php endif; ?>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">3. Location (Pin on Map or Auto-Detect)</label>
-                <div class="flex space-x-2 mb-2">
-                    <button type="button" onclick="getLocation()" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200 transition">
-                        📍 Auto-detect GPS
-                    </button>
-                    <span id="loc-status" class="text-sm text-gray-500 py-1"></span>
+        <!-- Form Layout -->
+        <form id="reportForm" action="/brgy-waste-app-v3/public/resident/submit" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                <!-- LEFT COLUMN -->
+                <div class="flex flex-col gap-6">
+                    
+                    <!-- A. Photo Upload Card -->
+                    <div class="bg-white border border-gray-200/80 rounded-[20px] p-5 shadow-sm flex flex-col">
+                        <label class="block text-[15px] font-bold text-slate-800 mb-4">Photo of Waste</label>
+                        
+                        <div id="drop-area" class="relative flex-1 min-h-[220px] rounded-[16px] border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-[#118B50]/50 transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center group overflow-hidden" onclick="document.getElementById('photoInput').click()">
+                            
+                            <div id="upload-content" class="flex flex-col items-center gap-3">
+                                <div class="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center text-[#118B50] group-hover:scale-110 transition-transform">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-[14px] font-bold text-slate-700">Click or drag image to upload</p>
+                                    <p class="text-[12px] text-slate-400 font-medium mt-1">PNG, JPG up to 5MB</p>
+                                </div>
+                            </div>
+
+                            <img id="imagePreview" class="absolute inset-0 w-full h-full object-cover hidden z-10" alt="Preview">
+                        </div>
+                        
+                        <input id="photoInput" name="photo" type="file" class="hidden" accept="image/jpeg,image/png">
+                        <div id="photoError" class="text-red-500 text-[12px] font-bold mt-2 hidden">Please select a valid image under 5MB.</div>
+                    </div>
+
+                    <!-- B. Description Card -->
+                    <div class="bg-white border border-gray-200/80 rounded-[20px] p-5 shadow-sm flex flex-col pt-5">
+                        <label class="block text-[15px] font-bold text-slate-800 mb-3" for="description">Issue Description</label>
+                        <textarea id="description" name="description" rows="5" minlength="10" maxlength="500" 
+                                placeholder="Describe the waste issue in detail... e.g., location specifics, type of waste, foul odor..."
+                                class="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-[14px] text-[14px] text-slate-700 placeholder:text-slate-400 outline-none focus:bg-white focus:border-[#118B50] focus:ring-4 focus:ring-[#118B50]/10 transition-all resize-none"></textarea>
+                        
+                        <div class="flex justify-between items-center mt-2 px-1">
+                            <span id="descError" class="text-red-500 text-[12px] font-bold hidden">Minimum 10 characters required.</span>
+                            <span id="charCount" class="text-[12px] font-bold text-slate-400 ml-auto transition-colors">0/500</span>
+                        </div>
+                    </div>
+
                 </div>
-                <div id="map" class="h-64 rounded border border-gray-300 z-0"></div>
-                <input type="hidden" id="latitude" name="latitude" required>
-                <input type="hidden" id="longitude" name="longitude" required>
+
+                <!-- RIGHT COLUMN -->
+                <div class="flex flex-col h-full gap-5 bg-white border border-gray-200/80 rounded-[20px] p-5 shadow-sm">
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-1">
+                        <label class="text-[15px] font-bold text-slate-800">Pin Location</label>
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <button type="button" onclick="detectGPS()" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#10b981]/10 hover:bg-[#10b981]/20 text-[#10b981] px-3.5 py-2 rounded-xl text-[12.5px] font-bold transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                                Detect GPS
+                            </button>
+                            <div class="hidden sm:block w-px h-6 bg-gray-200"></div>
+                            <span class="text-[12px] font-semibold text-slate-400 hidden sm:block">or click map to pin</span>
+                        </div>
+                    </div>
+
+                    <div id="locStatus" class="text-[12px] font-bold text-[#118B50] hidden">Location updated!</div>
+
+                    <div class="w-full h-[300px] lg:h-full min-h-[350px] bg-slate-100 rounded-[14px] border border-gray-200 relative overflow-hidden flex flex-col shrink-0">
+                        <div id="mapContainer" class="w-full h-full z-0 relative flex-1 outline-none"></div>
+
+                        <!-- Legend overlay -->
+                        <div class="absolute bottom-3 left-3 bg-white/95 backdrop-blur shadow-sm border border-gray-100 px-3 py-2.5 rounded-xl z-[400] flex flex-col gap-2 pointer-events-none">
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Priorities</div>
+                            <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 border border-white shadow-sm shadow-amber-500/50"></span> Pending
+                            </div>
+                            <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
+                                <span class="w-2.5 h-2.5 rounded-full bg-blue-500 border border-white shadow-sm shadow-blue-500/50"></span> Verified
+                            </div>
+                            <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white shadow-sm shadow-emerald-500/50"></span> Resolved
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="latitude" name="latitude" required>
+                    <input type="hidden" id="longitude" name="longitude" required>
+                </div>
             </div>
 
-            <button type="submit" class="w-full bg-primary text-primary-foreground font-semibold py-3 px-4 rounded-md shadow-md hover:bg-primary/90 transition">
-                Submit Report
-            </button>
+            <!-- Submit Action -->
+            <div class="mt-2 w-full pb-4">
+                <button type="submit" id="submitBtn" class="w-full bg-[#118B50] hover:bg-[#0e7442] active:scale-[0.99] text-white font-bold py-4 rounded-[14px] shadow-[0_4px_14px_rgba(17,139,80,0.3)] transition-all flex justify-center items-center gap-2 text-[15px]">
+                    <span id="btnText">Submit Report</span>
+                    <svg id="btnSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+                <div id="formErrorGlobal" class="text-center text-red-500 font-bold text-[13px] mt-4 hidden">Please fix the errors above before submitting.</div>
+            </div>
+
         </form>
+    </main>
+</div>
+
+<!-- Mobile Bottom Navigation (only visible < md screens) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-200/60 pt-2.5 pb-6 px-1 z-50 flex justify-between items-end shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Home</span>
+    </a>
+    <a href="/brgy-waste-app-v3/public/resident" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+        <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Reports</span>
+    </a>
+    <div class="flex-1 flex justify-center sticky z-50">
+        <a href="/brgy-waste-app-v3/public/resident/submit" class="flex flex-col items-center relative -top-[22px] group transform active:scale-95 transition-all">
+            <div class="w-[58px] h-[58px] rounded-full bg-[#118B50] flex items-center justify-center border-[5px] border-[#f9fafb] shadow-md text-white mb-1 group-hover:bg-[#0e7442]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <span class="text-[10.5px] font-extrabold tracking-wide text-[#118B50]">Report</span>
+        </a>
+    </div>
+    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <span class="text-[10.5px] font-bold tracking-wide text-slate-500">News</span>
+    </a>
+    <a href="#" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Profile</span>
+    </a>
+</nav>
+
+<!-- Unsaved Changes Modal -->
+<div id="unsavedModal" class="fixed inset-0 z-[9999] hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
+    
+    <!-- Modal Content -->
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-[20px] shadow-2xl max-w-sm w-full overflow-hidden transform transition-all">
+            <!-- Header -->
+            <div class="p-6 pb-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[18px] font-bold text-slate-800 mb-1">Unsaved Report</h3>
+                        <p class="text-[14px] text-slate-500 font-medium leading-relaxed">You have a report that hasn't been submitted. Are you sure you want to leave? Your progress will be lost.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="px-6 pb-6 flex gap-3">
+                <button onclick="closeModal()" class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-slate-700 font-bold rounded-[12px] transition-colors text-[14px]">
+                    Cancel
+                </button>
+                <button id="confirmLeave" class="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-[12px] transition-colors text-[14px] shadow-lg shadow-red-600/20">
+                    Discard
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Scripts for interactive UI -->
 <script>
-    // Image Preview
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function(){
-            var output = document.getElementById('preview');
-            output.src = reader.result;
-            output.classList.remove('hidden');
-        };
-        reader.readAsDataURL(event.target.files[0]);
+    // --- UI Elements ---
+    const dropArea = document.getElementById('drop-area');
+    const photoInput = document.getElementById('photoInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadContent = document.getElementById('upload-content');
+    const photoError = document.getElementById('photoError');
+    
+    const descInput = document.getElementById('description');
+    const charCount = document.getElementById('charCount');
+    const descError = document.getElementById('descError');
+    
+    const locStatus = document.getElementById('locStatus');
+    const form = document.getElementById('reportForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const formErrorGlobal = document.getElementById('formErrorGlobal');
+
+    let fileIsValid = false;
+    let hasChanges = false;
+    let pendingNavigation = null;
+
+    // --- Track form changes ---
+    function markAsChanged() {
+        hasChanges = true;
     }
 
-    // Leaflet.js Map Initialization
-    var map = L.map('map').setView([14.6760, 121.0437], 15); // Default to Dulong Bayan approx center
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-    var marker = L.marker([14.6760, 121.0437], {draggable: true}).addTo(map);
-    
-    // Default form value
-    document.getElementById('latitude').value = 14.6760;
-    document.getElementById('longitude').value = 121.0437;
+    // Track all form inputs
+    descInput.addEventListener('input', markAsChanged);
+    photoInput.addEventListener('change', markAsChanged);
+    document.getElementById('latitude').addEventListener('input', markLocationChanged);
+    document.getElementById('longitude').addEventListener('input', markLocationChanged);
 
-    // Drag marker updates input
-    marker.on('dragend', function(e) {
-        var latLng = e.target.getLatLng();
-        document.getElementById('latitude').value = latLng.lat;
-        document.getElementById('longitude').value = latLng.lng;
+    // --- Modal Functions ---
+    function closeModal() {
+        document.getElementById('unsavedModal').classList.add('hidden');
+        pendingNavigation = null;
+    }
+
+    function showModal(callback) {
+        pendingNavigation = callback;
+        document.getElementById('unsavedModal').classList.remove('hidden');
+    }
+
+    // Confirm leave button
+    document.getElementById('confirmLeave').addEventListener('click', function() {
+        if (pendingNavigation) {
+            closeModal();
+            window.location.href = pendingNavigation;
+        }
     });
 
-    // Auto-detect GPS
-    function getLocation() {
-        var status = document.getElementById('loc-status');
-        if (navigator.geolocation) {
-            status.innerHTML = "Locating...";
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
-                var newLatLng = new L.LatLng(lat, lng);
-                marker.setLatLng(newLatLng);
-                map.setView(newLatLng, 16);
-                status.innerHTML = "Found!";
-            }, function() {
-                status.innerHTML = "GPS disabled/denied.";
+    // --- Intercept Navigation Links ---
+    function setupNavigationWarning() {
+        // Get all nav links (both desktop and mobile)
+        const navLinks = document.querySelectorAll('nav a[href*="/resident/"]');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                
+                // Don't intercept the current page link
+                if (href === '/brgy-waste-app-v3/public/resident/submit') {
+                    return;
+                }
+
+                // Only warn if there are changes
+                if (hasChanges) {
+                    e.preventDefault();
+                    showModal(() => {
+                        window.location.href = href;
+                    });
+                }
             });
-        } else {
-            status.innerHTML = "Geolocation not supported.";
+        });
+    }
+
+    // --- Browser Back/Forward Button Warning ---
+    function handleBeforeUnload(e) {
+        if (hasChanges) {
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
         }
     }
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Setup on DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+        setupNavigationWarning();
+    });
+
+    // Mark as changed when map location is updated
+    let isInitializing = true;
+    function markLocationChanged() {
+        if (!isInitializing) {
+            markAsChanged();
+        }
+    }
+
+    // --- Photo Upload Logic ---
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.classList.add('bg-gray-100', 'border-[#118B50]');
+    });
+    
+    dropArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('bg-gray-100', 'border-[#118B50]');
+    });
+    
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('bg-gray-100', 'border-[#118B50]');
+        if (e.dataTransfer.files.length) {
+            photoInput.files = e.dataTransfer.files;
+            handleFileSelection();
+        }
+    });
+
+    photoInput.addEventListener('change', handleFileSelection);
+
+    function handleFileSelection() {
+        if (!photoInput.files || !photoInput.files.length) return;
+        
+        const file = photoInput.files[0];
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        
+        // Validation
+        if (!validTypes.includes(file.type)) {
+            showPhotoError("Must be JPG or PNG.");
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) { // 5MB
+            showPhotoError("File size exceeds 5MB.");
+            return;
+        }
+
+        // Success Preview
+        photoError.classList.add('hidden');
+        dropArea.classList.remove('border-red-400');
+        fileIsValid = true;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.classList.remove('hidden');
+            uploadContent.classList.add('opacity-0'); // Hide upload layout text but keep clickable
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function showPhotoError(msg) {
+        fileIsValid = false;
+        imagePreview.classList.add('hidden');
+        uploadContent.classList.remove('opacity-0');
+        photoError.textContent = msg;
+        photoError.classList.remove('hidden');
+        dropArea.classList.add('border-red-400');
+        photoInput.value = ""; // clear
+    }
+
+    // --- Description Counter ---
+    descInput.addEventListener('input', function() {
+        const len = this.value.length;
+        charCount.textContent = `${len}/500`;
+        if (len >= 500) {
+            charCount.classList.add('text-red-500');
+        } else {
+            charCount.classList.remove('text-red-500');
+        }
+        if (len >= 10) {
+            descError.classList.add('hidden');
+            descInput.classList.remove('border-red-400');
+        }
+    });
+
+    // --- Map Implementation ---
+    // Wait for DOM to be fully ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if Leaflet is loaded
+        if (typeof L === 'undefined') {
+            console.error('Leaflet library not loaded!');
+            document.getElementById('mapContainer').innerHTML = '<div class="flex items-center justify-center h-full text-gray-500 font-semibold">Map unavailable - Please click "Detect GPS" or refresh the page.</div>';
+            return;
+        }
+
+        // Delay map initialization to ensure container is rendered
+        setTimeout(function() {
+            try {
+                const defaultCenter = [15.560, 120.801]; // Dulong bayan approx map center
+                
+                // Initialize map only if not already initialized
+                if (!window.mapInstance) {
+                    window.mapInstance = L.map('mapContainer', {
+                        center: defaultCenter,
+                        zoom: 15,
+                        zoomControl: true
+                    });
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors',
+                        maxZoom: 19
+                    }).addTo(window.mapInstance);
+
+                    // Draggable Marker representing the user's report location
+                    window.mapMarker = L.marker(defaultCenter, { draggable: true }).addTo(window.mapInstance);
+
+                    // Custom red pin
+                    const customIcon = L.divIcon({
+                        html: `<div style="background-color: #ef4444; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.4), 0 0 0 2px rgba(239,68,68,0.2); animation: pulse 2s infinite;"></div>`,
+                        className: '', 
+                        iconSize: [16, 16], 
+                        iconAnchor: [8, 8]
+                    });
+                    window.mapMarker.setIcon(customIcon);
+
+                    // Attach map clicks to easily move marker
+                    window.mapInstance.on('click', function(e) {
+                        window.mapMarker.setLatLng(e.latlng);
+                        updateLatLng(e.latlng.lat, e.latlng.lng);
+                        showLocationSuccess();
+                    });
+
+                    window.mapMarker.on('dragend', function(e) {
+                        const ll = window.mapMarker.getLatLng();
+                        updateLatLng(ll.lat, ll.lng);
+                    });
+
+                    // Add Barangay Boundary
+                    var barangayGeoJSON = {
+                        "type": "FeatureCollection",
+                        "features": [{
+                            "type": "Feature", "properties": {}, "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [[
+                                    [120.80135, 15.56992],[120.80018, 15.56728],[120.79897, 15.56570],[120.79751, 15.56528],[120.79516, 15.56375],[120.79464, 15.56032],[120.79121, 15.55485],[120.80013, 15.54781],[120.80494, 15.55061],[120.80886, 15.55288],[120.81743, 15.54962],[120.82609, 15.55121],[120.83358, 15.55413],[120.83261, 15.55740],[120.82838, 15.56506],[120.82364, 15.57034],[120.82033, 15.56455],[120.81492, 15.56098],[120.80324, 15.56739],[120.80135, 15.56992]
+                                ]]
+                            }
+                        }]
+                    };
+                    L.geoJSON(barangayGeoJSON, {
+                        style: { color: '#22c55e', weight: 2.5, fillColor: '#ecfdf5', fillOpacity: 0.15, dashArray: '6, 6' }
+                    }).addTo(window.mapInstance);
+
+                    // Ensure map renders correctly after container is visible
+                    setTimeout(() => window.mapInstance.invalidateSize(), 200);
+                }
+
+                // Initial populate (don't trigger change detection)
+                updateLatLng(defaultCenter[0], defaultCenter[1]);
+                // Reset initialization flag after initial setup
+                setTimeout(() => { isInitializing = false; }, 200);
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                document.getElementById('mapContainer').innerHTML = '<div class="flex items-center justify-center h-full text-gray-500 font-semibold">Error loading map - Please use GPS detection or refresh.</div>';
+            }
+        }, 100);
+    });
+
+    // Hidden inputs population
+    function updateLatLng(lat, lng) {
+        document.getElementById('latitude').value = lat.toFixed(6);
+        document.getElementById('longitude').value = lng.toFixed(6);
+        markLocationChanged();
+    }
+
+    // initial populate is done in DOMContentLoaded
+
+    function detectGPS() {
+        const btn = event.currentTarget;
+        const ogContent = btn.innerHTML;
+        btn.innerHTML = 'Locating...';
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                const userLL = new L.LatLng(lat, lng);
+
+                window.mapInstance.flyTo(userLL, 16, { duration: 1.5 });
+                window.mapMarker.setLatLng(userLL);
+                updateLatLng(lat, lng);
+
+                btn.innerHTML = ogContent;
+                showLocationSuccess();
+
+            }, err => {
+                alert("GPS access denied or unavailable. Please click manually on the map.");
+                btn.innerHTML = ogContent;
+            });
+        } else {
+            alert("Geolocation not supported by browser.");
+            btn.innerHTML = ogContent;
+        }
+    }
+
+    function showLocationSuccess() {
+        locStatus.classList.remove('hidden');
+        setTimeout(() => locStatus.classList.add('hidden'), 3000);
+    }
+
+    window.addEventListener("resize", () => { 
+        setTimeout(() => window.mapInstance && window.mapInstance.invalidateSize(), 150); 
+    });
+
+    // --- Validation & Submit Logic ---
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let valid = true;
+        
+        // Check image
+        if (!fileIsValid) {
+            showPhotoError("Image is required.");
+            valid = false;
+        }
+        
+        // Check generic description
+        if (descInput.value.length < 10) {
+            descError.classList.remove('hidden');
+            descInput.classList.add('border-red-400');
+            valid = false;
+        }
+        
+        // Check Location
+        if(!document.getElementById('latitude').value) {
+            alert("Please select a location on the map.");
+            valid = false;
+        }
+
+        if (!valid) {
+            formErrorGlobal.classList.remove('hidden');
+            return;
+        }
+        
+        formErrorGlobal.classList.add('hidden');
+
+        // Disable beforeunload warning during form submission
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+        hasChanges = false;
+
+        // UI submitting
+        submitBtn.setAttribute('disabled', 'true');
+        submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+        btnText.textContent = "Submitting Report...";
+        btnSpinner.classList.remove('hidden');
+
+        // Form post (native submittal un-hijacking after JS checks pass)
+        // Since we blocked the native default via e.preventDefault(),
+        // We submit it programmatically.
+        form.submit();
+    });
+
 </script>
+
+<style>
+/* Safe animation for marker pinging */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Map container styling */
+#mapContainer {
+    width: 100%;
+    height: 100%;
+    min-height: 350px;
+    z-index: 1;
+}
+
+/* Ensure Leaflet map tiles are visible */
+.leaflet-container {
+    width: 100%;
+    height: 100%;
+    background: #ddd;
+    font-family: inherit;
+}
+
+/* Grayscale map filter for cleaner look */
+.leaflet-tile-pane {
+    filter: grayscale(20%) opacity(0.9);
+}
+</style>
+
 <?php include '../app/Views/layouts/footer.php'; ?>

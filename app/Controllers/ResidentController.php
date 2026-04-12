@@ -16,6 +16,8 @@ class ResidentController extends Controller {
     public function index() {
         // Track Submitted Reports (FR-05)
         $data['reports'] = $this->reportModel->getReportsByResident($_SESSION['user_id']);
+        $data['stats'] = $this->reportModel->getDashboardStatsByResident($_SESSION['user_id']);
+        $data['map_pins'] = $this->reportModel->getHeatmapDataByResident($_SESSION['user_id']);
         $this->view('resident/dashboard', $data);
     }
 
@@ -72,7 +74,7 @@ class ResidentController extends Controller {
                     'description' => $description,
                     'latitude' => $lat,
                     'longitude' => $lng,
-                    'is_out_of_bounds' => $is_out_of_bounds
+                    'location_verified' => !$is_out_of_bounds
                 ];
 
                 if ($this->reportModel->createReport($reportData)) {
@@ -89,9 +91,61 @@ class ResidentController extends Controller {
         $this->view('resident/submit_report', $data);
     }
 
+    public function my_report() {
+        $data['reports'] = $this->reportModel->getReportsByResident($_SESSION['user_id']);
+        $this->view('resident/my_report', $data);
+    }
+
+    public function view_report($id) {
+        $data['report'] = $this->reportModel->getReportById($id, $_SESSION['user_id']);
+
+        if (!$data['report']) {
+            header('Location: /brgy-waste-app-v3/public/resident/my_report');
+            exit;
+        }
+
+        $data['timeline'] = $this->reportModel->getReportTimeline($id);
+        $this->view('resident/view_report', $data);
+    }
+
+    public function delete_report($id) {
+        $report = $this->reportModel->getReportById($id, $_SESSION['user_id']);
+
+        if (!$report) {
+            $_SESSION['error'] = 'Report not found or you do not have permission to delete it.';
+            header('Location: /brgy-waste-app-v3/public/resident/my_report');
+            exit;
+        }
+
+        // Only allow deletion of pending reports
+        if ($report['status'] !== 'pending') {
+            $_SESSION['error'] = 'Only pending reports can be deleted.';
+            header('Location: /brgy-waste-app-v3/public/resident/view_report/' . $id);
+            exit;
+        }
+
+        // Delete the uploaded photo file
+        if (!empty($report['photo_path'])) {
+            $filePath = '../public/uploads/' . $report['photo_path'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+
+        if ($this->reportModel->deleteReport($id, $_SESSION['user_id'])) {
+            $this->auditModel->logAction($_SESSION['user_id'], 'Report Deleted', "Report ID $id", 'Resident deleted their pending report', 'success');
+            $_SESSION['success'] = 'Report deleted successfully.';
+        } else {
+            $_SESSION['error'] = 'Failed to delete report.';
+        }
+
+        header('Location: /brgy-waste-app-v3/public/resident/my_report');
+        exit;
+    }
+
     public function announcements() {
         $db = new Database();
-        $db->query("SELECT * FROM notifications WHERE type = 'announcement' ORDER BY created_at DESC");
+        $db->query("SELECT * FROM announcements ORDER BY created_at DESC");
         $data['announcements'] = $db->resultSet();
         $this->view('resident/announcements', $data);
     }

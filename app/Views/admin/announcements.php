@@ -23,8 +23,8 @@
                 <input type="text" name="title" required class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background">
             </div>
             <div class="mb-4">
-                <label class="block text-sm font-medium text-foreground mb-1">Message Content</label>
-                <textarea name="message" required rows="4" class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background"></textarea>
+                <label class="block text-sm font-medium text-foreground mb-1">Content</label>
+                <textarea name="content" required rows="4" class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background"></textarea>
             </div>
             <div class="text-right">
                 <button type="submit" class="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-md shadow-sm font-semibold">Post Announcement</button>
@@ -40,7 +40,7 @@
                 <div>
                     <h3 class="text-lg font-bold text-gray-900"><?php echo htmlspecialchars($item['title']); ?></h3>
                     <p class="text-xs text-gray-500 mb-2"><?php echo date('F d, Y h:i A', strtotime($item['created_at'])); ?></p>
-                    <p class="text-gray-700"><?php echo nl2br(htmlspecialchars($item['message'])); ?></p>
+                    <p class="text-gray-700"><?php echo nl2br(htmlspecialchars($item['content'])); ?></p>
                 </div>
             </div>
         <?php endforeach; else: ?>

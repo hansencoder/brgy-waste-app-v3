@@ -13,11 +13,11 @@ class User {
     }
 
     public function register($data) {
-        $this->db->query('INSERT INTO users (full_name, address, contact_number, email, password_hash, role, status) VALUES (:full_name, :address, :contact_number, :email, :password, "resident", "pending")');
-        
-        $this->db->bind(':full_name', $data['full_name']);
+        $this->db->query('INSERT INTO users (name, address, phone_number, email, password, role, status) VALUES (:name, :address, :phone_number, :email, :password, "resident", "pending")');
+
+        $this->db->bind(':name', $data['name']);
         $this->db->bind(':address', $data['address']);
-        $this->db->bind(':contact_number', $data['contact_number']);
+        $this->db->bind(':phone_number', $data['phone_number']);
         $this->db->bind(':email', $data['email']);
         $this->db->bind(':password', $data['password']);
 
@@ -26,11 +26,11 @@ class User {
 
     public function saveMfaToken($user_id, $token) {
         // Clear old tokens for this user
-        $this->db->query('DELETE FROM mfa_tokens WHERE user_id = :user_id');
+        $this->db->query('DELETE FROM two_factor_tokens WHERE user_id = :user_id');
         $this->db->bind(':user_id', $user_id);
         $this->db->execute();
 
-        $this->db->query('INSERT INTO mfa_tokens (user_id, token, expires_at) VALUES (:user_id, :token, DATE_ADD(NOW(), INTERVAL 5 MINUTE))');
+        $this->db->query('INSERT INTO two_factor_tokens (user_id, token, expires_at) VALUES (:user_id, :token, DATE_ADD(NOW(), INTERVAL 5 MINUTE))');
         $this->db->bind(':user_id', $user_id);
         $this->db->bind(':token', $token);
 
@@ -38,14 +38,14 @@ class User {
     }
 
     public function verifyMfaToken($user_id, $token) {
-        $this->db->query('SELECT * FROM mfa_tokens WHERE user_id = :user_id AND token = :token AND expires_at >= NOW()');
+        $this->db->query('SELECT * FROM two_factor_tokens WHERE user_id = :user_id AND token = :token AND expires_at >= NOW()');
         $this->db->bind(':user_id', $user_id);
         $this->db->bind(':token', $token);
-        
+
         $row = $this->db->single();
         if ($this->db->rowCount() > 0) {
             // Invalidate token
-            $this->db->query('DELETE FROM mfa_tokens WHERE id = :id');
+            $this->db->query('DELETE FROM two_factor_tokens WHERE id = :id');
             $this->db->bind(':id', $row['id']);
             $this->db->execute();
             return true;

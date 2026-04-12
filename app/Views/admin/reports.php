@@ -52,17 +52,12 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($report['full_name']); ?></div>
+                            <div class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($report['name']); ?></div>
                             <div class="text-xs text-gray-500"><?php echo htmlspecialchars($report['email']); ?></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-xs text-gray-500">Lat: <?php echo $report['latitude']; ?></div>
                             <div class="text-xs text-gray-500">Lng: <?php echo $report['longitude']; ?></div>
-                            <?php if ($report['is_out_of_bounds']): ?>
-                                <span class="px-2 mt-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    Flagged: Out of bounds
-                                </span>
-                            <?php endif; ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <?php 
@@ -73,12 +68,6 @@
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo $statusClass; ?>">
                                 <?php echo strtoupper($report['status']); ?>
                             </span>
-                            
-                            <?php if($report['admin_remark']): ?>
-                                <div class="text-[10px] text-gray-500 mt-1 w-32 truncate" title="<?php echo htmlspecialchars($report['admin_remark']); ?>">
-                                    Remark: <?php echo htmlspecialchars($report['admin_remark']); ?>
-                                </div>
-                            <?php endif; ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <form action="/brgy-waste-app-v3/public/admin/reports" method="POST" class="inline">

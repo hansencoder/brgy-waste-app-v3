@@ -44,9 +44,6 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </div>
             </div>
-            <div class="mt-4">
-                <a href="#" class="text-blue-500 text-sm font-medium hover:underline">View all reports →</a>
-            </div>
         </div>
         <!-- Card 2 -->
         <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between items-stretch">
@@ -58,9 +55,6 @@
                 <div class="bg-yellow-50 p-2 rounded-lg text-yellow-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 </div>
-            </div>
-            <div class="mt-4">
-                <a href="#" class="text-yellow-600 text-sm font-medium hover:underline">Review registrations →</a>
             </div>
         </div>
         <!-- Card 3 -->
@@ -74,9 +68,6 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 </div>
             </div>
-            <div class="mt-4">
-                <a href="#" class="text-green-500 text-sm font-medium hover:underline">Manage residents →</a>
-            </div>
         </div>
         <!-- Card 4 -->
         <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between items-stretch">
@@ -88,9 +79,6 @@
                 <div class="bg-purple-50 p-2 rounded-lg text-purple-500">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                 </div>
-            </div>
-            <div class="mt-4">
-                <a href="#" class="text-purple-500 text-sm font-medium hover:underline">View analytics →</a>
             </div>
         </div>
     </div>
@@ -220,9 +208,120 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Init Leaflet Map
-        var map = L.map('map').setView([14.6060, 120.9837], 12);
+        var map = L.map('map').setView([15.5656, 120.8010], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add a pin for the Barangay
+        L.marker([15.5656, 120.8010]).addTo(map).bindPopup("<b>Brgy. Dulong Bayan</b>").openPopup();
+
+        // Add exact boundaries (GeoJSON)
+        var barangayGeoJSON = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "properties": {},
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [120.8013517, 15.5699279],
+                    [120.8008898, 15.569572],
+                    [120.8008276, 15.5686578],
+                    [120.8006126, 15.5685788],
+                    [120.8005542, 15.5678398],
+                    [120.8001844, 15.5672858],
+                    [120.8000725, 15.5668847],
+                    [120.8001665, 15.566531],
+                    [120.7995785, 15.5663685],
+                    [120.7989717, 15.5657033],
+                    [120.7987031, 15.5658025],
+                    [120.7984537, 15.5654243],
+                    [120.7980956, 15.5652],
+                    [120.7977553, 15.5652043],
+                    [120.7975135, 15.5652862],
+                    [120.7971285, 15.5652259],
+                    [120.7964691, 15.5648604],
+                    [120.7961709, 15.5643821],
+                    [120.795562, 15.5643993],
+                    [120.7951681, 15.5637567],
+                    [120.7953561, 15.5632478],
+                    [120.7952523, 15.562581],
+                    [120.7950598, 15.5617529],
+                    [120.7950416, 15.5611835],
+                    [120.7945939, 15.5608471],
+                    [120.7946431, 15.5603295],
+                    [120.7943504, 15.5596467],
+                    [120.7937415, 15.5597848],
+                    [120.7930393, 15.55916],
+                    [120.7928646, 15.5570187],
+                    [120.7921781, 15.555107],
+                    [120.7912123, 15.554853],
+                    [120.7913399, 15.5543176],
+                    [120.7915605, 15.5533236],
+                    [120.7918092, 15.5534046],
+                    [120.8001316, 15.5478115],
+                    [120.8011058, 15.5481325],
+                    [120.8021398, 15.5484701],
+                    [120.8027807, 15.5485113],
+                    [120.8032508, 15.5489723],
+                    [120.8030798, 15.5500426],
+                    [120.8038043, 15.5501365],
+                    [120.8044282, 15.5502517],
+                    [120.8049495, 15.550614],
+                    [120.8058211, 15.5508445],
+                    [120.8062911, 15.551569],
+                    [120.8071584, 15.5520964],
+                    [120.8076635, 15.5520903],
+                    [120.8081181, 15.5524005],
+                    [120.8083454, 15.5523519],
+                    [120.8085979, 15.5525708],
+                    [120.8088668, 15.5528807],
+                    [120.8118007, 15.5512389],
+                    [120.8126332, 15.550257],
+                    [120.8153176, 15.5523838],
+                    [120.817434, 15.549628],
+                    [120.8219183, 15.5518119],
+                    [120.8232918, 15.5522367],
+                    [120.8253946, 15.5516159],
+                    [120.8260956, 15.5512188],
+                    [120.8281375, 15.5526533],
+                    [120.8298546, 15.5518644],
+                    [120.8310955, 15.5519514],
+                    [120.8335885, 15.5541358],
+                    [120.8325752, 15.5557229],
+                    [120.8326161, 15.5574083],
+                    [120.8332704, 15.5602447],
+                    [120.8283841, 15.5650646],
+                    [120.8236492, 15.5703491],
+                    [120.82189, 15.5689622],
+                    [120.8219651, 15.5676998],
+                    [120.8203353, 15.5645562],
+                    [120.8205697, 15.5594636],
+                    [120.8185042, 15.5617437],
+                    [120.8149287, 15.5609879],
+                    [120.8126889, 15.5623097],
+                    [120.8092582, 15.5595308],
+                    [120.8032464, 15.5673914],
+                    [120.8014669, 15.5699463],
+                    [120.8013468, 15.5699463],
+                    [120.8013468, 15.5699463]
+                  ]
+                ]
+              }
+            }
+          ]
+        };
+        
+        L.geoJSON(barangayGeoJSON, {
+            style: {
+                color: '#16a34a',     // Green outline
+                weight: 3,
+                fillColor: '#22c55e', // Green fill
+                fillOpacity: 0.1      // Light transparent fill
+            }
         }).addTo(map);
 
         // Heatmap Data Injection
@@ -234,9 +333,10 @@
         if (heatData.length > 0) {
             L.heatLayer(heatData, {radius: 25, blur: 15}).addTo(map);
         } else {
+            // Fake data for demonstration if no reports
             L.heatLayer([
-                [14.606, 120.983, 0.5],
-                [14.616, 120.993, 0.7]
+                [15.5656, 120.8010, 0.5],
+                [15.556, 120.813, 0.7]
             ], {radius: 25, blur: 15}).addTo(map);
         }
     });

@@ -1,556 +1,395 @@
 <?php include '../app/Views/layouts/header.php'; ?>
-<style>
-    /* Sidebar styles */
-    .sidebar {
-        width: 260px;
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        background: hsl(215 60% 20%);
-        color: hsl(210 40% 90%);
-        border-right: 1px solid hsl(215 40% 30%);
-        overflow-y: auto;
-        z-index: 50;
-    }
-    .sidebar-nav {
-        padding: 1rem;
-    }
-    .sidebar-nav a {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.625rem 0.75rem;
-        border-radius: 0.375rem;
-        color: hsl(210 40% 90%);
-        text-decoration: none;
-        transition: background-color 0.2s;
-        margin-bottom: 0.25rem;
-    }
-    .sidebar-nav a:hover {
-        background: hsl(215 50% 30%);
-    }
-    .sidebar-nav a.active {
-        background: hsl(215 50% 30%);
-        font-weight: 600;
-    }
-    .sidebar-nav a svg {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-    }
-    .nav-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: hsl(215 30% 60%);
-        padding: 0 0.75rem;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-    }
-    /* Main content area */
-    .main-content {
-        margin-left: 260px;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-    /* Top header bar */
-    .top-header {
-        height: 56px;
-        background: hsl(0 0% 100%);
-        border-bottom: 1px solid hsl(214 20% 88%);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 1.5rem;
-        position: sticky;
-        top: 0;
-        z-index: 40;
-    }
-    .top-header-left {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    .top-header-right {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    .role-selector {
-        padding: 0.375rem 0.75rem;
-        border: 1px solid hsl(214 20% 88%);
-        border-radius: 0.375rem;
-        background: hsl(0 0% 100%);
-        font-size: 0.875rem;
-        color: hsl(215 60% 15%);
-        cursor: pointer;
-    }
-    .icon-btn {
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 0.375rem;
-        border: none;
-        background: transparent;
-        color: hsl(215 60% 15%);
-        cursor: pointer;
-        position: relative;
-        transition: background-color 0.2s;
-    }
-    .icon-btn:hover {
-        background: hsl(210 20% 93%);
-    }
-    .icon-btn svg {
-        width: 20px;
-        height: 20px;
-    }
-    .notification-badge {
-        position: absolute;
-        top: 2px;
-        right: 2px;
-        width: 16px;
-        height: 16px;
-        background: hsl(0 72% 51%);
-        color: white;
-        font-size: 0.625rem;
-        font-weight: 700;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    /* Form content */
-    .form-content {
-        flex: 1;
-        padding: 2rem;
-        background: hsl(210 20% 97%);
-    }
-    .form-container {
-        max-width: 560px;
-        margin: 0 auto;
-    }
-    .form-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: hsl(215 60% 15%);
-        margin-bottom: 0.25rem;
-    }
-    .form-subtitle {
-        font-size: 0.875rem;
-        color: hsl(215 16% 47%);
-        margin-bottom: 1.5rem;
-    }
-    .form-section {
-        background: hsl(0 0% 100%);
-        border: 1px solid hsl(214 20% 88%);
-        border-radius: 0.5rem;
-        padding: 1.25rem;
-        margin-bottom: 1.5rem;
-    }
-    .section-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: hsl(215 60% 15%);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .section-title svg {
-        width: 16px;
-        height: 16px;
-    }
-    /* Upload area */
-    .upload-area {
-        border: 2px dashed hsl(214 20% 88%);
-        border-radius: 0.5rem;
-        padding: 2.5rem 1rem;
-        text-align: center;
-        cursor: pointer;
-        transition: border-color 0.2s, background-color 0.2s;
-    }
-    .upload-area:hover, .upload-area.dragover {
-        border-color: hsl(215 60% 25%);
-        background: hsl(210 20% 97%);
-    }
-    .upload-area svg {
-        width: 32px;
-        height: 32px;
-        color: hsl(215 16% 47%);
-        margin-bottom: 0.75rem;
-    }
-    .upload-text {
-        font-size: 0.875rem;
-        color: hsl(215 16% 47%);
-    }
-    .upload-hint {
-        font-size: 0.75rem;
-        color: hsl(215 16% 47%);
-        margin-top: 0.25rem;
-    }
-    /* Textarea */
-    .form-textarea {
-        width: 100%;
-        min-height: 100px;
-        padding: 0.75rem;
-        border: 1px solid hsl(214 20% 88%);
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        color: hsl(215 60% 15%);
-        resize: vertical;
-        font-family: inherit;
-    }
-    .form-textarea:focus {
-        outline: none;
-        border-color: hsl(215 60% 25%);
-        box-shadow: 0 0 0 3px hsl(215 60% 25% / 0.1);
-    }
-    .form-textarea::placeholder {
-        color: hsl(215 16% 47%);
-    }
-    .char-counter {
-        text-align: right;
-        font-size: 0.75rem;
-        color: hsl(215 16% 47%);
-        margin-top: 0.25rem;
-    }
-    /* Location buttons */
-    .location-buttons {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-    .location-btn {
-        flex: 1;
-        padding: 0.625rem 1rem;
-        border: 1px solid hsl(214 20% 88%);
-        border-radius: 0.375rem;
-        background: hsl(210 20% 97%);
-        font-size: 0.875rem;
-        color: hsl(215 60% 15%);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: background-color 0.2s;
-    }
-    .location-btn:hover {
-        background: hsl(210 20% 93%);
-    }
-    .location-btn svg {
-        width: 16px;
-        height: 16px;
-    }
-    /* Map container */
-    .map-container {
-        width: 100%;
-        height: 200px;
-        border-radius: 0.375rem;
-        overflow: hidden;
-    }
-    #map {
-        width: 100%;
-        height: 100%;
-    }
-    /* Submit button */
-    .submit-btn {
-        width: 100%;
-        padding: 0.875rem 1.5rem;
-        background: hsl(215 60% 25%);
-        color: hsl(210 40% 98%);
-        border: none;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .submit-btn:hover {
-        background: hsl(215 60% 20%);
-    }
-    /* Logo area */
-    .sidebar-logo {
-        padding: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        border-bottom: 1px solid hsl(215 40% 30%);
-    }
-    .logo-icon {
-        width: 36px;
-        height: 36px;
-        background: hsl(142 71% 45%);
-        border-radius: 0.375rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .logo-icon svg {
-        width: 20px;
-        height: 20px;
-        color: white;
-    }
-    .logo-text {
-        display: flex;
-        flex-direction: column;
-    }
-    .logo-title {
-        font-size: 0.875rem;
-        font-weight: 700;
-        color: hsl(210 40% 98%);
-        line-height: 1.2;
-    }
-    .logo-subtitle {
-        font-size: 0.75rem;
-        color: hsl(215 30% 60%);
-    }
-</style>
+<?php
+// Retrieve user info from session if available
+$fullName = $_SESSION['user_name'] ?? 'Juan Dela Cruz';
+$firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_name']))[0] : 'Juan';
+?>
 
-<!-- Sidebar -->
-<aside class="sidebar">
-    <div class="sidebar-logo">
-        <div class="logo-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+<div class="min-h-screen bg-[#f9fafb] w-full font-sans antialiased text-slate-800">
+
+    <!-- Top Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-[68px]">
+                <!-- Left: Logo -->
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#118B50] flex items-center justify-center text-white shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <span class="font-extrabold text-[#111827] text-lg tracking-tight">CivicLens</span>
+                </div>
+
+                <!-- Center: Nav Links -->
+                <div class="hidden md:flex items-center justify-center gap-1.5 flex-1">
+                    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex items-center gap-2 bg-[#118B50] text-white px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] shadow-sm shadow-[#118B50]/20 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg>
+                        Home
+                    </a>
+                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                        Reports
+                    </a>
+                    <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        Report
+                    </a>
+                    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                        News
+                    </a>
+                </div>
+
+                <!-- Right: Profile -->
+                <div class="flex items-center gap-3 md:gap-5">
+                    <button class="relative p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden md:block">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                        <span class="absolute top-[6px] right-[7px] w-[9px] h-[9px] rounded-full bg-red-500 border-2 border-white"></span>
+                    </button>
+                    
+                    <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
+
+                    <!-- Dropdown structure -->
+                    <div class="relative group cursor-pointer">
+                        <div class="flex items-center gap-2.5 pr-1 py-1 rounded-full hover:bg-slate-50 transition-colors">
+                            <div class="w-[34px] h-[34px] rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 text-slate-500 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <span class="text-[13px] font-bold text-slate-700 hidden sm:block"><?php echo htmlspecialchars($firstName); ?></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hidden sm:block"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 top-[100%] mt-1 w-48 bg-white border border-gray-100 rounded-[12px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all text-sm overflow-hidden z-50">
+                            <a href="#" class="block px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors">Settings</a>
+                            <div class="h-px bg-gray-100"></div>
+                            <a href="/brgy-waste-app-v3/public/auth/logout" class="block px-4 py-3 text-red-600 font-medium hover:bg-red-50 transition-colors">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="logo-text">
-            <span class="logo-title">WasteWatch</span>
-            <span class="logo-subtitle">Resident Portal</span>
-        </div>
-    </div>
-    <nav class="sidebar-nav">
-        <div class="nav-label">Navigation</div>
-        <a href="/brgy-waste-app-v3/public/resident/submit" class="active">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            Submit Report
-        </a>
-        <a href="/brgy-waste-app-v3/public/resident">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-            My Reports
-        </a>
-        <a href="/brgy-waste-app-v3/public/resident/announcements">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-            Announcements
-        </a>
     </nav>
-</aside>
 
-<!-- Main Content -->
-<div class="main-content">
-    <!-- Top Header -->
-    <header class="top-header">
-        <div class="top-header-left">
-            <button class="icon-btn" onclick="toggleSidebar()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
-            </button>
-        </div>
-        <div class="top-header-right">
-            <select class="role-selector">
-                <option value="resident">Resident</option>
-            </select>
-            <button class="icon-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                <span class="notification-badge">2</span>
-            </button>
-            <a href="/brgy-waste-app-v3/public/auth/logout" class="icon-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-8 md:space-y-10 pb-24 md:pb-12">
+        
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-5">
+            <div>
+                <h1 class="text-[32px] font-extrabold text-[#111827] tracking-tight leading-tight mb-0.5">Welcome, <?php echo htmlspecialchars($firstName); ?>!</h1>
+                <p class="text-[15px] text-slate-500 font-medium">Here's your report summary</p>
+            </div>
+            <a href="/brgy-waste-app-v3/public/resident/submit" class="inline-flex flex-shrink-0 items-center justify-center gap-2 bg-[#118B50] hover:bg-[#0e7442] text-white px-5 py-[11px] rounded-[10px] font-bold text-[14px] transition-colors shadow-sm shadow-[#118B50]/20 w-fit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Report Waste
             </a>
         </div>
-    </header>
 
-    <!-- Form Content -->
-    <div class="form-content">
-        <div class="form-container">
-            <h1 class="form-title">Submit Waste Report</h1>
-            <p class="form-subtitle">Report waste issues in Barangay Dulong Bayan</p>
-
-            <form id="reportForm" action="/brgy-waste-app-v3/public/resident/submit" method="POST" enctype="multipart/form-data">
-                <!-- Photo Upload Section -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                        Photo of Waste
+        <!-- Summary Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+            <!-- Total Reports -->
+            <div class="bg-white rounded-[16px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-gray-100 flex flex-col gap-2 relative overflow-hidden group hover:border-[#118B50]/30 transition-colors">
+                <div class="flex items-center gap-4 w-full">
+                    <div class="w-[42px] h-[42px] rounded-[10px] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0 group-hover:scale-105 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
                     </div>
-                    <div class="upload-area" id="uploadArea">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                        <div class="upload-text">Click or drag to upload</div>
-                        <div class="upload-hint">JPG, JPEG, PNG (max 5MB)</div>
-                    </div>
-                    <input type="file" id="photoInput" name="photo" accept=".jpg,.jpeg,.png" style="display: none;">
-                    <div id="previewContainer" style="margin-top: 1rem; display: none;">
-                        <img id="previewImage" style="max-width: 100%; max-height: 200px; border-radius: 0.375rem;" />
-                        <button type="button" id="removePhoto" style="margin-top: 0.5rem; padding: 0.375rem 0.75rem; background: hsl(0 72% 51%); color: white; border: none; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer;">Remove</button>
+                    <div class="flex flex-col pt-0.5">
+                        <div class="text-[26px] font-extrabold text-slate-800 leading-none tracking-tight"><?php echo $data['stats']['total'] ?? 0; ?></div>
+                        <div class="text-[13px] font-semibold text-slate-400 mt-1 uppercase tracking-wide">Total Reports</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Description Section -->
-                <div class="form-section">
-                    <div class="section-title">Description</div>
-                    <textarea class="form-textarea" id="description" name="description" placeholder="Describe the waste issue in detail (minimum 10 characters)..." maxlength="500" required></textarea>
-                    <div class="char-counter"><span id="charCount">0</span>/500</div>
+            <!-- Pending -->
+            <div class="bg-white rounded-[16px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-gray-100 flex flex-col gap-2 relative overflow-hidden group hover:border-amber-200 transition-colors">
+                <div class="flex items-center gap-4 w-full">
+                    <div class="w-[42px] h-[42px] rounded-[10px] bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 shrink-0 group-hover:scale-105 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="flex flex-col pt-0.5">
+                        <div class="text-[26px] font-extrabold text-slate-800 leading-none tracking-tight"><?php echo $data['stats']['pending'] ?? 0; ?></div>
+                        <div class="text-[13px] font-semibold text-slate-400 mt-1 uppercase tracking-wide">Pending</div>
+                    </div>
                 </div>
+            </div>
 
-                <!-- Location Section -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                        Location
+            <!-- Resolved -->
+            <div class="bg-white rounded-[16px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-gray-100 flex flex-col gap-2 relative overflow-hidden group hover:border-emerald-200 transition-colors">
+                <div class="flex items-center gap-4 w-full">
+                    <div class="w-[42px] h-[42px] rounded-[10px] bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 shrink-0 group-hover:scale-105 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                     </div>
-                    <div class="location-buttons">
-                        <button type="button" class="location-btn" id="detectGPS">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                            Detect GPS
-                        </button>
-                        <button type="button" class="location-btn" id="manualPin">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                            Manual Pin
-                        </button>
+                    <div class="flex flex-col pt-0.5">
+                        <div class="text-[26px] font-extrabold text-slate-800 leading-none tracking-tight"><?php echo $data['stats']['resolved'] ?? 0; ?></div>
+                        <div class="text-[13px] font-semibold text-slate-400 mt-1 uppercase tracking-wide">Resolved</div>
                     </div>
-                    <div class="map-container">
-                        <div id="map"></div>
-                    </div>
-                    <input type="hidden" id="latitude" name="latitude" required>
-                    <input type="hidden" id="longitude" name="longitude" required>
                 </div>
+            </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="submit-btn">Submit Report</button>
-            </form>
+            <!-- Verified -->
+            <div class="bg-white rounded-[16px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-gray-100 flex flex-col gap-2 relative overflow-hidden group hover:border-blue-200 transition-colors">
+                <div class="flex items-center gap-4 w-full">
+                    <div class="w-[42px] h-[42px] rounded-[10px] bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-500 shrink-0 group-hover:scale-105 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <div class="flex flex-col pt-0.5">
+                        <div class="text-[26px] font-extrabold text-slate-800 leading-none tracking-tight"><?php echo $data['stats']['verified'] ?? 0; ?></div>
+                        <div class="text-[13px] font-semibold text-slate-400 mt-1 uppercase tracking-wide">Verified</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!-- Recent Reports Section -->
+        <div class="pt-2">
+            <div class="flex justify-between items-end mb-4 md:mb-5">
+                <h2 class="text-[19px] font-extrabold text-[#111827]">Recent Reports</h2>
+                <a href="/brgy-waste-app-v3/public/resident/my_report" class="text-[#118B50] font-bold text-[13.5px] hover:underline">View all</a>
+            </div>
+            
+            <div class="space-y-4">
+                <?php if(!empty($data['reports'])): ?>
+                    <?php $recent = array_slice($data['reports'], 0, 3); // Get top 3 ?>
+                    <?php foreach($recent as $report): ?>
+                        <?php 
+                            $statusColors = [
+                                'pending' => ['bg' => 'amber-50', 'text' => 'amber-600', 'dot' => 'amber-500'],
+                                'verified' => ['bg' => 'blue-50', 'text' => 'blue-600', 'dot' => 'blue-500'],
+                                'resolved' => ['bg' => 'emerald-50', 'text' => 'emerald-600', 'dot' => 'emerald-500']
+                            ];
+                            $color = $statusColors[$report['status']] ?? $statusColors['pending'];
+                            $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' . $report['photo_path'] : 'https://placehold.co/150x150?text=No+Image';
+                        ?>
+                        <a href="/brgy-waste-app-v3/public/resident/view_report/<?php echo $report['id']; ?>" class="block">
+                            <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 bg-white border border-gray-200/80 rounded-[18px] p-4 md:p-5 shadow-sm hover:shadow-md transition-shadow relative">
+                                <div class="w-16 h-16 sm:w-20 sm:h-20 md:w-[90px] md:h-[90px] rounded-[14px] overflow-hidden shrink-0 border border-gray-100 bg-gray-50 flex items-center justify-center">
+                                    <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Thumbnail" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1 gap-2">
+                                        <span class="text-[12.5px] font-mono text-slate-400 tracking-tight font-medium">RPT-<?php echo str_pad($report['id'], 5, '0', STR_PAD_LEFT); ?></span>
+                                        <div class="absolute top-4 right-4 sm:static sm:top-auto sm:right-auto">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-<?php echo $color['bg']; ?> text-<?php echo $color['text']; ?> rounded-full text-[11.5px] font-bold">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-<?php echo $color['dot']; ?>"></span>
+                                                <?php echo ucfirst($report['status']); ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-[15px] font-semibold text-slate-800 leading-snug truncate sm:whitespace-normal mb-1 sm:mb-2 max-w-4xl"><?php echo htmlspecialchars($report['description']); ?></h3>
+                                    <div class="text-[12px] text-slate-400 font-medium"><?php echo date('M j, Y', strtotime($report['created_at'])); ?></div>
+                                </div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-slate-500 py-4 text-[14px]">You have no recent reports.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Waste Map Section -->
+        <div class="pt-2">
+            <div class="flex justify-between items-end mb-4 md:mb-5">
+                <h2 class="text-[19px] font-extrabold text-[#111827] flex items-center gap-2.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#118B50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Waste Reports Map
+                </h2>
+                <a href="#" class="text-[#118B50] font-bold text-[13.5px] hover:underline">Full map</a>
+            </div>
+            
+            <div class="w-full h-[320px] md:h-[400px] lg:h-[450px] rounded-[20px] md:rounded-[24px] border border-gray-200 shadow-sm overflow-hidden relative bg-gray-50 flex flex-col">
+                <div id="dashboardMap" class="w-full h-full flex-1 z-0 relative z-0 outline-none"></div>
+            </div>
+        </div>
+
+    </main>
 </div>
 
+<!-- Mobile Bottom Navigation (only visible < md screens) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-200/60 pt-2.5 pb-6 px-1 z-50 flex justify-between items-end shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#118B50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        <span class="text-[10.5px] font-extrabold text-[#118B50] tracking-wide">Home</span>
+    </a>
+    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+        <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Reports</span>
+    </a>
+    <div class="flex-1 flex justify-center sticky z-50">
+        <a href="/brgy-waste-app-v3/public/resident/submit" class="flex flex-col items-center relative -top-[22px] group transform active:scale-95 transition-all">
+            <div class="w-[58px] h-[58px] rounded-full bg-[#118B50] flex items-center justify-center border-[5px] border-[#f9fafb] shadow-md text-white mb-1 group-hover:bg-[#0e7442]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <span class="text-[10.5px] font-extrabold tracking-wide text-[#118B50]">Report</span>
+        </a>
+    </div>
+    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <span class="text-[10.5px] font-bold tracking-wide text-slate-500">News</span>
+    </a>
+    <a href="#" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Profile</span>
+    </a>
+</nav>
+
 <script>
-// Initialize map
-const map = L.map('map').setView([14.5995, 120.9842], 15); // Default to Philippines coordinates
+document.addEventListener('DOMContentLoaded', function() {
+    // Leaflet.js Map Initialization with boundaries from user config
+    const mapCenter = [15.558, 120.803]; 
+    
+    // Default Map Initialization
+    const map = L.map('dashboardMap', {
+        zoomControl: window.innerWidth >= 768, 
+        dragging: window.innerWidth >= 768, 
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        touchZoom: window.innerWidth >= 768
+    }).setView(mapCenter, 15);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-}).addTo(map);
+    // Using a clean minimal basemap like CartoDB Positron equivalent or standard OSM with grayscale filter via CSS
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OS',
+        className: 'map-tiles'
+    }).addTo(map);
 
-let marker = null;
+    // Dynamic clean map style injection
+    var mapStyle = document.createElement('style');
+    mapStyle.innerHTML = `
+        .map-tiles { filter: grayscale(1) opacity(0.7); }
+    `;
+    document.head.appendChild(mapStyle);
 
-// Upload area functionality
-const uploadArea = document.getElementById('uploadArea');
-const photoInput = document.getElementById('photoInput');
-const previewContainer = document.getElementById('previewContainer');
-const previewImage = document.getElementById('previewImage');
-const removePhoto = document.getElementById('removePhoto');
-
-uploadArea.addEventListener('click', () => {
-    photoInput.click();
-});
-
-uploadArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadArea.classList.add('dragover');
-});
-
-uploadArea.addEventListener('dragleave', () => {
-    uploadArea.classList.remove('dragover');
-});
-
-uploadArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFile(files[0]);
-    }
-});
-
-photoInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-        handleFile(e.target.files[0]);
-    }
-});
-
-function handleFile(file) {
-    if (file.type.match('image.*')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            previewImage.src = e.target.result;
-            previewContainer.style.display = 'block';
-            uploadArea.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-removePhoto.addEventListener('click', () => {
-    photoInput.value = '';
-    previewContainer.style.display = 'none';
-    uploadArea.style.display = 'block';
-});
-
-// Character counter
-const description = document.getElementById('description');
-const charCount = document.getElementById('charCount');
-
-description.addEventListener('input', () => {
-    charCount.textContent = description.value.length;
-});
-
-// GPS Detection
-document.getElementById('detectGPS').addEventListener('click', () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
-            
-            map.setView([lat, lng], 16);
-            
-            if (marker) {
-                map.removeLayer(marker);
+    // Exact geo boundary configured
+    var barangayGeoJSON = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                [
+                    [120.8013517, 15.5699279],
+                    [120.8008898, 15.569572],
+                    [120.8008276, 15.5686578],
+                    [120.8006126, 15.5685788],
+                    [120.8005542, 15.5678398],
+                    [120.8001844, 15.5672858],
+                    [120.8000725, 15.5668847],
+                    [120.8001665, 15.566531],
+                    [120.7995785, 15.5663685],
+                    [120.7989717, 15.5657033],
+                    [120.7987031, 15.5658025],
+                    [120.7984537, 15.5654243],
+                    [120.7980956, 15.5652],
+                    [120.7977553, 15.5652043],
+                    [120.7975135, 15.5652862],
+                    [120.7971285, 15.5652259],
+                    [120.7964691, 15.5648604],
+                    [120.7961709, 15.5643821],
+                    [120.795562, 15.5643993],
+                    [120.7951681, 15.5637567],
+                    [120.7953561, 15.5632478],
+                    [120.7952523, 15.562581],
+                    [120.7950598, 15.5617529],
+                    [120.7950416, 15.5611835],
+                    [120.7945939, 15.5608471],
+                    [120.7946431, 15.5603295],
+                    [120.7943504, 15.5596467],
+                    [120.7937415, 15.5597848],
+                    [120.7930393, 15.55916],
+                    [120.7928646, 15.5570187],
+                    [120.7921781, 15.555107],
+                    [120.7912123, 15.554853],
+                    [120.7913399, 15.5543176],
+                    [120.7915605, 15.5533236],
+                    [120.7918092, 15.5534046],
+                    [120.8001316, 15.5478115],
+                    [120.8011058, 15.5481325],
+                    [120.8021398, 15.5484701],
+                    [120.8027807, 15.5485113],
+                    [120.8032508, 15.5489723],
+                    [120.8030798, 15.5500426],
+                    [120.8038043, 15.5501365],
+                    [120.8044282, 15.5502517],
+                    [120.8049495, 15.550614],
+                    [120.8058211, 15.5508445],
+                    [120.8062911, 15.551569],
+                    [120.8071584, 15.5520964],
+                    [120.8076635, 15.5520903],
+                    [120.8081181, 15.5524005],
+                    [120.8083454, 15.5523519],
+                    [120.8085979, 15.5525708],
+                    [120.8088668, 15.5528807],
+                    [120.8118007, 15.5512389],
+                    [120.8126332, 15.550257],
+                    [120.8153176, 15.5523838],
+                    [120.817434, 15.549628],
+                    [120.8219183, 15.5518119],
+                    [120.8232918, 15.5522367],
+                    [120.8253946, 15.5516159],
+                    [120.8260956, 15.5512188],
+                    [120.8281375, 15.5526533],
+                    [120.8298546, 15.5518644],
+                    [120.8310955, 15.5519514],
+                    [120.8335885, 15.5541358],
+                    [120.8325752, 15.5557229],
+                    [120.8326161, 15.5574083],
+                    [120.8332704, 15.5602447],
+                    [120.8283841, 15.5650646],
+                    [120.8236492, 15.5703491],
+                    [120.82189, 15.5689622],
+                    [120.8219651, 15.5676998],
+                    [120.8203353, 15.5645562],
+                    [120.8205697, 15.5594636],
+                    [120.8185042, 15.5617437],
+                    [120.8149287, 15.5609879],
+                    [120.8126889, 15.5623097],
+                    [120.8092582, 15.5595308],
+                    [120.8032464, 15.5673914],
+                    [120.8014669, 15.5699463],
+                    [120.8013468, 15.5699463],
+                    [120.8013468, 15.5699463]
+                ]
+            ]
             }
-            marker = L.marker([lat, lng]).addTo(map);
-        }, (error) => {
-            alert('Unable to detect your location. Please use Manual Pin option.');
-        });
-    }
-});
-
-// Manual Pin
-let manualMode = false;
-document.getElementById('manualPin').addEventListener('click', () => {
-    manualMode = !manualMode;
-    if (manualMode) {
-        map.getContainer().style.cursor = 'crosshair';
-    } else {
-        map.getContainer().style.cursor = '';
-    }
-});
-
-map.on('click', (e) => {
-    if (manualMode) {
-        const lat = e.latlng.lat;
-        const lng = e.latlng.lng;
-        
-        document.getElementById('latitude').value = lat;
-        document.getElementById('longitude').value = lng;
-        
-        if (marker) {
-            map.removeLayer(marker);
         }
-        marker = L.marker([lat, lng]).addTo(map);
-        
-        manualMode = false;
-        map.getContainer().style.cursor = '';
-    }
-});
+        ]
+    };
+    
+    L.geoJSON(barangayGeoJSON, {
+        style: {
+            color: '#22c55e',     // Bright green dash 
+            weight: 2.5,
+            fillColor: '#ecfdf5', // Extremely light green fill
+            fillOpacity: 0.15,    
+            dashArray: '6, 6'
+        }
+    }).addTo(map);
 
-// Sidebar toggle (for mobile)
-function toggleSidebar() {
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
-}
+    // Marker Pins populated from database
+    const mapPins = <?php echo json_encode($data['map_pins'] ?? []); ?>;
+    
+    mapPins.forEach(pin => {
+        let color = '#f59e0b'; // pending amber
+        if (pin.status === 'verified') color = '#3b82f6'; // blue
+        if (pin.status === 'resolved') color = '#10b981'; // green
+
+        const markerHtml = `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`;
+        const icon = L.divIcon({
+            html: markerHtml,
+            className: '',
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+        });
+        L.marker([pin.latitude, pin.longitude], { icon: icon }).addTo(map);
+    });
+
+    // Ensure map tiles load perfectly on viewport resizes
+    setTimeout(function() { map.invalidateSize(); }, 100);
+    window.addEventListener("resize", function() { map.invalidateSize(); });
+});
 </script>
 
 <?php include '../app/Views/layouts/footer.php'; ?>

@@ -21,8 +21,10 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Affected Record</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
                         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
                     </tr>
                 </thead>
@@ -36,10 +38,16 @@
                                 <?php echo htmlspecialchars($log['user_name'] ?? 'System / Anonymous'); ?>
                             </td>
                             <td class="px-6 py-3 whitespace-nowrap text-gray-700">
-                                <?php echo htmlspecialchars($log['action_type']); ?>
+                                <?php echo htmlspecialchars($log['action']); ?>
                             </td>
-                            <td class="px-6 py-3 text-gray-500 max-w-sm truncate" title="<?php echo htmlspecialchars($log['action_details']); ?>">
-                                <?php echo htmlspecialchars($log['action_details']); ?>
+                            <td class="px-6 py-3 whitespace-nowrap text-gray-600 max-w-xs truncate" title="<?php echo htmlspecialchars($log['affected_record'] ?? ''); ?>">
+                                <?php echo htmlspecialchars($log['affected_record'] ?? 'N/A'); ?>
+                            </td>
+                            <td class="px-6 py-3 text-gray-500 max-w-sm truncate" title="<?php echo htmlspecialchars($log['details'] ?? ''); ?>">
+                                <?php echo htmlspecialchars($log['details'] ?? 'N/A'); ?>
+                            </td>
+                            <td class="px-6 py-3 whitespace-nowrap text-gray-600 text-xs">
+                                <?php echo htmlspecialchars($log['ip_address'] ?? 'N/A'); ?>
                             </td>
                             <td class="px-6 py-3 whitespace-nowrap text-center">
                                 <?php if($log['result'] == 'success'): ?>
@@ -50,7 +58,7 @@
                             </td>
                         </tr>
                     <?php endforeach; else: ?>
-                        <tr><td colspan="5" class="text-center py-4">No logs found.</td></tr>
+                        <tr><td colspan="7" class="text-center py-4">No logs found.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>

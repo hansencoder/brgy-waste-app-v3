@@ -1,66 +1,26 @@
-CREATE DATABASE IF NOT EXISTS brgy_waste_db;
+-- ============================================
+-- FINAL MIGRATION STEPS
+-- Users and Reports tables already migrated
+-- This creates the remaining new tables
+-- ============================================
+
 USE brgy_waste_db;
 
 -- ============================================
--- USER MANAGEMENT
+-- STEP 1: RENAME MFA TOKENS TABLE
 -- ============================================
 
--- Users table
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    address VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('resident', 'secretary', 'captain') NOT NULL DEFAULT 'resident',
-    status VARCHAR(50) DEFAULT 'pending',
-    last_login DATETIME DEFAULT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX (email),
-    INDEX (role),
-    INDEX (status)
-);
+RENAME TABLE mfa_tokens TO two_factor_tokens;
 
--- Account deactivations tracking
-CREATE TABLE IF NOT EXISTS account_deactivations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    reason TEXT NOT NULL,
-    deactivated_by INT NOT NULL,
-    deactivated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (deactivated_by) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX (user_id),
-    INDEX (deactivated_at)
-);
+-- Add is_used column if not exists
+ALTER TABLE two_factor_tokens 
+    ADD COLUMN IF NOT EXISTS is_used BOOLEAN DEFAULT FALSE AFTER expires_at;
 
 -- ============================================
--- REPORTS & REPORTING
+-- STEP 2: CREATE NEW TABLES
 -- ============================================
 
--- Waste reports
-CREATE TABLE IF NOT EXISTS reports (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    resident_id INT NOT NULL,
-    photo_path VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    latitude DECIMAL(10,8) NOT NULL,
-    longitude DECIMAL(11,8) NOT NULL,
-    location_verified BOOLEAN DEFAULT FALSE,
-    status VARCHAR(50) NOT NULL DEFAULT 'pending',
-    submission_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    reviewed_by INT DEFAULT NULL,
-    FOREIGN KEY (resident_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL,
-    INDEX (status),
-    INDEX (submission_date),
-    INDEX (resident_id)
-);
-
--- Report status history
+-- Create report_status_history table
 CREATE TABLE IF NOT EXISTS report_status_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
     report_id INT NOT NULL,
@@ -75,7 +35,7 @@ CREATE TABLE IF NOT EXISTS report_status_history (
     INDEX (changed_at)
 );
 
--- Report flags
+-- Create report_flags table
 CREATE TABLE IF NOT EXISTS report_flags (
     id INT AUTO_INCREMENT PRIMARY KEY,
     report_id INT NOT NULL,
@@ -91,11 +51,47 @@ CREATE TABLE IF NOT EXISTS report_flags (
     INDEX (flagged_at)
 );
 
+-- Create account_deactivations table
+CREATE TABLE IF NOT EXISTS account_deactivations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    reason TEXT NOT NULL,
+    deactivated_by INT NOT NULL,
+    deactivated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (deactivated_by) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX (user_id),
+    INDEX (deactivated_at)
+);
+
+-- Create announcements table
+CREATE TABLE IF NOT EXISTS announcements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    created_by INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX (created_at)
+);
+
 -- ============================================
--- NOTIFICATIONS & ANNOUNCEMENTS
+-- STEP 3: MIGRATE NOTIFICATIONS
 -- ============================================
 
--- Notifications
+-- Backup existing notifications
+CREATE TABLE IF NOT EXISTS notifications_backup AS SELECT * FROM notifications;
+
+-- Migrate announcement-type notifications to announcements table
+INSERT INTO announcements (title, content, created_by, created_at)
+SELECT title, message, 1, created_at 
+FROM notifications 
+WHERE type = 'announcement';
+
+-- Drop old notifications table
+DROP TABLE IF EXISTS notifications;
+
+-- Create new notifications table
 CREATE TABLE IF NOT EXISTS notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT DEFAULT NULL,
@@ -115,21 +111,23 @@ CREATE TABLE IF NOT EXISTS notifications (
     INDEX (created_at)
 );
 
--- Announcements
-CREATE TABLE IF NOT EXISTS announcements (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    created_by INT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX (created_at)
-);
+-- Migrate old notification-type messages to new structure
+INSERT INTO notifications (user_id, type, title, content, is_read, created_at)
+SELECT user_id, type, title, message, is_read, created_at 
+FROM notifications_backup 
+WHERE type = 'notification';
 
 -- ============================================
--- REPORT SUMMARIES
+-- STEP 4: MIGRATE REPORT SUMMARIES
 -- ============================================
 
+-- Backup existing summaries
+CREATE TABLE IF NOT EXISTS report_summaries_backup AS SELECT * FROM report_summaries;
+
+-- Drop old table
+DROP TABLE IF EXISTS report_summaries;
+
+-- Create new report_summaries table
 CREATE TABLE IF NOT EXISTS report_summaries (
     id INT AUTO_INCREMENT PRIMARY KEY,
     generated_by INT NOT NULL,
@@ -144,9 +142,16 @@ CREATE TABLE IF NOT EXISTS report_summaries (
 );
 
 -- ============================================
--- AUDIT LOGS
+-- STEP 5: MIGRATE AUDIT LOGS
 -- ============================================
 
+-- Backup existing audit logs
+CREATE TABLE IF NOT EXISTS audit_logs_backup AS SELECT * FROM audit_logs;
+
+-- Drop old table
+DROP TABLE IF EXISTS audit_logs;
+
+-- Create new audit_logs table
 CREATE TABLE IF NOT EXISTS audit_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT DEFAULT NULL,
@@ -164,27 +169,25 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 
 -- ============================================
--- TWO-FACTOR AUTHENTICATION
+-- STEP 6: UPDATE REMAINING COLUMN TYPES
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS two_factor_tokens (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    token VARCHAR(10) NOT NULL,
-    expires_at DATETIME NOT NULL,
-    is_used BOOLEAN DEFAULT FALSE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX (token),
-    INDEX (expires_at)
-);
+-- Update status column in reports to VARCHAR
+ALTER TABLE reports MODIFY COLUMN status VARCHAR(50) NOT NULL DEFAULT 'pending';
+
+-- Update timestamp columns to DATETIME
+ALTER TABLE reports 
+    MODIFY submission_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    MODIFY updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE users 
+    MODIFY created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    MODIFY updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 -- ============================================
--- DEFAULT ADMIN ACCOUNTS
--- Password for both is: Password@123
--- Hash generated via: password_hash('Password@123', PASSWORD_BCRYPT)
+-- MIGRATION COMPLETE
 -- ============================================
 
-INSERT IGNORE INTO users (id, name, address, phone_number, email, password, role, status) VALUES
-(1, 'Barangay Captain', 'Barangay Hall', '09123456789', 'captain@dulongbayan.ph', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', 'captain', 'active'),
-(2, 'Barangay Secretary', 'Barangay Hall', '09123456788', 'secretary@dulongbayan.ph', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', 'secretary', 'active');
+SELECT 'Migration completed successfully!' AS status;
+SELECT 'Backup tables created: notifications_backup, report_summaries_backup, audit_logs_backup' AS info;
+SELECT 'Please verify data integrity and remove backup tables when confident.' AS warning;

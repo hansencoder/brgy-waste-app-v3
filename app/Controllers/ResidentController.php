@@ -124,14 +124,6 @@ class ResidentController extends Controller {
             exit;
         }
 
-        // Delete the uploaded photo file
-        if (!empty($report['photo_path'])) {
-            $filePath = '../public/uploads/' . $report['photo_path'];
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
-        }
-
         if ($this->reportModel->deleteReport($id, $_SESSION['user_id'])) {
             $this->auditModel->logAction($_SESSION['user_id'], 'Report Deleted', "Report ID $id", 'Resident deleted their pending report', 'success');
             $_SESSION['success'] = 'Report deleted successfully.';

@@ -34,8 +34,16 @@ class AdminController extends Controller {
             $reason = filter_var($_POST['reason'], FILTER_SANITIZE_STRING) ?: '';
             $action = $_POST['action'];
 
+            // Load Notification model
+            require_once __DIR__ . '/../Models/Notification.php';
+            $notificationModel = new Notification();
+
             if ($action == 'approve') {
                 $this->userModel->updateUserStatus($user_id, 'active');
+                
+                // Create notification for account approval
+                $notificationModel->createAccountApprovedNotification($user_id, $_SESSION['user_id']);
+                
                 $this->auditModel->logAction($_SESSION['user_id'], 'Account Approved', "User ID $user_id", "Approved account ID $user_id", 'success');
             } elseif ($action == 'reject') {
                 $this->userModel->deleteUser($user_id);
@@ -47,7 +55,7 @@ class AdminController extends Controller {
                 $this->userModel->deleteUser($user_id);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Account Deleted', "User ID $user_id", "Deleted account ID $user_id", 'success');
             }
-            
+
             header("Location: /brgy-waste-app-v3/public/admin/accounts");
             exit;
         }
@@ -69,11 +77,30 @@ class AdminController extends Controller {
             $action = $post['action'];
             $remark = filter_var($post['remark'], FILTER_SANITIZE_STRING) ?: '';
 
+            // Load Notification model
+            require_once __DIR__ . '/../Models/Notification.php';
+            $notificationModel = new Notification();
+
+            // Get old status for notification
+            $db = new Database();
+            $db->query("SELECT status FROM reports WHERE id = :id");
+            $db->bind(':id', $report_id);
+            $oldReport = $db->single();
+            $oldStatus = $oldReport ? $oldReport['status'] : 'pending';
+
             if ($action == 'verify') {
                 $reportModel->updateReportStatus($report_id, 'verified', $_SESSION['user_id']);
+                
+                // Create notification for report status change
+                $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'verified', $_SESSION['user_id']);
+                
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Verified', "Report ID $report_id", "Verified report. Remark: $remark", 'success');
             } elseif ($action == 'resolve') {
                 $reportModel->updateReportStatus($report_id, 'resolved', $_SESSION['user_id']);
+                
+                // Create notification for report status change
+                $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'resolved', $_SESSION['user_id']);
+                
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Resolved', "Report ID $report_id", "Resolved report. Remark: $remark", 'success');
             } elseif ($action == 'delete') {
                 $reportModel->deleteReport($report_id);
@@ -141,6 +168,14 @@ class AdminController extends Controller {
                 $db->bind(':content', filter_var($_POST['content'], FILTER_SANITIZE_STRING));
                 $db->bind(':created_by', $_SESSION['user_id']);
                 $db->execute();
+                
+                // Get the announcement ID
+                $announcementId = $db->lastInsertId();
+
+                // Create notification for all users about the new announcement
+                require_once __DIR__ . '/../Models/Notification.php';
+                $notificationModel = new Notification();
+                $notificationModel->createAnnouncementNotification($announcementId, $_SESSION['user_id']);
 
                 $this->auditModel->logAction($_SESSION['user_id'], 'Post Announcement', 'Announcements', "Posted '{$_POST['title']}'", 'success');
                 header("Location: /brgy-waste-app-v3/public/admin/announcements");

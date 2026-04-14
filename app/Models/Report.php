@@ -37,6 +37,20 @@ class Report {
     }
 
     public function deleteReport($id, $resident_id = null) {
+        // Fetch photo_path before deleting
+        $this->db->query('SELECT photo_path FROM reports WHERE id = :id');
+        $this->db->bind(':id', $id);
+        $report = $this->db->single();
+
+        // Delete the uploaded photo file
+        if ($report && !empty($report['photo_path'])) {
+            $filePath = '../public/uploads/' . $report['photo_path'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+
+        // Delete the database record
         if ($resident_id !== null) {
             $this->db->query('DELETE FROM reports WHERE id = :id AND resident_id = :resident_id');
             $this->db->bind(':id', $id);

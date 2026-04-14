@@ -40,9 +40,8 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 
                 <!-- Right: Profile -->
                 <div class="flex items-center gap-3 md:gap-5">
-                    <button class="relative p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden md:block">
+                    <button onclick="openNotificationPanel()" class="relative p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden md:block">
                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                        <span class="absolute top-[6px] right-[7px] w-[9px] h-[9px] rounded-full bg-red-500 border-2 border-white"></span>
                     </button>
                     
                     <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
@@ -114,6 +113,12 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                             </div>
 
                             <img id="imagePreview" class="absolute inset-0 w-full h-full object-cover hidden z-10" alt="Preview">
+                            <button type="button" id="removeImageBtn" class="absolute top-3 right-3 z-20 w-8 h-8 rounde-half bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-lg hidden " title="Remove image">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
                         </div>
                         
                         <input id="photoInput" name="photo" type="file" class="hidden" accept="image/jpeg,image/png">
@@ -265,6 +270,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
     const imagePreview = document.getElementById('imagePreview');
     const uploadContent = document.getElementById('upload-content');
     const photoError = document.getElementById('photoError');
+    const removeImageBtn = document.getElementById('removeImageBtn');
     
     const descInput = document.getElementById('description');
     const charCount = document.getElementById('charCount');
@@ -402,12 +408,14 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         photoError.classList.add('hidden');
         dropArea.classList.remove('border-red-400');
         fileIsValid = true;
-        
+
         const reader = new FileReader();
         reader.onload = function(e) {
             imagePreview.src = e.target.result;
             imagePreview.classList.remove('hidden');
             uploadContent.classList.add('opacity-0'); // Hide upload layout text but keep clickable
+            removeImageBtn.classList.remove('hidden');
+            removeImageBtn.classList.add('flex');
         }
         reader.readAsDataURL(file);
     }
@@ -416,11 +424,27 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         fileIsValid = false;
         imagePreview.classList.add('hidden');
         uploadContent.classList.remove('opacity-0');
+        removeImageBtn.classList.add('hidden');
+        removeImageBtn.classList.remove('flex');
         photoError.textContent = msg;
         photoError.classList.remove('hidden');
         dropArea.classList.add('border-red-400');
         photoInput.value = ""; // clear
     }
+
+    // --- Remove Image Button ---
+    removeImageBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent triggering dropArea click
+        imagePreview.src = '';
+        imagePreview.classList.add('hidden');
+        uploadContent.classList.remove('opacity-0');
+        removeImageBtn.classList.add('hidden');
+        removeImageBtn.classList.remove('flex');
+        photoInput.value = '';
+        fileIsValid = false;
+        photoError.classList.add('hidden');
+        dropArea.classList.remove('border-red-400');
+    });
 
     // --- Description Counter ---
     descInput.addEventListener('input', function() {
@@ -646,4 +670,5 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 }
 </style>
 
+<?php include '../app/Views/layouts/notification-panel.php'; ?>
 <?php include '../app/Views/layouts/footer.php'; ?>

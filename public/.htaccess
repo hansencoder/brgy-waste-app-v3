@@ -1,6 +1,12 @@
 Options -Indexes
 
 RewriteEngine On
+
+# Handle API routes directly
+RewriteCond %{REQUEST_URI} ^/brgy-waste-app-v3/public/api/
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

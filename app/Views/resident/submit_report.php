@@ -30,7 +30,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                     </a>
                     <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 bg-[#118B50] text-white px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] shadow-sm shadow-[#118B50]/20 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                        Report
+                        Submit Report
                     </a>
                     <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
@@ -43,25 +43,22 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                     <button onclick="openNotificationPanel()" class="relative p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors hidden md:block">
                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                     </button>
-                    
+
                     <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
 
-                    <div class="relative group cursor-pointer">
-                        <div class="flex items-center gap-2.5 pr-1 py-1 rounded-full hover:bg-slate-50 transition-colors">
-                            <div class="w-[34px] h-[34px] rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 text-slate-500 shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <span class="text-[13px] font-bold text-slate-700 hidden sm:block"><?php echo htmlspecialchars($firstName); ?></span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hidden sm:block"><path d="m6 9 6 6 6-6"/></svg>
+
+                    <a href="/brgy-waste-app-v3/public/resident/profile" class="text-[13px] font-bold text-slate-700 hidden sm:block hover:text-[#118B50] transition-colors">Resident <?php echo htmlspecialchars($firstName); ?></a>
+
+
+                    <a href="/brgy-waste-app-v3/public/auth/logout" class="flex items-center gap-2.5 px-3 py-1 rounded-full hover:bg-red-50 transition-colors ">
+
+
+                        <div class="w-[34px] h-[34px] rounded-full border border-red-200 flex items-center justify-center bg-gray-50 text-slate-500 shadow-sm group-hover:border-red-200 group-hover:bg-red-50 ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            
                         </div>
                         
-                        <!-- Dropdown Menu -->
-                        <div class="absolute right-0 top-[100%] mt-1 w-48 bg-white border border-gray-100 rounded-[12px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all text-sm overflow-hidden z-50">
-                            <a href="#" class="block px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors">Settings</a>
-                            <div class="h-px bg-gray-100"></div>
-                            <a href="/brgy-waste-app-v3/public/auth/logout" class="block px-4 py-3 text-red-600 font-medium hover:bg-red-50 transition-colors">Logout</a>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -142,7 +139,8 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 
                 <!-- RIGHT COLUMN -->
                 <div class="flex flex-col h-full gap-5 bg-white border border-gray-200/80 rounded-[20px] p-5 shadow-sm">
-                    
+
+
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-1">
                         <label class="text-[15px] font-bold text-slate-800">Pin Location</label>
                         <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -154,25 +152,12 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                             <span class="text-[12px] font-semibold text-slate-400 hidden sm:block">or click map to pin</span>
                         </div>
                     </div>
-
+                    
                     <div id="locStatus" class="text-[12px] font-bold text-[#118B50] hidden">Location updated!</div>
 
+                    <!-- MAP -->
                     <div class="w-full h-[300px] lg:h-full min-h-[350px] bg-slate-100 rounded-[14px] border border-gray-200 relative overflow-hidden flex flex-col shrink-0">
                         <div id="mapContainer" class="w-full h-full z-0 relative flex-1 outline-none"></div>
-
-                        <!-- Legend overlay -->
-                        <div class="absolute bottom-3 left-3 bg-white/95 backdrop-blur shadow-sm border border-gray-100 px-3 py-2.5 rounded-xl z-[400] flex flex-col gap-2 pointer-events-none">
-                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Priorities</div>
-                            <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
-                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 border border-white shadow-sm shadow-amber-500/50"></span> Pending
-                            </div>
-                            <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
-                                <span class="w-2.5 h-2.5 rounded-full bg-blue-500 border border-white shadow-sm shadow-blue-500/50"></span> Verified
-                            </div>
-                            <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white shadow-sm shadow-emerald-500/50"></span> Resolved
-                            </div>
-                        </div>
                     </div>
 
                     <input type="hidden" id="latitude" name="latitude" required>
@@ -218,7 +203,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
         <span class="text-[10.5px] font-bold tracking-wide text-slate-500">News</span>
     </a>
-    <a href="#" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+    <a href="/brgy-waste-app-v3/public/resident/profile" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Profile</span>
     </a>
@@ -503,6 +488,11 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 
                     // Attach map clicks to easily move marker
                     window.mapInstance.on('click', function(e) {
+                        // Check if clicked location is within barangay boundary
+                        if (!isInsideBarangay(e.latlng.lat, e.latlng.lng)) {
+                            alert("This location is outside of Barangay Dulong Bayan coverage area. Please select a location within the green boundary.");
+                            return;
+                        }
                         window.mapMarker.setLatLng(e.latlng);
                         updateLatLng(e.latlng.lat, e.latlng.lng);
                         showLocationSuccess();
@@ -517,7 +507,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                     var barangayGeoJSON = {
                         "type": "FeatureCollection",
                         "features": [{
-                            "type": "Feature", "properties": {}, "geometry": {
+                            "type": "Feature", "properties": {"name": "Barangay Dulong Bayan"}, "geometry": {
                                 "type": "Polygon",
                                 "coordinates": [[
                                     [120.80135, 15.56992],[120.80018, 15.56728],[120.79897, 15.56570],[120.79751, 15.56528],[120.79516, 15.56375],[120.79464, 15.56032],[120.79121, 15.55485],[120.80013, 15.54781],[120.80494, 15.55061],[120.80886, 15.55288],[120.81743, 15.54962],[120.82609, 15.55121],[120.83358, 15.55413],[120.83261, 15.55740],[120.82838, 15.56506],[120.82364, 15.57034],[120.82033, 15.56455],[120.81492, 15.56098],[120.80324, 15.56739],[120.80135, 15.56992]
@@ -525,9 +515,12 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                             }
                         }]
                     };
-                    L.geoJSON(barangayGeoJSON, {
-                        style: { color: '#22c55e', weight: 2.5, fillColor: '#ecfdf5', fillOpacity: 0.15, dashArray: '6, 6' }
+                    var boundaryLayer = L.geoJSON(barangayGeoJSON, {
+                        style: { color: '#22c55e', weight: 3, fillColor: '#10b981', fillOpacity: 0.08, dashArray: '8, 6' }
                     }).addTo(window.mapInstance);
+                    
+                    // Add boundary label
+                    boundaryLayer.bindPopup("<b>Barangay Dulong Bayan</b><br><span style='font-size: 11px; color: #64748b;'>Reports can only be submitted within this area</span>");
 
                     // Ensure map renders correctly after container is visible
                     setTimeout(() => window.mapInstance.invalidateSize(), 200);
@@ -553,6 +546,34 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 
     // initial populate is done in DOMContentLoaded
 
+    // --- Barangay Dulong Bayan Boundary Check ---
+    // Polygon coordinates defining the barangay boundary
+    const barangayBoundary = [
+        [15.56992, 120.80135], [15.56728, 120.80018], [15.56570, 120.79897],
+        [15.56528, 120.79751], [15.56375, 120.79516], [15.56032, 120.79464],
+        [15.55485, 120.79121], [15.54781, 120.80013], [15.55061, 120.80494],
+        [15.55288, 120.80886], [15.54962, 120.81743], [15.55121, 120.82609],
+        [15.55413, 120.83358], [15.55740, 120.83261], [15.56506, 120.82838],
+        [15.57034, 120.82364], [15.56455, 120.82033], [15.56098, 120.81492],
+        [15.56739, 120.80324], [15.56992, 120.80135]
+    ];
+
+    // Point-in-polygon algorithm to check if location is within barangay
+    function isInsideBarangay(lat, lng) {
+        let inside = false;
+        const x = lat, y = lng;
+        
+        for (let i = 0, j = barangayBoundary.length - 1; i < barangayBoundary.length; j = i++) {
+            const xi = barangayBoundary[i][0], yi = barangayBoundary[i][1];
+            const xj = barangayBoundary[j][0], yj = barangayBoundary[j][1];
+            
+            const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+        
+        return inside;
+    }
+
     function detectGPS() {
         const btn = event.currentTarget;
         const ogContent = btn.innerHTML;
@@ -562,6 +583,14 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
             navigator.geolocation.getCurrentPosition(pos => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
+                
+                // Check if location is within barangay boundary
+                if (!isInsideBarangay(lat, lng)) {
+                    alert("This location is outside of Barangay Dulong Bayan coverage area. Please move to an area within the barangay boundaries to submit a report.");
+                    btn.innerHTML = ogContent;
+                    return;
+                }
+                
                 const userLL = new L.LatLng(lat, lng);
 
                 window.mapInstance.flyTo(userLL, 16, { duration: 1.5 });
@@ -593,33 +622,44 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
     // --- Validation & Submit Logic ---
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         let valid = true;
-        
+        let locationError = null;
+
         // Check image
         if (!fileIsValid) {
             showPhotoError("Image is required.");
             valid = false;
         }
-        
+
         // Check generic description
         if (descInput.value.length < 10) {
             descError.classList.remove('hidden');
             descInput.classList.add('border-red-400');
             valid = false;
         }
-        
+
         // Check Location
-        if(!document.getElementById('latitude').value) {
+        const lat = document.getElementById('latitude').value;
+        const lng = document.getElementById('longitude').value;
+        
+        if(!lat) {
             alert("Please select a location on the map.");
             valid = false;
+        } else {
+            // Check if location is within barangay boundary
+            if (!isInsideBarangay(parseFloat(lat), parseFloat(lng))) {
+                locationError = "This location is outside of Barangay Dulong Bayan coverage area. Reports can only be submitted within the barangay boundaries.";
+                alert(locationError);
+                valid = false;
+            }
         }
 
         if (!valid) {
             formErrorGlobal.classList.remove('hidden');
             return;
         }
-        
+
         formErrorGlobal.classList.add('hidden');
 
         // Disable beforeunload warning during form submission

@@ -35,12 +35,21 @@
 
     <div class="space-y-4">
         <?php if(!empty($data['announcements'])): foreach($data['announcements'] as $item): ?>
-            <div class="bg-card rounded-lg shadow-sm border border-border p-6 flex items-start">
-                <div class="bg-secondary/15 p-3 rounded-full mr-4 text-secondary text-xl font-bold">📢</div>
-                <div>
-                    <h3 class="text-lg font-bold text-gray-900"><?php echo htmlspecialchars($item['title']); ?></h3>
-                    <p class="text-xs text-gray-500 mb-2"><?php echo date('F d, Y h:i A', strtotime($item['created_at'])); ?></p>
-                    <p class="text-gray-700"><?php echo nl2br(htmlspecialchars($item['content'])); ?></p>
+            <div class="bg-card rounded-lg shadow-sm border border-border p-6 flex items-start relative group">
+                <div class="bg-secondary/15 p-3 rounded-full mr-4 text-secondary text-xl font-bold shrink-0">📢</div>
+                <div class="flex-1">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-gray-900"><?php echo htmlspecialchars($item['title']); ?></h3>
+                            <p class="text-xs text-gray-500 mb-2"><?php echo date('F d, Y h:i A', strtotime($item['created_at'])); ?></p>
+                        </div>
+                        <?php if ($_SESSION['user_role'] == 'secretary'): ?>
+                        <button onclick="showDeleteConfirm(<?php echo $item['id']; ?>, '<?php echo addslashes(htmlspecialchars($item['title'])); ?>')" class="shrink-0 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete Announcement">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                        </button>
+                        <?php endif; ?>
+                    </div>
+                    <p class="text-gray-700 mt-2"><?php echo nl2br(htmlspecialchars($item['content'])); ?></p>
                 </div>
             </div>
         <?php endforeach; else: ?>
@@ -48,6 +57,52 @@
         <?php endif; ?>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteAnnouncementModal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="hideDeleteConfirm()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
+            <button onclick="hideDeleteConfirm()" class="absolute top-4 right-4 p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+
+            <div class="text-center mb-4">
+                <div class="mx-auto w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-1">Delete Announcement?</h3>
+                <p class="text-sm text-slate-500">Are you sure you want to delete <strong id="announcementTitle" class="text-slate-700"></strong>? This action cannot be undone.</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="hideDeleteConfirm()" class="flex-1 px-4 py-2.5 border border-gray-200 text-slate-700 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <form id="deleteAnnouncementForm" action="/brgy-waste-app-v3/public/admin/delete_announcement" method="POST" class="flex-1">
+                    <input type="hidden" id="announcementId" name="announcement_id" value="">
+                    <button type="submit" class="w-full px-4 py-2.5 bg-red-600 text-white rounded-xl font-semibold text-sm hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20">
+                        Delete Announcement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showDeleteConfirm(id, title) {
+    document.getElementById('announcementId').value = id;
+    document.getElementById('announcementTitle').textContent = title;
+    document.getElementById('deleteAnnouncementModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function hideDeleteConfirm() {
+    document.getElementById('deleteAnnouncementModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+</script>
         </main>
     </div>
 </div>

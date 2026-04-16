@@ -15,8 +15,46 @@ class AdminController extends Controller {
 
     public function index() {
         $reportModel = $this->model('Report');
+        $db = new Database();
+
+        // Core stats
         $data['stats'] = $reportModel->getDashboardStats();
         $data['heatmap'] = $reportModel->getHeatmapData();
+
+        // New reports submitted today
+        $db->query("SELECT COUNT(*) as count FROM reports WHERE DATE(submission_date) = CURDATE()");
+        $todayRow = $db->single();
+        $data['today_count'] = $todayRow ? (int)$todayRow['count'] : 0;
+
+        // Pending reports count
+        $data['pending_count'] = (int)($data['stats']['pending'] ?? 0);
+
+        // Active residents count
+        $db->query("SELECT COUNT(*) as count FROM users WHERE role = 'resident' AND status = 'active'");
+        $resRow = $db->single();
+        $data['active_residents'] = $resRow ? (int)$resRow['count'] : 0;
+
+        // Resolution rate
+        $total = (int)($data['stats']['total'] ?? 0);
+        $resolved = (int)($data['stats']['resolved'] ?? 0);
+        $data['resolution_rate'] = $total > 0 ? round(($resolved / $total) * 100) : 0;
+
+        // Recent 5 reports with submitter name
+        $db->query("SELECT r.id, r.description, r.status, r.submission_date, u.name as resident_name
+                    FROM reports r
+                    JOIN users u ON r.resident_id = u.id
+                    ORDER BY r.submission_date DESC
+                    LIMIT 5");
+        $data['recent_reports'] = $db->resultSet();
+
+        // Recent 5 activity log entries
+        $db->query("SELECT a.action, a.details, a.created_at, u.name as user_name
+                    FROM audit_logs a
+                    LEFT JOIN users u ON a.user_id = u.id
+                    WHERE a.action != 'Dashboard Access'
+                    ORDER BY a.created_at DESC
+                    LIMIT 5");
+        $data['recent_activity'] = $db->resultSet();
 
         // Log access
         $this->auditModel->logAction($_SESSION['user_id'], 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', 'success');
@@ -186,5 +224,25 @@ class AdminController extends Controller {
         $db->query("SELECT * FROM announcements ORDER BY created_at DESC");
         $data['announcements'] = $db->resultSet();
         $this->view('admin/announcements', $data);
+    }
+
+    public function delete_announcement() {
+        if ($_SESSION['user_role'] != 'secretary') {
+            die("Unauthorized Access: Only Barangay Secretary can delete announcements.");
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['announcement_id'])) {
+            $announcementId = filter_var($_POST['announcement_id'], FILTER_VALIDATE_INT);
+            
+            $db = new Database();
+            $db->query("DELETE FROM announcements WHERE id = :id");
+            $db->bind(':id', $announcementId);
+            $db->execute();
+
+            $this->auditModel->logAction($_SESSION['user_id'], 'Delete Announcement', "Announcement ID $announcementId", "Deleted announcement", 'success');
+        }
+
+        header("Location: /brgy-waste-app-v3/public/admin/announcements");
+        exit;
     }
 }

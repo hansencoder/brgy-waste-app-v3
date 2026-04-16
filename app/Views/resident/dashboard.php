@@ -31,7 +31,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                     </a>
                     <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                        Report
+                        Submit Report
                     </a>
                     <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
@@ -47,23 +47,19 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 
                     <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
 
-                    <!-- Dropdown structure -->
-                    <div class="relative group cursor-pointer">
-                        <div class="flex items-center gap-2.5 pr-1 py-1 rounded-full hover:bg-slate-50 transition-colors">
-                            <div class="w-[34px] h-[34px] rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 text-slate-500 shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <span class="text-[13px] font-bold text-slate-700 hidden sm:block"><?php echo htmlspecialchars($firstName); ?></span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hidden sm:block"><path d="m6 9 6 6 6-6"/></svg>
+
+                    <a href="/brgy-waste-app-v3/public/resident/profile" class="text-[13px] font-bold text-slate-700 hidden sm:block hover:text-[#118B50] transition-colors">Resident <?php echo htmlspecialchars($firstName); ?></a>
+
+
+                    <a href="/brgy-waste-app-v3/public/auth/logout" class="flex items-center gap-2.5 px-3 py-1 rounded-full hover:bg-red-50 transition-colors ">
+
+
+                        <div class="w-[34px] h-[34px] rounded-full border border-red-200 flex items-center justify-center bg-gray-50 text-slate-500 shadow-sm group-hover:border-red-200 group-hover:bg-red-50 ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            
                         </div>
                         
-                        <!-- Dropdown Menu -->
-                        <div class="absolute right-0 top-[100%] mt-1 w-48 bg-white border border-gray-100 rounded-[12px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all text-sm overflow-hidden z-50">
-                            <a href="#" class="block px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-colors">Settings</a>
-                            <div class="h-px bg-gray-100"></div>
-                            <a href="/brgy-waste-app-v3/public/auth/logout" class="block px-4 py-3 text-red-600 font-medium hover:bg-red-50 transition-colors">Logout</a>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -195,9 +191,10 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                 <a href="#" class="text-[#118B50] font-bold text-[13.5px] hover:underline">Full map</a>
             </div>
             
-            <div class="w-full h-[320px] md:h-[400px] lg:h-[450px] rounded-[20px] md:rounded-[24px] border border-gray-200 shadow-sm overflow-hidden relative bg-gray-50 flex flex-col">
+            <div class="w-full h-[320px] md:h-[400px] lg:h-[450px] rounded-[20px] md:rounded-[24px] border border-gray-200 shadow-sm overflow-hidden relative bg-gray-50 flex flex-col ">
                 <div id="dashboardMap" class="w-full h-full flex-1 z-0 relative z-0 outline-none"></div>
             </div>
+            
         </div>
 
     </main>
@@ -225,7 +222,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
         <span class="text-[10.5px] font-bold tracking-wide text-slate-500">News</span>
     </a>
-    <a href="#" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+    <a href="/brgy-waste-app-v3/public/resident/profile" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Profile</span>
     </a>
@@ -240,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const map = L.map('dashboardMap', {
         zoomControl: window.innerWidth >= 768, 
         dragging: window.innerWidth >= 768, 
-        scrollWheelZoom: false,
+        scrollWheelZoom: true,
         doubleClickZoom: false,
         touchZoom: window.innerWidth >= 768
     }).setView(mapCenter, 15);

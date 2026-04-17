@@ -21,6 +21,26 @@
         </div>
         <?php endif; ?>
     </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="mb-6 bg-[#dfece2] rounded-lg shadow p-4">
+        <form action="/brgy-waste-app-v3/public/admin/reports" method="GET" class="flex gap-4 items-end">
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Search Reports</label>
+                <input type="text" name="search" placeholder="Search by description, reporter name, or email..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+            <div class="w-48">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
+                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="">All Statuses</option>
+                    <option value="pending" <?php echo ($_GET['status'] ?? '') == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                    <option value="verified" <?php echo ($_GET['status'] ?? '') == 'verified' ? 'selected' : ''; ?>>Verified</option>
+                    <option value="resolved" <?php echo ($_GET['status'] ?? '') == 'resolved' ? 'selected' : ''; ?>>Resolved</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded font-semibold text-sm shadow">Search</button>
+        </form>
+    </div>
     
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
@@ -56,8 +76,8 @@
                             <div class="text-xs text-gray-500"><?php echo htmlspecialchars($report['email']); ?></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-xs text-gray-500">Lat: <?php echo $report['latitude']; ?></div>
-                            <div class="text-xs text-gray-500">Lng: <?php echo $report['longitude']; ?></div>
+                            <div class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($report['location_name'] ?? 'Unknown location'); ?></div>
+                            <div class="text-xs text-gray-500 mt-1"><?php echo $report['latitude']; ?>, <?php echo $report['longitude']; ?></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <?php 

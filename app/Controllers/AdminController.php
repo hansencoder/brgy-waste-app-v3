@@ -69,6 +69,13 @@ class AdminController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
             $user_id = filter_var($_POST['user_id'], FILTER_VALIDATE_INT);
+            
+            // Validate that user_id is a valid integer
+            if (!$user_id || $user_id === false) {
+                header("Location: /brgy-waste-app-v3/public/admin/accounts");
+                exit;
+            }
+            
             $reason = filter_var($_POST['reason'], FILTER_SANITIZE_STRING) ?: '';
             $action = $_POST['action'];
 
@@ -87,11 +94,14 @@ class AdminController extends Controller {
                 $this->userModel->deleteUser($user_id);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Account Rejected', "User ID $user_id", "Rejected account ID $user_id. Reason: $reason", 'success');
             } elseif ($action == 'deactivate') {
-                $this->userModel->updateUserStatus($user_id, 'deactivated');
-                $this->auditModel->logAction($_SESSION['user_id'], 'Account Deactivated', "User ID $user_id", "Deactivated account ID $user_id. Reason: $reason", 'success');
-            } elseif ($action == 'delete') {
+                $result = $this->userModel->updateUserStatus($user_id, 'deactivated');
+                $this->auditModel->logAction($_SESSION['user_id'], 'Account Deactivated', "User ID $user_id", "Deactivated account ID $user_id. Reason: $reason", $result ? 'success' : 'failed');
+            } elseif ($action == 'reactivate') {
+                $result = $this->userModel->updateUserStatus($user_id, 'active');
+                $this->auditModel->logAction($_SESSION['user_id'], 'Account Reactivated', "User ID $user_id", "Reactivated account ID $user_id", $result ? 'success' : 'failed');
+            } elseif ($action == 'remove') {
                 $this->userModel->deleteUser($user_id);
-                $this->auditModel->logAction($_SESSION['user_id'], 'Account Deleted', "User ID $user_id", "Deleted account ID $user_id", 'success');
+                $this->auditModel->logAction($_SESSION['user_id'], 'Account Removed', "User ID $user_id", "Removed account ID $user_id. Reason: $reason", 'success');
             }
 
             header("Location: /brgy-waste-app-v3/public/admin/accounts");
@@ -99,6 +109,18 @@ class AdminController extends Controller {
         }
 
         $data['users'] = $this->userModel->getAllUsers();
+        
+        // Add report counts for each resident user
+        $reportModel = $this->model('Report');
+        foreach ($data['users'] as &$user) {
+            if ($user['role'] == 'resident') {
+                $userReports = $reportModel->getReportsByResident($user['id']);
+                $user['report_count'] = count($userReports);
+            } else {
+                $user['report_count'] = 0;
+            }
+        }
+        
         $this->view('admin/accounts', $data);
     }
 
@@ -149,7 +171,46 @@ class AdminController extends Controller {
             exit;
         }
 
-        $data['reports'] = $reportModel->getAllReports();
+        // Get search and status filters from GET parameters
+        $search = isset($_GET['search']) ? filter_var($_GET['search'], FILTER_SANITIZE_STRING) : '';
+        $status = isset($_GET['status']) ? filter_var($_GET['status'], FILTER_SANITIZE_STRING) : '';
+
+        // Build query with filters
+        $db = new Database();
+        $query = "SELECT r.*, u.name, u.email FROM reports r JOIN users u ON r.resident_id = u.id WHERE 1=1";
+        
+        if (!empty($search)) {
+            $query .= " AND (r.description LIKE :search OR u.name LIKE :search OR u.email LIKE :search)";
+        }
+        
+        if (!empty($status)) {
+            $query .= " AND r.status = :status";
+        }
+        
+        $query .= " ORDER BY r.submission_date DESC";
+        
+        $db->query($query);
+        
+        if (!empty($search)) {
+            $searchTerm = "%{$search}%";
+            $db->bind(':search', $searchTerm);
+        }
+        
+        if (!empty($status)) {
+            $db->bind(':status', $status);
+        }
+        
+        $data['reports'] = $db->resultSet();
+        
+        // Add location names to each report
+        require_once '../app/Core/Geocoding.php';
+        foreach ($data['reports'] as &$report) {
+            $report['location_name'] = Geocoding::getLocationName(
+                $report['latitude'],
+                $report['longitude']
+            );
+        }
+        
         $this->view('admin/reports', $data);
     }
 
@@ -163,6 +224,15 @@ class AdminController extends Controller {
         if (isset($_GET['format'])) {
             $format = $_GET['format'];
             $reports = $reportModel->getAllReports();
+            
+            // Add location names to each report
+            require_once '../app/Core/Geocoding.php';
+            foreach ($reports as &$r) {
+                $r['location_name'] = Geocoding::getLocationName(
+                    $r['latitude'],
+                    $r['longitude']
+                );
+            }
 
             $this->auditModel->logAction($_SESSION['user_id'], 'Report Generated', 'Report Summary', "Format: $format", 'success');
 
@@ -170,9 +240,9 @@ class AdminController extends Controller {
                 header('Content-Type: text/csv; charset=utf-8');
                 header('Content-Disposition: attachment; filename=waste_report_summary.csv');
                 $output = fopen('php://output', 'w');
-                fputcsv($output, array('ID', 'Date Submitted', 'Reporter Name', 'Email', 'Description', 'Status', 'Latitude', 'Longitude'));
+                fputcsv($output, array('ID', 'Date Submitted', 'Reporter Name', 'Email', 'Description', 'Location', 'Status'));
                 foreach ($reports as $r) {
-                    fputcsv($output, array($r['id'], $r['submission_date'], $r['name'], $r['email'], $r['description'], $r['status'], $r['latitude'], $r['longitude']));
+                    fputcsv($output, array($r['id'], $r['submission_date'], $r['name'], $r['email'], $r['description'], $r['location_name'], $r['status']));
                 }
                 fclose($output);
                 exit;
@@ -182,6 +252,33 @@ class AdminController extends Controller {
                 exit;
             }
         }
+    }
+
+    public function report_summaries() {
+        if ($_SESSION['user_role'] != 'secretary') {
+            die("Unauthorized Access: Only Barangay Secretary can generate report summaries.");
+        }
+
+        $reportModel = $this->model('Report');
+        $db = new Database();
+
+        // Get previous exports (recent exports) - safely handle if table doesn't exist
+        $data['exports'] = array();
+        try {
+            $db->query("SELECT * FROM exports ORDER BY created_at DESC LIMIT 10");
+            $result = $db->resultSet();
+            if ($result) {
+                $data['exports'] = $result;
+            }
+        } catch (Exception $e) {
+            // Table doesn't exist yet, that's okay - just continue with empty exports
+            $data['exports'] = array();
+        }
+
+        // Log access
+        $this->auditModel->logAction($_SESSION['user_id'], 'Report Summaries Access', 'Report Summaries', 'Accessed report summaries page', 'success');
+
+        $this->view('admin/report_summaries', $data);
     }
 
     public function auditLogs() {
@@ -243,6 +340,240 @@ class AdminController extends Controller {
         }
 
         header("Location: /brgy-waste-app-v3/public/admin/announcements");
+        exit;
+    }
+
+    // API endpoint for getting filtered reports
+    public function getFilteredReports() {
+        if ($_SESSION['user_role'] != 'secretary') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+
+        $dateFrom = isset($_GET['dateFrom']) ? filter_var($_GET['dateFrom'], FILTER_SANITIZE_STRING) : '';
+        $dateTo = isset($_GET['dateTo']) ? filter_var($_GET['dateTo'], FILTER_SANITIZE_STRING) : '';
+        $status = isset($_GET['status']) ? filter_var($_GET['status'], FILTER_SANITIZE_STRING) : '';
+
+        $db = new Database();
+        $reportModel = $this->model('Report');
+
+        // Build query with filters
+        $query = "SELECT r.id, r.description, r.status, r.submission_date, u.name, u.email, r.latitude, r.longitude 
+                  FROM reports r 
+                  JOIN users u ON r.resident_id = u.id 
+                  WHERE 1=1";
+
+        if ($dateFrom) {
+            $query .= " AND DATE(r.submission_date) >= :dateFrom";
+        }
+
+        if ($dateTo) {
+            $query .= " AND DATE(r.submission_date) <= :dateTo";
+        }
+
+        if ($status && $status !== '') {
+            $query .= " AND r.status = :status";
+        }
+
+        $query .= " ORDER BY r.submission_date DESC";
+
+        $db->query($query);
+
+        if ($dateFrom) {
+            $db->bind(':dateFrom', $dateFrom);
+        }
+        if ($dateTo) {
+            $db->bind(':dateTo', $dateTo);
+        }
+        if ($status && $status !== '') {
+            $db->bind(':status', $status);
+        }
+
+        $reports = $db->resultSet();
+
+        // Add location names and format data
+        require_once '../app/Core/Geocoding.php';
+        foreach ($reports as &$report) {
+            $report['location'] = Geocoding::getLocationName($report['latitude'], $report['longitude']);
+            $report['date'] = date('m/d/Y', strtotime($report['submission_date']));
+        }
+
+        // Calculate summary
+        $summary = [
+            'total' => count($reports),
+            'pending' => count(array_filter($reports, fn($r) => $r['status'] == 'pending')),
+            'verified' => count(array_filter($reports, fn($r) => $r['status'] == 'verified')),
+            'resolved' => count(array_filter($reports, fn($r) => $r['status'] == 'resolved'))
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'summary' => $summary,
+            'reports' => $reports
+        ]);
+        exit;
+    }
+
+    // Export reports to PDF
+    public function exportReportSummaryPDF() {
+        if ($_SESSION['user_role'] != 'secretary') {
+            die("Unauthorized Access");
+        }
+
+        $dateFrom = isset($_GET['dateFrom']) ? filter_var($_GET['dateFrom'], FILTER_SANITIZE_STRING) : '';
+        $dateTo = isset($_GET['dateTo']) ? filter_var($_GET['dateTo'], FILTER_SANITIZE_STRING) : '';
+        $status = isset($_GET['status']) ? filter_var($_GET['status'], FILTER_SANITIZE_STRING) : '';
+
+        $db = new Database();
+
+        // Build query with filters
+        $query = "SELECT r.id, r.description, r.status, r.submission_date, u.name, u.email, r.latitude, r.longitude 
+                  FROM reports r 
+                  JOIN users u ON r.resident_id = u.id 
+                  WHERE 1=1";
+
+        if ($dateFrom) {
+            $query .= " AND DATE(r.submission_date) >= :dateFrom";
+        }
+        if ($dateTo) {
+            $query .= " AND DATE(r.submission_date) <= :dateTo";
+        }
+        if ($status && $status !== '') {
+            $query .= " AND r.status = :status";
+        }
+
+        $query .= " ORDER BY r.submission_date DESC";
+
+        $db->query($query);
+
+        if ($dateFrom) {
+            $db->bind(':dateFrom', $dateFrom);
+        }
+        if ($dateTo) {
+            $db->bind(':dateTo', $dateTo);
+        }
+        if ($status && $status !== '') {
+            $db->bind(':status', $status);
+        }
+
+        $reports = $db->resultSet();
+
+        // Generate simple HTML for PDF conversion
+        $html = "
+        <html>
+        <head>
+            <title>Waste Report Summary</title>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #4CAF50; color: white; }
+            </style>
+        </head>
+        <body>
+            <h1>Waste Report Summary</h1>
+            <p>Report Period: $dateFrom to $dateTo</p>
+            <p>Total Reports: " . count($reports) . "</p>
+            <table>
+                <tr>
+                    <th>Report ID</th>
+                    <th>Resident</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>";
+
+        foreach ($reports as $report) {
+            $html .= "<tr>
+                <td>{$report['id']}</td>
+                <td>{$report['name']}</td>
+                <td>{$report['description']}</td>
+                <td>{$report['status']}</td>
+                <td>" . date('m/d/Y', strtotime($report['submission_date'])) . "</td>
+            </tr>";
+        }
+
+        $html .= "
+            </table>
+        </body>
+        </html>";
+
+        // For now, provide download as HTML that can be printed to PDF
+        header('Content-Type: text/html; charset=utf-8');
+        header('Content-Disposition: attachment; filename="report_summary_' . date('Y-m-d') . '.html"');
+        echo $html;
+        exit;
+    }
+
+    // Export reports to XLSX
+    public function exportReportSummaryXLSX() {
+        if ($_SESSION['user_role'] != 'secretary') {
+            die("Unauthorized Access");
+        }
+
+        $dateFrom = isset($_GET['dateFrom']) ? filter_var($_GET['dateFrom'], FILTER_SANITIZE_STRING) : '';
+        $dateTo = isset($_GET['dateTo']) ? filter_var($_GET['dateTo'], FILTER_SANITIZE_STRING) : '';
+        $status = isset($_GET['status']) ? filter_var($_GET['status'], FILTER_SANITIZE_STRING) : '';
+
+        $db = new Database();
+
+        // Build query with filters
+        $query = "SELECT r.id, r.description, r.status, r.submission_date, u.name, u.email, r.latitude, r.longitude 
+                  FROM reports r 
+                  JOIN users u ON r.resident_id = u.id 
+                  WHERE 1=1";
+
+        if ($dateFrom) {
+            $query .= " AND DATE(r.submission_date) >= :dateFrom";
+        }
+        if ($dateTo) {
+            $query .= " AND DATE(r.submission_date) <= :dateTo";
+        }
+        if ($status && $status !== '') {
+            $query .= " AND r.status = :status";
+        }
+
+        $query .= " ORDER BY r.submission_date DESC";
+
+        $db->query($query);
+
+        if ($dateFrom) {
+            $db->bind(':dateFrom', $dateFrom);
+        }
+        if ($dateTo) {
+            $db->bind(':dateTo', $dateTo);
+        }
+        if ($status && $status !== '') {
+            $db->bind(':status', $status);
+        }
+
+        $reports = $db->resultSet();
+
+        // Generate CSV for XLSX
+        $filename = "report_summary_" . date('Y-m-d') . ".csv";
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $output = fopen('php://output', 'w');
+
+        // Add headers
+        fputcsv($output, ['Report ID', 'Resident Name', 'Email', 'Description', 'Status', 'Submission Date']);
+
+        // Add data
+        foreach ($reports as $report) {
+            fputcsv($output, [
+                $report['id'],
+                $report['name'],
+                $report['email'],
+                $report['description'],
+                $report['status'],
+                date('m/d/Y H:i', strtotime($report['submission_date']))
+            ]);
+        }
+
+        fclose($output);
         exit;
     }
 }

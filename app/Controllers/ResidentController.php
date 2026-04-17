@@ -106,6 +106,20 @@ class ResidentController extends Controller {
 
                 if ($this->reportModel->createReport($reportData)) {
                     $this->auditModel->logAction($_SESSION['user_id'], 'Report Submitted', 'Waste Report', "User submitted report", 'success');
+                    
+                    // Get the report ID that was just created
+                    $db = new Database();
+                    $db->query("SELECT id FROM reports WHERE resident_id = :resident_id ORDER BY submission_date DESC LIMIT 1");
+                    $db->bind(':resident_id', $_SESSION['user_id']);
+                    $newReport = $db->single();
+                    
+                    if ($newReport) {
+                        // Notify admins about new report submission
+                        require_once __DIR__ . '/../Models/Notification.php';
+                        $notificationModel = new Notification();
+                        $notificationModel->createReportSubmittedNotification($newReport['id']);
+                    }
+                    
                     $data['success'] = 'Report submitted successfully.';
                 } else {
                     $data['error'] = 'Database error while saving report.';
@@ -130,6 +144,13 @@ class ResidentController extends Controller {
             header('Location: /brgy-waste-app-v3/public/resident/my_report');
             exit;
         }
+
+        // Get location name from coordinates
+        require_once '../app/Core/Geocoding.php';
+        $data['report']['location_name'] = Geocoding::getLocationName(
+            $data['report']['latitude'],
+            $data['report']['longitude']
+        );
 
         $data['timeline'] = $this->reportModel->getReportTimeline($id);
         $this->view('resident/view_report', $data);

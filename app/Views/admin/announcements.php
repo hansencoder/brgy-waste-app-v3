@@ -27,7 +27,7 @@
                 <textarea name="content" required rows="4" class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background"></textarea>
             </div>
             <div class="text-right">
-                <button type="submit" class="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-md shadow-sm font-semibold">Post Announcement</button>
+                <button type="submit" class="bg-[#15281F] hover:bg-[#15281F]/90 text-primary-foreground px-6 py-2 rounded-md shadow-sm font-semibold">Post Announcement</button>
             </div>
         </form>
     </div>

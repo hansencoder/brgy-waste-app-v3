@@ -68,32 +68,32 @@ if (!empty($timeline)) {
 
 <div class="min-h-screen bg-[#f9fafb] w-full font-sans antialiased text-slate-800 flex flex-col">
     <!-- Top Navbar -->
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm shrink-0">
+    <nav class="bg-[#15281f] border-b border-gray-200 sticky top-0 z-50 shadow-sm shrink-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-[68px]">
                 <!-- Left: Logo -->
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-[#118B50] flex items-center justify-center text-white shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <div class="w-8 h-8 rounded-lg bg-[#F4A825] flex items-center justify-center text-white shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
-                    <span class="font-extrabold text-[#111827] text-lg tracking-tight">CivicLens</span>
+                    <span class="font-extrabold text-white text-lg tracking-tight">WasteWatch</span>
                 </div>
 
                 <!-- Center: Nav Links -->
                 <div class="hidden md:flex items-center justify-center gap-1.5 flex-1">
-                    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#234232] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg>
                         Home
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex items-center gap-2 bg-[#234232] text-white px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] shadow-sm shadow-[#118B50]/20 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
                         Reports
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#234232] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                         Submit Report
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#234232] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                         News
                     </a>
@@ -107,7 +107,7 @@ if (!empty($timeline)) {
                     
                     <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
 
-                    <a href="/brgy-waste-app-v3/public/resident/profile" class="text-[13px] font-bold text-slate-700 hidden sm:block hover:text-[#118B50] transition-colors">Resident <?php echo htmlspecialchars($firstName); ?></a>
+                    <a href="/brgy-waste-app-v3/public/resident/profile" class="text-[13px] font-bold text-white hidden sm:block hover:text-[#118B50] transition-colors">Resident <?php echo htmlspecialchars($firstName); ?></a>
                     <a href="/brgy-waste-app-v3/public/auth/logout" class="flex items-center gap-2.5 px-3 py-1 rounded-full hover:bg-red-50 transition-colors group">
                         <div class="w-[34px] h-[34px] rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 text-slate-500 shadow-sm group-hover:border-red-200 group-hover:bg-red-50 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -210,15 +210,29 @@ if (!empty($timeline)) {
         <!-- 3. Map Section -->
         <div class="bg-white rounded-[18px] overflow-hidden shadow-sm border border-gray-200/80 mb-5 flex flex-col">
             <div id="reportMap" class="w-full h-[220px] bg-gray-100 border-b border-gray-100 z-10"></div>
-            <div class="p-4 flex items-center justify-between">
-                <div class="flex items-center gap-2 text-slate-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="text-[13.5px] font-mono font-medium tracking-tight" id="coordsText"><?php echo $report['latitude'] . ', ' . $report['longitude']; ?></span>
+            <div class="p-4 space-y-3">
+                <!-- Location Name -->
+                <div class="flex items-start gap-2 text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#118B50] flex-shrink-0 mt-0.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <div class="flex-1">
+                        <p class="text-[12px] text-slate-400 font-medium uppercase tracking-wide mb-0.5">Location</p>
+                        <p class="text-[13.5px] font-semibold text-slate-800" id="locationName"><?php echo htmlspecialchars($report['location_name'] ?? 'Unknown location'); ?></p>
+                    </div>
                 </div>
-                <!-- Copy Coordinates -->
-                <button onclick="copyCoords()" class="text-[12.5px] font-bold text-[#118B50] hover:text-[#0e7442] hover:bg-[#118B50]/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5" id="copyBtn">
+                
+                <!-- Coordinates -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-slate-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                        <span class="text-[12px] text-slate-400 font-medium">Coordinates</span>
+                    </div>
+                    <span class="text-[12.5px] font-mono font-medium tracking-tight text-slate-600" id="coordsText"><?php echo $report['latitude'] . ', ' . $report['longitude']; ?></span>
+                </div>
+                
+                <!-- Copy Coordinates Button -->
+                <button onclick="copyCoords()" class="w-full text-[12.5px] font-bold text-[#118B50] hover:text-[#0e7442] hover:bg-[#118B50]/10 px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5" id="copyBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                    Copy
+                    Copy Coordinates
                 </button>
             </div>
         </div>
@@ -310,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
             zoomControl: false,
             dragging: !L.Browser.mobile,
             touchZoom: !L.Browser.mobile,
-            scrollWheelZoom: false
+            scrollWheelZoom: true
         });
 
         // Add tiles with grayscale styled class

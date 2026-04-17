@@ -54,7 +54,7 @@
                     <th class="p-3 border">Date</th>
                     <th class="p-3 border">Reporter</th>
                     <th class="p-3 border w-1/3">Description</th>
-                    <th class="p-3 border">Coordinates</th>
+                    <th class="p-3 border">Location</th>
                     <th class="p-3 border">Status</th>
                 </tr>
             </thead>
@@ -65,7 +65,7 @@
                     <td class="p-3 border"><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></td>
                     <td class="p-3 border"><?php echo htmlspecialchars($r['name']); ?></td>
                     <td class="p-3 border truncate w-1/3 text-xs"><?php echo htmlspecialchars($r['description']); ?></td>
-                    <td class="p-3 border text-xs"><?php echo $r['latitude']; ?><br><?php echo $r['longitude']; ?></td>
+                    <td class="p-3 border text-xs"><?php echo htmlspecialchars($r['location_name'] ?? 'Unknown location'); ?></td>
                     <td class="p-3 border font-bold uppercase"><?php echo $r['status']; ?></td>
                 </tr>
                 <?php endforeach; ?>

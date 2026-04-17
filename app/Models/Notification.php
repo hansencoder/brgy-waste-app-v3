@@ -175,4 +175,39 @@ class Notification {
             'send_to_all' => false
         ]);
     }
+
+    /**
+     * Create notification for new report submission (notify all admins)
+     */
+    public function createReportSubmittedNotification($reportId) {
+        // Get report and resident details
+        $this->db->query("
+            SELECT r.id, r.description, r.submission_date, u.name as resident_name 
+            FROM reports r 
+            JOIN users u ON r.resident_id = u.id 
+            WHERE r.id = :id
+        ");
+        $this->db->bind(':id', $reportId);
+        $report = $this->db->single();
+
+        if (!$report) return false;
+
+        // Get all admin IDs (secretary and captain)
+        $this->db->query("SELECT id FROM users WHERE role IN ('secretary', 'captain')");
+        $admins = $this->db->resultSet();
+
+        // Create notification for each admin
+        foreach ($admins as $admin) {
+            $this->create([
+                'user_id' => $admin['id'],
+                'report_id' => $reportId,
+                'type' => 'report_update',
+                'title' => 'New Report Submitted',
+                'content' => "New report submitted by {$report['resident_name']}: " . substr($report['description'], 0, 50) . (strlen($report['description']) > 50 ? '...' : ''),
+                'send_to_all' => false
+            ]);
+        }
+
+        return true;
+    }
 }

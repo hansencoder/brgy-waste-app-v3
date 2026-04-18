@@ -26,10 +26,10 @@
             font-weight: 800;
             line-height: 1.15;
             letter-spacing: -0.02em;
-            color: hsl(215 60% 20%);
+            color: #15281f;
         }
         .hero-title .highlight {
-            color: hsl(160 50% 40%);
+            color: #F4A825;
         }
         @media (min-width: 640px) {
             .hero-title {
@@ -60,7 +60,7 @@
             justify-content: center;
             gap: 0.5rem;
             padding: 0.875rem 1.75rem;
-            background: hsl(215 60% 25%);
+            background: #15281f;
             color: white;
             border-radius: 0.375rem;
             font-size: 1rem;
@@ -73,7 +73,7 @@
             width: 100%;
         }
         .btn-primary:hover {
-            background: hsl(215 60% 20%);
+            background: #0d1a12;
         }
         .btn-primary svg {
             width: 18px;
@@ -355,7 +355,7 @@
 <body class="bg-background text-foreground font-sans antialiased min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="sticky top-0 z-50 border-b border-border bg-white">
+    <header class="sticky top-0 z-50 border-b border-border bg-[#15281F]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="header-logo">
@@ -363,18 +363,18 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                     <div class="header-logo-text">
-                        <span class="header-logo-title">WasteWatch</span>
-                        <span class="header-logo-subtitle">Barangay Dulong Bayan</span>
+                        <span class="header-logo-title text-white">WasteWatch</span>
+                        <span class="header-logo-subtitle text-white">Barangay Dulong Bayan</span>
                     </div>
                 </div>
                 <!-- Desktop Navigation -->
                 <nav class="desktop-nav items-center gap-3">
                     <?php if ($data['isLoggedIn']): ?>
-                        <a href="/brgy-waste-app-v3/public/auth" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Log In</a>
+                        <a href="/brgy-waste-app-v3/public/auth" class="text-sm font-medium text-[#F4A825] hover:text-[#f9da8e] transition-colors">Log In</a>
                         <a href="/brgy-waste-app-v3/public/<?php echo $data['role'] == 'resident' ? 'resident' : 'admin'; ?>" class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold shadow-sm hover:bg-primary/90 transition-colors">Dashboard</a>
                     <?php else: ?>
-                        <a href="/brgy-waste-app-v3/public/auth" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2">Log In</a>
-                        <a href="/brgy-waste-app-v3/public/auth/register" class="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold shadow-sm hover:bg-primary/90 transition-colors">Register</a>
+                        <a href="/brgy-waste-app-v3/public/auth" class="text-sm font-medium text-[#c0dac8] hover:text-[#f9da8e] transition-colors px-3 py-2">Log In</a>
+                        <a href="/brgy-waste-app-v3/public/auth/register" class="inline-flex items-center justify-center rounded-md bg-[#2a523d] text-primary-foreground px-4 py-2 text-sm font-semibold shadow-sm hover:bg-[#234232] transition-colors">Register</a>
                     <?php endif; ?>
                 </nav>
                 <!-- Mobile Menu Button -->
@@ -415,10 +415,7 @@
     <!-- Hero Section -->
     <section class="py-12 sm:py-16 md:py-24 lg:py-32" style="background: hsl(210 20% 97%);">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="badge-pill mb-4 sm:mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                For a Cleaner Community
-            </div>
+            
             <h1 class="hero-title mb-4 sm:mb-6">
                 Report Waste Issues in<br>
                 <span class="highlight">Barangay Dulong Bayan</span>

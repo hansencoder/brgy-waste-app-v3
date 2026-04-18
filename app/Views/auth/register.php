@@ -11,12 +11,12 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                 </div>
                 
-                <h2 class="text-[20px] font-bold text-[#1b365d] mb-2 tracking-tight">Registration Submitted</h2>
+                <h2 class="text-[20px] font-bold text-[#15281f] mb-2 tracking-tight">Registration Submitted</h2>
                 <p class="text-[14px] text-slate-500 mb-8 leading-relaxed max-w-[90%] mx-auto font-medium">
                     Your account is pending approval by the Barangay Secretary. You will receive a notification once approved.
                 </p>
                 
-                <a href="/brgy-waste-app-v3/public/auth" class="w-full inline-block bg-[#1b365d] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#1b365d]/20 hover:bg-[#142948] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#1b365d]/30 text-[14px] active:scale-[0.98]">
+                <a href="/brgy-waste-app-v3/public/auth" class="w-full inline-block bg-[#15281f] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#15281f]/20 hover:bg-[#0f1a17] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#15281f]/30 text-[14px] active:scale-[0.98]">
                     Go to Login
                 </a>
             </div>
@@ -30,14 +30,14 @@
 
         <div class="flex flex-col items-center mb-7">
             <!-- Icon -->
-            <div class="w-14 h-14 bg-[#1b365d] rounded-2xl flex items-center justify-center mb-4 shadow-md shadow-[#1b365d]/20">
+            <div class="w-14 h-14 bg-[#15281f] rounded-2xl flex items-center justify-center mb-4 shadow-md shadow-[#15281f]/20">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
-            <h2 class="text-[22px] font-bold text-[#1b365d] mb-1.5 tracking-tight">Create Account</h2>
+            <h2 class="text-[22px] font-bold text-[#15281f] mb-1.5 tracking-tight">Create Account</h2>
             <p class="text-[14px] text-slate-500 font-medium">Register as a resident of Barangay Dulong Bayan</p>
         </div>
 
-        <h2 class="text-[22px] font-bold text-[#1b365d] mb-6 tracking-tight">Create Your Account</h2>
+        <h2 class="text-[22px] font-bold text-[#15281f] mb-6 tracking-tight">Create Your Account</h2>
 
         <?php if (!empty($data['error'])): ?>
             <div class="bg-red-50/80 border border-red-100 text-red-600 px-4 py-3 mb-6 rounded-lg text-sm flex items-center gap-2" role="alert">
@@ -53,45 +53,44 @@
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
 
             <div>
-                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="name">Full Name <span class="text-red-500">*</span></label>
+                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="name">Full Name <span class="text-red-500">*</span></label>
                 <div class="relative">
                     <input type="text" id="name" name="name" required
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#1b365d]/10 focus:border-[#1b365d] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
+                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                         placeholder="Hans Flores"
                         oninput="this.value = this.value.replace(/[^a-zA-Z\s\-]/g, ''); validateInput(this)">
                 </div>
-                <p class="text-[11px] text-gray-400 mt-1 ml-1">As shown in a valid ID</p>
             </div>
 
             <div>
-                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="address">Complete Address <span class="text-red-500">*</span></label>
+                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="address">Complete Address <span class="text-red-500">*</span></label>
                 <input type="text" id="address" name="address" required
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#1b365d]/10 focus:border-[#1b365d] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
+                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                     placeholder="123 Rizal St., Purok 5"
                     oninput="this.value = this.value.replace(/[<>]/g, ''); validateInput(this)">
             </div>
 
             <div>
-                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="phone_number">Mobile Number <span class="text-red-500">*</span></label>
+                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="phone_number">Mobile Number <span class="text-red-500">*</span></label>
                 <input type="text" id="phone_number" name="phone_number" required pattern="^09\d{9}$" title="Standard format: 09XXXXXXXXX."
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#1b365d]/10 focus:border-[#1b365d] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
+                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                     placeholder="09171234567"
                     maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateInput(this)">
             </div>
 
             <div>
-                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="email">Email Address <span class="text-red-500">*</span></label>
+                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="email">Email Address <span class="text-red-500">*</span></label>
                 <input type="email" id="email" name="email" required pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#1b365d]/10 focus:border-[#1b365d] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
+                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                     placeholder="you@email.com"
                     oninput="this.value = this.value.replace(/[^a-zA-Z0-9._%+\-@]/g, ''); validateInput(this)">
             </div>
 
             <div>
-                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="password">Password <span class="text-red-500">*</span></label>
+                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="password">Password <span class="text-red-500">*</span></label>
                 <div class="relative">
                     <input type="password" id="password" name="password" required
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#1b365d]/10 focus:border-[#1b365d] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 pr-10"
+                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 pr-10"
                         placeholder="••••••••••••"
                         oninput="checkPasswordStrength(this.value); validateInput(this)">
                     <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors" tabindex="-1" aria-label="Toggle password visibility">
@@ -118,10 +117,10 @@
             </div>
 
             <div class="pt-1">
-                <label class="block text-[13px] font-bold text-[#1b365d] mb-1" for="confirm_password">Confirm Password <span class="text-red-500">*</span></label>
+                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="confirm_password">Confirm Password <span class="text-red-500">*</span></label>
                 <div class="relative">
                     <input type="password" id="confirm_password" name="confirm_password" required
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#1b365d]/10 focus:border-[#1b365d] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 pr-10"
+                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 pr-10"
                         placeholder="••••••••••••"
                         oninput="validatePasswordsMatch(); validateInput(this)">
                     <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors" tabindex="-1" aria-label="Toggle confirm password visibility">
@@ -133,16 +132,16 @@
 
             <!-- Lock Info Box -->
             <div class="bg-blue-50/50 border border-blue-100/70 rounded-lg p-3 my-4 flex gap-2.5 items-start shadow-sm shadow-blue-100/20">
-                <div class="text-[#eab308] mt-0.5 shrink-0 bg-[#fefce8] p-1 rounded"> <!-- Yellow lock to match design lock icon coloring if desired -->
+                <div class="text-[#f4a825] mt-0.5 shrink-0 bg-[#fffbf0] p-1 rounded"> <!-- Gold lock -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </div>
-                <p class="text-[11.5px] text-blue-800/80 leading-relaxed font-medium">
+                <p class="text-[11.5px] text-[#15281f]/80 leading-relaxed font-medium">
                     Your information is encrypted and secure. We only use this for verification and notifications.
                 </p>
             </div>
             
             <div class="pt-2">
-                <button type="submit" id="submitBtn" class="w-full bg-[#1b365d] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#1b365d]/20 hover:bg-[#142948] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#1b365d]/30 text-[14px] active:scale-[0.98]">
+                <button type="submit" id="submitBtn" class="w-full bg-[#15281f] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#15281f]/20 hover:bg-[#0f1a17] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#15281f]/30 text-[14px] active:scale-[0.98]">
                     Create Account
                 </button>
             </div>
@@ -150,7 +149,7 @@
 
         <div class="mt-6 text-center pt-2">
             <p class="text-[13px] text-slate-500">Already have an account? 
-                <a href="/brgy-waste-app-v3/public/auth" class="text-[#1b365d] font-bold hover:underline ml-0.5">Log in</a>
+                <a href="/brgy-waste-app-v3/public/auth" class="text-[#15281f] font-bold hover:underline ml-0.5">Log in</a>
             </p>
         </div>
         <?php endif; ?>
@@ -239,9 +238,9 @@
             passwordIsValid = false;
         } else {
             bar.style.width = '100%';
-            bar.classList.add('bg-[#1b365d]'); 
+            bar.classList.add('bg-[#15281f]'); 
             text.innerText = 'Strong';
-            text.className = 'text-[#1b365d] font-bold min-w-[32px] text-right';
+            text.className = 'text-[#15281f] font-bold min-w-[32px] text-right';
             passwordIsValid = true;
         }
         
@@ -252,7 +251,7 @@
         const el = document.getElementById(id);
         if (isValid) {
             // Using dark blue exclusively upon match
-            el.className = 'flex items-center gap-1.5 text-[#1b365d] font-semibold transition-colors';
+            el.className = 'flex items-center gap-1.5 text-[#15281f] font-semibold transition-colors';
             el.innerHTML = svgs.check + ' ' + el.innerText;
         } else {
             el.className = 'flex items-center gap-1.5 text-red-400 transition-colors';

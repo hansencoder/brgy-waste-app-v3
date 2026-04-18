@@ -76,7 +76,7 @@ class AdminController extends Controller {
                 exit;
             }
             
-            $reason = filter_var($_POST['reason'], FILTER_SANITIZE_STRING) ?: '';
+            $reason = isset($_POST['reason']) ? htmlspecialchars(strip_tags($_POST['reason']), ENT_QUOTES, 'UTF-8') : '';
             $action = $_POST['action'];
 
             // Load Notification model
@@ -120,6 +120,7 @@ class AdminController extends Controller {
                 $user['report_count'] = 0;
             }
         }
+        unset($user); // Break the reference to avoid the dangling reference bug
         
         $this->view('admin/accounts', $data);
     }
@@ -132,10 +133,9 @@ class AdminController extends Controller {
         $reportModel = $this->model('Report');
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
-            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $report_id = filter_var($post['report_id'], FILTER_VALIDATE_INT);
-            $action = $post['action'];
-            $remark = filter_var($post['remark'], FILTER_SANITIZE_STRING) ?: '';
+            $report_id = filter_var($_POST['report_id'] ?? 0, FILTER_VALIDATE_INT);
+            $action = htmlspecialchars(strip_tags($_POST['action'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $remark = isset($_POST['remark']) ? htmlspecialchars(strip_tags($_POST['remark']), ENT_QUOTES, 'UTF-8') : '';
 
             // Load Notification model
             require_once __DIR__ . '/../Models/Notification.php';
@@ -172,8 +172,8 @@ class AdminController extends Controller {
         }
 
         // Get search and status filters from GET parameters
-        $search = isset($_GET['search']) ? filter_var($_GET['search'], FILTER_SANITIZE_STRING) : '';
-        $status = isset($_GET['status']) ? filter_var($_GET['status'], FILTER_SANITIZE_STRING) : '';
+        $search = isset($_GET['search']) ? htmlspecialchars(strip_tags($_GET['search']), ENT_QUOTES, 'UTF-8') : '';
+        $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
 
         // Build query with filters
         $db = new Database();
@@ -203,7 +203,7 @@ class AdminController extends Controller {
         $data['reports'] = $db->resultSet();
         
         // Add location names to each report
-        require_once '../app/Core/Geocoding.php';
+        require_once __DIR__ . '/../Core/Geocoding.php';
         foreach ($data['reports'] as &$report) {
             $report['location_name'] = Geocoding::getLocationName(
                 $report['latitude'],
@@ -226,7 +226,7 @@ class AdminController extends Controller {
             $reports = $reportModel->getAllReports();
             
             // Add location names to each report
-            require_once '../app/Core/Geocoding.php';
+            require_once __DIR__ . '/../Core/Geocoding.php';
             foreach ($reports as &$r) {
                 $r['location_name'] = Geocoding::getLocationName(
                     $r['latitude'],
@@ -351,18 +351,18 @@ class AdminController extends Controller {
             exit;
         }
 
-        $dateFrom = isset($_GET['dateFrom']) ? filter_var($_GET['dateFrom'], FILTER_SANITIZE_STRING) : '';
-        $dateTo = isset($_GET['dateTo']) ? filter_var($_GET['dateTo'], FILTER_SANITIZE_STRING) : '';
-        $status = isset($_GET['status']) ? filter_var($_GET['status'], FILTER_SANITIZE_STRING) : '';
+        $dateFrom = isset($_GET['dateFrom']) ? htmlspecialchars(strip_tags($_GET['dateFrom']), ENT_QUOTES, 'UTF-8') : '';
+        $dateTo = isset($_GET['dateTo']) ? htmlspecialchars(strip_tags($_GET['dateTo']), ENT_QUOTES, 'UTF-8') : '';
+        $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
 
         $db = new Database();
         $reportModel = $this->model('Report');
 
         // Build query with filters
         $query = "SELECT r.id, r.description, r.status, r.submission_date, u.name, u.email, r.latitude, r.longitude 
-                  FROM reports r 
-                  JOIN users u ON r.resident_id = u.id 
-                  WHERE 1=1";
+                FROM reports r 
+                JOIN users u ON r.resident_id = u.id 
+                WHERE 1=1";
 
         if ($dateFrom) {
             $query .= " AND DATE(r.submission_date) >= :dateFrom";
@@ -393,7 +393,7 @@ class AdminController extends Controller {
         $reports = $db->resultSet();
 
         // Add location names and format data
-        require_once '../app/Core/Geocoding.php';
+        require_once __DIR__ . '/../Core/Geocoding.php';
         foreach ($reports as &$report) {
             $report['location'] = Geocoding::getLocationName($report['latitude'], $report['longitude']);
             $report['date'] = date('m/d/Y', strtotime($report['submission_date']));
@@ -422,9 +422,9 @@ class AdminController extends Controller {
             die("Unauthorized Access");
         }
 
-        $dateFrom = isset($_GET['dateFrom']) ? filter_var($_GET['dateFrom'], FILTER_SANITIZE_STRING) : '';
-        $dateTo = isset($_GET['dateTo']) ? filter_var($_GET['dateTo'], FILTER_SANITIZE_STRING) : '';
-        $status = isset($_GET['status']) ? filter_var($_GET['status'], FILTER_SANITIZE_STRING) : '';
+        $dateFrom = isset($_GET['dateFrom']) ? htmlspecialchars(strip_tags($_GET['dateFrom']), ENT_QUOTES, 'UTF-8') : '';
+        $dateTo = isset($_GET['dateTo']) ? htmlspecialchars(strip_tags($_GET['dateTo']), ENT_QUOTES, 'UTF-8') : '';
+        $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
 
         $db = new Database();
 
@@ -513,9 +513,9 @@ class AdminController extends Controller {
             die("Unauthorized Access");
         }
 
-        $dateFrom = isset($_GET['dateFrom']) ? filter_var($_GET['dateFrom'], FILTER_SANITIZE_STRING) : '';
-        $dateTo = isset($_GET['dateTo']) ? filter_var($_GET['dateTo'], FILTER_SANITIZE_STRING) : '';
-        $status = isset($_GET['status']) ? filter_var($_GET['status'], FILTER_SANITIZE_STRING) : '';
+        $dateFrom = isset($_GET['dateFrom']) ? htmlspecialchars(strip_tags($_GET['dateFrom']), ENT_QUOTES, 'UTF-8') : '';
+        $dateTo = isset($_GET['dateTo']) ? htmlspecialchars(strip_tags($_GET['dateTo']), ENT_QUOTES, 'UTF-8') : '';
+        $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
 
         $db = new Database();
 

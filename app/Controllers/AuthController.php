@@ -167,12 +167,53 @@ class AuthController extends Controller {
 
             $hashed = password_hash($password, PASSWORD_BCRYPT);
 
+            // Handle ID uploads
+            $upload_dir = '../public/uploads/ids/';
+            $id_front_path = null;
+            $id_back_path = null;
+
+            if (isset($_FILES['id_front']) && $_FILES['id_front']['error'] === 0) {
+                $ext = strtolower(pathinfo($_FILES['id_front']['name'], PATHINFO_EXTENSION));
+                $allowed = ['jpg', 'jpeg', 'png'];
+                if (in_array($ext, $allowed)) {
+                    $filename = uniqid('front_') . '.' . $ext;
+                    if (move_uploaded_file($_FILES['id_front']['tmp_name'], $upload_dir . $filename)) {
+                        $id_front_path = '/uploads/ids/' . $filename;
+                    }
+                } else {
+                    $data['error'] = "Invalid file format for Front ID. Only JPG and PNG allowed.";
+                    return $this->view('auth/register', $data);
+                }
+            } else {
+                $data['error'] = "Please upload a Valid ID (Front).";
+                return $this->view('auth/register', $data);
+            }
+
+            if (isset($_FILES['id_back']) && $_FILES['id_back']['error'] === 0) {
+                $ext = strtolower(pathinfo($_FILES['id_back']['name'], PATHINFO_EXTENSION));
+                $allowed = ['jpg', 'jpeg', 'png'];
+                if (in_array($ext, $allowed)) {
+                    $filename = uniqid('back_') . '.' . $ext;
+                    if (move_uploaded_file($_FILES['id_back']['tmp_name'], $upload_dir . $filename)) {
+                        $id_back_path = '/uploads/ids/' . $filename;
+                    }
+                } else {
+                    $data['error'] = "Invalid file format for Back ID. Only JPG and PNG allowed.";
+                    return $this->view('auth/register', $data);
+                }
+            } else {
+                $data['error'] = "Please upload a Valid ID (Back).";
+                return $this->view('auth/register', $data);
+            }
+
             $regData = [
                 'name' => trim($post['name']),
                 'address' => trim($post['address']),
                 'phone_number' => trim($post['phone_number']),
                 'email' => trim(strtolower($post['email'])),
-                'password' => $hashed
+                'password' => $hashed,
+                'id_front' => $id_front_path,
+                'id_back' => $id_back_path
             ];
 
             if ($this->userModel->register($regData)) {

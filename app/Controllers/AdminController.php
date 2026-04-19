@@ -126,13 +126,12 @@ class AdminController extends Controller {
     }
 
     public function reports() {
-        if ($_SESSION['user_role'] != 'secretary') {
-            die("Unauthorized Access: Only Barangay Secretary can manage reports.");
-        }
-
         $reportModel = $this->model('Report');
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
+            if ($_SESSION['user_role'] != 'secretary') {
+                die("Unauthorized Access: Only Barangay Secretary can perform report actions.");
+            }
             $report_id = filter_var($_POST['report_id'] ?? 0, FILTER_VALIDATE_INT);
             $action = htmlspecialchars(strip_tags($_POST['action'] ?? ''), ENT_QUOTES, 'UTF-8');
             $remark = isset($_POST['remark']) ? htmlspecialchars(strip_tags($_POST['remark']), ENT_QUOTES, 'UTF-8') : '';
@@ -255,10 +254,6 @@ class AdminController extends Controller {
     }
 
     public function report_summaries() {
-        if ($_SESSION['user_role'] != 'secretary') {
-            die("Unauthorized Access: Only Barangay Secretary can generate report summaries.");
-        }
-
         $reportModel = $this->model('Report');
         $db = new Database();
 
@@ -282,10 +277,6 @@ class AdminController extends Controller {
     }
 
     public function auditLogs() {
-        if ($_SESSION['user_role'] != 'secretary') {
-            die("Unauthorized Access: Only Secretary can view audit logs.");
-        }
-
         // Get all logs
         $db = new Database();
         $db->query("SELECT a.*, u.name as user_name FROM audit_logs a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC");
@@ -345,12 +336,6 @@ class AdminController extends Controller {
 
     // API endpoint for getting filtered reports
     public function getFilteredReports() {
-        if ($_SESSION['user_role'] != 'secretary') {
-            http_response_code(403);
-            echo json_encode(['error' => 'Unauthorized']);
-            exit;
-        }
-
         $dateFrom = isset($_GET['dateFrom']) ? htmlspecialchars(strip_tags($_GET['dateFrom']), ENT_QUOTES, 'UTF-8') : '';
         $dateTo = isset($_GET['dateTo']) ? htmlspecialchars(strip_tags($_GET['dateTo']), ENT_QUOTES, 'UTF-8') : '';
         $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
@@ -418,10 +403,6 @@ class AdminController extends Controller {
 
     // Export reports to PDF
     public function exportReportSummaryPDF() {
-        if ($_SESSION['user_role'] != 'secretary') {
-            die("Unauthorized Access");
-        }
-
         $dateFrom = isset($_GET['dateFrom']) ? htmlspecialchars(strip_tags($_GET['dateFrom']), ENT_QUOTES, 'UTF-8') : '';
         $dateTo = isset($_GET['dateTo']) ? htmlspecialchars(strip_tags($_GET['dateTo']), ENT_QUOTES, 'UTF-8') : '';
         $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
@@ -497,22 +478,20 @@ class AdminController extends Controller {
 
         $html .= "
             </table>
+            <br>
+            <button onclick=\"window.print()\" style=\"padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;\">🖨️ Print / Save as PDF</button>
+            <p style=\"font-size: 12px; color: #666;\">Note: In the print dialog, select 'Save as PDF' as the destination.</p>
         </body>
         </html>";
 
-        // For now, provide download as HTML that can be printed to PDF
+        // Render as standard HTML for preview
         header('Content-Type: text/html; charset=utf-8');
-        header('Content-Disposition: attachment; filename="report_summary_' . date('Y-m-d') . '.html"');
         echo $html;
         exit;
     }
 
     // Export reports to XLSX
     public function exportReportSummaryXLSX() {
-        if ($_SESSION['user_role'] != 'secretary') {
-            die("Unauthorized Access");
-        }
-
         $dateFrom = isset($_GET['dateFrom']) ? htmlspecialchars(strip_tags($_GET['dateFrom']), ENT_QUOTES, 'UTF-8') : '';
         $dateTo = isset($_GET['dateTo']) ? htmlspecialchars(strip_tags($_GET['dateTo']), ENT_QUOTES, 'UTF-8') : '';
         $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
@@ -575,5 +554,96 @@ class AdminController extends Controller {
 
         fclose($output);
         exit;
+    }
+
+    public function profile() {
+        $data = ['error' => '', 'success' => ''];
+        $db = new Database();
+
+        // Get user data
+        $db->query("SELECT * FROM users WHERE id = :id");
+        $db->bind(':id', $_SESSION['user_id']);
+        $data['user'] = $db->single();
+
+        // Handle profile update
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $address = trim($_POST['address'] ?? '');
+            $phone = trim($_POST['phone_number'] ?? '');
+
+            if (empty($name)) {
+                $data['error'] = 'Full name is required.';
+                return $this->view('admin/profile', $data);
+            }
+            if (empty($address)) {
+                $data['error'] = 'Address is required.';
+                return $this->view('admin/profile', $data);
+            }
+            if (!preg_match('/^09\d{9}$/', $phone)) {
+                $data['error'] = 'Invalid Philippine phone number. Must be 11 digits starting with 09.';
+                return $this->view('admin/profile', $data);
+            }
+
+            $db->query("UPDATE users SET name = :name, address = :address, phone_number = :phone WHERE id = :id");
+            $db->bind(':name', $name);
+            $db->bind(':address', $address);
+            $db->bind(':phone', $phone);
+            $db->bind(':id', $_SESSION['user_id']);
+            
+            if ($db->execute()) {
+                $_SESSION['user_name'] = $name;
+                $data['success'] = 'Profile updated successfully.';
+                // Refresh
+                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->bind(':id', $_SESSION['user_id']);
+                $data['user'] = $db->single();
+                $this->auditModel->logAction($_SESSION['user_id'], 'Profile Updated', 'Profile', 'Admin updated personal information', 'success');
+            } else {
+                $data['error'] = 'Failed to update profile.';
+            }
+        }
+        $this->view('admin/profile', $data);
+    }
+
+    public function change_password() {
+        $data = ['error' => '', 'success' => ''];
+        $db = new Database();
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $currentPassword = $_POST['current_password'] ?? '';
+            $newPassword = $_POST['new_password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
+
+            $db->query("SELECT password FROM users WHERE id = :id");
+            $db->bind(':id', $_SESSION['user_id']);
+            $user = $db->single();
+
+            if (!password_verify($currentPassword, $user['password'])) {
+                $data['error'] = 'Current password is incorrect.';
+            } else if (strlen($newPassword) < 8 || !preg_match('/[A-Z]/', $newPassword) || !preg_match('/[0-9]/', $newPassword) || !preg_match('/[!@#$%^&*]/', $newPassword)) {
+                $data['error'] = 'Password does not meet the necessary requirements.';
+            } else if ($newPassword !== $confirmPassword) {
+                $data['error'] = 'New passwords do not match.';
+            } else if (password_verify($newPassword, $user['password'])) {
+                $data['error'] = 'New password must be different from current password.';
+            } else {
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                $db->query("UPDATE users SET password = :password WHERE id = :id");
+                $db->bind(':password', $hashedPassword);
+                $db->bind(':id', $_SESSION['user_id']);
+                if ($db->execute()) {
+                    $data['success'] = 'Password changed successfully.';
+                    $this->auditModel->logAction($_SESSION['user_id'], 'Password Changed', 'Security', 'Admin changed their password', 'success');
+                } else {
+                    $data['error'] = 'Failed to change password.';
+                }
+            }
+
+            // Refresh user data for view
+            $db->query("SELECT * FROM users WHERE id = :id");
+            $db->bind(':id', $_SESSION['user_id']);
+            $data['user'] = $db->single();
+        }
+        $this->view('admin/profile', $data);
     }
 }

@@ -11,7 +11,7 @@
         
         <!-- Scrollable Content -->
         <main class="flex-1 relative overflow-y-auto focus:outline-none">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4 py-4">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <!-- Header -->
                 <div class="mb-8">
                     <h1 class="text-3xl font-bold text-gray-900">Manage Accounts</h1>
@@ -19,7 +19,7 @@
                 </div>
 
                 <!-- Status Tab Navigation -->
-                <div class="border-2 rounded-lg p-4 mb-8 bg-white inline-flex gap-8">
+                <div class=" rounded-lg p-4 mb-8 bg-white inline-flex gap-8">
                     <?php 
                         $pending_count = count(array_filter($data['users'], fn($u) => $u['role'] == 'resident' && $u['status'] == 'pending'));
                         $active_count = count(array_filter($data['users'], fn($u) => $u['role'] == 'resident' && $u['status'] == 'active'));
@@ -49,11 +49,9 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
@@ -62,9 +60,6 @@
                                 <?php foreach ($data['users'] as $user):
                                     if ($user['role'] == 'resident' && $user['status'] == 'pending'): ?>
                                     <tr class="hover:bg-gray-50 transition-colors" data-user-id="<?php echo $user['id']; ?>" data-user-status="<?php echo $user['status']; ?>">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-mono text-gray-600"><?php echo htmlspecialchars($user['id']); ?></div>
-                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($user['name']); ?></div>
                                         </td>
@@ -75,12 +70,13 @@
                                             <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['phone_number']); ?></div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['address'] ?? 'N/A'); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-600"><?php echo date('m/d/Y', strtotime($user['created_at'] ?? 'now')); ?></div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                            <button onclick="openIdModal('<?php echo htmlspecialchars($user['id_front'] ?? ''); ?>', '<?php echo htmlspecialchars($user['id_back'] ?? ''); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors" title="View IDs">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                                <span class="text-xs">View IDs</span>
+                                            </button>
                                             <button onclick="openActionModal('approve', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors" title="Approve">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                                 <span class="text-xs">Approve</span>
@@ -102,11 +98,9 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Reports</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -117,9 +111,6 @@
                                     if ($user['role'] == 'resident' && $user['status'] == 'active'): ?>
                                     <tr class="hover:bg-gray-50 transition-colors" data-user-id="<?php echo $user['id']; ?>" data-user-status="<?php echo $user['status']; ?>">
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-mono text-gray-600"><?php echo htmlspecialchars($user['id']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($user['name']); ?></div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -127,9 +118,6 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['phone_number']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['address'] ?? 'N/A'); ?></div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
                                             <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800"><?php echo $user['report_count'] ?? 0; ?></span>
@@ -162,10 +150,8 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
@@ -175,16 +161,10 @@
                                     if ($user['role'] == 'resident' && $user['status'] == 'deactivated'): ?>
                                     <tr class="hover:bg-gray-50 transition-colors" data-user-id="<?php echo $user['id']; ?>" data-user-status="<?php echo $user['status']; ?>">
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-mono text-gray-600"><?php echo htmlspecialchars($user['id']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($user['name']); ?></div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['email']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['address'] ?? 'N/A'); ?></div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
                                             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 text-gray-700">
@@ -239,6 +219,48 @@
             <button onclick="confirmAction()" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors">
                 Confirm
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- ID Viewer Modal -->
+<div id="idModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-[60] flex items-center justify-center p-4 animate-fadeIn">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full transform transition-all animate-slideUp overflow-hidden flex flex-col max-h-[90vh]">
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between shrink-0">
+            <h2 class="text-lg font-bold text-gray-900">Resident Valid IDs</h2>
+            <button onclick="closeIdModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-6 overflow-y-auto w-full bg-gray-50 flex-1">
+            <div class="space-y-6">
+                <!-- Front Side -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        Front Side
+                    </h3>
+                    <div class="w-full bg-gray-100 rounded-lg flex items-center justify-center min-h-[200px] overflow-hidden">
+                        <img id="idFrontImg" src="" alt="Front ID" class="max-w-full max-h-full object-contain hidden">
+                        <span id="idFrontEmpty" class="text-xs text-gray-400 font-medium hidden">No image uploaded</span>
+                    </div>
+                </div>
+
+                <!-- Back Side -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        Back Side
+                    </h3>
+                    <div class="w-full bg-gray-100 rounded-lg flex items-center justify-center min-h-[200px] overflow-hidden">
+                        <img id="idBackImg" src="" alt="Back ID" class="max-w-full max-h-full object-contain hidden">
+                        <span id="idBackEmpty" class="text-xs text-gray-400 font-medium hidden">No image uploaded</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -328,6 +350,43 @@ let currentAction = null;
 let currentUserId = null;
 let currentUserName = null;
 
+// ID Viewer Modal functions
+function openIdModal(idFrontUrl, idBackUrl) {
+    const modal = document.getElementById('idModal');
+    
+    // Front Image
+    const frontImg = document.getElementById('idFrontImg');
+    const frontEmpty = document.getElementById('idFrontEmpty');
+    if (idFrontUrl && idFrontUrl.trim() !== '') {
+        frontImg.src = '/brgy-waste-app-v3/public' + idFrontUrl;
+        frontImg.classList.remove('hidden');
+        frontEmpty.classList.add('hidden');
+    } else {
+        frontImg.src = '';
+        frontImg.classList.add('hidden');
+        frontEmpty.classList.remove('hidden');
+    }
+
+    // Back Image
+    const backImg = document.getElementById('idBackImg');
+    const backEmpty = document.getElementById('idBackEmpty');
+    if (idBackUrl && idBackUrl.trim() !== '') {
+        backImg.src = '/brgy-waste-app-v3/public' + idBackUrl;
+        backImg.classList.remove('hidden');
+        backEmpty.classList.add('hidden');
+    } else {
+        backImg.src = '';
+        backImg.classList.add('hidden');
+        backEmpty.classList.remove('hidden');
+    }
+
+    modal.classList.remove('hidden');
+}
+
+function closeIdModal() {
+    document.getElementById('idModal').classList.add('hidden');
+}
+
 // Tab filtering
 function filterTab(tab) {
     // Hide all tables
@@ -341,9 +400,9 @@ function filterTab(tab) {
 
     // Update tab styling
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('text-blue-700');
+        btn.classList.remove('border-b-2', 'border-blue-600', 'text-blue-700');
     });
-    document.querySelector(`[data-tab="${tab}"]`)?.classList.add('text-blue-700');
+    document.querySelector(`[data-tab="${tab}"]`)?.classList.add('border-b-2', 'border-blue-600', 'text-blue-700');
 }
 
 // Open action modal
@@ -443,6 +502,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeActionModal();
         closeEditModal();
+        closeIdModal();
     }
 });
 
@@ -453,6 +513,10 @@ document.getElementById('actionModal')?.addEventListener('click', (e) => {
 
 document.getElementById('editModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'editModal') closeEditModal();
+});
+
+document.getElementById('idModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'idModal') closeIdModal();
 });
 
 // Set default tab to pending on load

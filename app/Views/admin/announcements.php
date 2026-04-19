@@ -36,7 +36,6 @@
     <div class="space-y-4">
         <?php if(!empty($data['announcements'])): foreach($data['announcements'] as $item): ?>
             <div class="bg-card rounded-lg shadow-sm border border-border p-6 flex items-start relative group">
-                <div class="bg-secondary/15 p-3 rounded-full mr-4 text-secondary text-xl font-bold shrink-0">📢</div>
                 <div class="flex-1">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex-1">

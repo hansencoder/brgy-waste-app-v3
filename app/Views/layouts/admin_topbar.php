@@ -1,4 +1,4 @@
-<header class="h-16 flex items-center justify-between px-6 bg-[#15281f] z-10 sticky top-0">
+<header class="h-16 flex items-center justify-between px-6 bg-white z-10 sticky top-0">
     <div class="flex-1 flex items-center pr-4">
         <!-- Empty space on the left as requested by design -->
     </div>
@@ -10,15 +10,17 @@
             </svg>
         </button>
         
-        <div class="flex items-center text-white text-sm space-x-4  pl-6  bg-[#234232] rounded-full px-4 py-2">
+        <a href="/brgy-waste-app-v3/public/admin/profile" class="flex items-center text-white text-sm space-x-2 pl-2 bg-[#2A523D] hover:bg-[#1a3828] transition-colors rounded-[6px] px-4 py-2">
             <div class="flex items-center space-x-2">
                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
                 <span class="font-medium"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin User'); ?></span>
             </div>
-            
-            <a href="/brgy-waste-app-v3/public/auth/logout" class="text-red-600 hover:text-red-400 font-medium transition-colors">
+        </a>
+
+        <div class="flex items-center text-white text-sm  pl-6  bg-[#c21313] rounded-[6px] px-4 py-2">
+            <a href="/brgy-waste-app-v3/public/auth/logout" class="text-white hover:text-red-400 font-medium transition-colors">
                 Log Out
             </a>
         </div>

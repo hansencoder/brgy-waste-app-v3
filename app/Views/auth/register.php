@@ -48,7 +48,7 @@
 
         <!-- Old success alert removed in favor of full success screen -->
 
-        <form action="/brgy-waste-app-v3/public/auth/register" method="POST" class="space-y-4" onsubmit="return validateRegisterForm()">
+        <form action="/brgy-waste-app-v3/public/auth/register" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="return validateRegisterForm()">
             <!-- CSRF Protection -->
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
 
@@ -84,6 +84,66 @@
                     class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                     placeholder="you@email.com"
                     oninput="this.value = this.value.replace(/[^a-zA-Z0-9._%+\-@]/g, ''); validateInput(this)">
+            </div>
+
+            <!-- Valid ID Attachment -->
+            <div class="pt-1">
+                <label class="block text-[13px] font-bold text-[#15281f] mb-2">Valid ID Attachment (Front & Back) <span class="text-red-500">*</span></label>
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Front ID -->
+                    <div>
+                        <div id="front_container" class="relative w-full h-28 rounded-lg border-2 border-dashed border-gray-300 bg-[#fcfcfd] flex flex-col items-center justify-center hover:border-[#15281f] hover:bg-[#f6f7fa] transition-colors overflow-hidden group">
+                            
+                            <input type="file" id="id_front" name="id_front" accept="image/*" capture="environment" class="hidden" onchange="previewImage(this, 'preview_front', 'icon_front')">
+                            
+                            <div id="icon_front" class="flex flex-col items-center transition-opacity duration-300 z-10 w-full px-2">
+                                <span class="text-[12px] font-bold text-gray-600 mb-2">Front ID</span>
+                                <div class="flex w-full gap-1.5 justify-center">
+                                    <button type="button" onclick="openWebcam('front')" class="flex items-center justify-center flex-1 gap-1 bg-[#15281f] text-white py-1.5 rounded cursor-pointer text-[10px] font-bold hover:bg-[#0f1a17] transition-colors focus:outline-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                        Webcam
+                                    </button>
+                                    <label for="id_front" class="flex items-center justify-center flex-1 gap-1 bg-gray-200 text-[#15281f] py-1.5 rounded cursor-pointer text-[10px] font-bold hover:bg-gray-300 transition-colors m-0 text-center text-nowrap">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                                        Browse
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <img id="preview_front" class="hidden absolute inset-0 w-full h-full object-cover z-0" src="" alt="Front ID Preview">
+                            <button type="button" id="remove_front" onclick="removeImage('front')" class="hidden absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 z-20 hover:bg-red-600 transition-colors shadow-sm focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Back ID -->
+                    <div>
+                        <div id="back_container" class="relative w-full h-28 rounded-lg border-2 border-dashed border-gray-300 bg-[#fcfcfd] flex flex-col items-center justify-center hover:border-[#15281f] hover:bg-[#f6f7fa] transition-colors overflow-hidden group">
+                            
+                            <input type="file" id="id_back" name="id_back" accept="image/*" capture="environment" class="hidden" onchange="previewImage(this, 'preview_back', 'icon_back')">
+                            
+                            <div id="icon_back" class="flex flex-col items-center transition-opacity duration-300 z-10 w-full px-2">
+                                <span class="text-[12px] font-bold text-gray-600 mb-2">Back ID</span>
+                                <div class="flex w-full gap-1.5 justify-center">
+                                    <button type="button" onclick="openWebcam('back')" class="flex items-center justify-center flex-1 gap-1 bg-[#15281f] text-white py-1.5 rounded cursor-pointer text-[10px] font-bold hover:bg-[#0f1a17] transition-colors focus:outline-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                        Webcam
+                                    </button>
+                                    <label for="id_back" class="flex items-center justify-center flex-1 gap-1 bg-gray-200 text-[#15281f] py-1.5 rounded cursor-pointer text-[10px] font-bold hover:bg-gray-300 transition-colors m-0 text-center text-nowrap">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                                        Browse
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <img id="preview_back" class="hidden absolute inset-0 w-full h-full object-cover z-0" src="" alt="Back ID Preview">
+                            <button type="button" id="remove_back" onclick="removeImage('back')" class="hidden absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 z-20 hover:bg-red-600 transition-colors shadow-sm focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div>
@@ -162,6 +222,28 @@
     <?php endif; ?>
 </div>
 
+<!-- Webcam Modal -->
+<div id="webcamModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-[14px] p-6 max-w-md w-full shadow-2xl flex flex-col items-center">
+        <h3 class="text-lg font-bold text-[#15281f] mb-4 w-full flex justify-between items-center">
+            Take a Photo
+            <button type="button" onclick="closeWebcam()" class="text-gray-400 hover:text-gray-600 focus:outline-none bg-gray-100 hover:bg-gray-200 rounded-full p-1.5 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </h3>
+        
+        <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden mb-6 shadow-inner">
+            <video id="webcamVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+            <canvas id="webcamCanvas" class="hidden"></canvas>
+        </div>
+        
+        <button type="button" id="captureBtn" class="w-16 h-16 bg-white border-4 border-[#15281f] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors focus:outline-none mb-2" onclick="captureWebcam()">
+            <div class="w-12 h-12 bg-[#15281f] rounded-full"></div>
+        </button>
+        <p class="text-[13px] text-gray-500 font-medium text-center">Ensure your ID is well-lit and clearly visible.</p>
+    </div>
+</div>
+
 <script>
     // --- Show/Hide Password Components ---
     function setupPasswordToggle(toggleId, inputId, iconId) {
@@ -186,6 +268,110 @@
         setupPasswordToggle('togglePassword', 'password', 'eyeIcon');
         setupPasswordToggle('toggleConfirmPassword', 'confirm_password', 'eyeIconConfirm');
     });
+
+    // --- Webcam Capture Logic ---
+    let currentCamSide = null;
+    let webcamStream = null;
+
+    async function openWebcam(side) {
+        currentCamSide = side;
+        const modal = document.getElementById('webcamModal');
+        const video = document.getElementById('webcamVideo');
+        
+        try {
+            webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = webcamStream;
+            modal.classList.remove('hidden');
+        } catch (err) {
+            console.error("Camera error:", err);
+            alert("Camera access denied or unavailabe. Please use the Browse (Upload) option instead.");
+        }
+    }
+
+    function closeWebcam() {
+        const modal = document.getElementById('webcamModal');
+        const video = document.getElementById('webcamVideo');
+        
+        if (webcamStream) {
+            webcamStream.getTracks().forEach(track => track.stop());
+            webcamStream = null;
+        }
+        video.srcObject = null;
+        modal.classList.add('hidden');
+        currentCamSide = null;
+    }
+
+    function captureWebcam() {
+        if (!currentCamSide) return;
+        
+        const video = document.getElementById('webcamVideo');
+        const canvas = document.getElementById('webcamCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Match the canvas size to the video stream size
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Draw the current video frame to the canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Convert canvas image to a File object
+        canvas.toBlob((blob) => {
+            if(!blob) return;
+            const file = new File([blob], currentCamSide + "_cam_capture.jpg", { type: "image/jpeg" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            
+            // Assign new file to the hidden input
+            const input = document.getElementById('id_' + currentCamSide);
+            input.files = dataTransfer.files;
+            
+            // Trigger preview renderer
+            previewImage(input, 'preview_' + currentCamSide, 'icon_' + currentCamSide);
+            
+            closeWebcam();
+        }, 'image/jpeg', 0.9);
+    }
+
+    // --- ID Image Preview ---
+    function previewImage(input, previewId, iconId) {
+        const preview = document.getElementById(previewId);
+        const icon = document.getElementById(iconId);
+        const side = previewId.split('_')[1];
+        const removeBtn = document.getElementById('remove_' + side);
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                icon.classList.add('hidden'); 
+                removeBtn.classList.remove('hidden');
+                input.parentElement.classList.remove('border-red-400', 'border-gray-300');
+                input.parentElement.classList.add('border-[#15281f]'); // Highlight selected
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            removeImage(side);
+        }
+    }
+
+    function removeImage(side) {
+        const input = document.getElementById('id_' + side);
+        const preview = document.getElementById('preview_' + side);
+        const icon = document.getElementById('icon_' + side);
+        const removeBtn = document.getElementById('remove_' + side);
+        
+        input.value = '';
+        preview.src = '';
+        preview.classList.add('hidden');
+        icon.classList.remove('hidden');
+        removeBtn.classList.add('hidden');
+        input.parentElement.classList.add('border-gray-300');
+        input.parentElement.classList.remove('border-[#15281f]');
+    }
 
     // --- Validation Graphics logic ---
     const svgs = {
@@ -307,6 +493,18 @@
         }
 
         if (!validatePasswordsMatch()) {
+            valid = false;
+        }
+
+        // Validate File Uploads
+        const fileFront = document.getElementById('id_front');
+        const fileBack = document.getElementById('id_back');
+        if (!fileFront.files || fileFront.files.length === 0) {
+            document.getElementById('front_container').classList.add('border-red-400');
+            valid = false;
+        }
+        if (!fileBack.files || fileBack.files.length === 0) {
+            document.getElementById('back_container').classList.add('border-red-400');
             valid = false;
         }
 

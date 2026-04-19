@@ -8,32 +8,32 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 <div class="min-h-screen bg-[#f9fafb] w-full font-sans antialiased text-slate-800">
 
     <!-- Top Navbar -->
-    <nav class="bg-[#118B50] border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-[68px]">
                 <!-- Left: Logo -->
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-[#F4A825] flex items-center justify-center text-white shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-[#2A523D] flex items-center justify-center text-white shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
-                    <span class="font-extrabold text-white text-lg tracking-tight">WasteWatch</span>
+                    <span class="font-extrabold text-black text-lg tracking-tight">WasteWatch</span>
                 </div>
 
                 <!-- Center: Nav Links -->
                 <div class="hidden md:flex items-center justify-center gap-1.5 flex-1">
-                    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex items-center gap-2 bg-[#10a95e] text-white px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] shadow-sm shadow-[#118B50]/20 transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex items-center gap-2 bg-[#2A523D] text-white px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] shadow-sm shadow-[#118B50]/20 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg>
                         Home
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-[#10a95e] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#2A523D] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
                         Reports
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-[#10a95e] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#2A523D] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                         Submit Report
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-[#10a95e] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#2A523D] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                         News
                     </a>
@@ -48,7 +48,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                     <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
 
 
-                    <a href="/brgy-waste-app-v3/public/resident/profile" class="text-[13px] font-bold text-white hidden sm:block hover:text-[#118B50] bg-[#10a95e] px-4 py-2.5 transition-colors">Resident <?php echo htmlspecialchars($firstName); ?></a>
+                    <a href="/brgy-waste-app-v3/public/resident/profile" class="text-[13px] font-bold text-white hidden sm:block hover:text-[#118B50] bg-[#2A523D] px-4 py-2.5 rounded-[12px] transition-colors">Resident <?php echo htmlspecialchars($firstName); ?></a>
 
 
                     <a href="/brgy-waste-app-v3/public/auth/logout" class="flex items-center gap-2.5 px-3 py-1 rounded-full hover:bg-red-50 transition-colors ">
@@ -68,12 +68,12 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-8 md:space-y-10 pb-24 md:pb-12">
         
         <!-- Header Section -->
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-5">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-5 bg-[#2A523D] px-12 py-6 rounded-[12px]">
             <div>
-                <h1 class="text-[32px] font-extrabold text-[#111827] tracking-tight leading-tight mb-0.5">Welcome, <?php echo htmlspecialchars($firstName); ?>!</h1>
-                <p class="text-[15px] text-slate-500 font-medium">Here's your report summary</p>
+                <h1 class="text-[32px] font-extrabold text-[#F0F0F0] tracking-tight leading-tight mb-0.5">Welcome, <?php echo htmlspecialchars($firstName); ?>!</h1>
+                <p class="text-[15px] text-slate-300 font-medium">Here's your report summary</p>
             </div>
-            <a href="/brgy-waste-app-v3/public/resident/submit" class="inline-flex flex-shrink-0 items-center justify-center gap-2 bg-[#118B50] hover:bg-[#0e7442] text-white px-5 py-[11px] rounded-[10px] font-bold text-[14px] transition-colors shadow-sm shadow-[#118B50]/20 w-fit">
+            <a href="/brgy-waste-app-v3/public/resident/submit" class="inline-flex flex-shrink-0 items-center justify-center gap-2 bg-[#0e7442] hover:bg-[#1e3c2c] text-white px-5 py-[11px] rounded-[10px] font-bold text-[14px] transition-colors shadow-sm shadow-[#2A523D]/20 w-fit">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Report Waste
             </a>
@@ -202,8 +202,8 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 <!-- Mobile Bottom Navigation (only visible < md screens) -->
 <nav class="md:hidden fixed bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-200/60 pt-2.5 pb-6 px-1 z-50 flex justify-between items-end shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
     <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#118B50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-        <span class="text-[10.5px] font-extrabold text-[#118B50] tracking-wide">Home</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2A523D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        <span class="text-[10.5px] font-extrabold text-[#2A523D] tracking-wide">Home</span>
     </a>
     <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
@@ -211,10 +211,10 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
     </a>
     <div class="flex-1 flex justify-center sticky z-50">
         <a href="/brgy-waste-app-v3/public/resident/submit" class="flex flex-col items-center relative -top-[22px] group transform active:scale-95 transition-all">
-            <div class="w-[58px] h-[58px] rounded-full bg-[#118B50] flex items-center justify-center border-[5px] border-[#f9fafb] shadow-md text-white mb-1 group-hover:bg-[#0e7442]">
+            <div class="w-[58px] h-[58px] rounded-full bg-[#2A523D] flex items-center justify-center border-[5px] border-[#f9fafb] shadow-md text-white mb-1 group-hover:bg-[#1e3c2c]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             </div>
-            <span class="text-[10.5px] font-extrabold tracking-wide text-[#118B50]">Report</span>
+            <span class="text-[10.5px] font-extrabold tracking-wide text-[#2A523D]">Report</span>
         </a>
     </div>
     <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">

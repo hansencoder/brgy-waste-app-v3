@@ -15,15 +15,11 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-foreground">Manage Waste Reports</h1>
         <?php if ($_SESSION['user_role'] == 'secretary'): ?>
-        <div>
-            <a href="/brgy-waste-app-v3/public/admin/export?format=csv" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-semibold text-sm shadow">Export to CSV (Excel)</a>
-            <a href="/brgy-waste-app-v3/public/admin/export?format=print" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold text-sm shadow ml-2">Export to PDF</a>
-        </div>
         <?php endif; ?>
     </div>
 
     <!-- Search and Filter Bar -->
-    <div class="mb-6 bg-[#dfece2] rounded-lg shadow p-4">
+    <div class="mb-6 bg-[#eefff2] rounded-lg shadow p-4">
         <form action="/brgy-waste-app-v3/public/admin/reports" method="GET" class="flex gap-4 items-end">
             <div class="flex-1">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Search Reports</label>
@@ -50,7 +46,9 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reporter</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <?php if ($_SESSION['user_role'] == 'secretary'): ?>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -89,6 +87,7 @@
                                 <?php echo strtoupper($report['status']); ?>
                             </span>
                         </td>
+                        <?php if ($_SESSION['user_role'] == 'secretary'): ?>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <form action="/brgy-waste-app-v3/public/admin/reports" method="POST" class="inline">
                                 <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
@@ -101,6 +100,7 @@
                                 <button type="button" onclick="promptAction(<?php echo $report['id']; ?>, 'delete')" class="text-red-600 hover:text-red-900">Delete</button>
                             </form>
                         </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

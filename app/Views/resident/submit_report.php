@@ -7,32 +7,32 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 <div class="min-h-screen bg-[#f9fafb] w-full font-sans antialiased text-slate-800 flex flex-col">
 
     <!-- Top Navbar (Matching Dashboard) -->
-    <nav class="bg-[#118B50] border-b border-gray-200 sticky top-0 z-50 shadow-sm shrink-0">
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm shrink-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-[68px]">
                 <!-- Left: Logo -->
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-[#F4A825] flex items-center justify-center text-white shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-[#2A523D] flex items-center justify-center text-white shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
-                    <span class="font-extrabold text-white text-lg tracking-tight">WasteWatch</span>
+                    <span class="font-extrabold text-black text-lg tracking-tight">WasteWatch</span>
                 </div>
 
                 <!-- Center: Nav Links -->
                 <div class="hidden md:flex items-center justify-center gap-1.5 flex-1">
-                    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-[#10a95e] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#2A523D] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg>
                         Home
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-[#10a95e] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#2A523D] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
                         Reports
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 bg-[#10a95e] text-white px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] shadow-sm shadow-[#118B50]/20 transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/submit" class="flex items-center gap-2 bg-[#2A523D] text-white px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] shadow-sm shadow-[#118B50]/20 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                         Submit Report
                     </a>
-                    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-[#10a95e] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
+                    <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex items-center gap-2 text-slate-500 hover:text-white hover:bg-[#2A523D] px-4 py-2.5 rounded-[12px] font-semibold text-[13.5px] transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                         News
                     </a>
@@ -47,7 +47,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                     <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
 
 
-                    <a href="/brgy-waste-app-v3/public/resident/profile" class="text-[13px] font-bold text-white hidden sm:block hover:text-[#118B50] transition-colors">Resident <?php echo htmlspecialchars($firstName); ?></a>
+                    <a href="/brgy-waste-app-v3/public/resident/profile" class="text-[13px] font-bold text-white hidden sm:block hover:text-[#118B50] bg-[#2A523D] px-4 py-2.5 rounded-[12px] transition-colors">Resident <?php echo htmlspecialchars($firstName); ?></a>
 
 
                     <a href="/brgy-waste-app-v3/public/auth/logout" class="flex items-center gap-2.5 px-3 py-1 rounded-full hover:bg-red-50 transition-colors ">
@@ -99,13 +99,22 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                         
                         <div id="drop-area" class="relative flex-1 min-h-[220px] rounded-[16px] border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-[#118B50]/50 transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center group overflow-hidden" onclick="document.getElementById('photoInput').click()">
                             
-                            <div id="upload-content" class="flex flex-col items-center gap-3">
-                                <div class="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center text-[#118B50] group-hover:scale-110 transition-transform">
+                            <div id="upload-content" class="flex flex-col items-center gap-2">
+                                <div class="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center text-[#118B50] group-hover:scale-110 transition-transform mb-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                 </div>
                                 <div>
                                     <p class="text-[14px] font-bold text-slate-700">Click or drag image to upload</p>
                                     <p class="text-[12px] text-slate-400 font-medium mt-1">PNG, JPG up to 5MB</p>
+                                </div>
+                                <div class="flex gap-2 mt-2 relative z-20" onclick="event.stopPropagation()">
+                                    <button type="button" onclick="openWebcam()" class="flex items-center gap-1.5 bg-[#2A523D] text-white px-3 py-1.5 rounded-lg text-[12px] font-bold hover:bg-[#1e3c2c] transition-colors focus:outline-none shadow-sm shadow-[#2A523D]/20">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                        Use Camera
+                                    </button>
+                                    <button type="button" onclick="document.getElementById('photoInput').click()" class="flex items-center gap-1.5 bg-white border border-gray-200 text-slate-700 px-3 py-1.5 rounded-lg text-[12px] font-bold hover:bg-gray-50 transition-colors focus:outline-none shadow-sm">
+                                        Browse Files
+                                    </button>
                                 </div>
                             </div>
 
@@ -167,7 +176,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 
             <!-- Submit Action -->
             <div class="mt-2 w-full pb-4">
-                <button type="submit" id="submitBtn" class="w-full bg-[#118B50] hover:bg-[#0e7442] active:scale-[0.99] text-white font-bold py-4 rounded-[14px] shadow-[0_4px_14px_rgba(17,139,80,0.3)] transition-all flex justify-center items-center gap-2 text-[15px]">
+                <button type="submit" id="submitBtn" class="w-full bg-[#2A523D] hover:bg-[#1e3c2c] active:scale-[0.99] text-white font-bold py-4 rounded-[14px] shadow-[0_4px_14px_rgba(42,82,61,0.3)] transition-all flex justify-center items-center gap-2 text-[15px]">
                     <span id="btnText">Submit Report</span>
                     <svg id="btnSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -187,16 +196,16 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
         <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Home</span>
     </a>
-    <a href="/brgy-waste-app-v3/public/resident" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
+    <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-1 group-active:stroke-[#334155]"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
         <span class="text-[10.5px] font-bold tracking-wide text-slate-500">Reports</span>
     </a>
     <div class="flex-1 flex justify-center sticky z-50">
         <a href="/brgy-waste-app-v3/public/resident/submit" class="flex flex-col items-center relative -top-[22px] group transform active:scale-95 transition-all">
-            <div class="w-[58px] h-[58px] rounded-full bg-[#118B50] flex items-center justify-center border-[5px] border-[#f9fafb] shadow-md text-white mb-1 group-hover:bg-[#0e7442]">
+            <div class="w-[58px] h-[58px] rounded-full bg-[#2A523D] flex items-center justify-center border-[5px] border-[#f9fafb] shadow-md text-white mb-1 group-hover:bg-[#1e3c2c]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             </div>
-            <span class="text-[10.5px] font-extrabold tracking-wide text-[#118B50]">Report</span>
+            <span class="text-[10.5px] font-extrabold tracking-wide text-[#2A523D]">Submit</span>
         </a>
     </div>
     <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex flex-col items-center flex-1 pb-1 transform active:scale-95 transition-transform group">
@@ -243,6 +252,97 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                     Discard
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Webcam Modal -->
+<div id="webcamModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-[9999] flex items-center justify-center p-4">
+    <div class="bg-white rounded-[14px] p-6 max-w-md w-full shadow-2xl flex flex-col items-center">
+        <h3 class="text-lg font-bold text-[#118B50] mb-4 w-full flex justify-between items-center">
+            Take a Photo
+            <button type="button" onclick="closeWebcam()" class="text-gray-400 hover:text-[#118B50] focus:outline-none bg-gray-50 hover:bg-green-50 rounded-full p-1.5 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </h3>
+        
+        <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden mb-6 shadow-inner">
+            <video id="webcamVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+            <canvas id="webcamCanvas" class="hidden"></canvas>
+        </div>
+        
+        <button type="button" id="captureBtn" class="w-16 h-16 bg-white border-4 border-[#118B50] rounded-full shadow-lg flex items-center justify-center hover:bg-green-50 transition-colors focus:outline-none mb-2" onclick="captureWebcam()">
+            <div class="w-12 h-12 bg-[#118B50] rounded-full"></div>
+        </button>
+        <p class="text-[13px] text-gray-500 font-medium text-center">Ensure the waste issue is clearly visible.</p>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div id="previewModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-[9999] flex items-center justify-center p-4">
+    <div class="bg-white rounded-[24px] shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center shrink-0">
+            <div>
+                <h3 class="text-[20px] font-extrabold text-slate-800 tracking-tight">Review Your Report</h3>
+                <p class="text-[13px] text-slate-500 font-medium">Please verify all details before final submission.</p>
+            </div>
+            <button type="button" onclick="closePreview()" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-[#118B50] hover:bg-green-50 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 overflow-y-auto flex-1 custom-scrollbar">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left: Photo -->
+                <div class="flex flex-col gap-3">
+                    <span class="text-[12px] font-bold text-slate-400 uppercase tracking-wider">ATTACHED PHOTO</span>
+                    <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-gray-100 shadow-sm relative">
+                        <img id="previewImage" class="w-full h-full object-cover" src="" alt="Waste Preview">
+                    </div>
+                </div>
+
+                <!-- Right: Map -->
+                <div class="flex flex-col gap-3">
+                    <span class="text-[12px] font-bold text-slate-400 uppercase tracking-wider">PINNED LOCATION</span>
+                    <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-gray-100 shadow-sm relative">
+                        <div id="miniMap" class="w-full h-full z-0"></div>
+                        <div class="absolute bottom-3 left-3 z-[1000] bg-white/90 backdrop-blur px-2 py-1 rounded-lg border border-gray-100 shadow-sm">
+                            <span class="text-[10px] font-bold text-slate-600" id="previewCoords">15.560, 120.801</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mt-8 flex flex-col gap-3">
+                <span class="text-[12px] font-bold text-slate-400 uppercase tracking-wider">ISSUE DESCRIPTION</span>
+                <div class="p-4 bg-slate-50 rounded-2xl border border-gray-100 italic text-slate-700 text-[14.5px] leading-relaxed" id="previewDesc">
+                    No description provided.
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="mt-8 p-4 bg-green-50/50 rounded-2xl border border-green-100 flex gap-4">
+                <div class="shrink-0 pt-0.5">
+                    <input type="checkbox" id="confirmAccuracy" class="w-5 h-5 rounded border-green-300 text-[#118B50] focus:ring-[#118B50] cursor-pointer">
+                </div>
+                <label for="confirmAccuracy" class="text-[13.5px] text-slate-600 font-medium cursor-pointer leading-tight">
+                    I confirm that this report is accurate and reflects a genuine waste management issue within Barangay Dulong Bayan.
+                </label>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-6 bg-slate-50/80 border-t border-gray-100 flex flex-col sm:flex-row gap-3 shrink-0">
+            <button type="button" onclick="closePreview()" class="flex-1 px-6 py-3.5 bg-white border border-gray-200 text-slate-700 font-bold rounded-xl hover:bg-gray-50 transition-all text-[15px]">
+                Back to Edit
+            </button>
+            <button type="button" id="finalSubmitBtn" onclick="handleFinalSubmit()" class="flex-1 px-6 py-3.5 bg-[#2A523D] text-white font-bold rounded-xl shadow-lg shadow-[#2A523D]/20 hover:bg-[#1e3c2c] active:scale-[0.98] transition-all text-[15px] flex items-center justify-center gap-2">
+                <span>Confirm & Submit</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
         </div>
     </div>
 </div>
@@ -429,7 +529,66 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         fileIsValid = false;
         photoError.classList.add('hidden');
         dropArea.classList.remove('border-red-400');
+        markAsChanged();
     });
+
+    // --- Webcam Capture Logic ---
+    let webcamStream = null;
+
+    async function openWebcam() {
+        const modal = document.getElementById('webcamModal');
+        const video = document.getElementById('webcamVideo');
+        
+        try {
+            webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = webcamStream;
+            modal.classList.remove('hidden');
+        } catch (err) {
+            console.error("Camera error:", err);
+            alert("Camera access denied or unavailable. Please use the Browse Files option instead.");
+        }
+    }
+
+    function closeWebcam() {
+        const modal = document.getElementById('webcamModal');
+        const video = document.getElementById('webcamVideo');
+        
+        if (webcamStream) {
+            webcamStream.getTracks().forEach(track => track.stop());
+            webcamStream = null;
+        }
+        video.srcObject = null;
+        modal.classList.add('hidden');
+    }
+
+    function captureWebcam() {
+        const video = document.getElementById('webcamVideo');
+        const canvas = document.getElementById('webcamCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Match the canvas size to the video stream size
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Draw the current video frame to the canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Convert canvas image to a File object
+        canvas.toBlob((blob) => {
+            if(!blob) return;
+            const file = new File([blob], "waste_camera_capture.jpg", { type: "image/jpeg" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            
+            // Assign new file to the hidden input
+            photoInput.files = dataTransfer.files;
+            
+            // Trigger file handling logic
+            handleFileSelection();
+            
+            closeWebcam();
+        }, 'image/jpeg', 0.9);
+    }
 
     // --- Description Counter ---
     descInput.addEventListener('input', function() {
@@ -661,22 +820,91 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         }
 
         formErrorGlobal.classList.add('hidden');
+        showPreview();
+    });
 
-        // Disable beforeunload warning during form submission
+    // --- Preview Logic ---
+    let miniMapInstance = null;
+    let miniMapMarker = null;
+
+    function showPreview() {
+        const previewModal = document.getElementById('previewModal');
+        const previewImage = document.getElementById('previewImage');
+        const previewDesc = document.getElementById('previewDesc');
+        const previewCoords = document.getElementById('previewCoords');
+        
+        const lat = document.getElementById('latitude').value;
+        const lng = document.getElementById('longitude').value;
+        
+        // Populate Data
+        previewImage.src = imagePreview.src;
+        previewDesc.textContent = descInput.value;
+        previewCoords.textContent = `${lat}, ${lng}`;
+        
+        // Show Modal
+        previewModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        // Initialize/Update Mini Map
+        setTimeout(() => {
+            if (!miniMapInstance) {
+                miniMapInstance = L.map('miniMap', {
+                    dragging: false,
+                    scrollWheelZoom: false,
+                    zoomControl: false,
+                    attributionControl: false
+                }).setView([lat, lng], 17);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMapInstance);
+                
+                const customIcon = L.divIcon({
+                    html: `<div style="background-color: #ef4444; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                    className: '', 
+                    iconSize: [12, 12], 
+                    iconAnchor: [6, 6]
+                });
+                
+                miniMapMarker = L.marker([lat, lng], {icon: customIcon}).addTo(miniMapInstance);
+            } else {
+                miniMapInstance.setView([lat, lng], 17);
+                miniMapMarker.setLatLng([lat, lng]);
+            }
+            miniMapInstance.invalidateSize();
+        }, 100);
+    }
+
+    function closePreview() {
+        document.getElementById('previewModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    function handleFinalSubmit() {
+        const checkbox = document.getElementById('confirmAccuracy');
+        const finalBtn = document.getElementById('finalSubmitBtn');
+        
+        if (!checkbox.checked) {
+            checkbox.classList.add('ring-2', 'ring-red-400');
+            setTimeout(() => checkbox.classList.remove('ring-2', 'ring-red-400'), 1500);
+            return;
+        }
+
+        // Disable UI
+        finalBtn.setAttribute('disabled', 'true');
+        finalBtn.innerHTML = `
+            <span>Submitting...</span>
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        `;
+
+        // Disable beforeunload warning
         window.removeEventListener('beforeunload', handleBeforeUnload);
         hasChanges = false;
 
-        // UI submitting
-        submitBtn.setAttribute('disabled', 'true');
-        submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
-        btnText.textContent = "Submitting Report...";
-        btnSpinner.classList.remove('hidden');
-
-        // Form post (native submittal un-hijacking after JS checks pass)
-        // Since we blocked the native default via e.preventDefault(),
-        // We submit it programmatically.
+        // Final Native Submit
         form.submit();
-    });
+    }
 
 </script>
 
@@ -707,6 +935,20 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 /* Grayscale map filter for cleaner look */
 .leaflet-tile-pane {
     filter: grayscale(20%) opacity(0.9);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
 }
 </style>
 

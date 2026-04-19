@@ -1,5 +1,5 @@
 <?php include '../app/Views/layouts/header.php'; ?>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script></div></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <div class="flex h-screen bg-gray-50 overflow-hidden w-full">
     <!-- Sidebar -->
     <?php include '../app/Views/layouts/admin_sidebar.php'; ?>
@@ -20,7 +20,7 @@
                 </div>
 
                 <!-- Filter Card -->
-                <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
                     <div class="flex items-center gap-2 mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
@@ -70,7 +70,7 @@
                     </div>
 
                     <!-- Generate Button -->
-                    <button onclick="generatePreview()" id="generateBtn" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-800 hover:bg-blue-900 text-white rounded-lg font-semibold text-sm transition-colors">
+                    <button onclick="generatePreview()" id="generateBtn" class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#118B50] hover:bg-[#15281f] text-white rounded-md font-medium text-sm shadow-sm transition-colors">
                         <span id="generateBtnText">Generate Preview</span>
                     </button>
                 </div>
@@ -81,62 +81,90 @@
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold text-gray-900">Summary Preview</h2>
                         <div class="flex gap-3">
-                            <button onclick="exportPDF()" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium text-sm">
+                            <button onclick="exportXLSX()" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold transition-colors text-sm shadow">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
                                     <line x1="12" y1="15" x2="12" y2="3"></line>
                                 </svg>
-                                Export PDF
+                                Export to CSV
                             </button>
-                            <button onclick="exportXLSX()" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium text-sm">
+                            <button onclick="exportPDF()" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition-colors text-sm shadow ml-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
                                     <line x1="12" y1="15" x2="12" y2="3"></line>
                                 </svg>
-                                Export XLSX
+                                Export to PDF
                             </button>
                         </div>
                     </div>
 
                     <!-- Summary Cards -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                         <!-- Total Card -->
-                        <div class="bg-gray-100 rounded-lg p-6 border-b-4 border-gray-400">
-                            <div class="text-center">
-                                <p class="text-3xl font-bold text-gray-900" id="totalCount">0</p>
-                                <p class="text-sm text-gray-600 mt-2 font-medium">Total</p>
+                        <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-gray-500 text-sm font-medium mb-1">Total</h3>
+                                    <p class="text-4xl font-bold text-gray-900" id="totalCount">0</p>
+                                </div>
+                                <div class="bg-gray-50 p-2 rounded-lg text-gray-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Pending Card -->
-                        <div class="bg-yellow-50 rounded-lg p-6 border-b-4 border-yellow-400">
-                            <div class="text-center">
-                                <p class="text-3xl font-bold text-yellow-700" id="pendingCount">0</p>
-                                <p class="text-sm text-yellow-600 mt-2 font-medium">Pending</p>
+                        <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-gray-500 text-sm font-medium mb-1">Pending</h3>
+                                    <p class="text-4xl font-bold text-amber-500" id="pendingCount">0</p>
+                                </div>
+                                <div class="bg-amber-50 p-2 rounded-lg text-amber-600">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Verified Card -->
-                        <div class="bg-blue-50 rounded-lg p-6 border-b-4 border-blue-400">
-                            <div class="text-center">
-                                <p class="text-3xl font-bold text-blue-700" id="verifiedCount">0</p>
-                                <p class="text-sm text-blue-600 mt-2 font-medium">Verified</p>
+                        <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-gray-500 text-sm font-medium mb-1">Verified</h3>
+                                    <p class="text-4xl font-bold text-blue-500" id="verifiedCount">0</p>
+                                </div>
+                                <div class="bg-blue-50 p-2 rounded-lg text-blue-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Resolved Card -->
-                        <div class="bg-green-50 rounded-lg p-6 border-b-4 border-green-400">
-                            <div class="text-center">
-                                <p class="text-3xl font-bold text-green-700" id="resolvedCount">0</p>
-                                <p class="text-sm text-green-600 mt-2 font-medium">Resolved</p>
+                        <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-gray-500 text-sm font-medium mb-1">Resolved</h3>
+                                    <p class="text-4xl font-bold text-emerald-500" id="resolvedCount">0</p>
+                                </div>
+                                <div class="bg-emerald-50 p-2 rounded-lg text-emerald-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Reports Table -->
-                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                         <div id="noDataMessage" class="hidden p-8 text-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 mx-auto mb-4">
                                 <circle cx="12" cy="12" r="10"></circle>
@@ -160,38 +188,35 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
 
-                <!-- Analytics Section -->
-                <div id="analyticsSection" class="hidden mb-8 animate-fadeIn">
-                    <!-- Section Header -->
-                    <div class="mb-6">
-                        <h2 class="text-xl font-bold text-gray-900">Analytics</h2>
-                        <p class="mt-1 text-sm text-gray-600">Waste reporting trends and insights</p>
-                    </div>
+                    <!-- Analytics Section -->
+                    <div class="mt-8" id="analyticsSection">
+                        <h2 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                            Analytics
+                        </h2>
+                        <p class="text-sm text-gray-600 mb-6">Waste reporting trends and insights</p>
 
-                    <!-- Charts Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Daily Reports Chart -->
-                        <div class="bg-white rounded-xl shadow-md p-6">
-                            <h3 class="text-base font-bold text-gray-900 mb-6">Daily Reports (This Week)</h3>
-                            <div class="relative h-64">
-                                <div id="dailyReportsLoading" class="absolute inset-0 bg-gray-100 rounded-lg animate-pulse"></div>
-                                <canvas id="dailyReportsChart" class="hidden"></canvas>
-                                <div id="dailyReportsEmpty" class="hidden flex items-center justify-center h-full text-gray-400">
-                                    <p class="text-sm">No data available</p>
+                        <!-- Charts Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Daily Reports Chart -->
+                            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Daily Reports (This Week)</h3>
+                                <div id="dailyChartContainer" class="relative h-64">
+                                    <canvas id="dailyReportsChart"></canvas>
+                                    <div id="dailyChartEmpty" class="hidden absolute inset-0 flex items-center justify-center">
+                                        <p class="text-gray-500 text-sm">No data available for selected filters</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Monthly Trends Chart -->
-                        <div class="bg-white rounded-xl shadow-md p-6">
-                            <h3 class="text-base font-bold text-gray-900 mb-6">Monthly Trends</h3>
-                            <div class="relative h-64">
-                                <div id="monthlyTrendsLoading" class="absolute inset-0 bg-gray-100 rounded-lg animate-pulse"></div>
-                                <canvas id="monthlyTrendsChart" class="hidden"></canvas>
-                                <div id="monthlyTrendsEmpty" class="hidden flex items-center justify-center h-full text-gray-400">
-                                    <p class="text-sm">No data available</p>
+                            <!-- Monthly Trends Chart -->
+                            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Trends</h3>
+                                <div id="monthlyChartContainer" class="relative h-64">
+                                    <canvas id="monthlyTrendsChart"></canvas>
+                                    <div id="monthlyChartEmpty" class="hidden absolute inset-0 flex items-center justify-center">
+                                        <p class="text-gray-500 text-sm">No data available for selected filters</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -199,7 +224,7 @@
                 </div>
 
                 <!-- Previous Exports Section -->
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                     <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -300,10 +325,6 @@
 </style>
 
 <script>
-// Chart instances
-let dailyReportsChartInstance = null;
-let monthlyTrendsChartInstance = null;
-
 // Get today's date and start of month
 function getDefaultDates() {
     const today = new Date();
@@ -321,180 +342,6 @@ window.addEventListener('load', () => {
     document.getElementById('dateFrom').value = defaults.from;
     document.getElementById('dateTo').value = defaults.to;
 });
-
-// Generate daily reports chart data (this week)
-function generateDailyReportsData(reports) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const dailyCounts = [0, 0, 0, 0, 0, 0, 0];
-    
-    const today = new Date();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Monday
-    
-    reports.forEach(report => {
-        const reportDate = new Date(report.date);
-        if (reportDate >= startOfWeek && reportDate <= today) {
-            const dayIndex = reportDate.getDay() === 0 ? 6 : reportDate.getDay() - 1;
-            dailyCounts[dayIndex]++;
-        }
-    });
-    
-    return { labels: days, data: dailyCounts };
-}
-
-// Generate monthly trends data (past 6 months)
-function generateMonthlyTrendsData(reports) {
-    const months = [];
-    const monthlyCounts = [];
-    const today = new Date();
-    
-    for (let i = 5; i >= 0; i--) {
-        const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-        const monthName = date.toLocaleString('default', { month: 'short' });
-        months.push(monthName);
-        
-        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        
-        const count = reports.filter(report => {
-            const reportDate = new Date(report.date);
-            return reportDate >= monthStart && reportDate <= monthEnd;
-        }).length;
-        
-        monthlyCounts.push(count);
-    }
-    
-    return { labels: months, data: monthlyCounts };
-}
-
-// Render daily reports bar chart
-function renderDailyReportsChart(reports) {
-    const ctx = document.getElementById('dailyReportsChart');
-    const loadingDiv = document.getElementById('dailyReportsLoading');
-    const emptyDiv = document.getElementById('dailyReportsEmpty');
-    
-    const dailyData = generateDailyReportsData(reports);
-    const hasData = dailyData.data.some(count => count > 0);
-    
-    if (!hasData) {
-        ctx.classList.add('hidden');
-        loadingDiv.classList.add('hidden');
-        emptyDiv.classList.remove('hidden');
-        return;
-    }
-    
-    ctx.classList.remove('hidden');
-    loadingDiv.classList.add('hidden');
-    emptyDiv.classList.add('hidden');
-    
-    if (dailyReportsChartInstance) {
-        dailyReportsChartInstance.destroy();
-    }
-    
-    dailyReportsChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: dailyData.labels,
-            datasets: [{
-                label: 'Reports',
-                data: dailyData.data,
-                backgroundColor: '#118B50',
-                borderRadius: 6,
-                borderSkipped: false
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                    ticks: { font: { size: 12 } }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { size: 12 } }
-                }
-            }
-        }
-    });
-}
-
-// Render monthly trends line chart
-function renderMonthlyTrendsChart(reports) {
-    const ctx = document.getElementById('monthlyTrendsChart');
-    const loadingDiv = document.getElementById('monthlyTrendsLoading');
-    const emptyDiv = document.getElementById('monthlyTrendsEmpty');
-    
-    const monthlyData = generateMonthlyTrendsData(reports);
-    const hasData = monthlyData.data.some(count => count > 0);
-    
-    if (!hasData) {
-        ctx.classList.add('hidden');
-        loadingDiv.classList.add('hidden');
-        emptyDiv.classList.remove('hidden');
-        return;
-    }
-    
-    ctx.classList.remove('hidden');
-    loadingDiv.classList.add('hidden');
-    emptyDiv.classList.add('hidden');
-    
-    if (monthlyTrendsChartInstance) {
-        monthlyTrendsChartInstance.destroy();
-    }
-    
-    monthlyTrendsChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: monthlyData.labels,
-            datasets: [{
-                label: 'Reports',
-                data: monthlyData.data,
-                borderColor: '#118B50',
-                backgroundColor: 'rgba(17, 139, 80, 0.05)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#118B50',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 7
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                    ticks: { font: { size: 12 } }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { size: 12 } }
-                }
-            }
-        }
-    });
-}
-
-// Update analytics charts
-function updateAnalytics(reports) {
-    const analyticsSection = document.getElementById('analyticsSection');
-    analyticsSection.classList.remove('hidden');
-    renderDailyReportsChart(reports);
-    renderMonthlyTrendsChart(reports);
-}
 
 // Validate filters
 function validateFilters() {
@@ -579,10 +426,10 @@ function generatePreview() {
                 
                 tableBody.innerHTML = reports.map(report => {
                     const statusClass = {
-                        'pending': 'bg-yellow-100 text-yellow-800',
-                        'verified': 'bg-blue-100 text-blue-800',
-                        'resolved': 'bg-green-100 text-green-800'
-                    }[report.status] || 'bg-gray-100 text-gray-800';
+                        'pending': 'bg-amber-50 text-amber-600',
+                        'verified': 'bg-blue-50 text-blue-600',
+                        'resolved': 'bg-emerald-50 text-emerald-600'
+                    }[report.status] || 'bg-gray-50 text-gray-600';
 
                     return `
                         <tr class="hover:bg-gray-50 transition-colors">
@@ -590,7 +437,7 @@ function generatePreview() {
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">${report.name}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${report.location}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${statusClass}">
                                     ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
                                 </span>
                             </td>
@@ -604,7 +451,7 @@ function generatePreview() {
             summarySection.classList.remove('hidden');
             
             // Update analytics charts
-            updateAnalytics(reports);
+            updateAnalyticsCharts(reports);
             
             // Scroll to preview
             setTimeout(() => {
@@ -632,8 +479,8 @@ function exportPDF() {
     const status = document.getElementById('statusFilter').value;
     
     const exportUrl = `/brgy-waste-app-v3/public/admin/exportReportSummaryPDF?dateFrom=${encodeURIComponent(dateFrom)}&dateTo=${encodeURIComponent(dateTo)}&status=${encodeURIComponent(status)}`;
-    window.location.href = exportUrl;
-    showToast('PDF export started');
+    window.open(exportUrl, '_blank');
+    showToast('Opening PDF preview in new tab...');
 }
 
 function exportXLSX() {
@@ -670,6 +517,199 @@ function showToast(message) {
     setTimeout(() => {
         toast.classList.add('hidden');
     }, 3000);
+}
+
+// Chart instances
+let dailyChart = null;
+let monthlyChart = null;
+
+// Function to process reports and generate chart data
+function updateAnalyticsCharts(reports) {
+    if (reports.length === 0) {
+        // Show empty state
+        document.getElementById('dailyChartEmpty').classList.remove('hidden');
+        document.getElementById('monthlyChartEmpty').classList.remove('hidden');
+        document.getElementById('dailyReportsChart').style.display = 'none';
+        document.getElementById('monthlyTrendsChart').style.display = 'none';
+        return;
+    }
+    
+    // Hide empty states
+    document.getElementById('dailyChartEmpty').classList.add('hidden');
+    document.getElementById('monthlyChartEmpty').classList.add('hidden');
+    document.getElementById('dailyReportsChart').style.display = 'block';
+    document.getElementById('monthlyTrendsChart').style.display = 'block';
+
+    // Get dates from filters
+    const dateFrom = new Date(document.getElementById('dateFrom').value);
+    const dateTo = new Date(document.getElementById('dateTo').value);
+
+    // Process daily data (last 7 days)
+    const dailyData = processDailyData(reports, dateFrom, dateTo);
+    renderDailyChart(dailyData);
+
+    // Process monthly data (last 6 months)
+    const monthlyData = processMonthlyData(reports, dateFrom, dateTo);
+    renderMonthlyChart(monthlyData);
+}
+
+function processDailyData(reports, dateFrom, dateTo) {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dailyCounts = { Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0 };
+
+    // Count reports by day of week
+    reports.forEach(report => {
+        const reportDate = new Date(report.submission_date || report.date);
+        const dayName = days[reportDate.getDay()];
+        dailyCounts[dayName]++;
+    });
+
+    return {
+        labels: days,
+        values: days.map(day => dailyCounts[day])
+    };
+}
+
+function processMonthlyData(reports, dateFrom, dateTo) {
+    const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    // Build month labels dynamically from the filter date range
+    const monthLabels = [];
+    const monthKeys = [];
+    let current = new Date(dateFrom.getFullYear(), dateFrom.getMonth(), 1);
+    const end = new Date(dateTo.getFullYear(), dateTo.getMonth(), 1);
+
+    while (current <= end) {
+        const key = current.getFullYear() + '-' + String(current.getMonth() + 1).padStart(2, '0');
+        const label = allMonths[current.getMonth()] + ' ' + current.getFullYear();
+        monthKeys.push(key);
+        monthLabels.push(label);
+        current.setMonth(current.getMonth() + 1);
+    }
+
+    // Initialize counts
+    const monthlyCounts = {};
+    monthKeys.forEach(key => monthlyCounts[key] = 0);
+
+    // Count reports by year-month
+    reports.forEach(report => {
+        const reportDate = new Date(report.submission_date || report.date);
+        const key = reportDate.getFullYear() + '-' + String(reportDate.getMonth() + 1).padStart(2, '0');
+        if (monthlyCounts.hasOwnProperty(key)) {
+            monthlyCounts[key]++;
+        }
+    });
+
+    return {
+        labels: monthLabels,
+        values: monthKeys.map(key => monthlyCounts[key])
+    };
+}
+
+function renderDailyChart(data) {
+    const ctx = document.getElementById('dailyReportsChart');
+    
+    // Destroy existing chart if it exists
+    if (dailyChart) {
+        dailyChart.destroy();
+    }
+
+    dailyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Reports',
+                data: data.values,
+                backgroundColor: '#16a34a',
+                borderColor: '#15803d',
+                borderWidth: 1,
+                borderRadius: 4,
+                hoverBackgroundColor: '#15803d'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: undefined,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: '#f3f4f6'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderMonthlyChart(data) {
+    const ctx = document.getElementById('monthlyTrendsChart');
+    
+    // Destroy existing chart if it exists
+    if (monthlyChart) {
+        monthlyChart.destroy();
+    }
+
+    monthlyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Monthly Reports',
+                data: data.values,
+                borderColor: '#16a34a',
+                backgroundColor: 'rgba(22, 163, 74, 0.05)',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#16a34a',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                hoverBackgroundColor: '#15803d'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: '#f3f4f6'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Close modals with Escape key

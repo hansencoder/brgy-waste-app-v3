@@ -13,13 +13,15 @@ class User {
     }
 
     public function register($data) {
-        $this->db->query('INSERT INTO users (name, address, phone_number, email, password, role, status) VALUES (:name, :address, :phone_number, :email, :password, "resident", "pending")');
+        $this->db->query('INSERT INTO users (name, address, phone_number, email, password, id_front, id_back, role, status) VALUES (:name, :address, :phone_number, :email, :password, :id_front, :id_back, "resident", "pending")');
 
         $this->db->bind(':name', $data['name']);
         $this->db->bind(':address', $data['address']);
         $this->db->bind(':phone_number', $data['phone_number']);
         $this->db->bind(':email', $data['email']);
         $this->db->bind(':password', $data['password']);
+        $this->db->bind(':id_front', $data['id_front'] ?? null);
+        $this->db->bind(':id_back', $data['id_back'] ?? null);
 
         return $this->db->execute();
     }

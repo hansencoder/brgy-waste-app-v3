@@ -9,7 +9,8 @@ $timeline = $data['timeline'];
 $statusColors = [
     'pending' => ['bg' => 'amber-50', 'text' => 'amber-600', 'dot' => 'amber-500'],
     'verified' => ['bg' => 'blue-50', 'text' => 'blue-600', 'dot' => 'blue-500'],
-    'resolved' => ['bg' => 'emerald-50', 'text' => 'emerald-600', 'dot' => 'emerald-500']
+    'resolved' => ['bg' => 'emerald-50', 'text' => 'emerald-600', 'dot' => 'emerald-500'],
+    'rejected' => ['bg' => 'red-50', 'text' => 'red-600', 'dot' => 'red-500']
 ];
 $color = $statusColors[$report['status']] ?? $statusColors['pending'];
 $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' . $report['photo_path'] : 'https://placehold.co/800x400?text=No+Image';
@@ -30,38 +31,61 @@ if (!empty($timeline)) {
             $title = "Report verified by " . ($t['changed_by_name'] ?? 'secretary');
         } else if ($t['new_status'] == 'resolved') {
             $title = "Cleanup completed";
+        } else if ($t['new_status'] == 'rejected') {
+            $title = "Report rejected";
         } else {
             $title = "Status updated to " . ucfirst($t['new_status']);
         }
 
         $tColor = $statusColors[$t['new_status']] ?? $statusColors['pending'];
         
-        $events[] = [
+        $event = [
             'status' => $t['new_status'],
             'title' => $title,
             'date' => date('M j, Y, h:i A', strtotime($t['changed_at'])),
             'color' => $tColor
         ];
+        
+        // Add reason for rejected status
+        if ($t['new_status'] == 'rejected') {
+            $event['reason'] = $t['remark'];
+        }
+        
+        $events[] = $event;
     }
 } else {
     // 3. Fallback: Synthesize timeline from current status for testing purposes (when manually updated via DB)
-    if ($report['status'] === 'verified' || $report['status'] === 'resolved') {
-        $events[] = [
-            'status' => 'verified',
-            'title' => 'Report verified by secretary',
-            // approximate dates if no history
-            'date' => date('M j, Y, h:i A', strtotime($report['updated_at'])),
-            'color' => $statusColors['verified']
-        ];
-    }
-    
-    if ($report['status'] === 'resolved') {
-        $events[] = [
-            'status' => 'resolved',
-            'title' => 'Cleanup completed',
-            'date' => date('M j, Y, h:i A', strtotime($report['updated_at'])),
-            'color' => $statusColors['resolved']
-        ];
+    if ($report['status'] === 'verified' || $report['status'] === 'resolved' || $report['status'] === 'rejected') {
+        if ($report['status'] === 'verified') {
+            $events[] = [
+                'status' => 'verified',
+                'title' => 'Report verified by secretary',
+                'date' => date('M j, Y, h:i A', strtotime($report['updated_at'])),
+                'color' => $statusColors['verified']
+            ];
+        }
+        
+        if ($report['status'] === 'resolved') {
+            $events[] = [
+                'status' => 'resolved',
+                'title' => 'Cleanup completed',
+                'date' => date('M j, Y, h:i A', strtotime($report['updated_at'])),
+                'color' => $statusColors['resolved']
+            ];
+        }
+        
+        if ($report['status'] === 'rejected') {
+            $event = [
+                'status' => 'rejected',
+                'title' => 'Report rejected',
+                'date' => date('M j, Y, h:i A', isset($data['flag_date']) ? strtotime($data['flag_date']) : strtotime($report['updated_at'])),
+                'color' => $statusColors['rejected']
+            ];
+            if (isset($data['flag_reason'])) {
+                $event['reason'] = $data['flag_reason'];
+            }
+            $events[] = $event;
+        }
     }
 }
 ?>
@@ -148,10 +172,12 @@ if (!empty($timeline)) {
             
             <?php endif; ?>
 
+            <?php if ($report['status'] !== 'rejected'): ?>
             <button onclick="showDeleteConfirm()" class="flex items-center gap-2 bg-white border border-red-200 text-red-600 px-4 py-[9px] rounded-[10px] text-[13px] font-bold hover:bg-red-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-200">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                 Delete
             </button>
+            <?php endif; ?>
         </div>
 
         <!-- Delete Confirmation Modal -->
@@ -265,6 +291,12 @@ if (!empty($timeline)) {
                         </div>
                         <h4 class="text-[14px] font-bold text-slate-800 leading-snug mb-1"><?php echo $event['title']; ?></h4>
                         <div class="text-[12px] text-slate-400 font-medium"><?php echo $event['date']; ?></div>
+                        <?php if (isset($event['reason'])): ?>
+                        <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-[12px] font-medium">
+                            <p class="text-[11px] text-red-500 uppercase tracking-wide font-bold mb-1">Rejection Reason:</p>
+                            <p><?php echo htmlspecialchars($event['reason']); ?></p>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endforeach; ?>

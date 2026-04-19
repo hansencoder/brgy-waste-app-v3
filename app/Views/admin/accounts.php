@@ -133,7 +133,7 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
                                                 <span class="text-xs">Edit</span>
                                             </button>
-                                            <button onclick="openActionModal('deactivate', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white transition-colors" title="Deactivate">
+                                            <button onclick="openActionModal('deactivate', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#dd0000] hover:bg-[#520000] text-white transition-colors" title="Deactivate">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/></svg>
                                                 <span class="text-xs">Deactivate</span>
                                             </button>
@@ -207,8 +207,22 @@
         <div class="px-6 py-6">
             <p id="modalMessage" class="text-gray-600 text-sm leading-relaxed">Are you sure?</p>
             
-            <!-- Reason Textarea (for reject/deactivate) -->
-            <textarea id="reasonInput" placeholder="Enter reason (optional)" class="hidden w-full mt-4 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none" rows="3"></textarea>
+            <!-- Reason Dropdown (for deactivate) -->
+            <div id="reasonSection" class="hidden mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Deactivation</label>
+                <select id="reasonSelect" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    <option value="">Select a reason</option>
+                    <option value="inactivity">Inactivity</option>
+                    <option value="user_initiated_request">User-initiated request</option>
+                    <option value="violation_of_terms">Violation of service terms</option>
+                    <option value="suspected_compromise">Suspected compromise</option>
+                    <option value="policy_violation">Policy and compliance violation</option>
+                    <option value="other">Other (please specify)</option>
+                </select>
+                
+                <!-- Custom reason textarea (shows when "Other" is selected) -->
+                <textarea id="otherReasonInput" placeholder="Please explain the reason for deactivation..." class="hidden w-full mt-3 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none" rows="3"></textarea>
+            </div>
         </div>
 
         <!-- Modal Footer -->
@@ -430,14 +444,21 @@ function openActionModal(action, userId, userName) {
     document.getElementById('modalTitle').textContent = titles[action];
     document.getElementById('modalMessage').innerHTML = messages[action];
 
-    // Show reason input for reject/deactivate
-    const reasonInput = document.getElementById('reasonInput');
-    if (['reject', 'deactivate'].includes(action)) {
-        reasonInput.classList.remove('hidden');
-        reasonInput.value = '';
-        reasonInput.placeholder = action === 'reject' ? 'Enter rejection reason (optional)' : 'Enter deactivation reason (optional)';
+    // Show reason dropdown for deactivate only
+    const reasonSection = document.getElementById('reasonSection');
+    const reasonSelect = document.getElementById('reasonSelect');
+    const otherReasonInput = document.getElementById('otherReasonInput');
+    
+    if (action === 'deactivate') {
+        reasonSection.classList.remove('hidden');
+        reasonSelect.value = '';
+        otherReasonInput.classList.add('hidden');
+        otherReasonInput.value = '';
     } else {
-        reasonInput.classList.add('hidden');
+        reasonSection.classList.add('hidden');
+        reasonSelect.value = '';
+        otherReasonInput.classList.add('hidden');
+        otherReasonInput.value = '';
     }
 
     document.getElementById('actionModal').classList.remove('hidden');
@@ -457,10 +478,20 @@ function confirmAction() {
     document.getElementById('form_user_id').value = currentUserId;
     document.getElementById('form_action').value = currentAction;
     
-    const reason = document.getElementById('reasonInput').value.trim();
-    if (['reject', 'deactivate'].includes(currentAction)) {
-        document.getElementById('form_reason').value = reason || '';
+    // Get reason from dropdown (deactivate only)
+    let reason = '';
+    if (currentAction === 'deactivate') {
+        const reasonSelect = document.getElementById('reasonSelect');
+        reason = reasonSelect.value;
+        
+        // If "other" is selected, get the custom reason from textarea
+        if (reason === 'other') {
+            const otherReason = document.getElementById('otherReasonInput').value.trim();
+            reason = otherReason ? `other: ${otherReason}` : '';
+        }
     }
+    
+    document.getElementById('form_reason').value = reason;
 
     // Submit form
     document.getElementById('actionForm').submit();
@@ -522,6 +553,18 @@ document.getElementById('idModal')?.addEventListener('click', (e) => {
 // Set default tab to pending on load
 window.addEventListener('load', () => {
     filterTab('pending');
+});
+
+// Handle reason dropdown change
+document.getElementById('reasonSelect')?.addEventListener('change', (e) => {
+    const otherReasonInput = document.getElementById('otherReasonInput');
+    if (e.target.value === 'other') {
+        otherReasonInput.classList.remove('hidden');
+        otherReasonInput.focus();
+    } else {
+        otherReasonInput.classList.add('hidden');
+        otherReasonInput.value = '';
+    }
 });
 </script>
             </div>

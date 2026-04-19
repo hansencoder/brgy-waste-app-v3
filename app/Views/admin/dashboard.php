@@ -39,7 +39,7 @@ $statusLabel = [
                 <!-- ── Header ── -->
                 <div class="flex justify-between items-end mb-8">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-1">Secretary Dashboard</h1>
+                        <h1 class="text-3xl font-bold text-gray-900 mb-1"><?php echo ucfirst($_SESSION['user_role'] ?? 'Secretary'); ?> Dashboard</h1>
                         <p class="text-gray-500 text-sm">Welcome back, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Secretary'); ?>! Here's what's happening in your barangay.</p>
                     </div>
                     <div class="flex space-x-3 text-sm">
@@ -132,8 +132,36 @@ $statusLabel = [
                 <!-- ── Main Content Grid ── -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                    <!-- Left Column (Reports Overview + Map) -->
+                    <!-- Left Column (Analytics + Reports Overview + Map) -->
                     <div class="lg:col-span-2 space-y-8">
+
+                        <!-- Analytics Section -->
+                        <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
+                            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                                <h2 class="text-lg font-bold text-gray-900">Waste Reporting Analytics</h2>
+                                <a href="/brgy-waste-app-v3/public/admin/report_summaries" class="text-green-600 text-sm font-medium hover:underline">View detailed analytics →</a>
+                            </div>
+                            <div class="p-6">
+                                <!-- Charts Grid -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Daily Reports Chart -->
+                                    <div class="flex flex-col">
+                                        <h3 class="text-sm font-semibold text-gray-700 mb-4">Reports by Day of Week</h3>
+                                        <div class="flex-1" style="min-height: 250px;">
+                                            <canvas id="dailyReportsChart"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <!-- Monthly Trends Chart -->
+                                    <div class="flex flex-col">
+                                        <h3 class="text-sm font-semibold text-gray-700 mb-4">Monthly Trends (Last 6 Months)</h3>
+                                        <div class="flex-1" style="min-height: 250px;">
+                                            <canvas id="monthlyTrendsChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Reports Overview Card -->
                         <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
@@ -272,27 +300,210 @@ $statusLabel = [
     </div>
 </div>
 
+<!-- Chart.js Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
 <!-- Leaflet Heat Plugin -->
 <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    var map = L.map('map').setView([15.558, 120.803], 14);
 
+<script>
+// Chart instances - global so we can destroy and recreate
+let dailyChart = null;
+let monthlyChart = null;
+
+// Process reports by day of week
+function processDailyData(reports) {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dailyCounts = { Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0 };
+
+    // Count reports by day of week
+    reports.forEach(report => {
+        const reportDate = new Date(report.submission_date);
+        const dayName = days[reportDate.getDay()];
+        dailyCounts[dayName]++;
+    });
+
+    return {
+        labels: days,
+        values: days.map(day => dailyCounts[day])
+    };
+}
+
+// Process reports by month
+function processMonthlyData(reports) {
+    const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const today = new Date();
+    const months = [];
+    const monthLabels = [];
+    
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        months.push(date);
+        monthLabels.push(allMonths[date.getMonth()] + ' ' + date.getFullYear());
+    }
+    
+    const data = [0, 0, 0, 0, 0, 0];
+    
+    reports.forEach(report => {
+        const reportDate = new Date(report.submission_date);
+        months.forEach((month, index) => {
+            const nextMonth = new Date(month.getFullYear(), month.getMonth() + 1, 1);
+            if (reportDate >= month && reportDate < nextMonth) {
+                data[index]++;
+            }
+        });
+    });
+    
+    return {
+        labels: monthLabels,
+        values: data
+    };
+}
+
+// Render Daily Reports Chart
+function renderDailyChart(data) {
+    const ctx = document.getElementById('dailyReportsChart');
+    
+    // Destroy existing chart if it exists
+    if (dailyChart) {
+        dailyChart.destroy();
+    }
+
+    dailyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Reports',
+                data: data.values,
+                backgroundColor: '#16a34a',
+                borderColor: '#15803d',
+                borderWidth: 1,
+                borderRadius: 4,
+                hoverBackgroundColor: '#15803d'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: '#f3f4f6'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Render Monthly Trends Chart
+function renderMonthlyChart(data) {
+    const ctx = document.getElementById('monthlyTrendsChart');
+    
+    // Destroy existing chart if it exists
+    if (monthlyChart) {
+        monthlyChart.destroy();
+    }
+
+    monthlyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Monthly Reports',
+                data: data.values,
+                borderColor: '#16a34a',
+                backgroundColor: 'rgba(22, 163, 74, 0.05)',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#16a34a',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                hoverBackgroundColor: '#15803d'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: '#f3f4f6'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Load analytics data
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch and render charts
+    fetch('/brgy-waste-app-v3/public/api/getAllReports.php')
+        .then(response => response.json())
+        .then(data => {
+            console.log('API Response:', data);
+            if (data.success && data.reports && data.reports.length > 0) {
+                console.log('Reports loaded:', data.reports.length);
+                const dailyData = processDailyData(data.reports);
+                const monthlyData = processMonthlyData(data.reports);
+                console.log('Daily data:', dailyData);
+                console.log('Monthly data:', monthlyData);
+                renderDailyChart(dailyData);
+                renderMonthlyChart(monthlyData);
+            } else {
+                console.log('No reports found or API error:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Failed to load analytics:', error);
+        });
+
+    // Initialize map
+    var map = L.map('map').setView([15.558, 120.803], 14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         className: 'map-grayscale'
     }).addTo(map);
 
-    // Subtle grayscale filter
     var s = document.createElement('style');
     s.innerHTML = '.map-grayscale { filter: grayscale(40%) opacity(0.85); }';
     document.head.appendChild(s);
 
-    // Barangay boundary
     var boundary = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[120.8013517,15.5699279],[120.8008898,15.569572],[120.8008276,15.5686578],[120.8006126,15.5685788],[120.8005542,15.5678398],[120.8001844,15.5672858],[120.8000725,15.5668847],[120.8001665,15.566531],[120.7995785,15.5663685],[120.7989717,15.5657033],[120.7987031,15.5658025],[120.7984537,15.5654243],[120.7980956,15.5652],[120.7977553,15.5652043],[120.7975135,15.5652862],[120.7971285,15.5652259],[120.7964691,15.5648604],[120.7961709,15.5643821],[120.795562,15.5643993],[120.7951681,15.5637567],[120.7953561,15.5632478],[120.7952523,15.562581],[120.7950598,15.5617529],[120.7950416,15.5611835],[120.7945939,15.5608471],[120.7946431,15.5603295],[120.7943504,15.5596467],[120.7937415,15.5597848],[120.7930393,15.55916],[120.7928646,15.5570187],[120.7921781,15.555107],[120.7912123,15.554853],[120.7913399,15.5543176],[120.7915605,15.5533236],[120.7918092,15.5534046],[120.8001316,15.5478115],[120.8011058,15.5481325],[120.8021398,15.5484701],[120.8027807,15.5485113],[120.8032508,15.5489723],[120.8030798,15.5500426],[120.8038043,15.5501365],[120.8044282,15.5502517],[120.8049495,15.550614],[120.8058211,15.5508445],[120.8062911,15.551569],[120.8071584,15.5520964],[120.8076635,15.5520903],[120.8081181,15.5524005],[120.8083454,15.5523519],[120.8085979,15.5525708],[120.8088668,15.5528807],[120.8118007,15.5512389],[120.8126332,15.550257],[120.8153176,15.5523838],[120.817434,15.549628],[120.8219183,15.5518119],[120.8232918,15.5522367],[120.8253946,15.5516159],[120.8260956,15.5512188],[120.8281375,15.5526533],[120.8298546,15.5518644],[120.8310955,15.5519514],[120.8335885,15.5541358],[120.8325752,15.5557229],[120.8326161,15.5574083],[120.8332704,15.5602447],[120.8283841,15.5650646],[120.8236492,15.5703491],[120.82189,15.5689622],[120.8219651,15.5676998],[120.8203353,15.5645562],[120.8205697,15.5594636],[120.8185042,15.5617437],[120.8149287,15.5609879],[120.8126889,15.5623097],[120.8092582,15.5595308],[120.8032464,15.5673914],[120.8014669,15.5699463],[120.8013468,15.5699463]]]}}]};
     L.geoJSON(boundary, { style: { color:'#16a34a', weight:2, fillColor:'#22c55e', fillOpacity:0.08, dashArray:'6,5' } }).addTo(map);
 
-    // Real report pins from DB
     var reports = <?php
         $db2 = new Database();
         $db2->query("SELECT latitude, longitude, status FROM reports");
@@ -310,7 +521,6 @@ document.addEventListener("DOMContentLoaded", function () {
         L.marker([parseFloat(pin.latitude), parseFloat(pin.longitude)], { icon: icon }).addTo(map);
     });
 
-    // Heatmap overlay
     var heatData = <?php echo json_encode(array_map(fn($p) => [(float)$p['latitude'], (float)$p['longitude'], 0.6], $heatmap)); ?>;
     if (heatData.length > 0) {
         L.heatLayer(heatData, { radius:30, blur:20, maxZoom:16 }).addTo(map);

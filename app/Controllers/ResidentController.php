@@ -153,6 +153,17 @@ class ResidentController extends Controller {
         );
 
         $data['timeline'] = $this->reportModel->getReportTimeline($id);
+        
+        // Get flag reason if report is rejected
+        if ($data['report']['status'] === 'rejected') {
+            $db = new Database();
+            $db->query("SELECT flag_reason, flagged_at FROM report_flags WHERE report_id = :id LIMIT 1");
+            $db->bind(':id', $id);
+            $flag = $db->single();
+            $data['flag_reason'] = $flag ? $flag['flag_reason'] : 'No reason provided';
+            $data['flag_date'] = $flag ? $flag['flagged_at'] : null;
+        }
+        
         $this->view('resident/view_report', $data);
     }
 

@@ -21,7 +21,7 @@ $fullName = $user['name'] ?? 'Barangay Secretary';
 
                 <!-- Page Header -->
                 <div class="mb-8">
-                    <h1 class="text-[28px] font-extrabold text-[#111827] tracking-tight leading-tight mb-1">Admin Profile</h1>
+                    <h1 class="text-[28px] font-extrabold text-[#111827] tracking-tight leading-tight mb-1"><?php echo ucfirst($user['role'] ?? 'Admin'); ?> Profile</h1>
                     <p class="text-[15px] text-slate-500 font-medium">Manage your administrative account information and security settings.</p>
                 </div>
 

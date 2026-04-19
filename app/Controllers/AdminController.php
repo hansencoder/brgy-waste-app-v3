@@ -161,9 +161,48 @@ class AdminController extends Controller {
                 $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'resolved', $_SESSION['user_id']);
                 
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Resolved', "Report ID $report_id", "Resolved report. Remark: $remark", 'success');
-            } elseif ($action == 'delete') {
-                $reportModel->deleteReport($report_id);
-                $this->auditModel->logAction($_SESSION['user_id'], 'Report Deleted', "Report ID $report_id", "Deleted report due to: $remark", 'success');
+            } elseif ($action == 'reject') {
+                // Flag the report and change status to rejected
+                $db = new Database();
+                
+                // Get report details for notification
+                $db->query("SELECT resident_id, status FROM reports WHERE id = :id");
+                $db->bind(':id', $report_id);
+                $report = $db->single();
+                $resident_id = $report ? $report['resident_id'] : null;
+                $old_status = $report ? $report['status'] : 'pending';
+                
+                // Update report status to rejected
+                $reportModel->updateReportStatus($report_id, 'rejected', $_SESSION['user_id']);
+                
+                // Create status history entry
+                $db->query("INSERT INTO report_status_history (report_id, previous_status, new_status, remark, changed_by, changed_at) VALUES (:report_id, :prev_status, 'rejected', :remark, :changed_by, NOW())");
+                $db->bind(':report_id', $report_id);
+                $db->bind(':prev_status', $old_status);
+                $db->bind(':remark', $remark);
+                $db->bind(':changed_by', $_SESSION['user_id']);
+                $db->execute();
+                
+                // Insert flag record
+                $db->query("INSERT INTO report_flags (report_id, flag_reason, flagged_by, flagged_at) VALUES (:report_id, :flag_reason, :flagged_by, NOW())");
+                $db->bind(':report_id', $report_id);
+                $db->bind(':flag_reason', $remark);
+                $db->bind(':flagged_by', $_SESSION['user_id']);
+                $db->execute();
+                
+                // Send notification to resident with detailed message
+                if ($resident_id) {
+                    $notificationModel->create([
+                        'user_id' => $resident_id,
+                        'report_id' => $report_id,
+                        'type' => 'report_rejected',
+                        'title' => 'Report Rejected',
+                        'content' => "Your waste report has been rejected. Reason: " . $remark,
+                        'send_to_all' => false
+                    ]);
+                }
+                
+                $this->auditModel->logAction($_SESSION['user_id'], 'Report Rejected', "Report ID $report_id", "Rejected report. Reason: $remark. Resident notified.", 'success');
             }
 
             header("Location: /brgy-waste-app-v3/public/admin/reports");
@@ -174,9 +213,12 @@ class AdminController extends Controller {
         $search = isset($_GET['search']) ? htmlspecialchars(strip_tags($_GET['search']), ENT_QUOTES, 'UTF-8') : '';
         $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
 
-        // Build query with filters
+        // Build query with filters - Include ALL reports including rejected
         $db = new Database();
-        $query = "SELECT r.*, u.name, u.email FROM reports r JOIN users u ON r.resident_id = u.id WHERE 1=1";
+        $query = "SELECT r.*, u.name, u.email, rf.flag_reason FROM reports r 
+                  JOIN users u ON r.resident_id = u.id 
+                  LEFT JOIN report_flags rf ON r.id = rf.report_id
+                  WHERE 1=1";
         
         if (!empty($search)) {
             $query .= " AND (r.description LIKE :search OR u.name LIKE :search OR u.email LIKE :search)";
@@ -211,6 +253,29 @@ class AdminController extends Controller {
         }
         
         $this->view('admin/reports', $data);
+    }
+
+    public function flaggedReports() {
+        if ($_SESSION['user_role'] != 'secretary') {
+            die("Unauthorized Access: Only Barangay Secretary can view flagged reports.");
+        }
+
+        $db = new Database();
+        
+        // Get all flagged reports with report and user details
+        $db->query("SELECT rf.*, r.description, r.submission_date, r.status as report_status, u.name as reporter_name, u.email as reporter_email, fu.name as flagged_by_name
+                    FROM report_flags rf
+                    JOIN reports r ON rf.report_id = r.id
+                    JOIN users u ON r.resident_id = u.id
+                    LEFT JOIN users fu ON rf.flagged_by = fu.id
+                    ORDER BY rf.flagged_at DESC");
+        
+        $data['flagged_reports'] = $db->resultSet();
+        
+        // Log access
+        $this->auditModel->logAction($_SESSION['user_id'], 'Flagged Reports Access', 'Flagged Reports', 'Accessed flagged reports page', 'success');
+        
+        $this->view('admin/flagged_reports', $data);
     }
 
     public function export() {

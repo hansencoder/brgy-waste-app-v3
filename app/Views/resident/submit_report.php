@@ -86,6 +86,66 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
             </div>
         <?php endif; ?>
 
+        <!-- Location Out of Bounds Error Overlay -->
+        <div id="locationError" class="fixed top-4 left-1/2 -translate-x-1/2 max-w-lg w-[calc(100%-2rem)] bg-amber-50 border border-amber-200 text-amber-800 px-5 py-4 rounded-xl shadow-lg flex gap-3 text-[14px] font-medium items-start hidden z-[9998] transition-all duration-300 animate-in fade-in slide-in-from-top-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <div class="flex-1">
+                <p class="font-bold">Location Out of Bounds</p>
+                <p class="text-[13px] font-normal text-amber-700">This location is outside Barangay Dulong Bayan. Please select a location within the green boundary.</p>
+            </div>
+            <button type="button" onclick="closeLocationError()" class="shrink-0 text-amber-600 hover:text-amber-800 transition-colors p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <!-- GPS Permission Error Overlay -->
+        <div id="gpsError" class="fixed top-4 left-1/2 -translate-x-1/2 max-w-lg w-[calc(100%-2rem)] bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-xl shadow-lg flex gap-3 text-[14px] font-medium items-start hidden z-[9998] transition-all duration-300 animate-in fade-in slide-in-from-top-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <div class="flex-1">
+                <p class="font-bold">GPS Access Denied</p>
+                <p class="text-[13px] font-normal text-red-500">Camera or location permission denied. Please click on the map to pin your location manually.</p>
+            </div>
+            <button type="button" onclick="closeGpsError()" class="shrink-0 text-red-600 hover:text-red-800 transition-colors p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <!-- Geolocation Not Supported Error Overlay -->
+        <div id="geoNotSupportedError" class="fixed top-4 left-1/2 -translate-x-1/2 max-w-lg w-[calc(100%-2rem)] bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-xl shadow-lg flex gap-3 text-[14px] font-medium items-start hidden z-[9998] transition-all duration-300 animate-in fade-in slide-in-from-top-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <div class="flex-1">
+                <p class="font-bold">Geolocation Not Supported</p>
+                <p class="text-[13px] font-normal text-red-500">Your browser doesn't support geolocation. Please click on the map to pin your location manually.</p>
+            </div>
+            <button type="button" onclick="closeGeoNotSupportedError()" class="shrink-0 text-red-600 hover:text-red-800 transition-colors p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <!-- Camera Permission Error Overlay -->
+        <div id="cameraError" class="fixed top-4 left-1/2 -translate-x-1/2 max-w-lg w-[calc(100%-2rem)] bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-xl shadow-lg flex gap-3 text-[14px] font-medium items-start hidden z-[9998] transition-all duration-300 animate-in fade-in slide-in-from-top-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <div class="flex-1">
+                <p class="font-bold">Camera Access Denied</p>
+                <p class="text-[13px] font-normal text-red-500">Camera permission was denied. Please use the Browse Files option to upload a photo instead.</p>
+            </div>
+            <button type="button" onclick="closeCameraError()" class="shrink-0 text-red-600 hover:text-red-800 transition-colors p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <!-- Location Not Selected Error Overlay -->
+        <div id="noLocationError" class="fixed top-4 left-1/2 -translate-x-1/2 max-w-lg w-[calc(100%-2rem)] bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-xl shadow-lg flex gap-3 text-[14px] font-medium items-start hidden z-[9998] transition-all duration-300 animate-in fade-in slide-in-from-top-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <div class="flex-1">
+                <p class="font-bold">Location Required</p>
+                <p class="text-[13px] font-normal text-red-500">Please click on the map or use Detect GPS to pin your waste location.</p>
+            </div>
+            <button type="button" onclick="closeNoLocationError()" class="shrink-0 text-red-600 hover:text-red-800 transition-colors p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
         <!-- Form Layout -->
         <form id="reportForm" action="/brgy-waste-app-v3/public/resident/submit" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
             
@@ -545,7 +605,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
             modal.classList.remove('hidden');
         } catch (err) {
             console.error("Camera error:", err);
-            alert("Camera access denied or unavailable. Please use the Browse Files option instead.");
+            showCameraError();
         }
     }
 
@@ -649,7 +709,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                     window.mapInstance.on('click', function(e) {
                         // Check if clicked location is within barangay boundary
                         if (!isInsideBarangay(e.latlng.lat, e.latlng.lng)) {
-                            alert("This location is outside of Barangay Dulong Bayan coverage area. Please select a location within the green boundary.");
+                            showLocationError();
                             return;
                         }
                         window.mapMarker.setLatLng(e.latlng);
@@ -733,6 +793,71 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         return inside;
     }
 
+    function showLocationError() {
+        closeGpsError();
+        closeGeoNotSupportedError();
+        closeCameraError();
+        closeNoLocationError();
+        const locErrorDiv = document.getElementById('locationError');
+        locErrorDiv.classList.remove('hidden');
+    }
+
+    function closeLocationError() {
+        document.getElementById('locationError').classList.add('hidden');
+    }
+
+    function showGpsError() {
+        closeLocationError();
+        closeGeoNotSupportedError();
+        closeCameraError();
+        closeNoLocationError();
+        const gpsErrorDiv = document.getElementById('gpsError');
+        gpsErrorDiv.classList.remove('hidden');
+    }
+
+    function closeGpsError() {
+        document.getElementById('gpsError').classList.add('hidden');
+    }
+
+    function showGeoNotSupportedError() {
+        closeLocationError();
+        closeGpsError();
+        closeCameraError();
+        closeNoLocationError();
+        const geoErrorDiv = document.getElementById('geoNotSupportedError');
+        geoErrorDiv.classList.remove('hidden');
+    }
+
+    function closeGeoNotSupportedError() {
+        document.getElementById('geoNotSupportedError').classList.add('hidden');
+    }
+
+    function showCameraError() {
+        closeLocationError();
+        closeGpsError();
+        closeGeoNotSupportedError();
+        closeNoLocationError();
+        const cameraErrorDiv = document.getElementById('cameraError');
+        cameraErrorDiv.classList.remove('hidden');
+    }
+
+    function closeCameraError() {
+        document.getElementById('cameraError').classList.add('hidden');
+    }
+
+    function showNoLocationError() {
+        closeLocationError();
+        closeGpsError();
+        closeGeoNotSupportedError();
+        closeCameraError();
+        const noLocErrorDiv = document.getElementById('noLocationError');
+        noLocErrorDiv.classList.remove('hidden');
+    }
+
+    function closeNoLocationError() {
+        document.getElementById('noLocationError').classList.add('hidden');
+    }
+
     function detectGPS() {
         const btn = event.currentTarget;
         const ogContent = btn.innerHTML;
@@ -745,7 +870,7 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                 
                 // Check if location is within barangay boundary
                 if (!isInsideBarangay(lat, lng)) {
-                    alert("This location is outside of Barangay Dulong Bayan coverage area. Please move to an area within the barangay boundaries to submit a report.");
+                    showLocationError();
                     btn.innerHTML = ogContent;
                     return;
                 }
@@ -760,11 +885,11 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
                 showLocationSuccess();
 
             }, err => {
-                alert("GPS access denied or unavailable. Please click manually on the map.");
+                showGpsError();
                 btn.innerHTML = ogContent;
             });
         } else {
-            alert("Geolocation not supported by browser.");
+            showGeoNotSupportedError();
             btn.innerHTML = ogContent;
         }
     }
@@ -803,13 +928,12 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
         const lng = document.getElementById('longitude').value;
         
         if(!lat) {
-            alert("Please select a location on the map.");
+            showNoLocationError();
             valid = false;
         } else {
             // Check if location is within barangay boundary
             if (!isInsideBarangay(parseFloat(lat), parseFloat(lng))) {
-                locationError = "This location is outside of Barangay Dulong Bayan coverage area. Reports can only be submitted within the barangay boundaries.";
-                alert(locationError);
+                showLocationError();
                 valid = false;
             }
         }

@@ -28,4 +28,4 @@
 </header>
 
 <!-- Include Notification Panel -->
-<?php include '../app/Views/layouts/notification-panel.php'; ?>
+<?php include __DIR__ . '/notification-panel.php'; ?>

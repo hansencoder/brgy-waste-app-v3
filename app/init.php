@@ -3,7 +3,7 @@ require_once 'Config/Database.php';
 require_once 'Core/App.php';
 require_once 'Core/Controller.php';
 
-// Session Timeout Handler (FR-11)
+// Session Timeout Handler 
 if (isset($_SESSION['user_id'])) {
     if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) { // 30 mins
         // We log the timeout

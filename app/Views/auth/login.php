@@ -1,4 +1,4 @@
-<?php include '../app/Views/layouts/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <div class="flex-grow flex items-center justify-center p-6 w-full" style="background-color: #f6f7fa;">
     <div class="bg-white rounded-[14px] p-8 max-w-[420px] w-full shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100">
         
@@ -15,7 +15,7 @@
             <div class="w-14 h-14 bg-[#15281f] rounded-2xl flex items-center justify-center mb-4 shadow-md shadow-[#15281f]/20">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
-            <h2 class="text-[22px] font-bold text-[#15281f] mb-1.5 tracking-tight">Welcome Back</h2>
+            <h2 class="text-[22px] font-bold text-[#15281f] mb-1.5 tracking-tight">Welcome</h2>
             <p class="text-[14px] text-slate-500 font-medium">Log in to your WasteWatch account</p>
         </div>
 
@@ -76,7 +76,7 @@
             password.setAttribute('type', type);
             
             // Toggle icon path
-            if (type === 'text') {
+            if (type === 'text') { 
                 eyeIcon.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>'; 
             } else {
                 eyeIcon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'; 
@@ -91,7 +91,7 @@
         
         let isValid = true;
 
-        // Basic client-side sanitization
+        // client-side sanitization
         try {
             emailInput.value = emailInput.value.trim().replace(/[<>]/g, '');
         } catch(e) {}
@@ -99,7 +99,6 @@
         if (!emailInput.checkValidity()) {
             emailInput.classList.add('border-red-400', 'ring-red-100');
             isValid = false;
-            // Optionally, add a subtle shake animation or error text
         } else {
             emailInput.classList.remove('border-red-400', 'ring-red-100');
         }
@@ -114,4 +113,4 @@
         return isValid;
     }
 </script>
-<?php include '../app/Views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

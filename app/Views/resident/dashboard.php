@@ -1,4 +1,4 @@
-<?php include '../app/Views/layouts/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <?php
 // Retrieve user info from session if available
 $fullName = $_SESSION['user_name'] ?? 'Juan Dela Cruz';
@@ -387,5 +387,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include '../app/Views/layouts/notification-panel.php'; ?>
-<?php include '../app/Views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/notification-panel.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

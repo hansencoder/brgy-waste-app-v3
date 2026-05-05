@@ -1,4 +1,4 @@
-<?php include '../app/Views/layouts/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <div class="flex-grow flex flex-col items-center justify-center py-10 px-4 w-full min-h-screen" style="background-color: #f6f7fa;">
 
     <!-- Main Card -->
@@ -46,7 +46,6 @@
             </div>
         <?php endif; ?>
 
-        <!-- Old success alert removed in favor of full success screen -->
 
         <form action="/brgy-waste-app-v3/public/auth/register" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="return validateRegisterForm()">
             <!-- CSRF Protection -->
@@ -58,7 +57,7 @@
                     <input type="text" id="name" name="name" required
                     class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                         placeholder="Hans Flores"
-                        oninput="this.value = this.value.replace(/[^a-zA-Z\s\-]/g, ''); validateInput(this)">
+                        oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s\-. ]/g, ''); validateInput(this)">
                 </div>
             </div>
 
@@ -70,8 +69,9 @@
                     oninput="this.value = this.value.replace(/[<>]/g, ''); validateInput(this)">
             </div>
 
+            <!-- Constraints: 11 digits and follows the standard format. -->
             <div>
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="phone_number">Mobile Number <span class="text-red-500">*</span></label>
+                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="phone_number">Mobile Number (09XXXXXXXXX) <span class="text-red-500">*</span></label>
                 <input type="text" id="phone_number" name="phone_number" required pattern="^09\d{9}$" title="Standard format: 09XXXXXXXXX."
                     class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
                     placeholder="09171234567"
@@ -190,15 +190,6 @@
                 <p id="password-match-error" class="text-red-500 text-[11px] font-medium mt-1.5 ml-0.5 hidden">Passwords do not match.</p>
             </div>
 
-            <!-- Lock Info Box -->
-            <div class="bg-blue-50/50 border border-blue-100/70 rounded-lg p-3 my-4 flex gap-2.5 items-start shadow-sm shadow-blue-100/20">
-                <div class="text-[#f4a825] mt-0.5 shrink-0 bg-[#fffbf0] p-1 rounded"> <!-- Gold lock -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <p class="text-[11.5px] text-[#15281f]/80 leading-relaxed font-medium">
-                    Your information is encrypted and secure. We only use this for verification and notifications.
-                </p>
-            </div>
             
             <div class="pt-2">
                 <button type="submit" id="submitBtn" class="w-full bg-[#15281f] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#15281f]/20 hover:bg-[#0f1a17] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#15281f]/30 text-[14px] active:scale-[0.98]">
@@ -480,9 +471,9 @@
                 valid = false;
             } else {
                 if (id !== 'password' && id !== 'confirm_password') {
-                     try {
-                         el.value = el.value.replace(/[<>]/g, '');
-                     } catch(e) {}
+                    try {
+                        el.value = el.value.replace(/[<>]/g, '');
+                    } catch(e) {}
                 }
             }
         });
@@ -511,4 +502,4 @@
         return valid;
     }
 </script>
-<?php include '../app/Views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

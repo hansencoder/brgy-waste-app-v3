@@ -1,4 +1,4 @@
-<?php include '../app/Views/layouts/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <?php
 $user = $data['user'];
 $firstName = isset($user['name']) ? explode(' ', trim($user['name']))[0] : 'User';
@@ -295,8 +295,8 @@ $fullName = $user['name'] ?? 'Juan Dela Cruz';
     </a>
 </nav>
 
-<?php include '../app/Views/layouts/notification-panel.php'; ?>
-<?php include '../app/Views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/notification-panel.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>
 
 <script>
     // --- Password Visibility Toggle ---

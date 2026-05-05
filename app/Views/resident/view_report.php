@@ -1,4 +1,4 @@
-<?php include '../app/Views/layouts/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <?php
 $fullName = $_SESSION['user_name'] ?? 'Juan Dela Cruz';
 $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_name']))[0] : 'Juan';
@@ -418,4 +418,4 @@ function hideDeleteConfirm() {
 }
 </script>
 
-<?php include '../app/Views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

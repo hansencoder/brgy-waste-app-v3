@@ -1,16 +1,27 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $user = "root";
-    private $pass = "";
-    private $dbname = "brgy_waste_db";
+    private $host;
+    private $user;
+    private $pass;
+    private $dbname;
 
     private $dbh;
     private $error;
     private $stmt;
 
     public function __construct() {
-        $dsn = 'mysql:host=' . $this->host . ';port=3307;dbname=' . $this->dbname;
+        // Parse .env file for security 
+        $envFile = __DIR__ . '/../../.env';
+        if (file_exists($envFile)) {
+            $env = parse_ini_file($envFile);
+            $this->host = $env['DB_HOST'] ?? 'localhost';
+            $this->user = $env['DB_USER'] ?? 'root';
+            $this->pass = $env['DB_PASS'] ?? '';
+            $this->dbname = $env['DB_NAME'] ?? 'brgy_waste_db';
+        } else {
+            throw new Exception(".env file is missing.");
+        }
+        $dsn = 'mysql:host=' . $this->host . ';port=3306;dbname=' . $this->dbname;
         $options = array(
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION

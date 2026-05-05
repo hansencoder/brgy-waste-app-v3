@@ -1,4 +1,4 @@
-<?php include '../app/Views/layouts/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <div class="flex-grow flex items-center justify-center p-6">
     <div class="glassmorphism rounded-2xl p-8 max-w-sm w-full shadow-2xl fade-in text-center relative overflow-hidden">
         
@@ -12,7 +12,7 @@
             
             <?php if(isset($_SESSION['debug_otp'])): ?>
                 <div class="bg-blue-100 border text-blue-700 text-xs p-2 mb-4 rounded text-center">
-                    [DEBUG] Your OTP: <strong class="text-xl"><?php echo $_SESSION['debug_otp']; ?></strong>
+                    Your OTP: <strong class="text-xl"><?php echo $_SESSION['debug_otp']; ?></strong>
                 </div>
             <?php endif; ?>
 
@@ -50,4 +50,4 @@
         </div>
     </div>
 </div>
-<?php include '../app/Views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

@@ -1,4 +1,4 @@
-<?php include '../app/Views/layouts/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <?php
 $user = $data['user'];
 $firstName = isset($user['name']) ? explode(' ', trim($user['name']))[0] : 'Admin';
@@ -7,13 +7,13 @@ $fullName = $user['name'] ?? 'Barangay Secretary';
 
 <div class="flex h-screen bg-gray-50 overflow-hidden w-full">
     <!-- Sidebar -->
-    <?php include '../app/Views/layouts/admin_sidebar.php'; ?>
+    <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
     <!-- Main Content Wrapper -->
     <div class="flex flex-col flex-1 w-0 overflow-hidden">
 
         <!-- Top Nav -->
-        <?php include '../app/Views/layouts/admin_topbar.php'; ?>
+        <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
 
         <!-- Scrollable Content -->
         <main class="flex-1 relative overflow-y-auto focus:outline-none">
@@ -370,4 +370,4 @@ $fullName = $user['name'] ?? 'Barangay Secretary';
         if (errorMsg) errorMsg.style.display = 'none';
     }, 5000);
 </script>
-<?php include '../app/Views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

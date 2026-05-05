@@ -1,4 +1,4 @@
-<?php include '../app/Views/layouts/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <?php
 $stats         = $data['stats']          ?? ['total'=>0,'pending'=>0,'verified'=>0,'resolved'=>0];
 $today_count   = $data['today_count']    ?? 0;
@@ -24,13 +24,13 @@ $statusLabel = [
 
 <div class="flex h-screen bg-gray-50 overflow-hidden w-full">
     <!-- Sidebar -->
-    <?php include '../app/Views/layouts/admin_sidebar.php'; ?>
+    <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
     <!-- Main Content Wrapper -->
     <div class="flex flex-col flex-1 w-0 overflow-hidden">
 
         <!-- Top Nav -->
-        <?php include '../app/Views/layouts/admin_topbar.php'; ?>
+        <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
 
         <!-- Scrollable Content -->
         <main class="flex-1 relative overflow-y-auto focus:outline-none">
@@ -44,14 +44,14 @@ $statusLabel = [
                     </div>
                     <div class="flex space-x-3 text-sm">
                         <a href="/brgy-waste-app-v3/public/admin/announcements"
-                           class="bg-[#118B50] hover:bg-[#15281f] text-white px-4 py-2 rounded-md font-medium flex items-center shadow-sm transition-colors">
+                        class="bg-[#118B50] hover:bg-[#15281f] text-white px-4 py-2 rounded-md font-medium flex items-center shadow-sm transition-colors">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                             </svg>
                             Post Announcement
                         </a>
                         <a href="/brgy-waste-app-v3/public/admin/export?format=csv"
-                           class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md font-medium flex items-center shadow-sm transition-colors">
+                        class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md font-medium flex items-center shadow-sm transition-colors">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
@@ -530,4 +530,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include '../app/Views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

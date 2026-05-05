@@ -18,7 +18,7 @@ class AuthController extends Controller {
             exit;
         }
         // Show login page
-        $data = ['error' => isset($_GET['error']) ? filter_var($_GET['error'], FILTER_SANITIZE_STRING) : ''];
+        $data = ['error' => isset($_GET['error']) ? htmlspecialchars($_GET['error'], ENT_QUOTES, 'UTF-8') : ''];
         $this->view('auth/login', $data);
     }
 
@@ -28,6 +28,7 @@ class AuthController extends Controller {
             $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
             $password = $_POST['password'];
 
+            // Empty Field Checks, Even if JS is disabled, the login route manually checks
             if (empty($email) || empty($password)) {
                 return $this->view('auth/login', ['error' => 'Please fill in all fields.']);
             }
@@ -91,6 +92,9 @@ class AuthController extends Controller {
 
             if ($this->userModel->verifyMfaToken($user_id, $otp)) {
                 // Success
+                // Regenerate session ID to prevent Session Fixation attacks
+                session_regenerate_id(true);
+                
                 $_SESSION['user_id'] = $user_id;
 
                 // Hacky quick lookup for role
@@ -139,9 +143,9 @@ class AuthController extends Controller {
         ];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $post = array_map(function($v) { return is_string($v) ? htmlspecialchars($v, ENT_QUOTES, 'UTF-8') : $v; }, $_POST);
             
-            // Extract & Validate
+            // Extract & Validate the password fields kahit ibypass yung frontend, ivavalidate parin sa database if match ba yung password
             $password = $_POST['password'];
             $c_password = $_POST['confirm_password'];
             
@@ -149,7 +153,7 @@ class AuthController extends Controller {
                 $data['error'] = "Passwords do not match.";
                 return $this->view('auth/register', $data);
             }
-
+            // stricly na kailangan kompletuhin yung password requirement
             if (strlen($password) < 8 || !preg_match("/[A-Z]/", $password) || !preg_match("/[a-z]/", $password) || !preg_match("/[0-9]/", $password) || !preg_match("/[\W]/", $password)) {
                 $data['error'] = "Password must be at least 8 chars long with uppercase, lowercase, number, and special char.";
                 return $this->view('auth/register', $data);

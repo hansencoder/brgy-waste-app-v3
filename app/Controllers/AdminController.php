@@ -112,15 +112,14 @@ class AdminController extends Controller {
         
         // Add report counts for each resident user
         $reportModel = $this->model('Report');
-        foreach ($data['users'] as &$user) {
+        foreach ($data['users'] as $key => $user) {
             if ($user['role'] == 'resident') {
                 $userReports = $reportModel->getReportsByResident($user['id']);
-                $user['report_count'] = count($userReports);
+                $data['users'][$key]['report_count'] = count($userReports);
             } else {
-                $user['report_count'] = 0;
+                $data['users'][$key]['report_count'] = 0;
             }
         }
-        unset($user); // Break the reference to avoid the dangling reference bug
         
         $this->view('admin/accounts', $data);
     }
@@ -216,9 +215,9 @@ class AdminController extends Controller {
         // Build query with filters - Include ALL reports including rejected
         $db = new Database();
         $query = "SELECT r.*, u.name, u.email, rf.flag_reason FROM reports r 
-                  JOIN users u ON r.resident_id = u.id 
-                  LEFT JOIN report_flags rf ON r.id = rf.report_id
-                  WHERE 1=1";
+                JOIN users u ON r.resident_id = u.id 
+                LEFT JOIN report_flags rf ON r.id = rf.report_id
+                WHERE 1=1";
         
         if (!empty($search)) {
             $query .= " AND (r.description LIKE :search OR u.name LIKE :search OR u.email LIKE :search)";
@@ -245,8 +244,8 @@ class AdminController extends Controller {
         
         // Add location names to each report
         require_once __DIR__ . '/../Core/Geocoding.php';
-        foreach ($data['reports'] as &$report) {
-            $report['location_name'] = Geocoding::getLocationName(
+        foreach ($data['reports'] as $key => $report) {
+            $data['reports'][$key]['location_name'] = Geocoding::getLocationName(
                 $report['latitude'],
                 $report['longitude']
             );
@@ -291,8 +290,8 @@ class AdminController extends Controller {
             
             // Add location names to each report
             require_once __DIR__ . '/../Core/Geocoding.php';
-            foreach ($reports as &$r) {
-                $r['location_name'] = Geocoding::getLocationName(
+            foreach ($reports as $key => $r) {
+                $reports[$key]['location_name'] = Geocoding::getLocationName(
                     $r['latitude'],
                     $r['longitude']
                 );
@@ -355,8 +354,8 @@ class AdminController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['user_role'] == 'secretary') {
             if (!empty($_POST['title']) && !empty($_POST['content'])) {
                 $db->query("INSERT INTO announcements (title, content, created_by) VALUES (:title, :content, :created_by)");
-                $db->bind(':title', filter_var($_POST['title'], FILTER_SANITIZE_STRING));
-                $db->bind(':content', filter_var($_POST['content'], FILTER_SANITIZE_STRING));
+                $db->bind(':title', htmlspecialchars($_POST['title'], ENT_QUOTES, 'UTF-8'));
+                $db->bind(':content', htmlspecialchars($_POST['content'], ENT_QUOTES, 'UTF-8'));
                 $db->bind(':created_by', $_SESSION['user_id']);
                 $db->execute();
                 
@@ -444,9 +443,9 @@ class AdminController extends Controller {
 
         // Add location names and format data
         require_once __DIR__ . '/../Core/Geocoding.php';
-        foreach ($reports as &$report) {
-            $report['location'] = Geocoding::getLocationName($report['latitude'], $report['longitude']);
-            $report['date'] = date('m/d/Y', strtotime($report['submission_date']));
+        foreach ($reports as $key => $report) {
+            $reports[$key]['location'] = Geocoding::getLocationName($report['latitude'], $report['longitude']);
+            $reports[$key]['date'] = date('m/d/Y', strtotime($report['submission_date']));
         }
 
         // Calculate summary

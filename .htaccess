@@ -2,25 +2,24 @@ RewriteEngine On
 
 Options -Indexes
 
-# Block access to sensitive file types
 <FilesMatch "\.(json|log|ini|sql|config|bak|md|txt|htaccess|htpasswd|env)$">
     Require all denied
-</FilesMatch>
+</FilesMatch>       
 
-# Protect .htaccess itself
 <Files ".htaccess">
     Require all denied
 </Files>
 
-# prevent XSS, clickjacking, MIME sniffing
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
+    
     Header set X-XSS-Protection "1; mode=block"
+    
     Header set X-Frame-Options "DENY"
+    
     Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# Prevent direct access to files in public directory
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/public/ [NC]
 RewriteRule ^ - [F]
 

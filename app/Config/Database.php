@@ -1,6 +1,7 @@
 <?php
 class Database {
     private $host;
+    private $port;
     private $user;
     private $pass;
     private $dbname;
@@ -10,18 +11,19 @@ class Database {
     private $stmt;
 
     public function __construct() {
-        // Parse .env file for security 
+        // Parse .env file for security
         $envFile = __DIR__ . '/../../.env';
         if (file_exists($envFile)) {
             $env = parse_ini_file($envFile);
-            $this->host = $env['DB_HOST'] ?? 'localhost';
-            $this->user = $env['DB_USER'] ?? 'root';
-            $this->pass = $env['DB_PASS'] ?? '';
-            $this->dbname = $env['DB_NAME'] ?? 'brgy_waste_db';
+            $this->host = trim($env['DB_HOST'] ?? 'localhost', "\"'");
+            $this->port = trim($env['DB_PORT'] ?? '3306', "\"'");
+            $this->user = trim($env['DB_USER'] ?? 'root', "\"'");
+            $this->pass = trim($env['DB_PASS'] ?? '', "\"'");
+            $this->dbname = trim($env['DB_NAME'] ?? 'brgy_waste_db', "\"'");
         } else {
             throw new Exception(".env file is missing.");
         }
-        $dsn = 'mysql:host=' . $this->host . ';port=3306;dbname=' . $this->dbname;
+        $dsn = 'mysql:host=' . $this->host . ';port=' . $this->port . ';dbname=' . $this->dbname;
         $options = array(
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION

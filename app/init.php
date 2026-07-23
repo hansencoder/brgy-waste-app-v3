@@ -14,7 +14,7 @@ if (isset($_SESSION['user_id'])) {
         
         session_unset();
         session_destroy();
-        header("Location: /brgy-waste-app-v3/public/auth?error=" . urlencode("You have been automatically logged out due to inactivity."));
+        header("Location: /brgy-waste-app-v3/public/index.php?url=auth&error=" . urlencode("You have been automatically logged out due to inactivity."));
         exit;
     }
     $_SESSION['last_activity'] = time();

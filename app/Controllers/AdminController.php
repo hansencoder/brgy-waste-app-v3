@@ -5,7 +5,7 @@ class AdminController extends Controller {
 
     public function __construct() {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['secretary', 'captain'])) {
-            header('Location: /brgy-waste-app-v3/public/auth');
+            header('Location: /brgy-waste-app-v3/public/index.php?url=auth');
             exit;
         }
 
@@ -71,13 +71,14 @@ class AdminController extends Controller {
             $user_id = filter_var($_POST['user_id'], FILTER_VALIDATE_INT);
             
             // Validate that user_id is a valid integer
-            if (!$user_id || $user_id === false) {
-                header("Location: /brgy-waste-app-v3/public/admin/accounts");
+                if (!$user_id || $user_id === false) {
+                header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/accounts'));
                 exit;
             }
             
             $reason = isset($_POST['reason']) ? htmlspecialchars(strip_tags($_POST['reason']), ENT_QUOTES, 'UTF-8') : '';
             $action = $_POST['action'];
+            $reportModel = $this->model('Report');
 
             // Load Notification model
             require_once __DIR__ . '/../Models/Notification.php';
@@ -91,6 +92,7 @@ class AdminController extends Controller {
                 
                 $this->auditModel->logAction($_SESSION['user_id'], 'Account Approved', "User ID $user_id", "Approved account ID $user_id", 'success');
             } elseif ($action == 'reject') {
+                $reportModel->deleteReportsByResident($user_id);
                 $this->userModel->deleteUser($user_id);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Account Rejected', "User ID $user_id", "Rejected account ID $user_id. Reason: $reason", 'success');
             } elseif ($action == 'deactivate') {
@@ -100,6 +102,7 @@ class AdminController extends Controller {
                 $result = $this->userModel->updateUserStatus($user_id, 'active');
                 $this->auditModel->logAction($_SESSION['user_id'], 'Account Reactivated', "User ID $user_id", "Reactivated account ID $user_id", $result ? 'success' : 'failed');
             } elseif ($action == 'remove') {
+                $reportModel->deleteReportsByResident($user_id);
                 $this->userModel->deleteUser($user_id);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Account Removed', "User ID $user_id", "Removed account ID $user_id. Reason: $reason", 'success');
             }
@@ -204,7 +207,7 @@ class AdminController extends Controller {
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Rejected', "Report ID $report_id", "Rejected report. Reason: $remark. Resident notified.", 'success');
             }
 
-            header("Location: /brgy-waste-app-v3/public/admin/reports");
+            header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/reports'));
             exit;
         }
 
@@ -368,7 +371,7 @@ class AdminController extends Controller {
                 $notificationModel->createAnnouncementNotification($announcementId, $_SESSION['user_id']);
 
                 $this->auditModel->logAction($_SESSION['user_id'], 'Post Announcement', 'Announcements', "Posted '{$_POST['title']}'", 'success');
-                header("Location: /brgy-waste-app-v3/public/admin/announcements");
+                header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/announcements'));
                 exit;
             }
         }
@@ -394,7 +397,7 @@ class AdminController extends Controller {
             $this->auditModel->logAction($_SESSION['user_id'], 'Delete Announcement', "Announcement ID $announcementId", "Deleted announcement", 'success');
         }
 
-        header("Location: /brgy-waste-app-v3/public/admin/announcements");
+            header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/announcements'));
         exit;
     }
 

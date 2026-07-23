@@ -20,9 +20,12 @@
         </div>
 
         <?php if (!empty($data['error'])): ?>
-            <div class="bg-red-50/80 border border-red-100 text-red-600 px-4 py-3 mb-6 rounded-lg text-sm text-center flex items-center justify-center gap-2" role="alert">
+            <div class="bg-red-50/80 border border-red-100 text-red-600 px-4 py-3 mb-6 rounded-lg text-sm text-center flex items-center justify-center gap-2 flex-wrap" role="alert">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <p><?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?></p>
+                <?php if (isset($data['lockout_seconds']) && $data['lockout_seconds'] > 0): ?>
+                    <span id="loginCountdown" class="font-bold ml-1"></span>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 
@@ -112,5 +115,35 @@
 
         return isValid;
     }
+
 </script>
+
+<?php if (isset($data['lockout_seconds']) && $data['lockout_seconds'] > 0): ?>
+<script>
+    (function() {
+        let seconds = <?php echo (int)$data['lockout_seconds']; ?>;
+        const el = document.getElementById('loginCountdown');
+        if (!el) return;
+
+        function formatTime(s) {
+            const mins = Math.floor(s / 60);
+            const secs = s % 60;
+            return mins > 0 ? mins + 'm ' + secs + 's' : secs + 's';
+        }
+
+        function update() {
+            if (seconds <= 0) {
+                el.textContent = '';
+                window.location.reload(); // unlock the form
+                return;
+            }
+            el.textContent = formatTime(seconds);
+            seconds--;
+            setTimeout(update, 1000);
+        }
+        update();
+    })();
+</script>
+<?php endif; ?>
+
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

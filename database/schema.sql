@@ -170,13 +170,26 @@
     CREATE TABLE IF NOT EXISTS two_factor_tokens (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
-        token VARCHAR(10) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        token VARCHAR(6) NOT NULL,
         expires_at DATETIME NOT NULL,
         is_used BOOLEAN DEFAULT FALSE,
+        attempts INT NOT NULL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         INDEX (token),
         INDEX (expires_at)
+    );
+
+    CREATE TABLE IF NOT EXISTS email_otp_rate_limits (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) NOT NULL,
+        ip VARCHAR(45) NOT NULL,
+        window_start DATETIME NOT NULL,
+        send_count INT NOT NULL DEFAULT 0,
+        UNIQUE KEY email_ip_window (email, ip, window_start),
+        INDEX (email),
+        INDEX (ip)
     );
 
     -- ============================================

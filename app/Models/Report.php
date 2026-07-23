@@ -62,6 +62,25 @@ class Report {
         return $this->db->execute();
     }
 
+    public function deleteReportsByResident($resident_id) {
+        $this->db->query('SELECT photo_path FROM reports WHERE resident_id = :resident_id');
+        $this->db->bind(':resident_id', $resident_id);
+        $reports = $this->db->resultSet();
+
+        foreach ($reports as $report) {
+            if (!empty($report['photo_path'])) {
+                $filePath = '../public/uploads/' . $report['photo_path'];
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+        }
+
+        $this->db->query('DELETE FROM reports WHERE resident_id = :resident_id');
+        $this->db->bind(':resident_id', $resident_id);
+        return $this->db->execute();
+    }
+
     public function getDashboardStats() {
         $stats = ['total' => 0, 'pending' => 0, 'verified' => 0, 'resolved' => 0];
         $this->db->query("SELECT status, COUNT(*) as count FROM reports GROUP BY status");

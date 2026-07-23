@@ -623,6 +623,16 @@
 </head>
 <body>
 
+    <?php
+    // Ensure $data is always defined to avoid PHP warnings in views
+    if (!isset($data) || !is_array($data)) {
+        $data = ['isLoggedIn' => false, 'role' => null];
+    } else {
+        $data['isLoggedIn'] = $data['isLoggedIn'] ?? false;
+        $data['role'] = $data['role'] ?? null;
+    }
+    ?>
+
     <!-- Navigation -->
     <nav>
         <div class="container nav-container">
@@ -637,10 +647,10 @@
             </a>
             <div class="nav-actions">
                 <?php if ($data['isLoggedIn']): ?>
-                    <a href="/brgy-waste-app-v3/public/<?php echo $data['role'] == 'resident' ? 'resident' : 'admin'; ?>" class="btn-register">Dashboard</a>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($data['role'] == 'resident' ? 'resident' : 'admin'); ?>" class="btn-register">Dashboard</a>
                 <?php else: ?>
-                    <a href="/brgy-waste-app-v3/public/auth" class="nav-link">Log In</a>
-                    <a href="/brgy-waste-app-v3/public/auth/register" class="btn-register">Register</a>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth'); ?>" class="nav-link">Log In</a>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth/register'); ?>" class="btn-register">Register</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -653,16 +663,16 @@
             <p>A cross-platform waste reporting system with geospatial mapping and analytics. Help keep your barangay clean by reporting waste issues directly to your local government.</p>
             <div class="hero-btns">
                 <?php if ($data['isLoggedIn']): ?>
-                    <a href="/brgy-waste-app-v3/public/<?php echo $data['role'] == 'resident' ? 'resident' : 'admin'; ?>" class="btn-main">
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($data['role'] == 'resident' ? 'resident' : 'admin'); ?>" class="btn-main">
                         Go to Dashboard
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
                 <?php else: ?>
-                    <a href="/brgy-waste-app-v3/public/auth/register" class="btn-main">
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth/register'); ?>" class="btn-main">
                         Get Started
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
-                    <a href="/brgy-waste-app-v3/public/auth" class="btn-sec">Log In to Your Account</a>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth'); ?>" class="btn-sec">Log In to Your Account</a>
                 <?php endif; ?>
             </div>
         </div>

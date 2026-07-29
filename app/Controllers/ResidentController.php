@@ -1,4 +1,5 @@
 <?php
+
 class ResidentController extends Controller {
     private $reportModel;
     private $auditModel;
@@ -13,27 +14,88 @@ class ResidentController extends Controller {
         $this->auditModel = $this->model('AuditLog');
     }
 
+    public function collection_schedule() {
+    $db = new Database();
+
+    // Fetch all active schedules with puroks
+    $db->query("
+        SELECT cs.*, 
+        GROUP_CONCAT(p.purok_name SEPARATOR ', ') as puroks,
+        MAX(cs.updated_at) as last_updated
+        FROM collection_schedules cs
+        LEFT JOIN collection_schedule_puroks csp ON cs.schedule_id = csp.schedule_id
+        LEFT JOIN puroks p ON csp.purok_id = p.purok_id
+        WHERE cs.status = 'active'
+        GROUP BY cs.schedule_id
+        ORDER BY FIELD(cs.collection_day, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
+    ");
+    $data['schedules'] = $db->resultSet();
+
+    // Fetch the latest special notice (announcement about schedule)
+    $db->query("
+        SELECT * FROM announcements 
+        WHERE visibility_id = 1 
+        AND (title LIKE '%schedule%' OR title LIKE '%collection%')
+        ORDER BY created_at DESC LIMIT 1
+    ");
+    $data['special_notice'] = $db->single();
+
+    // Get last updated date (use the most recent schedule update or fallback)
+    $db->query("SELECT MAX(updated_at) as last_updated FROM collection_schedules WHERE status = 'active'");
+    $row = $db->single();
+    $data['last_updated'] = $row['last_updated'] ? date('F j, Y', strtotime($row['last_updated'])) : date('F j, Y');
+
+    $this->view('resident/collection_schedule', $data);
+}
+
+    // ============================================================
+    // DASHBOARD
+    // ============================================================
     public function index() {
-        // Track Submitted Reports (FR-05)
         $data['reports'] = $this->reportModel->getReportsByResident($_SESSION['user_id']);
         $data['stats'] = $this->reportModel->getDashboardStatsByResident($_SESSION['user_id']);
         $data['map_pins'] = $this->reportModel->getHeatmapDataByResident($_SESSION['user_id']);
         $this->view('resident/dashboard', $data);
     }
 
+    // ============================================================
+    // SUBMIT REPORT
+    // ============================================================
     public function submit() {
         $data = ['error' => '', 'success' => ''];
+
+        // Load dropdown data from database
+        $categoryModel = $this->model('WasteCategory');
+        $quantityModel = $this->model('EstimatedQuantity');
+        $conditionModel = $this->model('WasteCondition');
+        $statusModel = $this->model('ReportStatus');
+
+        $data['categories'] = $categoryModel->getAll();
+        $data['quantities'] = $quantityModel->getAll();
+        $data['conditions'] = $conditionModel->getAll();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $description = trim($_POST['description']);
             $lat = $_POST['latitude'];
             $lng = $_POST['longitude'];
+            $category_id = (int) ($_POST['category_id'] ?? 0);
+            $quantity_id = (int) ($_POST['quantity_id'] ?? 0);
+            $condition_id = (int) ($_POST['condition_id'] ?? 0);
+            $remarks = trim($_POST['remarks'] ?? '');
 
+            // Validate description
             if (strlen($description) < 10 || strlen($description) > 500) {
                 $data['error'] = 'Description must be between 10 and 500 characters.';
                 return $this->view('resident/submit_report', $data);
             }
 
+            // Validate required fields
+            if (empty($category_id) || empty($quantity_id) || empty($condition_id)) {
+                $data['error'] = 'Please select a waste category, quantity, and condition.';
+                return $this->view('resident/submit_report', $data);
+            }
+
+            // Validate photo
             if (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
                 $data['error'] = 'A photo of the waste is required.';
                 return $this->view('resident/submit_report', $data);
@@ -54,6 +116,7 @@ class ResidentController extends Controller {
                 return $this->view('resident/submit_report', $data);
             }
 
+            // Upload photo
             $uploadDir = '../public/uploads/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
@@ -64,8 +127,7 @@ class ResidentController extends Controller {
 
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
 
-                // FR-04.11 Boundary Check - Barangay Dulong Bayan
-                // Point-in-polygon algorithm to check if location is within barangay boundaries
+                // Boundary Check - Barangay Dulong Bayan
                 $barangayBoundary = [
                     [15.56992, 120.80135], [15.56728, 120.80018], [15.56570, 120.79897],
                     [15.56528, 120.79751], [15.56375, 120.79516], [15.56032, 120.79464],
@@ -75,54 +137,62 @@ class ResidentController extends Controller {
                     [15.57034, 120.82364], [15.56455, 120.82033], [15.56098, 120.81492],
                     [15.56739, 120.80324], [15.56992, 120.80135]
                 ];
-                
+
                 // Point-in-polygon check
                 $isInside = false;
                 $j = count($barangayBoundary) - 1;
                 for ($i = 0; $i < count($barangayBoundary); $i++) {
                     $xi = $barangayBoundary[$i][0]; $yi = $barangayBoundary[$i][1];
                     $xj = $barangayBoundary[$j][0]; $yj = $barangayBoundary[$j][1];
-                    
+
                     $intersect = (($yi > $lng) != ($yj > $lng)) && ($lat < ($xj - $xi) * ($lng - $yi) / ($yj - $yi) + $xi);
                     if ($intersect) $isInside = !$isInside;
                     $j = $i;
                 }
-                
+
                 if (!$isInside) {
                     $data['error'] = 'This location is outside of Barangay Dulong Bayan coverage area. Reports can only be submitted within the barangay boundaries.';
-                    // Delete uploaded file since validation failed
                     unlink($targetPath);
                     return $this->view('resident/submit_report', $data);
                 }
 
+                // Get Pending status ID
+                $pendingStatus = $statusModel->getByName('Pending');
+                $status_id = $pendingStatus ? $pendingStatus['status_id'] : 1;
+
+                // Detect purok (optional - can be improved later)
+                $purok_id = $this->detectPurok($lat, $lng);
+
                 $reportData = [
                     'resident_id' => $_SESSION['user_id'],
-                    'photo_path' => $fileName,
                     'description' => $description,
                     'latitude' => $lat,
                     'longitude' => $lng,
-                    'location_verified' => true
+                    'location_verified' => true,
+                    'category_id' => $category_id,
+                    'quantity_id' => $quantity_id,
+                    'condition_id' => $condition_id,
+                    'status_id' => $status_id,
+                    'purok_id' => $purok_id,
+                    'location' => '', // Can be filled with reverse geocoding if needed
+                    'photos' => [$fileName]
                 ];
 
-                if ($this->reportModel->createReport($reportData)) {
-                    $this->auditModel->logAction($_SESSION['user_id'], 'Report Submitted', 'Waste Report', "User submitted report", 'success');
-                    
-                    // Get the report ID that was just created
-                    $db = new Database();
-                    $db->query("SELECT id FROM reports WHERE resident_id = :resident_id ORDER BY submission_date DESC LIMIT 1");
-                    $db->bind(':resident_id', $_SESSION['user_id']);
-                    $newReport = $db->single();
-                    
-                    if ($newReport) {
-                        // Notify admins about new report submission
-                        require_once __DIR__ . '/../Models/Notification.php';
-                        $notificationModel = new Notification();
-                        $notificationModel->createReportSubmittedNotification($newReport['id']);
-                    }
-                    
+                $reportId = $this->reportModel->createReport($reportData);
+
+                if ($reportId) {
+                    $this->auditModel->logAction($_SESSION['user_id'], 'Report Submitted', 'Waste Report', "User submitted report ID $reportId", 'success');
+
+                    // Notify admins about new report submission
+                    require_once __DIR__ . '/../Models/Notification.php';
+                    $notificationModel = new Notification();
+                    $notificationModel->createReportSubmittedNotification($reportId);
+
                     $data['success'] = 'Report submitted successfully.';
                 } else {
                     $data['error'] = 'Database error while saving report.';
+                    // Delete uploaded file since database insert failed
+                    unlink($targetPath);
                 }
             } else {
                 $data['error'] = 'Failed to upload photo.';
@@ -132,11 +202,17 @@ class ResidentController extends Controller {
         $this->view('resident/submit_report', $data);
     }
 
+    // ============================================================
+    // MY REPORTS LIST
+    // ============================================================
     public function my_report() {
         $data['reports'] = $this->reportModel->getReportsByResident($_SESSION['user_id']);
         $this->view('resident/my_report', $data);
     }
 
+    // ============================================================
+    // VIEW SINGLE REPORT
+    // ============================================================
     public function view_report($id) {
         $data['report'] = $this->reportModel->getReportById($id, $_SESSION['user_id']);
 
@@ -153,7 +229,7 @@ class ResidentController extends Controller {
         );
 
         $data['timeline'] = $this->reportModel->getReportTimeline($id);
-        
+
         // Get flag reason if report is rejected
         if ($data['report']['status'] === 'rejected') {
             $db = new Database();
@@ -163,10 +239,13 @@ class ResidentController extends Controller {
             $data['flag_reason'] = $flag ? $flag['flag_reason'] : 'No reason provided';
             $data['flag_date'] = $flag ? $flag['flagged_at'] : null;
         }
-        
+
         $this->view('resident/view_report', $data);
     }
 
+    // ============================================================
+    // DELETE REPORT
+    // ============================================================
     public function delete_report($id) {
         $report = $this->reportModel->getReportById($id, $_SESSION['user_id']);
 
@@ -176,8 +255,8 @@ class ResidentController extends Controller {
             exit;
         }
 
-        // Only allow deletion of pending reports
-        if ($report['status'] !== 'pending') {
+        // Only allow deletion of pending reports (check the status field from the joined query)
+        if (strtolower($report['status']) !== 'pending') {
             $_SESSION['error'] = 'Only pending reports can be deleted.';
             header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('resident/view_report/' . $id));
             exit;
@@ -194,29 +273,86 @@ class ResidentController extends Controller {
         exit;
     }
 
-    public function announcements() {
-        $db = new Database();
-        $db->query("SELECT * FROM announcements ORDER BY created_at DESC");
-        $data['announcements'] = $db->resultSet();
-        $this->view('resident/announcements', $data);
-    }
+    // ============================================================
+    // ANNOUNCEMENTS
+    // ============================================================
 
+    public function notification() {
+    $db = new Database();
+    $user_id = $_SESSION['user_id'];
+
+    // Fetch notifications for this user
+    $db->query("
+        SELECT n.*, 
+                nt.notification_type_name as type
+        FROM notifications n
+        LEFT JOIN notification_types nt ON n.type = nt.notification_type_name
+        WHERE n.user_id = :user_id OR n.send_to_all = 1
+        ORDER BY n.created_at DESC
+    ");
+    $db->bind(':user_id', $user_id);
+    $data['notifications'] = $db->resultSet();
+
+    // Get unread count
+    require_once __DIR__ . '/../Models/Notification.php';
+    $notificationModel = new Notification();
+    $data['unread_count'] = $notificationModel->getUnreadCount($user_id);
+
+    $this->view('resident/notification', $data);
+}
+
+
+
+
+
+    public function announcements() {
+    $db = new Database();
+    
+    // Get announcements visible to residents (Public or Registered)
+    $db->query("
+        SELECT a.*, u.name as author
+        FROM announcements a
+        LEFT JOIN users u ON a.created_by = u.id
+        WHERE a.visibility_id IN (1, 2)  -- Public or Registered
+        ORDER BY a.created_at DESC
+    ");
+    $data['announcements'] = $db->resultSet();
+    
+    // Get unread notifications count (optional)
+    require_once __DIR__ . '/../Models/Notification.php';
+    $notificationModel = new Notification();
+    $data['unread_count'] = $notificationModel->getUnreadCount($_SESSION['user_id']);
+    
+    $this->view('resident/announcements', $data);
+}
+
+    // ============================================================
+    // PROFILE
+    // ============================================================
     public function profile() {
         $data = ['error' => '', 'success' => ''];
         $db = new Database();
 
-        // Get user data
-        $db->query("SELECT * FROM users WHERE id = :id");
+        // Fetch user with role, position, purok names
+        $db->query("
+            SELECT u.*, 
+                    r.role_name, 
+                    p.position_name, 
+                    pk.purok_name
+            FROM users u
+            LEFT JOIN roles r ON u.role_id = r.role_id
+            LEFT JOIN positions p ON u.position_id = p.position_id
+            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+            WHERE u.id = :id
+        ");
         $db->bind(':id', $_SESSION['user_id']);
         $data['user'] = $db->single();
 
-        // Handle profile update
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $name = trim($_POST['name'] ?? '');
             $address = trim($_POST['address'] ?? '');
             $phone = trim($_POST['phone_number'] ?? '');
 
-            // Validation
             if (empty($name)) {
                 $data['error'] = 'Full name is required.';
                 return $this->view('resident/profile', $data);
@@ -227,7 +363,6 @@ class ResidentController extends Controller {
                 return $this->view('resident/profile', $data);
             }
 
-            // PH phone number validation (11 digits starting with 09)
             if (!preg_match('/^09\d{9}$/', $phone)) {
                 $data['error'] = 'Invalid Philippine phone number. Must be 11 digits starting with 09.';
                 return $this->view('resident/profile', $data);
@@ -239,14 +374,20 @@ class ResidentController extends Controller {
             $db->bind(':address', $address);
             $db->bind(':phone', $phone);
             $db->bind(':id', $_SESSION['user_id']);
-            
+
             if ($db->execute()) {
-                // Update session name
                 $_SESSION['user_name'] = $name;
                 $data['success'] = 'Profile updated successfully.';
-                
+
                 // Refresh user data
-                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->query("
+                    SELECT u.*, r.role_name, p.position_name, pk.purok_name
+                    FROM users u
+                    LEFT JOIN roles r ON u.role_id = r.role_id
+                    LEFT JOIN positions p ON u.position_id = p.position_id
+                    LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                    WHERE u.id = :id
+                ");
                 $db->bind(':id', $_SESSION['user_id']);
                 $data['user'] = $db->single();
 
@@ -259,6 +400,9 @@ class ResidentController extends Controller {
         $this->view('resident/profile', $data);
     }
 
+    // ============================================================
+    // CHANGE PASSWORD
+    // ============================================================
     public function change_password() {
         $data = ['error' => '', 'success' => ''];
         $db = new Database();
@@ -268,36 +412,41 @@ class ResidentController extends Controller {
             $newPassword = $_POST['new_password'] ?? '';
             $confirmPassword = $_POST['confirm_password'] ?? '';
 
-            // Get current user
             $db->query("SELECT password FROM users WHERE id = :id");
             $db->bind(':id', $_SESSION['user_id']);
             $user = $db->single();
 
-            // Verify current password
             if (!password_verify($currentPassword, $user['password'])) {
                 $data['error'] = 'Current password is incorrect.';
-                
-                // Get user data for view
-                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->query("SELECT u.*, r.role_name, p.position_name, pk.purok_name FROM users u
+                            LEFT JOIN roles r ON u.role_id = r.role_id
+                            LEFT JOIN positions p ON u.position_id = p.position_id
+                            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                            WHERE u.id = :id");
                 $db->bind(':id', $_SESSION['user_id']);
                 $data['user'] = $db->single();
-                
                 return $this->view('resident/profile', $data);
             }
 
-            // Validate new password
             if (strlen($newPassword) < 8) {
                 $data['error'] = 'Password must be at least 8 characters long.';
-                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->query("SELECT u.*, r.role_name, p.position_name, pk.purok_name FROM users u
+                            LEFT JOIN roles r ON u.role_id = r.role_id
+                            LEFT JOIN positions p ON u.position_id = p.position_id
+                            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                            WHERE u.id = :id");
                 $db->bind(':id', $_SESSION['user_id']);
                 $data['user'] = $db->single();
                 return $this->view('resident/profile', $data);
             }
 
-            // Check for uppercase, number, and special character
             if (!preg_match('/[A-Z]/', $newPassword)) {
                 $data['error'] = 'Password must contain at least one uppercase letter.';
-                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->query("SELECT u.*, r.role_name, p.position_name, pk.purok_name FROM users u
+                            LEFT JOIN roles r ON u.role_id = r.role_id
+                            LEFT JOIN positions p ON u.position_id = p.position_id
+                            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                            WHERE u.id = :id");
                 $db->bind(':id', $_SESSION['user_id']);
                 $data['user'] = $db->single();
                 return $this->view('resident/profile', $data);
@@ -305,7 +454,11 @@ class ResidentController extends Controller {
 
             if (!preg_match('/[0-9]/', $newPassword)) {
                 $data['error'] = 'Password must contain at least one number.';
-                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->query("SELECT u.*, r.role_name, p.position_name, pk.purok_name FROM users u
+                            LEFT JOIN roles r ON u.role_id = r.role_id
+                            LEFT JOIN positions p ON u.position_id = p.position_id
+                            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                            WHERE u.id = :id");
                 $db->bind(':id', $_SESSION['user_id']);
                 $data['user'] = $db->single();
                 return $this->view('resident/profile', $data);
@@ -313,31 +466,40 @@ class ResidentController extends Controller {
 
             if (!preg_match('/[!@#$%^&*]/', $newPassword)) {
                 $data['error'] = 'Password must contain at least one special character (!@#$%^&*).';
-                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->query("SELECT u.*, r.role_name, p.position_name, pk.purok_name FROM users u
+                            LEFT JOIN roles r ON u.role_id = r.role_id
+                            LEFT JOIN positions p ON u.position_id = p.position_id
+                            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                            WHERE u.id = :id");
                 $db->bind(':id', $_SESSION['user_id']);
                 $data['user'] = $db->single();
                 return $this->view('resident/profile', $data);
             }
 
-            // Check password match
             if ($newPassword !== $confirmPassword) {
                 $data['error'] = 'New passwords do not match.';
-                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->query("SELECT u.*, r.role_name, p.position_name, pk.purok_name FROM users u
+                            LEFT JOIN roles r ON u.role_id = r.role_id
+                            LEFT JOIN positions p ON u.position_id = p.position_id
+                            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                            WHERE u.id = :id");
                 $db->bind(':id', $_SESSION['user_id']);
                 $data['user'] = $db->single();
                 return $this->view('resident/profile', $data);
             }
 
-            // Check if new password is same as current
             if (password_verify($newPassword, $user['password'])) {
                 $data['error'] = 'New password must be different from current password.';
-                $db->query("SELECT * FROM users WHERE id = :id");
+                $db->query("SELECT u.*, r.role_name, p.position_name, pk.purok_name FROM users u
+                            LEFT JOIN roles r ON u.role_id = r.role_id
+                            LEFT JOIN positions p ON u.position_id = p.position_id
+                            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                            WHERE u.id = :id");
                 $db->bind(':id', $_SESSION['user_id']);
                 $data['user'] = $db->single();
                 return $this->view('resident/profile', $data);
             }
 
-            // Update password
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
             $db->query("UPDATE users SET password = :password WHERE id = :id");
             $db->bind(':password', $hashedPassword);
@@ -350,12 +512,24 @@ class ResidentController extends Controller {
                 $data['error'] = 'Failed to change password.';
             }
 
-            // Get user data for view
-            $db->query("SELECT * FROM users WHERE id = :id");
+            $db->query("SELECT u.*, r.role_name, p.position_name, pk.purok_name FROM users u
+                        LEFT JOIN roles r ON u.role_id = r.role_id
+                        LEFT JOIN positions p ON u.position_id = p.position_id
+                        LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                        WHERE u.id = :id");
             $db->bind(':id', $_SESSION['user_id']);
             $data['user'] = $db->single();
         }
 
         $this->view('resident/profile', $data);
+    }
+
+    // ============================================================
+    // HELPER: Detect Purok from coordinates
+    // ============================================================
+    private function detectPurok($lat, $lng) {
+        // For now, return default purok (Purok 1)
+        // In the future, you can implement point-in-polygon for each purok boundary
+        return 1;
     }
 }

@@ -1,284 +1,169 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
-<div class="flex h-screen bg-gray-50 overflow-hidden w-full">
-    <!-- Sidebar -->
-    <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
+<?php
+$reports = $data['reports'] ?? [];
+$status_counts = $data['status_counts'] ?? [
+    'Total' => 0,
+    'Pending' => 0,
+    'Verified' => 0,
+    'Rejected' => 0,
+    'In Progress' => 0,
+    'Resolved' => 0
+];
 
-    <!-- Main Content Wrapper -->
-    <div class="flex flex-col flex-1 w-0 overflow-hidden">
-        
-        <!-- Top Nav -->
-        <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
-        
-        <!-- Scrollable Content -->
-        <main class="flex-1 relative overflow-y-auto focus:outline-none">
-            <div class="max-w-7xl mx-auto px-4 py-8 flex-grow">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-foreground">Manage Waste Reports</h1>
-        <?php if ($_SESSION['user_role'] == 'secretary'): ?>
-        <?php endif; ?>
-    </div>
+// Helper for status badge styling
+function getStatusBadge($status) {
+    $map = [
+        'Pending'     => ['bg' => '#FEF3C7', 'text' => '#92400E', 'label' => 'Pending'],
+        'Verified'    => ['bg' => '#DCFCE7', 'text' => '#15803D', 'label' => 'Verified'],
+        'Resolved'    => ['bg' => '#E0F2FE', 'text' => '#0369A1', 'label' => 'Resolved'],
+        'Rejected'    => ['bg' => '#FEE2E2', 'text' => '#B91C1C', 'label' => 'Rejected'],
+        'In Progress' => ['bg' => '#FFEDD5', 'text' => '#C2410C', 'label' => 'In Progress'],
+    ];
+    return $map[$status] ?? ['bg' => '#F3F4F6', 'text' => '#4B5563', 'label' => $status];
+}
 
-    <!-- Search and Filter Bar -->
-    <div class="mb-6 bg-[#eefff2] rounded-lg shadow p-4">
-        <form action="/brgy-waste-app-v3/public/admin/reports" method="GET" class="flex gap-4 items-end">
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Search Reports</label>
-                <input type="text" name="search" placeholder="Search by description, reporter name, or email..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-            <div class="w-48">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
-                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                    <option value="">All Statuses</option>
-                    <option value="pending" <?php echo ($_GET['status'] ?? '') == 'pending' ? 'selected' : ''; ?>>Pending</option>
-                    <option value="verified" <?php echo ($_GET['status'] ?? '') == 'verified' ? 'selected' : ''; ?>>Verified</option>
-                    <option value="resolved" <?php echo ($_GET['status'] ?? '') == 'resolved' ? 'selected' : ''; ?>>Resolved</option>
-                    <option value="rejected" <?php echo ($_GET['status'] ?? '') == 'rejected' ? 'selected' : ''; ?>>Rejected</option>
-                </select>
-            </div>
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded font-semibold text-sm shadow">Search</button>
-        </form>
-    </div>
-    
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Info</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reporter</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <?php if ($_SESSION['user_role'] == 'secretary'): ?>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    <?php endif; ?>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                <?php foreach ($data['reports'] as $report): ?>
-                    <tr>
-                        <td class="px-6 py-4">
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0 h-16 w-16">
-                                    <a href="/brgy-waste-app-v3/public/uploads/<?php echo $report['photo_path']; ?>" target="_blank">
-                                        <img class="h-16 w-16 rounded object-cover cursor-pointer hover:opacity-75" src="/brgy-waste-app-v3/public/uploads/<?php echo $report['photo_path']; ?>" alt="">
-                                    </a>
-                                </div>
-                                <div class="ml-4 w-48">
-                                    <div class="text-sm font-medium text-gray-900 border border-gray-100 p-1 rounded bg-gray-50 overflow-hidden text-ellipsis h-12">
-                                        <?php echo htmlspecialchars($report['description']); ?>
-                                    </div>
-                                    <div class="text-xs text-gray-500 mt-1"><?php echo date('M d, Y', strtotime($report['created_at'])); ?></div>
-                                </div>
+// Metric card definition
+$metrics = [
+    'Total'       => ['value' => $status_counts['Total'], 'color' => 'text-slate-900', 'border' => 'border-emerald-500'],
+    'Pending'     => ['value' => $status_counts['Pending'], 'color' => 'text-amber-600', 'border' => 'border-amber-500'],
+    'Verified'    => ['value' => $status_counts['Verified'], 'color' => 'text-emerald-600', 'border' => 'border-emerald-500'],
+    'Rejected'    => ['value' => $status_counts['Rejected'], 'color' => 'text-red-600', 'border' => 'border-red-500'],
+    'In Progress' => ['value' => $status_counts['In Progress'], 'color' => 'text-orange-600', 'border' => 'border-orange-500'],
+    'Resolved'    => ['value' => $status_counts['Resolved'], 'color' => 'text-cyan-600', 'border' => 'border-cyan-500'],
+];
+?>
+
+<div class="min-h-screen bg-[#F8FAFC]">
+    <div class="lg:flex lg:min-h-screen">
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
+
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
+
+            <main class="flex-1 overflow-y-auto">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+
+                    <!-- Page Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div>
+                            <h1 class="text-2xl font-extrabold text-slate-900">Waste Report Management</h1>
+                            <p class="text-sm text-slate-500"><?php echo $status_counts['Total']; ?> total reports</p>
+                        </div>
+                        <a href="/brgy-waste-app-v3/public/admin/export?format=csv" class="inline-flex items-center gap-2 rounded-2xl bg-[#10B981] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-600 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Export
+                        </a>
+                    </div>
+
+                    <!-- Metrics Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                        <?php foreach ($metrics as $label => $metric): ?>
+                            <div class="bg-white rounded-2xl border-2 p-4 text-center shadow-sm transition hover:shadow-md <?php echo $metric['border']; ?>">
+                                <p class="text-2xl font-black <?php echo $metric['color']; ?>"><?php echo $metric['value']; ?></p>
+                                <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 mt-1"><?php echo $label; ?></p>
                             </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($report['name']); ?></div>
-                            <div class="text-xs text-gray-500"><?php echo htmlspecialchars($report['email']); ?></div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($report['location_name'] ?? 'Unknown location'); ?></div>
-                            <div class="text-xs text-gray-500 mt-1"><?php echo $report['latitude']; ?>, <?php echo $report['longitude']; ?></div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <?php 
-                                $statusClass = "bg-yellow-100 text-yellow-800";
-                                if($report['status'] == 'verified') $statusClass = "bg-blue-100 text-blue-800";
-                                if($report['status'] == 'resolved') $statusClass = "bg-green-100 text-green-800";
-                                if($report['status'] == 'rejected') $statusClass = "bg-red-100 text-red-800";
-                            ?>
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo $statusClass; ?>">
-                                <?php echo strtoupper($report['status']); ?>
-                            </span>
-                        </td>
-                        <?php if ($_SESSION['user_role'] == 'secretary'): ?>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <form action="/brgy-waste-app-v3/public/admin/reports" method="POST" class="inline">
-                                <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                <?php if ($report['status'] == 'pending'): ?>
-                                    <button type="button" onclick="promptAction(<?php echo $report['id']; ?>, 'verify')" class="text-blue-600 hover:text-blue-900 mr-2">Verify</button>
-                                    <button type="button" onclick="promptAction(<?php echo $report['id']; ?>, 'reject')" class="text-red-600 hover:text-red-900">Reject</button>
-                                <?php elseif ($report['status'] == 'verified'): ?>
-                                    <button type="button" onclick="promptAction(<?php echo $report['id']; ?>, 'resolve')" class="text-green-600 hover:text-green-900 mr-2">Resolve</button>
-                                    <button type="button" onclick="promptAction(<?php echo $report['id']; ?>, 'reject')" class="text-red-600 hover:text-red-900">Reject</button>
-                                <?php elseif ($report['status'] == 'rejected'): ?>
-                                    <button type="button" onclick="viewFlagReason(<?php echo $report['id']; ?>, '<?php echo htmlspecialchars(addslashes($report['flag_reason'] ?? '')); ?>')" class="text-indigo-600 hover:text-indigo-900">View Reason</button>
-                                <?php endif; ?>
-                            </form>
-                        </td>
-                        <?php endif; ?>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
+                        <?php endforeach; ?>
+                    </div>
 
-<!-- Flag Reason Modal -->
-<div id="reasonModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Rejection Reason</h3>
-        </div>
-        <div class="p-6">
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p id="reasonContent" class="text-red-700 text-sm leading-relaxed"></p>
-            </div>
-        </div>
-        <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
-            <button onclick="closeReasonModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md font-medium text-sm">
-                Close
-            </button>
-        </div>
-    </div>
-</div>
-<div id="flagModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Flag Report as Invalid</h3>
-            <p class="text-sm text-gray-600 mt-1">Please select a reason for flagging this report</p>
-        </div>
-        <form id="flagForm" action="/brgy-waste-app-v3/public/admin/reports" method="POST" class="p-6 space-y-4">
-            <input type="hidden" id="flag_report_id" name="report_id">
-            <input type="hidden" name="action" value="reject">
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Flag Reason</label>
-                <select id="flagReason" name="remark" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" required>
-                    <option value="">-- Select a reason --</option>
-                    <option value="Vague or Unclear report">Vague or Unclear report</option>
-                    <option value="Duplicated report">Duplicated report</option>
-                    <option value="Inappropriate or Misleading evidence">Inappropriate or Misleading evidence</option>
-                    <option value="Not Waste Related">Not Waste Related</option>
-                    <option value="Spam or Malicious Report">Spam or Malicious Report</option>
-                    <option value="Suspicious User Activity">Suspicious User Activity</option>
-                    <option value="Policy Violation">Policy Violation</option>
-                    <option value="Other">Other (Please specify below)</option>
-                </select>
-            </div>
-            
-            <div id="otherReasonDiv" class="hidden">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Please specify</label>
-                <textarea id="otherReason" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" rows="3" placeholder="Enter your custom reason..."></textarea>
-            </div>
-            
-            <div class="bg-red-50 border border-red-200 rounded p-3">
-                <p class="text-sm text-red-800">⚠️ This report will be marked as rejected and will show with a red status badge in the reports list.</p>
-            </div>
-            
-            <div class="flex gap-3 pt-4">
-                <button type="button" onclick="closeFlagModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
-                    Cancel
-                </button>
-                <button type="submit" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md shadow-sm text-sm font-medium">
-                    Flag Report
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+                    <!-- Search & Filter Bar -->
+                    <div class="flex flex-col sm:flex-row gap-3 items-center justify-between mb-6">
+                        <div class="relative w-full sm:w-80 lg:w-96">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </div>
+                            <input type="text" name="search" id="searchInput" placeholder="Search by ID, resident, category..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" class="w-full rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
+                        </div>
+                        <div class="w-full sm:w-auto">
+                            <select name="status" id="statusFilter" class="w-full sm:w-48 rounded-2xl border border-slate-200 bg-white py-2.5 px-4 text-sm text-slate-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
+                                <option value="">All Status</option>
+                                <option value="Pending" <?php echo ($_GET['status'] ?? '') === 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                                <option value="Verified" <?php echo ($_GET['status'] ?? '') === 'Verified' ? 'selected' : ''; ?>>Verified</option>
+                                <option value="In Progress" <?php echo ($_GET['status'] ?? '') === 'In Progress' ? 'selected' : ''; ?>>In Progress</option>
+                                <option value="Resolved" <?php echo ($_GET['status'] ?? '') === 'Resolved' ? 'selected' : ''; ?>>Resolved</option>
+                                <option value="Rejected" <?php echo ($_GET['status'] ?? '') === 'Rejected' ? 'selected' : ''; ?>>Rejected</option>
+                            </select>
+                        </div>
+                    </div>
 
-<form id="reportForm" action="/brgy-waste-app-v3/public/admin/reports" method="POST" class="hidden">
-    <input type="hidden" id="r_id" name="report_id">
-    <input type="hidden" id="r_action" name="action">
-    <input type="hidden" id="r_remark" name="remark">
-</form>
+                    <!-- Reports Table -->
+                    <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-200 text-sm">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Report ID</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Date</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Resident</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Category</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Qty</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Purok</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Status</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 bg-white">
+                                    <?php if (!empty($reports)): ?>
+                                        <?php foreach ($reports as $report):
+                                            $badge = getStatusBadge($report['status']);
+                                            $reportId = 'WR-' . str_pad($report['id'], 7, '0', STR_PAD_LEFT);
+                                        ?>
+                                        <tr class="hover:bg-slate-50 transition">
+                                            <td class="px-6 py-4 font-mono text-slate-900"><?php echo htmlspecialchars($reportId); ?></td>
+                                            <td class="px-6 py-4 text-slate-500"><?php echo date('M d, Y', strtotime($report['submission_date'])); ?></td>
+                                            <td class="px-6 py-4 text-slate-700"><?php echo htmlspecialchars($report['name'] ?? 'N/A'); ?></td>
+                                            <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($report['waste_category'] ?? 'N/A'); ?></td>
+                                            <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($report['estimated_quantity'] ?? 'N/A'); ?></td>
+                                            <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></td>
+                                            <td class="px-6 py-4">
+                                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold" style="background: <?php echo $badge['bg']; ?>; color: <?php echo $badge['text']; ?>;"><?php echo $badge['label']; ?></span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <a href="/brgy-waste-app-v3/public/admin/reports?view=<?php echo $report['id']; ?>" class="text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1.5 text-sm font-semibold">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                    Review
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="8" class="px-6 py-8 text-center text-slate-500">No reports found.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
 
 <script>
-function viewFlagReason(reportId, reason) {
-    document.getElementById('reasonContent').textContent = reason || 'No reason provided';
-    document.getElementById('reasonModal').classList.remove('hidden');
-}
+    // Auto-submit filter on change
+    document.getElementById('statusFilter')?.addEventListener('change', function() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('status', this.value);
+        window.location.href = url.toString();
+    });
 
-function closeReasonModal() {
-    document.getElementById('reasonModal').classList.add('hidden');
-}
-
-// Close reason modal when escape key is pressed
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeReasonModal();
-    }
-});
-
-// Close reason modal when clicking outside
-document.getElementById('reasonModal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeReasonModal();
-    }
-});
-
-function promptAction(id, action) {
-    if (action === 'reject') {
-        // Open flag modal
-        document.getElementById('flag_report_id').value = id;
-        document.getElementById('flagReason').value = '';
-        document.getElementById('otherReasonDiv').classList.add('hidden');
-        document.getElementById('otherReason').value = '';
-        document.getElementById('flagModal').classList.remove('hidden');
-    } else {
-        // For verify and resolve actions, use simple form submission
-        document.getElementById('r_id').value = id;
-        document.getElementById('r_action').value = action;
-        document.getElementById('r_remark').value = '';
-        document.getElementById('reportForm').submit();
-    }
-}
-
-function closeFlagModal() {
-    document.getElementById('flagModal').classList.add('hidden');
-}
-
-// Handle flag reason selection
-document.getElementById('flagReason')?.addEventListener('change', function() {
-    const otherDiv = document.getElementById('otherReasonDiv');
-    const otherReason = document.getElementById('otherReason');
-    if (this.value === 'Other') {
-        otherDiv.classList.remove('hidden');
-        otherReason.required = true;
-    } else {
-        otherDiv.classList.add('hidden');
-        otherReason.required = false;
-    }
-});
-
-// Close modal when escape key is pressed
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeFlagModal();
-    }
-});
-
-// Close modal when clicking outside
-document.getElementById('flagModal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeFlagModal();
-    }
-});
-
-// Handle form submission for flag modal
-document.getElementById('flagForm')?.addEventListener('submit', function(e) {
-    const reason = document.getElementById('flagReason').value;
-    const otherReason = document.getElementById('otherReason').value;
-    
-    if (!reason) {
-        e.preventDefault();
-        alert('Please select a flag reason');
-        return;
-    }
-    
-    if (reason === 'Other' && !otherReason.trim()) {
-        e.preventDefault();
-        alert('Please specify your custom reason');
-        return;
-    }
-    
-    // If "Other" is selected, use the custom reason
-    if (reason === 'Other') {
-        document.querySelector('input[name="remark"]').value = otherReason;
-    }
-});
+    // Search with enter key or after typing delay
+    const searchInput = document.getElementById('searchInput');
+    let timeout = null;
+    searchInput?.addEventListener('input', function() {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            const url = new URL(window.location.href);
+            if (this.value) {
+                url.searchParams.set('search', this.value);
+            } else {
+                url.searchParams.delete('search');
+            }
+            window.location.href = url.toString();
+        }, 400);
+    });
 </script>
-            </div>
-        </main>
-    </div>
-</div>
+
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

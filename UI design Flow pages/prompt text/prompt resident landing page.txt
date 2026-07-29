@@ -1,0 +1,53 @@
+Build a modern, clean, responsive resident dashboard page for the "Wastewatch" community platform based on the following specifications:
+
+1. Palette & Layout Overview:
+   - Primary Header/Top Banner: Deep dark forest green (#07281E)
+   - Accent Green: Vibrant emerald green (#10B981) for active states and primary CTA buttons
+   - Body Section Background: Light neutral gray (#F8FAFC)
+   - Layout: Fixed left sidebar + main content area with a dark top hero section and light body cards.
+
+2. Sidebar (Fixed Left, Dark Green):
+   - Logo: "Wastewatch" with leaf icon, "RESIDENT PORTAL" sublabel.
+   - Active Menu Item: "Dashboard" (Overview & stats) highlighted with a glowing green pill background.
+   - Inactive Links: "Submit Report", "My Reports", "Collection Schedule", "Announcements", "Notifications" (with red badge count "2"), "Profile".
+   - Footer item: "Logout".
+
+3. Top Hero Section (Dark Forest Green Background):
+   - Left Side (User Profile Info):
+     - Avatar "M" inside a bright teal circle.
+     - Small label "RESIDENT".
+     - Header "Manuel Santos" (h1, bold white text).
+     - Location subtext: "Barangay Dulong Bayan · Zone A · Purok 3".
+     - Action Buttons: 
+       * Primary CTA: "Report Waste Issue" (Emerald green pill button with camera/plus icon).
+       * Secondary CTA: "Announcements" (Dark pill button with bell icon and red badge "2").
+   - Right Side (5 Metric Cards Row):
+     - Semi-transparent dark frosted cards (`bg-white/10` with rounded corners):
+       1. Total Submitted: Icon (document), Number "4", Subtitle "Total Submitted"
+       2. Pending: Icon (clock), Number "1", Subtitle "Pending"
+       3. In Progress: Icon (trending up), Number "1", Subtitle "In Progress"
+       4. Resolved: Icon (check circle), Number "2", Subtitle "Resolved"
+       5. Supported: Icon (shield/thumbs up), Number "3", Subtitle "Supported"
+
+4. Main Body Content (Light Gray Background):
+   - Top Section (2 Column Grid):
+     a) Left Card — Urgent Notice (Dark Green Card):
+        - Top bar: "Urgent" pill badge (red icon + white background) and date "July 22, 2026".
+        - Headline: "Special collection day — July 26, 2026".
+        - Paragraph: "Due to the national holiday, waste collection in Zones A, B, and C is rescheduled to Saturday, July 26. Please place bins at the curb no later than..."
+        - Button: "Read all notices →" (Pill button with right arrow).
+     b) Right Card — Eco Tip (White Card with Border & Shadow):
+        - Header: Mint circular icon with leaf, label "ECO TIP".
+        - Headline: "Segregate before bin day".
+        - Paragraph: "Proper segregation speeds up sorting at the Materials Recovery Facility and boosts barangay compliance scores."
+        - Widget: "Zone A Compliance" progress bar at 84% (teal fill), subtext "Above barangay average (71%)".
+
+   - Bottom Section — Recent Report Activity Table:
+     - Section Header: Title "Recent Report Activity", subtext "Your latest submitted waste reports", and right-aligned link "View All Reports >".
+     - Data Table (White background, light borders, clean padding):
+       Columns: REPORT ID | WASTE CATEGORY | DATE SUBMITTED | STATUS | ACTION
+       Sample Rows:
+       1. `WR-2026-001` (teal text) | Illegal Dumping | Jul 20, 2026 | [Pending Verification - Light Yellow Badge] | View Details >
+       2. `WR-2026-002` | Overflowing Garbage Bin | Jul 18, 2026 | [In Progress - Light Blue/Cyan Badge] | View Details >
+       3. `WR-2026-003` | Uncollected Garbage | Jul 12, 2026 | [Resolved - Light Green Badge] | View Details >
+       4. `WR-2026-004` | Hazardous Waste | Jul 5, 2026 | [Resolved - Light Green Badge] | View Details >

@@ -30,34 +30,33 @@
         <?php endif; ?>
 
         <form action="/brgy-waste-app-v3/public/auth/login" method="POST" class="space-y-4" onsubmit="return validateLoginForm()">
-            <!-- XSS/CSRF Prevention attempt -->
-            <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
+    <input type="hidden" name="csrf_token" value="...">
 
-            <div>
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1.5" for="email">Email Address</label>
-                <input type="email" id="email" name="email" required pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$" title="Please enter a valid email address"
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 placeholder:text-slate-400"
-                    placeholder="you@email.com"
-                    oninput="this.value = this.value.replace(/[^a-zA-Z0-9._%+\-@]/g, '')">
-            </div>
-            
-            <div>
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1.5" for="password">Password</label>
-                <div class="relative">
-                    <input type="password" id="password" name="password" required minlength="8" 
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 pr-10">
-                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors" aria-label="Toggle password visibility">
-                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="pt-2">
-                <button type="submit" class="w-full bg-[#15281f] text-white font-semibold py-2.5 px-4 rounded-lg shadow-md shadow-[#15281f]/20 hover:bg-[#0f1a17] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#15281f]/30 text-[14px] active:scale-[0.98]">
-                    Log In
-                </button>
-            </div>
-        </form>
+    <div>
+        <label class="block text-[13px] font-bold text-[#15281f] mb-1.5" for="username_email">Username or Email</label>
+        <input type="text" id="username_email" name="username_email" required
+            class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 placeholder:text-slate-400"
+            placeholder="Username or Email"
+            oninput="this.value = this.value.replace(/[^a-zA-Z0-9._%+\-@]/g, '')">
+    </div>
+
+    <div>
+        <label class="block text-[13px] font-bold text-[#15281f] mb-1.5" for="password">Password</label>
+        <div class="relative">
+            <input type="password" id="password" name="password" required minlength="8"
+                class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 pr-10">
+            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors" aria-label="Toggle password visibility">
+                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="pt-2">
+        <button type="submit" class="w-full bg-[#15281f] text-white font-semibold py-2.5 px-4 rounded-lg shadow-md shadow-[#15281f]/20 hover:bg-[#0f1a17] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#15281f]/30 text-[14px] active:scale-[0.98]">
+            Log In
+        </button>
+    </div>
+</form>
 
         <div class="mt-8 text-center pt-2">
             <p class="text-[13px] text-slate-500">Don't have an account? 
@@ -89,9 +88,8 @@
 
     // Client-side Sanitization & Validation Form Submission
     function validateLoginForm() {
-        const emailInput = document.getElementById('email');
+        const inputField = document.getElementById('username_email'); // changed from 'email'
         const passwordInput = document.getElementById('password');
-        
         let isValid = true;
 
         // client-side sanitization

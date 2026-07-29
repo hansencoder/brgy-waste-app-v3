@@ -1,0 +1,65 @@
+Build a clean, modern "Profile & Account Settings" page for the "Wastewatch" resident web application based on the following specifications:
+
+1. Color Palette & Structure:
+   - Sidebar: Dark forest green (#07281E) fixed left navigation menu.
+   - Canvas Body: Light neutral off-white background (#F8FAFC).
+   - Top Hero Header: Dark forest green (#07281E) background with a subtle curved wave border transitioning to the light content body.
+   - Accent Colors: Glowing emerald green (#10B981) for active nav links and active toggle switches, bright teal (#0D9488) for avatar box.
+
+2. Navigation Sidebar (Left, Dark Green):
+   - Brand Header: "Wastewatch" logo + leaf icon, sublabel "RESIDENT PORTAL".
+   - Active Menu Item: "Profile" (Account settings) highlighted with a glowing green pill background.
+   - Inactive Links: Dashboard, Submit Report, My Reports, Collection Schedule, Announcements, Notifications (with red "2" badge count), Logout.
+
+3. Top Dark Hero Banner:
+   - Curved organic bottom edge separating the hero from the form body below.
+   - Profile Header Layout:
+     * Avatar: Large square rounded teal card (`#0D9488`) with white letter "M" inside, and a small green status indicator dot at the bottom-right corner.
+     * Sublabel: Small uppercase teal text "PROFILE"
+     * Title: "Manuel Santos" (h1, bold white text)
+     * Location: "Barangay Dulong Bayan · Zone A, Purok 3" (muted green/gray text)
+     * Badges Row:
+       - Green pill badge: "● Active Resident" (light translucent green background)
+       - Muted pill badge: "Registered: Jan 15, 2024" (dark translucent background)
+
+4. Main Form Section (Vertical Card Stack):
+   
+   - Card 1: Personal Information
+     * Container: Crisp white card with rounded-2xl border and soft shadow.
+     * Header: "Personal Information", subtext "Full Name · Position · Contact · Account Status · Date Registered".
+     * Form Fields (Grid):
+       - Row 1: 
+         • "FULL NAME" input: Editable text field with value "Manuel Santos"
+         • "POSITION" input: Disabled/read-only field with value "● Resident — Barangay Dulong Bayan"
+       - Row 2: 
+         • "CONTACT INFORMATION" input: Email text field with value "manuel.santos@email.com"
+         • Subtext below field: Warning icon + text "Changing contact information requires OTP verification." (small amber/orange text)
+       - Row 3 (Metadata Columns):
+         • ACCOUNT STATUS: "Active" (Bold text)
+         • DATE REGISTERED: "Jan 15, 2024" (Bold text)
+         • ZONE / PUROK: "Zone A · Purok 3" (Bold text)
+
+   - Card 2: Change Password
+     * Header: "Change Password"
+     * Form Fields (Vertical Stack):
+       - "CURRENT PASSWORD": Password input field (`••••••••`)
+       - "NEW PASSWORD": Password input field (`••••••••`)
+       - "CONFIRM NEW PASSWORD": Password input field (`••••••••`)
+     * Subtext: "Password must meet the configured policy. A confirmation notification will be sent after the update." (Small light gray text).
+
+   - Card 3: Notification Preferences
+     * Header: "Notification Preferences"
+     * List of Toggle Options:
+       1. "Collection day reminders"
+          - Subtext: "Notified the day before your scheduled pick-up"
+          - Control: Toggle Switch -> ON (Active Green)
+       2. "Barangay announcements"
+          - Subtext: "Receive official notices and urgent alerts"
+          - Control: Toggle Switch -> ON (Active Green)
+       3. "Report status updates"
+          - Subtext: "Track when your reports are reviewed/resolved"
+          - Control: Toggle Switch -> OFF (Gray)
+
+5. Page Action Controls (Bottom Bar):
+   - Primary Action: Large dark forest green button with a checkmark icon and text "Save Changes".
+   - Secondary Action: White outlined pill button with text "Logout".

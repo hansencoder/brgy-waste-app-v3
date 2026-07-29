@@ -1,574 +1,212 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
-<div class="flex h-screen bg-gray-50 overflow-hidden w-full">
-    <!-- Sidebar -->
-    <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
+<?php
+$users = $data['users'] ?? [];
+$tab = $data['tab'] ?? 'resident';
+$search = $data['search'] ?? '';
+$residentCount = $data['resident_count'] ?? 0;
+$staffCount = $data['staff_count'] ?? 0;
 
-    <!-- Main Content Wrapper -->
-    <div class="flex flex-col flex-1 w-0 overflow-hidden">
-        
-        <!-- Top Nav -->
-        <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
-        
-        <!-- Scrollable Content -->
-        <main class="flex-1 relative overflow-y-auto focus:outline-none">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <!-- Header -->
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">Manage Accounts</h1>
-                    <p class="mt-1 text-sm text-gray-600">Review and manage resident registrations</p>
-                </div>
+function getStatusBadge($status) {
+    $map = [
+        'active'      => ['bg' => '#DCFCE7', 'text' => '#15803D', 'label' => 'Active'],
+        'pending'     => ['bg' => '#FEF3C7', 'text' => '#92400E', 'label' => 'Pending'],
+        'suspended'   => ['bg' => '#FEF3C7', 'text' => '#92400E', 'label' => 'Suspended'],
+        'deactivated' => ['bg' => '#FEE2E2', 'text' => '#B91C1C', 'label' => 'Deactivated'],
+    ];
+    return $map[$status] ?? ['bg' => '#F3F4F6', 'text' => '#4B5563', 'label' => $status];
+}
+?>
 
-                <!-- Status Tab Navigation -->
-                <div class=" rounded-lg p-4 mb-8 bg-white inline-flex gap-8">
-                    <?php 
-                        $pending_count = count(array_filter($data['users'], fn($u) => $u['role'] == 'resident' && $u['status'] == 'pending'));
-                        $active_count = count(array_filter($data['users'], fn($u) => $u['role'] == 'resident' && $u['status'] == 'active'));
-                        $deactivated_count = count(array_filter($data['users'], fn($u) => $u['role'] == 'resident' && $u['status'] == 'deactivated'));
-                    ?>
-                    
-                    <!-- Pending Tab -->
-                    <button onclick="filterTab('pending')" class="tab-btn cursor-pointer transition-all font-medium text-gray-700 hover:text-gray-900" data-tab="pending">
-                        <span>Pending <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-yellow-200 text-yellow-800 text-xs font-bold ml-1"><?php echo $pending_count; ?></span></span>
-                    </button>
+<div class="min-h-screen bg-[#F8FAFC]">
+    <div class="lg:flex lg:min-h-screen">
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
-                    <!-- Active Tab -->
-                    <button onclick="filterTab('active')" class="tab-btn cursor-pointer transition-all font-medium text-gray-700 hover:text-gray-900" data-tab="active">
-                        <span>Active <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-200 text-green-800 text-xs font-bold ml-1"><?php echo $active_count; ?></span></span>
-                    </button>
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
 
-                    <!-- Deactivated Tab -->
-                    <button onclick="filterTab('deactivated')" class="tab-btn cursor-pointer transition-all font-medium text-gray-700 hover:text-gray-900" data-tab="deactivated">
-                        <span>Deactivated <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 text-xs font-bold ml-1"><?php echo $deactivated_count; ?></span></span>
-                    </button>
-                </div>
+            <main class="flex-1 overflow-y-auto">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
-                <!-- Table Container -->
-                <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <!-- Pending Table -->
-                    <div id="table-pending" class="table-view">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <?php foreach ($data['users'] as $user):
-                                    if ($user['role'] == 'resident' && $user['status'] == 'pending'): ?>
-                                    <tr class="hover:bg-gray-50 transition-colors" data-user-id="<?php echo $user['id']; ?>" data-user-status="<?php echo $user['status']; ?>">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($user['name']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['email']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['phone_number']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo date('m/d/Y', strtotime($user['created_at'] ?? 'now')); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                            <button onclick="openIdModal('<?php echo htmlspecialchars($user['id_front'] ?? ''); ?>', '<?php echo htmlspecialchars($user['id_back'] ?? ''); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors" title="View IDs">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                                                <span class="text-xs">View IDs</span>
-                                            </button>
-                                            <button onclick="openActionModal('approve', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors" title="Approve">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                                <span class="text-xs">Approve</span>
-                                            </button>
-                                            <button onclick="openActionModal('reject', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors" title="Reject">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                                <span class="text-xs">Reject</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <?php endif;
-                                endforeach; ?>
-                            </tbody>
-                        </table>
+                    <!-- Page Header -->
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-extrabold text-slate-900">User Management</h1>
+                        <p class="text-sm text-slate-500">Manage resident and staff accounts</p>
                     </div>
 
-                    <!-- Active Table -->
-                    <div id="table-active" class="table-view hidden">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Reports</th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <?php foreach ($data['users'] as $user):
-                                    if ($user['role'] == 'resident' && $user['status'] == 'active'): ?>
-                                    <tr class="hover:bg-gray-50 transition-colors" data-user-id="<?php echo $user['id']; ?>" data-user-status="<?php echo $user['status']; ?>">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($user['name']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['email']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['phone_number']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800"><?php echo $user['report_count'] ?? 0; ?></span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800">
-                                                <span class="w-2 h-2 bg-green-600 rounded-full"></span>
-                                                Active
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                            <button onclick="openEditModal(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>', '<?php echo htmlspecialchars(addslashes($user['email'])); ?>', '<?php echo htmlspecialchars(addslashes($user['phone_number'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors" title="Edit">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                                                <span class="text-xs">Edit</span>
-                                            </button>
-                                            <button onclick="openActionModal('deactivate', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#dd0000] hover:bg-[#520000] text-white transition-colors" title="Deactivate">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/></svg>
-                                                <span class="text-xs">Deactivate</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <?php endif;
-                                endforeach; ?>
-                            </tbody>
-                        </table>
+                    <!-- Segmented Control (Tabs) -->
+                    <div class="flex justify-center mb-6">
+                        <div class="inline-flex rounded-full bg-slate-100 p-1 shadow-sm">
+                            <a href="?tab=resident<?php echo $search ? '&search='.urlencode($search) : ''; ?>" 
+                               class="rounded-full px-6 py-2 text-sm font-semibold transition <?php echo $tab === 'resident' ? 'bg-[#10B981] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-200'; ?>">
+                                Resident Accounts <span class="inline-flex items-center justify-center rounded-full bg-white/20 px-2 py-0.5 text-xs ml-1"><?php echo $residentCount; ?></span>
+                            </a>
+                            <a href="?tab=staff<?php echo $search ? '&search='.urlencode($search) : ''; ?>" 
+                               class="rounded-full px-6 py-2 text-sm font-semibold transition <?php echo $tab === 'staff' ? 'bg-[#10B981] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-200'; ?>">
+                                Staff Accounts <span class="inline-flex items-center justify-center rounded-full bg-white/20 px-2 py-0.5 text-xs ml-1"><?php echo $staffCount; ?></span>
+                            </a>
+                        </div>
                     </div>
 
-                    <!-- Deactivated Table -->
-                    <div id="table-deactivated" class="table-view hidden">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <?php foreach ($data['users'] as $user):
-                                    if ($user['role'] == 'resident' && $user['status'] == 'deactivated'): ?>
-                                    <tr class="hover:bg-gray-50 transition-colors" data-user-id="<?php echo $user['id']; ?>" data-user-status="<?php echo $user['status']; ?>">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($user['name']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600"><?php echo htmlspecialchars($user['email']); ?></div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 text-gray-700">
-                                                <span class="w-2 h-2 bg-gray-600 rounded-full"></span>
-                                                Deactivated
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                            <button onclick="openActionModal('reactivate', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors" title="Reactivate">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2-8.83"/></svg>
-                                                <span class="text-xs">Reactivate</span>
-                                            </button>
-                                            <button onclick="openActionModal('remove', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors" title="Remove">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                                                <span class="text-xs">Remove</span>
-                                            </button>
-                                        </td>
+                    <!-- Search Bar -->
+                    <form method="GET" action="" class="max-w-xl mx-auto mb-6">
+                        <input type="hidden" name="tab" value="<?php echo $tab; ?>">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </div>
+                            <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search residents..." class="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
+                        </div>
+                    </form>
+
+                    <!-- Users Table -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-200 text-sm">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Name</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Email</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Contact</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Purok</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Registered</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Reports</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Status</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Actions</th>
                                     </tr>
-                                    <?php endif;
-                                endforeach; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 bg-white">
+                                    <?php if (!empty($users)): ?>
+                                        <?php foreach ($users as $user): 
+                                            $badge = getStatusBadge($user['status']);
+                                            $initials = $user['initials'] ?? '?';
+                                            $reportCount = ($user['role_id'] == 3) ? ($user['report_count'] ?? 0) : '-';
+                                        ?>
+                                        <tr class="hover:bg-slate-50 transition">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">
+                                                        <?php echo htmlspecialchars($initials); ?>
+                                                    </div>
+                                                    <span class="font-semibold text-slate-900"><?php echo htmlspecialchars($user['name']); ?></span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($user['email']); ?></td>
+                                            <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($user['phone_number']); ?></td>
+                                            <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($user['purok_name'] ?? 'N/A'); ?></td>
+                                            <td class="px-6 py-4 text-slate-500"><?php echo date('M d, Y', strtotime($user['created_at'])); ?></td>
+                                            <td class="px-6 py-4 text-center font-bold text-slate-800"><?php echo $reportCount; ?></td>
+                                            <td class="px-6 py-4">
+                                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold" style="background: <?php echo $badge['bg']; ?>; color: <?php echo $badge['text']; ?>;"><?php echo $badge['label']; ?></span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <a href="#" class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">View</a>
+                                                    <?php if ($user['status'] === 'active'): ?>
+                                                        <button onclick="openActionModal('suspend', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">Suspend</button>
+                                                    <?php elseif ($user['status'] === 'suspended'): ?>
+                                                        <button onclick="openActionModal('reactivate', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="text-teal-600 hover:text-teal-700 font-semibold text-sm">Reactivate</button>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="8" class="px-6 py-8 text-center text-slate-500">No accounts found.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
+    </div>
+</div>
 
-<!-- Action Confirmation Modal -->
-<div id="actionModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 animate-fadeIn">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all animate-slideUp">
-        <!-- Modal Header -->
+<!-- Action Modal (same as before) -->
+<div id="actionModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <h2 id="modalTitle" class="text-lg font-bold text-gray-900">Confirm Action</h2>
             <button onclick="closeActionModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
-
-        <!-- Modal Body -->
         <div class="px-6 py-6">
             <p id="modalMessage" class="text-gray-600 text-sm leading-relaxed">Are you sure?</p>
-            
-            <!-- Reason Dropdown (for deactivate) -->
-            <div id="reasonSection" class="hidden mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Deactivation</label>
-                <select id="reasonSelect" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                    <option value="">Select a reason</option>
-                    <option value="inactivity">Inactivity</option>
-                    <option value="user_initiated_request">User-initiated request</option>
-                    <option value="violation_of_terms">Violation of service terms</option>
-                    <option value="suspected_compromise">Suspected compromise</option>
-                    <option value="policy_violation">Policy and compliance violation</option>
-                    <option value="other">Other (please specify)</option>
-                </select>
-                
-                <!-- Custom reason textarea (shows when "Other" is selected) -->
-                <textarea id="otherReasonInput" placeholder="Please explain the reason for deactivation..." class="hidden w-full mt-3 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none" rows="3"></textarea>
-            </div>
         </div>
-
-        <!-- Modal Footer -->
         <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex gap-3">
             <button onclick="closeActionModal()" class="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors">
                 Cancel
             </button>
-            <button onclick="confirmAction()" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors">
-                Confirm
-            </button>
+            <form id="actionForm" action="/brgy-waste-app-v3/public/admin/accounts" method="POST" class="flex-1">
+                <input type="hidden" id="form_user_id" name="user_id">
+                <input type="hidden" id="form_action" name="action">
+                <input type="hidden" id="form_reason" name="reason" value="">
+                <button type="submit" class="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors">
+                    Confirm
+                </button>
+            </form>
         </div>
     </div>
 </div>
-
-<!-- ID Viewer Modal -->
-<div id="idModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-[60] flex items-center justify-center p-4 animate-fadeIn">
-    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full transform transition-all animate-slideUp overflow-hidden flex flex-col max-h-[90vh]">
-        <!-- Modal Header -->
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between shrink-0">
-            <h2 class="text-lg font-bold text-gray-900">Resident Valid IDs</h2>
-            <button onclick="closeIdModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="px-6 py-6 overflow-y-auto w-full bg-gray-50 flex-1">
-            <div class="space-y-6">
-                <!-- Front Side -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                        Front Side
-                    </h3>
-                    <div class="w-full bg-gray-100 rounded-lg flex items-center justify-center min-h-[200px] overflow-hidden">
-                        <img id="idFrontImg" src="" alt="Front ID" class="max-w-full max-h-full object-contain hidden">
-                        <span id="idFrontEmpty" class="text-xs text-gray-400 font-medium hidden">No image uploaded</span>
-                    </div>
-                </div>
-
-                <!-- Back Side -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                        Back Side
-                    </h3>
-                    <div class="w-full bg-gray-100 rounded-lg flex items-center justify-center min-h-[200px] overflow-hidden">
-                        <img id="idBackImg" src="" alt="Back ID" class="max-w-full max-h-full object-contain hidden">
-                        <span id="idBackEmpty" class="text-xs text-gray-400 font-medium hidden">No image uploaded</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Modal -->
-<div id="editModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 animate-fadeIn">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all animate-slideUp">
-        <!-- Modal Header -->
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <h2 class="text-lg font-bold text-gray-900">Edit Account</h2>
-            <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </div>
-
-        <!-- Modal Body -->
-        <form id="editForm" class="px-6 py-6 space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
-                <input id="editName" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Full Name">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                <input id="editEmail" type="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Email">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Contact Number</label>
-                <input id="editContact" type="tel" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Contact Number">
-            </div>
-        </form>
-
-        <!-- Modal Footer -->
-        <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex gap-3">
-            <button onclick="closeEditModal()" class="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors">
-                Cancel
-            </button>
-            <button onclick="saveEditForm()" class="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors">
-                Save Changes
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Success Toast -->
-<div id="successToast" class="fixed bottom-6 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden animate-slideUp">
-    <div class="flex items-center gap-3">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span id="toastMessage">Action completed successfully!</span>
-    </div>
-</div>
-
-<!-- Hidden form for backend submissions -->
-<form id="actionForm" action="/brgy-waste-app-v3/public/admin/accounts" method="POST" class="hidden">
-    <input type="hidden" id="form_user_id" name="user_id">
-    <input type="hidden" id="form_action" name="action">
-    <input type="hidden" id="form_reason" name="reason" value="">
-</form>
-
-<style>
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideUp {
-    from { 
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to { 
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-fadeIn {
-    animation: fadeIn 0.2s ease-out;
-}
-
-.animate-slideUp {
-    animation: slideUp 0.3s ease-out;
-}
-</style>
 
 <script>
 let currentAction = null;
 let currentUserId = null;
-let currentUserName = null;
 
-// ID Viewer Modal functions
-function openIdModal(idFrontUrl, idBackUrl) {
-    const modal = document.getElementById('idModal');
-    
-    // Front Image
-    const frontImg = document.getElementById('idFrontImg');
-    const frontEmpty = document.getElementById('idFrontEmpty');
-    if (idFrontUrl && idFrontUrl.trim() !== '') {
-        frontImg.src = '/brgy-waste-app-v3/public' + idFrontUrl;
-        frontImg.classList.remove('hidden');
-        frontEmpty.classList.add('hidden');
-    } else {
-        frontImg.src = '';
-        frontImg.classList.add('hidden');
-        frontEmpty.classList.remove('hidden');
-    }
-
-    // Back Image
-    const backImg = document.getElementById('idBackImg');
-    const backEmpty = document.getElementById('idBackEmpty');
-    if (idBackUrl && idBackUrl.trim() !== '') {
-        backImg.src = '/brgy-waste-app-v3/public' + idBackUrl;
-        backImg.classList.remove('hidden');
-        backEmpty.classList.add('hidden');
-    } else {
-        backImg.src = '';
-        backImg.classList.add('hidden');
-        backEmpty.classList.remove('hidden');
-    }
-
-    modal.classList.remove('hidden');
-}
-
-function closeIdModal() {
-    document.getElementById('idModal').classList.add('hidden');
-}
-
-// Tab filtering
-function filterTab(tab) {
-    // Hide all tables
-    document.querySelectorAll('.table-view').forEach(el => el.classList.add('hidden'));
-    
-    // Show selected table
-    const selectedTable = document.getElementById('table-' + tab);
-    if (selectedTable) {
-        selectedTable.classList.remove('hidden');
-    }
-
-    // Update tab styling
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('border-b-2', 'border-blue-600', 'text-blue-700');
-    });
-    document.querySelector(`[data-tab="${tab}"]`)?.classList.add('border-b-2', 'border-blue-600', 'text-blue-700');
-}
-
-// Open action modal
 function openActionModal(action, userId, userName) {
     currentAction = action;
     currentUserId = userId;
-    currentUserName = userName;
 
     const titles = {
-        'approve': 'Approve Account',
-        'reject': 'Reject Account',
-        'deactivate': 'Deactivate Account',
+        'suspend': 'Suspend Account',
         'reactivate': 'Reactivate Account',
+        'deactivate': 'Deactivate Account',
         'remove': 'Remove Account'
     };
 
     const messages = {
-        'approve': `Are you sure you want to approve <strong>${userName}</strong>?`,
-        'reject': `Are you sure you want to reject <strong>${userName}</strong>?`,
-        'deactivate': `Are you sure you want to deactivate <strong>${userName}</strong>?`,
+        'suspend': `Are you sure you want to suspend <strong>${userName}</strong>?`,
         'reactivate': `Are you sure you want to reactivate <strong>${userName}</strong>?`,
+        'deactivate': `Are you sure you want to deactivate <strong>${userName}</strong>?`,
         'remove': `Are you sure you want to permanently remove <strong>${userName}</strong>? This cannot be undone.`
     };
 
-    document.getElementById('modalTitle').textContent = titles[action];
-    document.getElementById('modalMessage').innerHTML = messages[action];
-
-    // Show reason dropdown for deactivate only
-    const reasonSection = document.getElementById('reasonSection');
-    const reasonSelect = document.getElementById('reasonSelect');
-    const otherReasonInput = document.getElementById('otherReasonInput');
-    
-    if (action === 'deactivate') {
-        reasonSection.classList.remove('hidden');
-        reasonSelect.value = '';
-        otherReasonInput.classList.add('hidden');
-        otherReasonInput.value = '';
-    } else {
-        reasonSection.classList.add('hidden');
-        reasonSelect.value = '';
-        otherReasonInput.classList.add('hidden');
-        otherReasonInput.value = '';
-    }
-
+    document.getElementById('modalTitle').textContent = titles[action] || 'Confirm Action';
+    document.getElementById('modalMessage').innerHTML = messages[action] || 'Are you sure?';
     document.getElementById('actionModal').classList.remove('hidden');
 }
 
-// Close action modal
 function closeActionModal() {
     document.getElementById('actionModal').classList.add('hidden');
     currentAction = null;
     currentUserId = null;
 }
 
-// Confirm action
-function confirmAction() {
-    if (!currentAction || !currentUserId) return;
-
+// When form is submitted, set the hidden fields
+document.getElementById('actionForm')?.addEventListener('submit', function(e) {
+    if (!currentUserId || !currentAction) {
+        e.preventDefault();
+        return;
+    }
     document.getElementById('form_user_id').value = currentUserId;
     document.getElementById('form_action').value = currentAction;
-    
-    // Get reason from dropdown (deactivate only)
-    let reason = '';
-    if (currentAction === 'deactivate') {
-        const reasonSelect = document.getElementById('reasonSelect');
-        reason = reasonSelect.value;
-        
-        // If "other" is selected, get the custom reason from textarea
-        if (reason === 'other') {
-            const otherReason = document.getElementById('otherReasonInput').value.trim();
-            reason = otherReason ? `other: ${otherReason}` : '';
-        }
-    }
-    
-    document.getElementById('form_reason').value = reason;
-
-    // Submit form
-    document.getElementById('actionForm').submit();
-}
-
-// Edit modal
-function openEditModal(userId, name, email, contact) {
-    currentUserId = userId;
-    document.getElementById('editName').value = name;
-    document.getElementById('editEmail').value = email;
-    document.getElementById('editContact').value = contact;
-    document.getElementById('editModal').classList.remove('hidden');
-}
-
-function closeEditModal() {
-    document.getElementById('editModal').classList.add('hidden');
-    currentUserId = null;
-}
-
-function saveEditForm() {
-    // This would typically send data via AJAX to backend
-    showSuccessToast('Account updated successfully!');
-    closeEditModal();
-}
-
-// Success toast
-function showSuccessToast(message) {
-    const toast = document.getElementById('successToast');
-    document.getElementById('toastMessage').textContent = message;
-    toast.classList.remove('hidden');
-    
-    setTimeout(() => {
-        toast.classList.add('hidden');
-    }, 3000);
-}
-
-// Close modals with Escape key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeActionModal();
-        closeEditModal();
-        closeIdModal();
-    }
+    // You can add reason input if needed
 });
 
-// Close modals when clicking outside
-document.getElementById('actionModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'actionModal') closeActionModal();
+// Close modal on overlay click
+document.getElementById('actionModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeActionModal();
 });
 
-document.getElementById('editModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'editModal') closeEditModal();
-});
-
-document.getElementById('idModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'idModal') closeIdModal();
-});
-
-// Set default tab to pending on load
-window.addEventListener('load', () => {
-    filterTab('pending');
-});
-
-// Handle reason dropdown change
-document.getElementById('reasonSelect')?.addEventListener('change', (e) => {
-    const otherReasonInput = document.getElementById('otherReasonInput');
-    if (e.target.value === 'other') {
-        otherReasonInput.classList.remove('hidden');
-        otherReasonInput.focus();
-    } else {
-        otherReasonInput.classList.add('hidden');
-        otherReasonInput.value = '';
-    }
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeActionModal();
 });
 </script>
-            </div>
-        </main>
-    </div>
-</div>
+
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

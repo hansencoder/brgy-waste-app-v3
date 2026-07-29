@@ -12,10 +12,13 @@ class Notification {
     public function getUserNotifications($userId, $limit = 10) {
         $this->db->query("
             SELECT n.*, 
-                   r.id as report_id, r.status as report_status,
-                   a.id as announcement_id, a.title as announcement_title
+                   r.id as report_id, 
+                   rs.status_name as report_status,
+                   a.id as announcement_id, 
+                   a.title as announcement_title
             FROM notifications n
             LEFT JOIN reports r ON n.report_id = r.id
+            LEFT JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN announcements a ON n.announcement_id = a.id
             WHERE n.user_id = :user_id OR n.send_to_all = TRUE
             ORDER BY n.created_at DESC
@@ -193,7 +196,7 @@ class Notification {
         if (!$report) return false;
 
         // Get all admin IDs (secretary and captain)
-        $this->db->query("SELECT id FROM users WHERE role IN ('secretary', 'captain')");
+        $this->db->query("SELECT id FROM users WHERE role_id IN (1, 2)"); // Admin and Supervisor
         $admins = $this->db->resultSet();
 
         // Create notification for each admin

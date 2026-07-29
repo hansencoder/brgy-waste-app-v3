@@ -1,0 +1,80 @@
+Build a clean, high-precision "Collection Schedule Management" page for the "Wastewatch" Administrator Portal using React, Tailwind CSS, and Lucide icons based on the following specifications:
+
+1. Layout & Sticky Architecture:
+   - Overall Wrapper: `flex min-h-screen bg-[#F8FAFC]`
+   - Sidebar Wrapper: `sticky top-0 h-screen w-64 flex-shrink-0 bg-[#07281E] z-30 overflow-y-auto`
+   - Main Content Wrapper: `flex-1 min-w-0 p-6 md:p-8 space-y-6 overflow-y-auto max-w-6xl mx-auto`
+
+2. Navigation Sidebar (Sticky Left Column, Dark Green #07281E):
+   - Brand Header:
+     - Logo: Shield outline icon with leaf inside + "Wastewatch" (white bold) and "ADMIN PORTAL" (muted teal sublabel).
+   - Navigation Menu Items:
+     1. "Dashboard", "Reports" (with red badge "2"), "User Mgmt", "GIS Monitor"
+     2. "Schedule" -> Active State: Glowing emerald green pill background (#10B981) with bold white text.
+     3. "Announcements", "Analytics", "Settings", "Audit Logs", "Profile".
+   - Profile Footer (Pinned to bottom):
+     - Avatar "MS" inside a green circle.
+     - Name: "Maria Santos" (Administrator) with exit icon "Logout".
+
+3. Page Header & Top Action Controls:
+   - Left Header:
+     - Title: "Collection Schedule Management" (h1, bold dark text)
+     - Subtitle: "Create, edit, and publish official collection schedules" (muted text)
+   - Right Controls (`flex items-center gap-3`):
+     - View Switcher Toggle (Segmented Pill Container `#F1F5F9`):
+       * Active View: "Cards" (Solid emerald green pill `#10B981`, grid/layout icon, white text)
+       * Inactive View: "Calendar" (Transparent background, calendar icon, dark text)
+     - Primary Button: "+ Add Schedule" (Solid emerald green `#10B981`, rounded-xl, white bold text).
+
+4. Main Canvas Content Stack:
+
+   a) Schedule Item Cards Stack (`space-y-4`):
+      - Card Style: White background (`bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex items-center justify-between`)
+
+      - Card 1 — Monday (Biodegradable):
+        * Left Side: Soft green square icon box (`bg-emerald-100 text-emerald-600 p-3 rounded-xl flex items-center justify-center`) with a leaf icon.
+        * Content:
+          • Header Row: "Monday" (Bold text) + Badge: "Biodegradable" (Soft green `#DCFCE7` bg, dark green text `#15803D`)
+          • Details Subtext: "6:00 AM – 10:00 AM · Purok 1, 2, 3" (Muted gray text)
+        * Right Actions: Edit button (square light green button `#F0FDF4` with pencil icon) + Delete button (square light red button `#FEF2F2` with trash icon).
+
+      - Card 2 — Wednesday (Non-Biodegradable):
+        * Left Side: Soft blue square icon box (`bg-sky-100 text-sky-600 p-3 rounded-xl`) with a recycle icon.
+        * Content:
+          • Header Row: "Wednesday" (Bold text) + Badge: "Non-Biodegradable" (Soft blue `#E0F2FE` bg, dark blue text `#0284C7`)
+          • Details Subtext: "6:00 AM – 10:00 AM · Purok 4, 5, 6"
+        * Right Actions: Edit icon button + Delete icon button.
+
+      - Card 3 — Friday (Residual Waste):
+        * Left Side: Soft orange square icon box (`bg-amber-100 text-amber-600 p-3 rounded-xl`) with a waste bin icon.
+        * Content:
+          • Header Row: "Friday" (Bold text) + Badge: "Residual Waste" (Soft orange `#FFEDD5` bg, dark orange text `#C2410C`)
+          • Details Subtext: "6:00 AM – 12:00 PM · All Puroks"
+        * Right Actions: Edit icon button + Delete icon button.
+
+      - Card 4 — 1st Saturday Monthly (Special / Hazardous):
+        * Left Side: Soft purple square icon box (`bg-purple-100 text-purple-600 p-3 rounded-xl`) with a warning triangle icon.
+        * Content:
+          • Header Row: "1st Saturday (Monthly)" (Bold text) + Badge: "Special / Hazardous" (Soft purple `#F3E8FF` bg, purple text `#7E22CE`)
+          • Details Subtext: "7:00 AM – 11:00 AM · All Puroks"
+        * Right Actions: Edit icon button + Delete icon button.
+
+   b) Special Collection Notice Banner (Bottom Section):
+      - Container: Light amber card background (`bg-amber-50/80 rounded-2xl border border-amber-200 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4`)
+      - Left Info Box (`flex items-center gap-3`):
+        * Alert Icon: Warning triangle icon in orange/amber (`text-amber-600 bg-amber-100 p-2 rounded-lg`).
+        * Text:
+          • Title: "Special Collection Notice" (Bold dark amber text `#92400E`)
+          • Subtext: "Publish an update for collection postponements or reschedules."
+      - Right Action: Button "+ Publish Notice" (Solid dark amber/orange button `#D97706`, white bold text, rounded-xl).
+
+5. Responsive Design Rules:
+   - Mobile (< 640px):
+     * Sticky sidebar unmounts into a top navigation bar with a hamburger drawer button.
+     * Header layout stacks vertically: Page title on top, view toggle and "+ Add Schedule" button full-width at bottom.
+     * Schedule cards stack contents vertically: Left icon + info block on top, edit/delete actions aligned right or full-width bottom.
+     * Special Notice Banner stacks title and "+ Publish Notice" button full-width.
+   - Tablet (640px – 1024px):
+     * Sidebar collapses into an icon-only 64px vertical rail (`sticky top-0 h-screen w-16`).
+   - Desktop (> 1024px):
+     * Full sticky sidebar (`sticky top-0 h-screen w-64`) with spacious schedule item rows.

@@ -1,388 +1,403 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
-<div class="flex-grow flex flex-col items-center justify-center py-10 px-4 w-full min-h-screen" style="background-color: #f6f7fa;">
 
-    <!-- Main Card -->
-    <div class="bg-white rounded-[14px] p-8 max-w-[480px] w-full shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100">
-    
-        <?php if (!empty($data['success'])): ?>
-            <div class="flex flex-col items-center text-center py-6">
-                <!-- Icon -->
-                <div class="w-[60px] h-[60px] bg-[#eefaf2] rounded-full flex items-center justify-center mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account · WasteWatch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #FFFFFF; }
+        .gradient-text { background: linear-gradient(135deg, #16C47F, #1ED760); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .feature-icon { background: rgba(22, 196, 127, 0.12); }
+        .segmented-control { background: rgba(0, 0, 0, 0.04); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .input-field { transition: all 0.2s ease; }
+        .input-field:focus { border-color: #16C47F; box-shadow: 0 0 0 4px rgba(22, 196, 127, 0.15); }
+        .btn-primary { transition: all 0.25s ease; background: #8D988D; }
+        .btn-primary:hover { background: #16C47F; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(22, 196, 127, 0.30); }
+        .btn-account { transition: all 0.2s ease; }
+        .btn-account.active { background: #F0FDF4; border-color: #16C47F; color: #16C47F; }
+        .btn-account.inactive { background: #FFFFFF; border-color: #E6E6E6; color: #72807A; }
+        .btn-account.inactive:hover { border-color: #B0B0B0; background: #FAFAFA; }
+        .password-rule { transition: all 0.2s ease; }
+        .password-rule.valid { color: #16C47F; }
+        .password-rule.invalid { color: #EF4444; }
+        .social-btn { transition: all 0.2s ease; }
+        .social-btn:hover { background: #F5F5F5; border-color: #D0D0D0; }
+    </style>
+</head>
+<body>
+
+<div class="min-h-screen w-full flex flex-col lg:flex-row overflow-hidden bg-white">
+
+    <!-- ============================================================ -->
+    <!-- LEFT PANEL – 50% HERO                                        -->
+    <!-- ============================================================ -->
+    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#071E14] to-[#0C2B1D] relative flex-col justify-between p-12 lg:p-16" style="min-height: 100vh;">
+
+        <!-- Radial Glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#16C47F]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Logo -->
+        <div class="relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-full bg-[#16C47F] flex items-center justify-center shadow-lg shadow-[#16C47F]/30">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
                 </div>
-                
-                <h2 class="text-[20px] font-bold text-[#15281f] mb-2 tracking-tight">Registration Submitted</h2>
-                <p class="text-[14px] text-slate-500 mb-8 leading-relaxed max-w-[90%] mx-auto font-medium">
-                    Your account is pending approval by the Barangay Secretary. You will receive a notification once approved.
-                </p>
-                
-                <a href="/brgy-waste-app-v3/public/auth" class="w-full inline-block bg-[#15281f] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#15281f]/20 hover:bg-[#0f1a17] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#15281f]/30 text-[14px] active:scale-[0.98]">
-                    Go to Login
+                <div>
+                    <h1 class="text-white font-extrabold text-2xl tracking-tight leading-none">WasteWatch</h1>
+                    <p class="text-[#16C47F] text-[10px] font-bold tracking-[0.2em] uppercase">Smart Waste Solutions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 flex-1 flex flex-col justify-center max-w-md">
+            <h2 class="text-white text-[44px] font-extrabold leading-[1.08] tracking-tight">
+                Smarter cities
+                <br>
+                <span class="gradient-text">start here.</span>
+            </h2>
+
+            <p class="text-white/60 text-base mt-5 leading-relaxed max-w-sm font-medium">
+                Join thousands of municipalities and residents tracking, reporting, and reducing waste in real time.
+            </p>
+
+            <!-- Features -->
+            <div class="mt-10 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg feature-icon flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-[#16C47F]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                        </svg>
+                    </div>
+                    <span class="text-white/80 text-sm font-medium">Real-time waste mapping & heatmaps</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg feature-icon flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-[#16C47F]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                    </div>
+                    <span class="text-white/80 text-sm font-medium">Instant community alert notifications</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg feature-icon flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-[#16C47F]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <span class="text-white/80 text-sm font-medium">Enterprise-grade data security</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg feature-icon flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-[#16C47F]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <span class="text-white/80 text-sm font-medium">Advanced recovery analytics</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="relative z-10 text-white/20 text-xs font-medium tracking-wider">
+            © <?php echo date('Y'); ?> WasteWatch · Smart Waste Solutions
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- RIGHT PANEL – 50% REGISTRATION FORM                          -->
+    <!-- ============================================================ -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-10 bg-white overflow-y-auto" style="min-height: 100vh;">
+        <div class="w-full max-w-[480px] py-8 lg:py-0">
+
+            <!-- Segmented Control -->
+            <div class="flex items-center p-1 segmented-control rounded-full w-fit mx-auto shadow-sm border border-white/20">
+                <a href="/brgy-waste-app-v3/public/auth" class="px-6 py-2.5 rounded-full text-sm font-semibold text-[#1D2A23]/60 hover:text-[#1D2A23] transition-all duration-200">
+                    Sign In
+                </a>
+                <a href="/brgy-waste-app-v3/public/auth/register" class="px-6 py-2.5 rounded-full text-sm font-semibold bg-[#16C47F] text-white shadow-lg shadow-[#16C47F]/25">
+                    Create Account
                 </a>
             </div>
-        <?php else: ?>
-        <div class="mb-6 -mt-1">
-            <a href="/brgy-waste-app-v3/public/" class="text-[13px] font-medium text-slate-400 hover:text-slate-600 flex items-center gap-1.5 transition-colors w-fit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                Back
-            </a>
-        </div>
 
-        <div class="flex flex-col items-center mb-7">
-            <!-- Icon -->
-            <div class="w-14 h-14 bg-[#15281f] rounded-2xl flex items-center justify-center mb-4 shadow-md shadow-[#15281f]/20">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <!-- Title -->
+            <div class="text-center mt-10">
+                <h2 class="text-[28px] font-extrabold text-[#1D2A23] tracking-tight">Join WasteWatch</h2>
+                <p class="text-[#72807A] text-sm mt-1.5 font-medium">Create your account today.</p>
             </div>
-            <h2 class="text-[22px] font-bold text-[#15281f] mb-1.5 tracking-tight">Create Account</h2>
-            <p class="text-[14px] text-slate-500 font-medium">Register as a resident of Barangay Dulong Bayan</p>
-        </div>
 
-        <h2 class="text-[22px] font-bold text-[#15281f] mb-6 tracking-tight">Create Your Account</h2>
+            <!-- Error / Success Messages -->
+            <?php if (!empty($data['error'])): ?>
+                <div class="mt-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-3">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+            <?php endif; ?>
 
-        <?php if (!empty($data['error'])): ?>
-            <div class="bg-red-50/80 border border-red-100 text-red-600 px-4 py-3 mb-6 rounded-lg text-sm flex items-center gap-2" role="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <p><?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?></p>
-            </div>
-        <?php endif; ?>
+            <?php if (!empty($data['success'])): ?>
+                <div class="mt-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm flex items-center gap-3">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <?php echo htmlspecialchars($data['success'], ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+            <?php endif; ?>
 
+            <!-- ========================================================== -->
+            <!-- FORM                                                       -->
+            <!-- ========================================================== -->
+            <form action="/brgy-waste-app-v3/public/auth/register" method="POST" class="mt-8 space-y-5" onsubmit="return validateRegisterForm()">
+                <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
 
-        <form action="/brgy-waste-app-v3/public/auth/register" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="return validateRegisterForm()">
-            <!-- CSRF Protection -->
-            <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
+                <!-- ACCOUNT TYPE -->
+                <div>
+                    <label class="block text-sm font-semibold text-[#1D2A23] mb-2">Account Type</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" onclick="selectAccountType('resident')" id="residentBtn" class="btn-account active px-4 py-3 rounded-xl border-2 text-sm font-semibold">
+                            Resident
+                        </button>
+                        <button type="button" onclick="selectAccountType('non-resident')" id="nonresidentBtn" class="btn-account inactive px-4 py-3 rounded-xl border-2 text-sm font-semibold">
+                            Non-Resident
+                        </button>
+                    </div>
+                    <input type="hidden" name="account_type" id="accountType" value="resident">
+                </div>
 
-            <div>
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="name">Full Name <span class="text-red-500">*</span></label>
-                <div class="relative">
+                <!-- FULL NAME -->
+                <div>
+                    <label class="block text-sm font-semibold text-[#1D2A23] mb-1.5">Full Name</label>
                     <input type="text" id="name" name="name" required
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
-                        placeholder="Hans Flores"
-                        oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s\-. ]/g, ''); validateInput(this)">
+                        class="input-field w-full px-4 py-3 rounded-xl border border-[#E6E6E6] outline-none bg-[#FAFAFA] text-[#1D2A23] text-sm placeholder:text-[#B0B0B0]"
+                        placeholder="Maria Santos"
+                        oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s\-.]/g, ''); validateInput(this)">
                 </div>
-            </div>
 
-            <div>
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="address">Complete Address <span class="text-red-500">*</span></label>
-                <input type="text" id="address" name="address" required
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
-                    placeholder="123 Rizal St., Purok 5"
-                    oninput="this.value = this.value.replace(/[<>]/g, ''); validateInput(this)">
-            </div>
+                <!-- USERNAME -->
+                <div>
+                    <label class="block text-sm font-semibold text-[#1D2A23] mb-1.5">Username</label>
+                    <input type="text" id="username" name="username" required
+                        class="input-field w-full px-4 py-3 rounded-xl border border-[#E6E6E6] outline-none bg-[#FAFAFA] text-[#1D2A23] text-sm placeholder:text-[#B0B0B0]"
+                        placeholder="mariasantos"
+                        oninput="this.value = this.value.replace(/[^a-zA-Z0-9_]/g, ''); validateInput(this)">
+                </div>
 
-            <!-- Constraints: 11 digits and follows the standard format. -->
-            <div>
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="phone_number">Mobile Number (09XXXXXXXXX) <span class="text-red-500">*</span></label>
-                <input type="text" id="phone_number" name="phone_number" required pattern="^09\d{9}$" title="Standard format: 09XXXXXXXXX."
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
-                    placeholder="09171234567"
-                    maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateInput(this)">
-            </div>
+                <!-- CONTACT INFORMATION – EMAIL + PHONE -->
+                <div>
+                    <label class="block text-sm font-semibold text-[#1D2A23] mb-1.5">Contact Information</label>
+                    <div class="space-y-3">
+                        <input type="email" id="email" name="email" required
+                            class="input-field w-full px-4 py-3 rounded-xl border border-[#E6E6E6] outline-none bg-[#FAFAFA] text-[#1D2A23] text-sm placeholder:text-[#B0B0B0]"
+                            placeholder="Email address"
+                            oninput="this.value = this.value.replace(/[^a-zA-Z0-9._%+\-@]/g, ''); validateInput(this)">
+                        <input type="text" id="phone_number" name="phone_number" required
+                            class="input-field w-full px-4 py-3 rounded-xl border border-[#E6E6E6] outline-none bg-[#FAFAFA] text-[#1D2A23] text-sm placeholder:text-[#B0B0B0]"
+                            placeholder="Phone number"
+                            maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateInput(this)">
+                    </div>
+                </div>
 
-            <div>
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="email">Email Address <span class="text-red-500">*</span></label>
-                <input type="email" id="email" name="email" required pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700"
-                    placeholder="you@email.com"
-                    oninput="this.value = this.value.replace(/[^a-zA-Z0-9._%+\-@]/g, ''); validateInput(this)">
-            </div>
+                <!-- PASSWORD -->
+                <div>
+                    <label class="block text-sm font-semibold text-[#1D2A23] mb-1.5">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password" required
+                            class="input-field w-full px-4 py-3 pr-12 rounded-xl border border-[#E6E6E6] outline-none bg-[#FAFAFA] text-[#1D2A23] text-sm placeholder:text-[#B0B0B0]"
+                            placeholder="••••••••••••"
+                            oninput="checkPasswordStrength(this.value); validateInput(this)">
+                        <button type="button" onclick="togglePassword('password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#B0B0B0] hover:text-[#72807A] transition-colors p-1">
+                            <svg class="w-5 h-5 eye-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <svg class="w-5 h-5 eye-off-icon hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                            </svg>
+                        </button>
+                    </div>
 
-            <!-- Valid ID Attachment -->
-            <div class="pt-1">
-                <label class="block text-[13px] font-bold text-[#15281f] mb-2">Valid ID Attachment (Front & Back) <span class="text-red-500">*</span></label>
-                <div class="grid grid-cols-2 gap-3">
-                    <!-- Front ID -->
-                    <div>
-                        <div id="front_container" class="relative w-full h-28 rounded-lg border-2 border-dashed border-gray-300 bg-[#fcfcfd] flex flex-col items-center justify-center hover:border-[#15281f] hover:bg-[#f6f7fa] transition-colors overflow-hidden group">
-                            
-                            <input type="file" id="id_front" name="id_front" accept="image/*" capture="environment" class="hidden" onchange="previewImage(this, 'preview_front', 'icon_front')">
-                            
-                            <div id="icon_front" class="flex flex-col items-center transition-opacity duration-300 z-10 w-full px-2">
-                                <span class="text-[12px] font-bold text-gray-600 mb-2">Front ID</span>
-                                <div class="flex w-full gap-1.5 justify-center">
-                                    <button type="button" onclick="openWebcam('front')" class="flex items-center justify-center flex-1 gap-1 bg-[#15281f] text-white py-1.5 rounded cursor-pointer text-[10px] font-bold hover:bg-[#0f1a17] transition-colors focus:outline-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                                        Webcam
-                                    </button>
-                                    <label for="id_front" class="flex items-center justify-center flex-1 gap-1 bg-gray-200 text-[#15281f] py-1.5 rounded cursor-pointer text-[10px] font-bold hover:bg-gray-300 transition-colors m-0 text-center text-nowrap">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                                        Browse
-                                    </label>
-                                </div>
+                    <!-- Password Strength Indicator -->
+                    <div id="password-rules-container" class="mt-3 hidden">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="flex-1 h-1.5 bg-[#E6E6E6] rounded-full overflow-hidden">
+                                <div id="pwd-strength-bar" class="h-full bg-red-400 w-0 transition-all duration-300"></div>
                             </div>
-                            
-                            <img id="preview_front" class="hidden absolute inset-0 w-full h-full object-cover z-0" src="" alt="Front ID Preview">
-                            <button type="button" id="remove_front" onclick="removeImage('front')" class="hidden absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 z-20 hover:bg-red-600 transition-colors shadow-sm focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                            </button>
+                            <span id="pwd-strength-text" class="text-red-500 font-bold min-w-[32px] text-right text-xs">Weak</span>
                         </div>
-                    </div>
-                    
-                    <!-- Back ID -->
-                    <div>
-                        <div id="back_container" class="relative w-full h-28 rounded-lg border-2 border-dashed border-gray-300 bg-[#fcfcfd] flex flex-col items-center justify-center hover:border-[#15281f] hover:bg-[#f6f7fa] transition-colors overflow-hidden group">
-                            
-                            <input type="file" id="id_back" name="id_back" accept="image/*" capture="environment" class="hidden" onchange="previewImage(this, 'preview_back', 'icon_back')">
-                            
-                            <div id="icon_back" class="flex flex-col items-center transition-opacity duration-300 z-10 w-full px-2">
-                                <span class="text-[12px] font-bold text-gray-600 mb-2">Back ID</span>
-                                <div class="flex w-full gap-1.5 justify-center">
-                                    <button type="button" onclick="openWebcam('back')" class="flex items-center justify-center flex-1 gap-1 bg-[#15281f] text-white py-1.5 rounded cursor-pointer text-[10px] font-bold hover:bg-[#0f1a17] transition-colors focus:outline-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                                        Webcam
-                                    </button>
-                                    <label for="id_back" class="flex items-center justify-center flex-1 gap-1 bg-gray-200 text-[#15281f] py-1.5 rounded cursor-pointer text-[10px] font-bold hover:bg-gray-300 transition-colors m-0 text-center text-nowrap">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                                        Browse
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <img id="preview_back" class="hidden absolute inset-0 w-full h-full object-cover z-0" src="" alt="Back ID Preview">
-                            <button type="button" id="remove_back" onclick="removeImage('back')" class="hidden absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 z-20 hover:bg-red-600 transition-colors shadow-sm focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                            </button>
-                        </div>
+                        <ul class="space-y-1.5 text-xs font-medium">
+                            <li id="rule-upper" class="password-rule invalid flex items-center gap-2 text-[#EF4444]">
+                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                At least one uppercase letter
+                            </li>
+                            <li id="rule-lower" class="password-rule invalid flex items-center gap-2 text-[#EF4444]">
+                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                At least one lowercase letter
+                            </li>
+                            <li id="rule-number" class="password-rule invalid flex items-center gap-2 text-[#EF4444]">
+                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                At least one number & one special character
+                            </li>
+                            <li id="rule-length" class="password-rule invalid flex items-center gap-2 text-[#EF4444]">
+                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                At least 8 characters
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </div>
 
-            <div>
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="password">Password <span class="text-red-500">*</span></label>
-                <div class="relative">
-                    <input type="password" id="password" name="password" required
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 pr-10"
-                        placeholder="••••••••••••"
-                        oninput="checkPasswordStrength(this.value); validateInput(this)">
-                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors" tabindex="-1" aria-label="Toggle password visibility">
-                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
-                </div>
-                
-                <!-- Password Strength & Rules -->
-                <div id="password-rules-container" class="mt-3 text-[11px] hidden transition-all duration-300">
-                    <div class="flex items-center gap-1.5 mb-2">  
-                        <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                            <div id="pwd-strength-bar" class="h-full bg-red-400 w-0 transition-all duration-300"></div>
-                        </div>
-                        <span id="pwd-strength-text" class="text-red-500 font-bold min-w-[32px] text-right">Weak</span>
+                <!-- CONFIRM PASSWORD -->
+                <div>
+                    <label class="block text-sm font-semibold text-[#1D2A23] mb-1.5">Confirm Password</label>
+                    <div class="relative">
+                        <input type="password" id="confirm_password" name="confirm_password" required
+                            class="input-field w-full px-4 py-3 pr-12 rounded-xl border border-[#E6E6E6] outline-none bg-[#FAFAFA] text-[#1D2A23] text-sm placeholder:text-[#B0B0B0]"
+                            placeholder="••••••••••••"
+                            oninput="validatePasswordsMatch(); validateInput(this)">
+                        <button type="button" onclick="togglePassword('confirm_password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#B0B0B0] hover:text-[#72807A] transition-colors p-1">
+                            <svg class="w-5 h-5 eye-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <svg class="w-5 h-5 eye-off-icon hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                            </svg>
+                        </button>
                     </div>
-                    
-                    <ul class="space-y-1 text-gray-500 font-medium ml-0.5">
-                        <li id="rule-upper" class="flex items-center gap-1.5 text-red-400"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> At least one uppercase letter</li>
-                        <li id="rule-lower" class="flex items-center gap-1.5 text-red-400"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> At least one lowercase letter</li>
-                        <li id="rule-number" class="flex items-center gap-1.5 text-red-400"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> At least one number & one special char</li>
-                        <li id="rule-length" class="flex items-center gap-1.5 text-red-400"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> At least 8 characters</li>
-                    </ul>
+                    <p id="password-match-error" class="text-red-500 text-xs font-medium mt-1.5 hidden">Passwords do not match.</p>
                 </div>
-            </div>
 
-            <div class="pt-1">
-                <label class="block text-[13px] font-bold text-[#15281f] mb-1" for="confirm_password">Confirm Password <span class="text-red-500">*</span></label>
-                <div class="relative">
-                    <input type="password" id="confirm_password" name="confirm_password" required
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:ring-4 focus:ring-[#15281f]/10 focus:border-[#15281f] outline-none transition-all bg-[#fcfcfd] text-[14px] text-slate-700 pr-10"
-                        placeholder="••••••••••••"
-                        oninput="validatePasswordsMatch(); validateInput(this)">
-                    <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors" tabindex="-1" aria-label="Toggle confirm password visibility">
-                        <svg id="eyeIconConfirm" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
+                <!-- VERIFICATION: "I'm not a robot" -->
+                <div class="flex items-start gap-3 pt-1">
+                    <input type="checkbox" id="captcha" name="captcha" required class="w-4 h-4 mt-0.5 rounded border-[#E6E6E6] text-[#16C47F] focus:ring-[#16C47F] focus:ring-2 focus:ring-offset-0 cursor-pointer">
+                    <label for="captcha" class="text-sm text-[#72807A] font-medium cursor-pointer leading-tight">I'm not a robot</label>
                 </div>
-                <p id="password-match-error" class="text-red-500 text-[11px] font-medium mt-1.5 ml-0.5 hidden">Passwords do not match.</p>
-            </div>
 
-            
-            <div class="pt-2">
-                <button type="submit" id="submitBtn" class="w-full bg-[#15281f] text-white font-semibold py-3 px-4 rounded-lg shadow-md shadow-[#15281f]/20 hover:bg-[#0f1a17] hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-[#15281f]/30 text-[14px] active:scale-[0.98]">
-                    Create Account
+                <!-- TERMS -->
+                <div class="flex items-start gap-3">
+                    <input type="checkbox" id="terms" name="terms" required class="w-4 h-4 mt-0.5 rounded border-[#E6E6E6] text-[#16C47F] focus:ring-[#16C47F] focus:ring-2 focus:ring-offset-0 cursor-pointer">
+                    <label for="terms" class="text-sm text-[#72807A] font-medium cursor-pointer leading-tight">
+                        I agree to the
+                        <a href="#" class="text-[#16C47F] hover:underline font-semibold">Terms of Service</a>
+                        and
+                        <a href="#" class="text-[#16C47F] hover:underline font-semibold">Privacy Policy</a>.
+                    </label>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" id="submitBtn" class="btn-primary w-full text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 text-base shadow-sm group">
+                    <span>Create account</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
                 </button>
-            </div>
-        </form>
 
-        <div class="mt-6 text-center pt-2">
-            <p class="text-[13px] text-slate-500">Already have an account? 
-                <a href="/brgy-waste-app-v3/public/auth" class="text-[#15281f] font-bold hover:underline ml-0.5">Log in</a>
-            </p>
+                <!-- DIVIDER -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-[#E6E6E6]"></div>
+                    </div>
+                    <div class="relative flex justify-center">
+                        <span class="bg-white px-4 text-xs text-[#72807A] font-medium uppercase tracking-wider">or continue with</span>
+                    </div>
+                </div>
+
+                <!-- SOCIAL LOGIN -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="button" class="social-btn flex items-center justify-center gap-2.5 w-full px-4 py-3 rounded-xl border border-[#E6E6E6] bg-white text-sm font-semibold text-[#1D2A23]">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Google
+                    </button>
+                    <button type="button" class="social-btn flex items-center justify-center gap-2.5 w-full px-4 py-3 rounded-xl border border-[#E6E6E6] bg-white text-sm font-semibold text-[#1D2A23]">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#00A4EF" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                            <path fill="#00A4EF" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#00A4EF" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#00A4EF" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Microsoft
+                    </button>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="text-center pt-2">
+                    <p class="text-sm text-[#72807A] font-medium">
+                        Already have an account?
+                        <a href="/brgy-waste-app-v3/public/auth" class="text-[#16C47F] font-semibold hover:underline ml-1">Sign in</a>
+                    </p>
+                </div>
+
+            </form>
         </div>
-        <?php endif; ?>
     </div>
-    
-    <?php if (empty($data['success'])): ?>
-    <div class="mt-8 text-center pb-8 text-[13px] text-slate-500 font-medium">
-        <a href="#" class="hover:text-slate-700 transition-colors">Need help registering?</a>
-    </div>
-    <?php endif; ?>
 </div>
 
-<!-- Webcam Modal -->
-<div id="webcamModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-[14px] p-6 max-w-md w-full shadow-2xl flex flex-col items-center">
-        <h3 class="text-lg font-bold text-[#15281f] mb-4 w-full flex justify-between items-center">
-            Take a Photo
-            <button type="button" onclick="closeWebcam()" class="text-gray-400 hover:text-gray-600 focus:outline-none bg-gray-100 hover:bg-gray-200 rounded-full p-1.5 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </h3>
-        
-        <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden mb-6 shadow-inner">
-            <video id="webcamVideo" autoplay playsinline class="w-full h-full object-cover"></video>
-            <canvas id="webcamCanvas" class="hidden"></canvas>
-        </div>
-        
-        <button type="button" id="captureBtn" class="w-16 h-16 bg-white border-4 border-[#15281f] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors focus:outline-none mb-2" onclick="captureWebcam()">
-            <div class="w-12 h-12 bg-[#15281f] rounded-full"></div>
-        </button>
-        <p class="text-[13px] text-gray-500 font-medium text-center">Ensure your ID is well-lit and clearly visible.</p>
-    </div>
-</div>
-
+<!-- ============================================================ -->
+<!-- JAVASCRIPT                                                    -->
+<!-- ============================================================ -->
 <script>
-    // --- Show/Hide Password Components ---
-    function setupPasswordToggle(toggleId, inputId, iconId) {
-        const toggleBtn = document.getElementById(toggleId);
+    // ============================
+    // Account Type Selector
+    // ============================
+    function selectAccountType(type) {
+        document.getElementById('accountType').value = type;
+        const residentBtn = document.getElementById('residentBtn');
+        const nonresidentBtn = document.getElementById('nonresidentBtn');
+
+        if (type === 'resident') {
+            residentBtn.className = 'btn-account active px-4 py-3 rounded-xl border-2 text-sm font-semibold';
+            nonresidentBtn.className = 'btn-account inactive px-4 py-3 rounded-xl border-2 text-sm font-semibold';
+        } else {
+            nonresidentBtn.className = 'btn-account active px-4 py-3 rounded-xl border-2 text-sm font-semibold';
+            residentBtn.className = 'btn-account inactive px-4 py-3 rounded-xl border-2 text-sm font-semibold';
+        }
+    }
+
+    // ============================
+    // Password Toggle
+    // ============================
+    function togglePassword(inputId, btn) {
         const input = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
+        const eyeIcon = btn.querySelector('.eye-icon');
+        const eyeOffIcon = btn.querySelector('.eye-off-icon');
 
-        if (!toggleBtn || !input || !icon) return;
-
-        toggleBtn.addEventListener('click', function () {
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-            if (type === 'text') {
-                icon.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>'; 
-            } else {
-                icon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'; 
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        setupPasswordToggle('togglePassword', 'password', 'eyeIcon');
-        setupPasswordToggle('toggleConfirmPassword', 'confirm_password', 'eyeIconConfirm');
-    });
-
-    // --- Webcam Capture Logic ---
-    let currentCamSide = null;
-    let webcamStream = null;
-
-    async function openWebcam(side) {
-        currentCamSide = side;
-        const modal = document.getElementById('webcamModal');
-        const video = document.getElementById('webcamVideo');
-        
-        try {
-            webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-            video.srcObject = webcamStream;
-            modal.classList.remove('hidden');
-        } catch (err) {
-            console.error("Camera error:", err);
-            alert("Camera access denied or unavailabe. Please use the Browse (Upload) option instead.");
-        }
-    }
-
-    function closeWebcam() {
-        const modal = document.getElementById('webcamModal');
-        const video = document.getElementById('webcamVideo');
-        
-        if (webcamStream) {
-            webcamStream.getTracks().forEach(track => track.stop());
-            webcamStream = null;
-        }
-        video.srcObject = null;
-        modal.classList.add('hidden');
-        currentCamSide = null;
-    }
-
-    function captureWebcam() {
-        if (!currentCamSide) return;
-        
-        const video = document.getElementById('webcamVideo');
-        const canvas = document.getElementById('webcamCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Match the canvas size to the video stream size
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        
-        // Draw the current video frame to the canvas
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Convert canvas image to a File object
-        canvas.toBlob((blob) => {
-            if(!blob) return;
-            const file = new File([blob], currentCamSide + "_cam_capture.jpg", { type: "image/jpeg" });
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            
-            // Assign new file to the hidden input
-            const input = document.getElementById('id_' + currentCamSide);
-            input.files = dataTransfer.files;
-            
-            // Trigger preview renderer
-            previewImage(input, 'preview_' + currentCamSide, 'icon_' + currentCamSide);
-            
-            closeWebcam();
-        }, 'image/jpeg', 0.9);
-    }
-
-    // --- ID Image Preview ---
-    function previewImage(input, previewId, iconId) {
-        const preview = document.getElementById(previewId);
-        const icon = document.getElementById(iconId);
-        const side = previewId.split('_')[1];
-        const removeBtn = document.getElementById('remove_' + side);
-        
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.classList.remove('hidden');
-                icon.classList.add('hidden'); 
-                removeBtn.classList.remove('hidden');
-                input.parentElement.classList.remove('border-red-400', 'border-gray-300');
-                input.parentElement.classList.add('border-[#15281f]'); // Highlight selected
-            }
-            
-            reader.readAsDataURL(input.files[0]);
+        if (input.type === 'password') {
+            input.type = 'text';
+            eyeIcon.classList.add('hidden');
+            eyeOffIcon.classList.remove('hidden');
         } else {
-            removeImage(side);
+            input.type = 'password';
+            eyeIcon.classList.remove('hidden');
+            eyeOffIcon.classList.add('hidden');
         }
     }
 
-    function removeImage(side) {
-        const input = document.getElementById('id_' + side);
-        const preview = document.getElementById('preview_' + side);
-        const icon = document.getElementById('icon_' + side);
-        const removeBtn = document.getElementById('remove_' + side);
-        
-        input.value = '';
-        preview.src = '';
-        preview.classList.add('hidden');
-        icon.classList.remove('hidden');
-        removeBtn.classList.add('hidden');
-        input.parentElement.classList.add('border-gray-300');
-        input.parentElement.classList.remove('border-[#15281f]');
-    }
-
-    // --- Validation Graphics logic ---
-    const svgs = {
-        cross: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
-        check: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20 6 9 17l-5-5"/></svg>'
-    };
-
-    let passwordIsValid = false;
-
+    // ============================
+    // Password Strength
+    // ============================
     function checkPasswordStrength(val) {
-        const rulesContainer = document.getElementById('password-rules-container');
+        const container = document.getElementById('password-rules-container');
         if (val.length > 0) {
-            rulesContainer.classList.remove('hidden');
+            container.classList.remove('hidden');
         } else {
-            rulesContainer.classList.add('hidden');
+            container.classList.add('hidden');
+            return;
         }
 
         const hasUpper = /[A-Z]/.test(val);
         const hasLower = /[a-z]/.test(val);
-        const hasNumAndSpec = /[0-9]/.test(val) && /[\W_]/.test(val); 
+        const hasNumAndSpec = /[0-9]/.test(val) && /[\W_]/.test(val);
         const hasLength = val.length >= 8;
 
         updateRule('rule-upper', hasUpper);
@@ -390,58 +405,55 @@
         updateRule('rule-number', hasNumAndSpec);
         updateRule('rule-length', hasLength);
 
-        let score = [hasUpper, hasLower, hasNumAndSpec, hasLength].filter(Boolean).length;
-        
+        const score = [hasUpper, hasLower, hasNumAndSpec, hasLength].filter(Boolean).length;
         const bar = document.getElementById('pwd-strength-bar');
         const text = document.getElementById('pwd-strength-text');
-        
+
         bar.className = 'h-full transition-all duration-300';
         if (score === 0) {
             bar.style.width = '0%';
             text.innerText = 'Weak';
-            text.className = 'text-red-500 font-bold min-w-[32px] text-right';
-            passwordIsValid = false;
+            text.className = 'text-red-500 font-bold min-w-[32px] text-right text-xs';
         } else if (score <= 2) {
             bar.style.width = '33%';
             bar.classList.add('bg-red-400');
             text.innerText = 'Weak';
-            text.className = 'text-red-500 font-bold min-w-[32px] text-right';
-            passwordIsValid = false;
+            text.className = 'text-red-500 font-bold min-w-[32px] text-right text-xs';
         } else if (score === 3) {
             bar.style.width = '66%';
             bar.classList.add('bg-orange-400');
             text.innerText = 'Fair';
-            text.className = 'text-orange-500 font-bold min-w-[32px] text-right';
-            passwordIsValid = false;
+            text.className = 'text-orange-500 font-bold min-w-[32px] text-right text-xs';
         } else {
             bar.style.width = '100%';
-            bar.classList.add('bg-[#15281f]'); 
+            bar.classList.add('bg-[#16C47F]');
             text.innerText = 'Strong';
-            text.className = 'text-[#15281f] font-bold min-w-[32px] text-right';
-            passwordIsValid = true;
+            text.className = 'text-[#16C47F] font-bold min-w-[32px] text-right text-xs';
         }
-        
+
         validatePasswordsMatch();
     }
 
     function updateRule(id, isValid) {
         const el = document.getElementById(id);
         if (isValid) {
-            // Using dark blue exclusively upon match
-            el.className = 'flex items-center gap-1.5 text-[#15281f] font-semibold transition-colors';
-            el.innerHTML = svgs.check + ' ' + el.innerText;
+            el.className = 'password-rule valid flex items-center gap-2 text-[#16C47F] text-xs font-medium';
+            el.innerHTML = '<svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> ' + el.innerText;
         } else {
-            el.className = 'flex items-center gap-1.5 text-red-400 transition-colors';
-            el.innerHTML = svgs.cross + ' ' + el.innerText;
+            el.className = 'password-rule invalid flex items-center gap-2 text-[#EF4444] text-xs font-medium';
+            el.innerHTML = '<svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg> ' + el.innerText;
         }
     }
 
+    // ============================
+    // Password Match
+    // ============================
     function validatePasswordsMatch() {
         const pass = document.getElementById('password').value;
         const conf = document.getElementById('confirm_password').value;
         const err = document.getElementById('password-match-error');
         const confInput = document.getElementById('confirm_password');
-        
+
         if (conf.length > 0 && pass !== conf) {
             err.classList.remove('hidden');
             confInput.classList.add('border-red-400', 'ring-red-100/50');
@@ -453,15 +465,20 @@
         }
     }
 
+    // ============================
+    // Input Validation
+    // ============================
     function validateInput(el) {
-        if(el.checkValidity() && el.value.trim() !== '') {
+        if (el.checkValidity() && el.value.trim() !== '') {
             el.classList.remove('border-red-400');
         }
     }
 
-    // --- On Form Submit ---
+    // ============================
+    // Form Validation
+    // ============================
     function validateRegisterForm() {
-        const requiredIds = ['name', 'address', 'phone_number', 'email', 'password', 'confirm_password'];
+        const requiredIds = ['name', 'username', 'email', 'phone_number', 'password', 'confirm_password'];
         let valid = true;
 
         requiredIds.forEach(id => {
@@ -470,36 +487,35 @@
                 el.classList.add('border-red-400');
                 valid = false;
             } else {
-                if (id !== 'password' && id !== 'confirm_password') {
-                    try {
-                        el.value = el.value.replace(/[<>]/g, '');
-                    } catch(e) {}
-                }
+                el.classList.remove('border-red-400');
             }
         });
 
-        if (!passwordIsValid) {
-            document.getElementById('password').classList.add('border-red-400');
+        // Username additional validation
+        const username = document.getElementById('username').value;
+        if (username && !/^[a-zA-Z0-9_]{3,30}$/.test(username)) {
+            document.getElementById('username').classList.add('border-red-400');
             valid = false;
         }
 
-        if (!validatePasswordsMatch()) {
+        if (!validatePasswordsMatch()) valid = false;
+
+        if (!document.getElementById('captcha').checked) {
+            document.getElementById('captcha').classList.add('ring-2', 'ring-red-400');
             valid = false;
+        } else {
+            document.getElementById('captcha').classList.remove('ring-2', 'ring-red-400');
         }
 
-        // Validate File Uploads
-        const fileFront = document.getElementById('id_front');
-        const fileBack = document.getElementById('id_back');
-        if (!fileFront.files || fileFront.files.length === 0) {
-            document.getElementById('front_container').classList.add('border-red-400');
+        if (!document.getElementById('terms').checked) {
+            document.getElementById('terms').classList.add('ring-2', 'ring-red-400');
             valid = false;
-        }
-        if (!fileBack.files || fileBack.files.length === 0) {
-            document.getElementById('back_container').classList.add('border-red-400');
-            valid = false;
+        } else {
+            document.getElementById('terms').classList.remove('ring-2', 'ring-red-400');
         }
 
         return valid;
     }
 </script>
+
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

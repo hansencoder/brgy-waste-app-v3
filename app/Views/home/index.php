@@ -1,797 +1,815 @@
+<?php include __DIR__ . '/../layouts/header.php'; ?>
+
+<?php
+$isLoggedIn = $data['isLoggedIn'] ?? false;
+$role = $data['role'] ?? null;
+$announcements = $data['announcements'] ?? [];
+$schedules = $data['schedules'] ?? [];
+$barangay = $data['barangay'] ?? [];
+$unreadCount = $data['unreadCount'] ?? 0;
+$barangayName = $barangay['barangay_name'] ?? 'Dulong Bayan';
+$barangayAddress = $barangay['official_address'] ?? 'Barangay Hall, Dulong Bayan';
+$barangayContact = $barangay['contact_number'] ?? '(02) 8-123-4567';
+$barangayEmail = $barangay['official_email'] ?? 'brgy.dulongbayan@email.com';
+
+// Schedule day mapping
+$dayColors = [
+    'Monday' => ['bg' => 'emerald-50', 'text' => 'emerald-700', 'badge' => 'bg-emerald-500'],
+    'Tuesday' => ['bg' => 'blue-50', 'text' => 'blue-700', 'badge' => 'bg-blue-500'],
+    'Wednesday' => ['bg' => 'sky-50', 'text' => 'sky-700', 'badge' => 'bg-sky-500'],
+    'Thursday' => ['bg' => 'indigo-50', 'text' => 'indigo-700', 'badge' => 'bg-indigo-500'],
+    'Friday' => ['bg' => 'amber-50', 'text' => 'amber-700', 'badge' => 'bg-amber-500'],
+    'Saturday' => ['bg' => 'purple-50', 'text' => 'purple-700', 'badge' => 'bg-purple-500'],
+    'Sunday' => ['bg' => 'rose-50', 'text' => 'rose-700', 'badge' => 'bg-rose-500']
+];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WasteWatch | Barangay Dulong Bayan</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <?php include __DIR__ . '/../layouts/theme-scripts.php'; ?>
+    <title>WasteWatch | <?php echo $barangayName; ?></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #15281F;
-            --primary-dark: #0A140F;
-            --secondary: #2A523D;
-            --accent: #2A523D;
-            --text-main: #1F2937;
-            --text-muted: #6B7280;
-            --bg-light: #F9FAFB;
-            --white: #FFFFFF;
-            --border: #E5E7EB;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            color: var(--text-main);
-            background-color: var(--white);
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
-
-        /* Utility Classes */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        .section-padding {
-            padding: 5rem 0;
-        }
-
-        .text-center { text-align: center; }
-
-        /* Navigation */
-        nav {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid var(--border);
-            height: 80px;
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-        }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo-brand {
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: var(--primary);
-            line-height: 1;
-        }
-
-        .logo-tag {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: var(--text-main);
-            font-weight: 500;
-            font-size: 1rem;
-            transition: color 0.2s;
-        }
-
-        .nav-link:hover { color: var(--secondary); }
-
-        .btn-register {
-            background: var(--primary);
-            color: var(--white);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .btn-register:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        /* Hero Section */
-        .hero {
-            background-color: var(--bg-light);
-            padding: 6rem 0 4rem;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            line-height: 1.1;
-            letter-spacing: -0.03em;
-        }
-
-        .hero h1 span { color: var(--accent); }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            max-width: 700px;
-            margin: 0 auto 2.5rem;
-            line-height: 1.6;
-        }
-
-        .hero-btns {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-        }
-
-        .btn-main {
-            background: var(--primary);
-            color: var(--white);
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-size: 1.125rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-main:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-sec {
-            background: var(--white);
-            color: var(--primary);
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-size: 1.125rem;
-            font-weight: 600;
-            text-decoration: none;
-            border: 1px solid var(--border);
-            transition: all 0.3s;
-        }
-
-        .btn-sec:hover {
-            background: #F3F4F6;
-        }
-
-        /* Stats Section */
-        .stats {
-            background: var(--white);
-            padding: 4rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-        }
-
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .stat-icon {
-            color: var(--secondary);
-            margin-bottom: 0.75rem;
-        }
-
-        .stat-num {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary);
-            line-height: 1;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Three Steps Section */
-        .steps {
-            background: var(--white);
-        }
-
-        .steps-badge {
-            background: #F3F4F6;
-            color: var(--text-muted);
-            padding: 6px 12px;
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-
-        .section-title {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-
-        .section-desc {
-            color: var(--text-muted);
-            margin-bottom: 4rem;
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-
-        .step-card {
-            background: var(--bg-light);
-            border-radius: 20px;
-            padding: 2.5rem;
-            position: relative;
-            text-align: left;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .step-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
-        }
-
-        .step-num {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #E5E7EB;
-        }
-
-        .step-icon {
-            width: 50px;
-            height: 50px;
-            background: #D1FAE5; /* #D1FAE5 is light green matched to secondary context */
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .step-card h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-        }
-
-        .step-card p {
-            font-size: 1rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* Roles Section */
-        .roles {
-            background: var(--bg-light);
-        }
-
-        .roles-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-        }
-
-        .role-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2.5rem;
-            text-align: left;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .role-badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .role-card h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .role-card p {
-            font-size: 0.9375rem;
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-            min-height: 3em;
-        }
-
-        .role-list {
-            list-style: none;
-            margin-top: auto;
-        }
-
-        .role-list li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9375rem;
-            margin-bottom: 0.75rem;
-            color: var(--text-main);
-        }
-
-        .role-list svg {
-            color: var(--secondary);
-            flex-shrink: 0;
-        }
-
-        /* Testimonial Section */
-        .testimonial {
-            background: var(--white);
-        }
-
-        .quote-icon {
-            color: #E5E7EB;
-            margin-bottom: 1.5rem;
-        }
-
-        .testimonial blockquote {
-            font-size: 1.5rem;
-            font-weight: 600;
-            max-width: 800px;
-            margin: 0 auto 2rem;
-            color: var(--primary);
-            line-height: 1.5;
-        }
-
-        .author {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 9999px;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.875rem;
-            font-weight: 700;
-        }
-
-        .author-info { text-align: left; }
-        .author-name { font-weight: 700; font-size: 1rem; line-height: 1; }
-        .author-title { font-size: 0.875rem; color: var(--text-muted); }
-
-        /* FAQ Section */
-        .faq {
-            background: var(--bg-light);
-        }
-
-        .faq-badge {
-            color: var(--accent);
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .faq-grid {
-            max-width: 800px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .faq-item {
-            background: var(--white);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-
-        .faq-question {
-            width: 100%;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: none;
-            border: none;
-            cursor: pointer;
-            text-align: left;
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--primary);
-            font-family: inherit;
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            padding: 0 1.5rem;
-            color: var(--text-muted);
-            font-size: 0.9375rem;
-            line-height: 1.6;
-        }
-
-        .faq-item.active .faq-answer {
-            max-height: 200px;
-            padding-bottom: 1.5rem;
-        }
-
-        .faq-icon {
-            transition: transform 0.3s;
-        }
-
-        .faq-item.active .faq-icon {
-            transform: rotate(180deg);
-        }
-
-        /* Ready CTA */
-        .cta-box {
-            background: linear-gradient(135deg, #15281F, #2A523D);
-            border-radius: 24px;
-            padding: 5rem 2rem;
-            text-align: center;
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-box::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05) 0%, transparent 40%);
-        }
-
-        .cta-box h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            position: relative;
-        }
-
-        .cta-box p {
-            font-size: 1.125rem;
-            color: rgba(255, 255, 255, 0.8);
-            max-width: 600px;
-            margin: 0 auto 2.5rem;
-            position: relative;
-        }
-
-        .cta-btns {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            position: relative;
-        }
-
-        .btn-cta-main {
-            background: #34D399;
-            color: var(--primary);
-            padding: 12px 28px;
-            border-radius: 12px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .btn-cta-main:hover {
-            background: #6EE7B7;
-            transform: scale(1.02);
-        }
-
-        .btn-cta-outline {
-            background: transparent;
-            color: var(--white);
-            padding: 12px 28px;
-            border-radius: 12px;
-            text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        .btn-cta-outline:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Footer */
-        footer {
-            padding: 2rem 0;
-            border-top: 1px solid var(--border);
-        }
-
-        .footer-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.875rem;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 24px;
-        }
-
-        .footer-link {
-            text-decoration: none;
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .footer-link:hover { color: var(--primary); }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .hero h1 { font-size: 3rem; }
-            .steps-grid, .roles-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem; }
-        }
-
-        @media (max-width: 640px) {
-            .hero h1 { font-size: 2.25rem; }
-            .hero-btns, .cta-btns { flex-direction: column; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .footer-flex { flex-direction: column; gap: 1.5rem; text-align: center; }
-        }
+        * { font-family: 'Inter', sans-serif; }
+        .pulse-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .hero-wave { position: absolute; bottom: -2px; left: 0; right: 0; }
+        .faq-question { transition: all 0.3s ease; }
+        .faq-answer { transition: max-height 0.3s ease, padding 0.3s ease; }
+        .mobile-menu { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .schedule-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .schedule-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px -12px rgba(0,0,0,0.15); }
+        .announcement-item { transition: background 0.2s ease; }
+        .announcement-item:hover { background: #f8fafc; }
+        .feature-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .feature-card:hover { transform: translateY(-4px); }
+        .step-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .step-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px -12px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
-    <?php
-    // Ensure $data is always defined to avoid PHP warnings in views
-    if (!isset($data) || !is_array($data)) {
-        $data = ['isLoggedIn' => false, 'role' => null];
-    } else {
-        $data['isLoggedIn'] = $data['isLoggedIn'] ?? false;
-        $data['role'] = $data['role'] ?? null;
-    }
-    ?>
-
-    <!-- Navigation -->
-    <nav>
-        <div class="container nav-container">
-            <a href="/brgy-waste-app-v3/public/" class="logo">
-                <div class="logo-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+<!-- ============================================================ -->
+<!-- NAVIGATION – Sticky Header                                   -->
+<!-- ============================================================ -->
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <a href="/brgy-waste-app-v3/public/" class="flex items-center gap-2.5 flex-shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-[#07281E] flex items-center justify-center text-white shadow-md shadow-[#07281E]/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
-                <div class="logo-text">
-                    <span class="logo-brand">WasteWatch</span>
-                    <span class="logo-tag">Barangay Dulong Bayan</span>
+                <div>
+                    <span class="font-extrabold text-slate-900 text-lg tracking-tight">WasteWatch</span>
+                    <span class="hidden sm:block text-[10px] font-semibold text-slate-400 tracking-wider">SMART WASTE SOLUTIONS</span>
                 </div>
             </a>
-            <div class="nav-actions">
-                <?php if ($data['isLoggedIn']): ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($data['role'] == 'resident' ? 'resident' : 'admin'); ?>" class="btn-register">Dashboard</a>
+
+            <!-- Desktop Nav Links -->
+            <div class="hidden md:flex items-center gap-1">
+                <a href="#features" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-[#07281E] transition-colors">Features</a>
+                <a href="#schedule" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-[#07281E] transition-colors">Schedule</a>
+                <a href="#announcements" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-[#07281E] transition-colors">Announcements</a>
+                <a href="#faq" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-[#07281E] transition-colors">FAQs</a>
+                <a href="#contact" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-[#07281E] transition-colors">Contact</a>
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-3">
+                <?php if ($isLoggedIn): ?>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-[#10B981] text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+                        Dashboard
+                    </a>
                 <?php else: ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth'); ?>" class="nav-link">Log In</a>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth/register'); ?>" class="btn-register">Register</a>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth'); ?>" class="hidden sm:inline-flex text-sm font-semibold text-slate-600 hover:text-[#07281E] transition-colors">Sign In</a>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth/register'); ?>" class="inline-flex items-center gap-2 px-5 py-2 bg-[#10B981] text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                        Register
+                    </a>
+                <?php endif; ?>
+                <!-- Mobile Menu Toggle -->
+                <button id="menuToggle" class="md:hidden p-2 text-slate-600 hover:text-[#07281E] transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- MOBILE MENU – Overlay                                        -->
+<!-- ============================================================ -->
+<div id="mobileMenu" class="fixed inset-0 z-[60] bg-white/95 backdrop-blur-lg hidden flex-col p-6 pt-20">
+    <button id="menuClose" class="absolute top-4 right-4 p-2 text-slate-500 hover:text-slate-800 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="flex flex-col space-y-6 text-center">
+        <a href="#features" class="text-lg font-semibold text-slate-700 hover:text-[#07281E]">Features</a>
+        <a href="#schedule" class="text-lg font-semibold text-slate-700 hover:text-[#07281E]">Schedule</a>
+        <a href="#announcements" class="text-lg font-semibold text-slate-700 hover:text-[#07281E]">Announcements</a>
+        <a href="#faq" class="text-lg font-semibold text-slate-700 hover:text-[#07281E]">FAQs</a>
+        <a href="#contact" class="text-lg font-semibold text-slate-700 hover:text-[#07281E]">Contact</a>
+        <div class="pt-4 border-t border-slate-200 flex flex-col gap-3">
+            <?php if ($isLoggedIn): ?>
+                <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>" class="w-full bg-[#10B981] text-white font-bold py-3 rounded-full">Dashboard</a>
+            <?php else: ?>
+                <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth'); ?>" class="w-full text-slate-600 font-semibold py-3">Sign In</a>
+                <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth/register'); ?>" class="w-full bg-[#10B981] text-white font-bold py-3 rounded-full shadow-lg shadow-emerald-500/20">Register</a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- HERO SECTION – Dark Forest Green                            -->
+<!-- ============================================================ -->
+<section class="relative bg-[#07281E] text-white overflow-hidden pt-16 pb-24">
+    <!-- Background Gradient & Glow -->
+    <div class="absolute inset-0 bg-gradient-to-br from-[#07281E] via-[#0B3024] to-[#10B981]/10 pointer-events-none"></div>
+    <div class="absolute top-1/3 -right-20 w-96 h-96 bg-[#10B981]/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-1/4 -left-20 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Wave Border -->
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-12 md:h-16">
+            <path d="M0 20 C360 60 720 0 1080 40 L1440 20 L1440 80 L0 80 Z" fill="#F8FAFC"/>
+            <path d="M0 40 C480 80 960 0 1440 50 L1440 80 L0 80 Z" fill="#F8FAFC" opacity="0.4"/>
+        </svg>
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl">
+            <!-- Badge -->
+            <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 text-emerald-300 text-[11px] font-bold uppercase tracking-[0.2em] rounded-full border border-white/5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
+                <?php echo strtoupper($barangayName); ?> · Waste Reporting Portal
+            </span>
+            <!-- Title -->
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mt-5 leading-[1.08] tracking-tight">
+                Community-Powered Waste Reporting.
+                <br>
+                <span class="bg-gradient-to-r from-[#10B981] to-[#34D399] bg-clip-text text-transparent">Cleaner Tomorrow.</span>
+            </h1>
+            <!-- Subtitle -->
+            <p class="text-base sm:text-lg text-emerald-100/80 mt-4 max-w-2xl leading-relaxed font-medium">
+                Report uncollected garbage, illegal dumping, and hazardous waste in <?php echo $barangayName; ?>.
+                Track resolution status in real-time.
+            </p>
+            <!-- CTAs -->
+            <div class="flex flex-wrap items-center gap-4 mt-8">
+                <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo $isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register'; ?>" class="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] text-white font-bold rounded-full shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    Report Waste Now
+                </a>
+                <a href="#features" class="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white font-semibold rounded-full hover:bg-white/10 transition-colors">
+                    Learn More
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SMART REPORTING / FEATURES SECTION                          -->
+<!-- ============================================================ -->
+<section id="features" class="py-16 bg-[#F8FAFC]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <span class="text-[#10B981] text-[11px] font-bold uppercase tracking-[0.25em]">SMARTER WASTE REPORTING</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 tracking-tight">A smarter way for residents to help</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <!-- Left: Text & Buttons -->
+            <div class="lg:col-span-5">
+                <p class="text-slate-600 leading-relaxed text-base">
+                    The Barangay Waste Reporting System empowers residents to actively participate in keeping their community clean.
+                    By reporting waste issues through the platform, residents contribute real-time data that helps the barangay plan
+                    more effective and efficient collection operations.
+                </p>
+                <div class="flex flex-wrap items-center gap-4 mt-6">
+                    <?php if ($isLoggedIn && $role == 'resident'): ?>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=resident/submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] text-white font-bold rounded-full shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                            Submit a Report
+                        </a>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=resident" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-slate-700 font-semibold rounded-full hover:bg-slate-50 transition-colors">Dashboard</a>
+                    <?php elseif ($isLoggedIn): ?>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($role); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] text-white font-bold rounded-full shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+                            Go to Dashboard
+                        </a>
+                    <?php else: ?>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] text-white font-bold rounded-full shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                            Create an Account
+                        </a>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-slate-700 font-semibold rounded-full hover:bg-slate-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                            Login
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Right: Feature Grid 2x2 -->
+            <div class="lg:col-span-7">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Feature 1 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200 p-5 shadow-[0_8px_25px_-12px_rgba(0,0,0,0.08)]">
+                        <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <h4 class="font-bold text-slate-800">Precise Location Tagging</h4>
+                        <p class="text-sm text-slate-500 mt-1">Pin waste locations on an interactive map for accurate reporting.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200 p-5 shadow-[0_8px_25px_-12px_rgba(0,0,0,0.08)]">
+                        <div class="w-11 h-11 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        </div>
+                        <h4 class="font-bold text-slate-800">Photo & Verification</h4>
+                        <p class="text-sm text-slate-500 mt-1">Upload photos as evidence and verify report authenticity.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200 p-5 shadow-[0_8px_25px_-12px_rgba(0,0,0,0.08)]">
+                        <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <h4 class="font-bold text-slate-800">Status Tracking</h4>
+                        <p class="text-sm text-slate-500 mt-1">Monitor your report from submission to resolution in real-time.</p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="feature-card bg-white rounded-2xl border border-slate-200 p-5 shadow-[0_8px_25px_-12px_rgba(0,0,0,0.08)]">
+                        <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </div>
+                        <h4 class="font-bold text-slate-800">Direct Resolution</h4>
+                        <p class="text-sm text-slate-500 mt-1">Barangay officials review and resolve reports efficiently.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- ANNOUNCEMENTS SECTION                                       -->
+<!-- ============================================================ -->
+<section id="announcements" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-10">
+            <span class="text-[#10B981] text-[11px] font-bold uppercase tracking-[0.25em]">LATEST UPDATES</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 tracking-tight">Announcements</h2>
+            <p class="text-slate-500 mt-1 text-base">Stay informed about collection schedules, events, and community notices.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Announcement List -->
+            <div class="lg:col-span-5 space-y-3">
+                <?php if (!empty($announcements)): ?>
+                    <?php
+                    $types = ['Urgent' => 'bg-red-100 text-red-700', 'Notice' => 'bg-cyan-50 text-cyan-700', 'Event' => 'bg-emerald-50 text-emerald-700', 'Update' => 'bg-amber-50 text-amber-700'];
+                    $dots = ['Urgent' => 'bg-red-500', 'Notice' => 'bg-cyan-600', 'Event' => 'bg-emerald-600', 'Update' => 'bg-amber-500'];
+                    ?>
+                    <?php foreach (array_slice($announcements, 0, 5) as $item):
+                        $type = 'Notice';
+                        if (stripos($item['title'], 'collection') !== false || stripos($item['content'], 'collection') !== false) $type = 'Urgent';
+                        elseif (stripos($item['title'], 'clean') !== false || stripos($item['title'], 'drive') !== false) $type = 'Event';
+                        elseif (stripos($item['title'], 'update') !== false || stripos($item['title'], 'available') !== false) $type = 'Update';
+                    ?>
+                    <div class="announcement-item flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:border-slate-200 cursor-pointer">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="w-2 h-2 rounded-full <?php echo $dots[$type] ?? 'bg-slate-400'; ?> flex-shrink-0"></span>
+                            <div>
+                                <p class="text-sm font-semibold text-slate-800 truncate"><?php echo htmlspecialchars($item['title']); ?></p>
+                                <p class="text-xs text-slate-400"><?php echo date('M j, Y', strtotime($item['created_at'])); ?></p>
+                            </div>
+                        </div>
+                        <span class="inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold <?php echo $types[$type] ?? 'bg-slate-100 text-slate-700'; ?> flex-shrink-0 ml-2"><?php echo $type; ?></span>
+                    </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="p-6 text-center text-slate-400 bg-slate-50 rounded-xl">No announcements available</div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Right: Featured Announcement Card -->
+            <div class="lg:col-span-7">
+                <?php
+                $featured = !empty($announcements) ? $announcements[0] : null;
+                if ($featured):
+                    $fTitle = $featured['title'] ?? 'Special collection today';
+                    $fContent = $featured['content'] ?? 'Stay updated with barangay announcements.';
+                    $fDate = date('M j, Y', strtotime($featured['created_at'] ?? 'now'));
+                ?>
+                <div class="bg-[#07281E] rounded-2xl p-6 md:p-8 text-white shadow-[0_24px_60px_-30px_rgba(7,40,30,0.5)]">
+                    <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/20 text-red-300 text-[10px] font-bold rounded-full border border-red-500/20">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-400 pulse-dot"></span>
+                            Pinned
+                        </span>
+                        <span class="text-sm text-emerald-200/70"><?php echo $fDate; ?></span>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-extrabold mt-4 leading-tight"><?php echo htmlspecialchars($fTitle); ?></h3>
+                    <p class="text-emerald-100/80 text-sm mt-3 leading-relaxed"><?php echo nl2br(htmlspecialchars(substr($fContent, 0, 150) . (strlen($fContent) > 150 ? '...' : ''))); ?></p>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
+                        <div>
+                            <p class="text-2xl font-black text-white"><?php echo count($announcements); ?></p>
+                            <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider">Active Notices</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-black text-red-400"><?php echo count(array_filter($announcements, fn($a) => stripos($a['title'] ?? '', 'collection') !== false || stripos($a['content'] ?? '', 'collection') !== false)); ?></p>
+                            <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider">Urgent</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-black text-amber-400"><?php echo count(array_filter($announcements, fn($a) => stripos($a['title'] ?? '', 'reschedule') !== false || stripos($a['title'] ?? '', 'postpone') !== false)); ?></p>
+                            <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider">Rescheduled</p>
+                        </div>
+                    </div>
+                </div>
+                <?php else: ?>
+                <div class="bg-[#07281E] rounded-2xl p-6 md:p-8 text-white flex items-center justify-center min-h-[200px]">
+                    <p class="text-emerald-200/60">No featured announcement</p>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
-    </nav>
+    </div>
+</section>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container">
-            <h1>Report Waste Issues in<br><span>Barangay Dulong Bayan</span></h1>
-            <p>A cross-platform waste reporting system with geospatial mapping and analytics. Help keep your barangay clean by reporting waste issues directly to your local government.</p>
-            <div class="hero-btns">
-                <?php if ($data['isLoggedIn']): ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($data['role'] == 'resident' ? 'resident' : 'admin'); ?>" class="btn-main">
-                        Go to Dashboard
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
-                <?php else: ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth/register'); ?>" class="btn-main">
-                        Get Started
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth'); ?>" class="btn-sec">Log In to Your Account</a>
+<!-- ============================================================ -->
+<!-- GARBAGE COLLECTION SCHEDULE                                -->
+<!-- ============================================================ -->
+<section id="schedule" class="py-16 bg-[#F8FAFC]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-10">
+            <span class="text-[#10B981] text-[11px] font-bold uppercase tracking-[0.25em]">PUBLIC SCHEDULE</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 tracking-tight">Garbage Collection Schedule</h2>
+            <p class="text-slate-500 mt-1 text-base">Current schedule for <?php echo $barangayName; ?>. Please have your bins at the curb by the indicated time.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <?php if (!empty($schedules)): ?>
+                <?php foreach ($schedules as $schedule):
+                    $day = $schedule['collection_day'];
+                    $colors = $dayColors[$day] ?? ['bg' => 'slate-50', 'text' => 'slate-700', 'badge' => 'bg-slate-500'];
+                    $start = date('g:i A', strtotime($schedule['start_time']));
+                    $end = date('g:i A', strtotime($schedule['end_time']));
+                    $puroks = $schedule['puroks'] ?? 'All Puroks';
+                    $wasteType = $schedule['waste_type'] ?? 'General';
+                ?>
+                <div class="schedule-card bg-white rounded-2xl border border-slate-200 p-5 shadow-[0_8px_25px_-12px_rgba(0,0,0,0.08)]">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="font-extrabold text-slate-900 text-lg"><?php echo $day; ?></span>
+                        <span class="inline-flex rounded-full px-2.5 py-0.5 text-[9px] font-bold bg-<?php echo $colors['bg']; ?> text-<?php echo $colors['text']; ?>">
+                            <?php echo htmlspecialchars($wasteType); ?>
+                        </span>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-600"><?php echo $start; ?> – <?php echo $end; ?></p>
+                    <p class="text-xs text-slate-400 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" class="inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <?php echo htmlspecialchars($puroks); ?>
+                    </p>
+                    <?php if (!empty($schedule['special_notes'])): ?>
+                        <p class="text-[10px] text-amber-600 mt-2 font-medium"><?php echo htmlspecialchars($schedule['special_notes']); ?></p>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-span-full text-center text-slate-400 py-8 bg-white rounded-2xl border border-slate-200">No collection schedules available</div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Notice Banner -->
+        <?php
+        $specialNotice = !empty($announcements) ? array_filter($announcements, fn($a) => stripos($a['title'] ?? '', 'collection') !== false || stripos($a['content'] ?? '', 'collection') !== false) : [];
+        $notice = !empty($specialNotice) ? array_values($specialNotice)[0] : null;
+        ?>
+        <?php if ($notice): ?>
+        <div class="mt-6 bg-amber-50 border border-amber-200 rounded-2xl p-5 flex items-start gap-4">
+            <div class="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 15H4L12 3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-amber-800 text-sm"><?php echo htmlspecialchars($notice['title']); ?></h4>
+                <p class="text-sm text-amber-700 mt-0.5"><?php echo nl2br(htmlspecialchars($notice['content'])); ?></p>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MOBILE EXPERIENCE SECTION                                  -->
+<!-- ============================================================ -->
+<section class="py-16 bg-[#E6F4EA]/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <!-- Left: Phone Mockup -->
+            <div class="lg:col-span-5 flex justify-center">
+                <div class="relative w-[280px] h-[560px] bg-[#07281E] rounded-[40px] border-[8px] border-slate-200 shadow-2xl overflow-hidden">
+                    <!-- Phone Screen -->
+                    <div class="absolute inset-[4px] bg-[#0B3024] rounded-[32px] overflow-hidden flex flex-col">
+                        <!-- Status Bar -->
+                        <div class="flex justify-between items-center px-6 pt-3">
+                            <span class="text-white/70 text-[10px] font-bold">9:41</span>
+                            <div class="flex gap-1">
+                                <div class="w-4 h-2 rounded-sm bg-white/30"></div>
+                                <div class="w-2 h-2 rounded-full bg-white/30"></div>
+                            </div>
+                        </div>
+                        <!-- Map Preview -->
+                        <div class="flex-1 m-3 rounded-xl bg-[#07281E] border border-white/10 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-900/20 to-transparent"></div>
+                            <!-- Heatmap dots -->
+                            <div class="absolute top-8 left-8 w-4 h-4 rounded-full bg-emerald-500/30 animate-pulse"></div>
+                            <div class="absolute top-16 left-16 w-6 h-6 rounded-full bg-emerald-400/20"></div>
+                            <div class="absolute top-24 left-32 w-8 h-8 rounded-full bg-emerald-300/15"></div>
+                            <div class="absolute bottom-12 right-8 w-5 h-5 rounded-full bg-emerald-500/25"></div>
+                            <div class="absolute bottom-8 right-20 w-3 h-3 rounded-full bg-emerald-400/30"></div>
+                            <!-- Fake marker -->
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#10B981] border-2 border-white shadow-lg"></div>
+                            <!-- Bottom label -->
+                            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur px-3 py-1 rounded-full">
+                                <span class="text-white text-[8px] font-bold">Live Heatmap · 3 hotspots</span>
+                            </div>
+                        </div>
+                        <!-- Bottom Nav -->
+                        <div class="flex justify-around px-4 pb-3 pt-1">
+                            <span class="text-emerald-400/60 text-[8px] font-bold">🗺️ Map</span>
+                            <span class="text-emerald-400/30 text-[8px] font-bold">📊 Stats</span>
+                            <span class="text-emerald-400/30 text-[8px] font-bold">⚡ Alerts</span>
+                            <span class="text-emerald-400/30 text-[8px] font-bold">👤 Profile</span>
+                        </div>
+                    </div>
+                    <!-- Home indicator -->
+                    <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 rounded-full bg-white/30"></div>
+                </div>
+            </div>
+
+            <!-- Right: Feature List -->
+            <div class="lg:col-span-7 space-y-6">
+                <div>
+                    <span class="text-[#10B981] text-[11px] font-bold uppercase tracking-[0.25em]">MOBILE EXPERIENCE</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 tracking-tight">Manage waste on the go</h2>
+                    <p class="text-slate-500 mt-1 text-base">Full reporting, live analytics, and zone alerts — right from your pocket.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Feature 1 -->
+                    <div class="flex items-start gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">One-tap Reporting</h4>
+                            <p class="text-sm text-slate-500">Capture, describe, and submit waste issues in under 20 seconds.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="flex items-start gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center text-cyan-600 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Live Map View</h4>
+                            <p class="text-sm text-slate-500">View real-time heatmap of waste reports and active hotspots.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="flex items-start gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Instant Alerts</h4>
+                            <p class="text-sm text-slate-500">Push notifications for report status changes and urgent notices.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="flex items-start gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Resident Portal Access</h4>
+                            <p class="text-sm text-slate-500">Full dashboard access from anywhere, anytime on any device.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- HOW IT WORKS – 3 Steps                                     -->
+<!-- ============================================================ -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <span class="text-[#10B981] text-[11px] font-bold uppercase tracking-[0.25em]">HOW IT WORKS</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 tracking-tight">Three steps to report waste</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Step 1 -->
+            <div class="step-card bg-[#F8FAFC] rounded-2xl p-6 border border-slate-200 relative">
+                <span class="inline-flex items-center justify-center w-8 h-8 bg-emerald-500 text-white font-bold text-sm rounded-full mb-4 shadow-lg shadow-emerald-500/20">01</span>
+                <h4 class="font-extrabold text-slate-800">Register & Log In</h4>
+                <p class="text-sm text-slate-500 mt-2 leading-relaxed">Create a free account using your email or mobile number. Verify via OTP and log in to access your personal resident dashboard.</p>
+                <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="inline-flex items-center gap-1 text-sm font-semibold text-[#10B981] mt-4 hover:underline">Get started →</a>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-card bg-[#F8FAFC] rounded-2xl p-6 border border-slate-200 relative">
+                <span class="inline-flex items-center justify-center w-8 h-8 bg-teal-500 text-white font-bold text-sm rounded-full mb-4 shadow-lg shadow-teal-500/20">02</span>
+                <h4 class="font-extrabold text-slate-800">Snap & Report</h4>
+                <p class="text-sm text-slate-500 mt-2 leading-relaxed">Take a photo of the waste issue, describe it briefly, and pin the exact location on the map. Submissions go directly to the barangay.</p>
+                <?php if ($isLoggedIn && $role == 'resident'): ?>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=resident/submit" class="inline-flex items-center gap-1 text-sm font-semibold text-[#10B981] mt-4 hover:underline">Submit now →</a>
+                <?php endif; ?>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card bg-[#F8FAFC] rounded-2xl p-6 border border-slate-200 relative">
+                <span class="inline-flex items-center justify-center w-8 h-8 bg-blue-500 text-white font-bold text-sm rounded-full mb-4 shadow-lg shadow-blue-500/20">03</span>
+                <h4 class="font-extrabold text-slate-800">Track Resolution</h4>
+                <p class="text-sm text-slate-500 mt-2 leading-relaxed">Receive status updates as the barangay reviews and acts on your report — from pending to resolved, every step is visible.</p>
+                <?php if ($isLoggedIn && $role == 'resident'): ?>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=resident/my_report" class="inline-flex items-center gap-1 text-sm font-semibold text-[#10B981] mt-4 hover:underline">View my reports →</a>
                 <?php endif; ?>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
+<!-- ============================================================ -->
+<!-- FAQ SECTION                                                -->
+<!-- ============================================================ -->
+<section id="faq" class="py-16 bg-[#F8FAFC]">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <span class="text-[#10B981] text-[11px] font-bold uppercase tracking-[0.25em]">FAQ</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 tracking-tight">Frequently Asked Questions</h2>
+            <p class="text-slate-500 mt-1 text-base">Everything you need to know about using the Waste Reporting System.</p>
+        </div>
 
-    <!-- Three Steps -->
-    <section class="steps section-padding text-center">
-        <div class="container text-center">
-            <h2 class="section-title">Three simple steps to a cleaner community</h2>
-            
-            <div class="steps-grid">
-                <div class="step-card">
-                    <span class="step-num">01</span>
-                    <div class="step-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <div class="space-y-3">
+            <!-- FAQ Items -->
+            <?php
+            $faqs = [
+                ['q' => 'How do I create an account?', 'a' => 'Click the "Register" button on the top right, fill in your name, email or phone number, and create a password. You will receive an OTP to verify your account.'],
+                ['q' => 'How do I submit a waste report?', 'a' => 'After logging in, go to "Submit Report", take a photo, describe the issue, and pin the location on the map. Your report will be sent directly to the barangay.'],
+                ['q' => 'What types of waste can be reported?', 'a' => 'You can report illegal dumping, overflowing garbage bins, uncollected garbage, construction waste, yard waste, hazardous waste, and other waste-related issues.'],
+                ['q' => 'Why was my report marked as a duplicate?', 'a' => 'If a similar report already exists within 50 meters of your location, the system will suggest you support the existing report instead of creating a new one.'],
+                ['q' => 'How can I support an existing report?', 'a' => 'When you try to submit a report and the system finds a nearby duplicate, you will see a popup with the option to "Support Existing Report" – click that to add your support.'],
+                ['q' => 'How are hotspots generated on the map?', 'a' => 'Hotspots are created when multiple reports are submitted within 50 meters of each other. The heatmap uses color coding to show density, from green (low) to red (high).']
+            ];
+            ?>
+            <?php foreach ($faqs as $index => $faq): ?>
+            <div class="faq-item bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition-colors" data-target="faq-<?php echo $index; ?>">
+                    <span class="font-semibold text-slate-800 text-sm"><?php echo htmlspecialchars($faq['q']); ?></span>
+                    <svg class="w-5 h-5 text-slate-400 transition-transform duration-300 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div id="faq-<?php echo $index; ?>" class="faq-answer max-h-0 overflow-hidden px-5 text-sm text-slate-500 leading-relaxed"><?php echo htmlspecialchars($faq['a']); ?></div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CONTACT & FINAL CTA                                        -->
+<!-- ============================================================ -->
+<section id="contact" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <!-- Contact Info Card -->
+            <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-[0_8px_25px_-12px_rgba(0,0,0,0.08)]">
+                <span class="text-[#10B981] text-[11px] font-bold uppercase tracking-[0.25em]">CONTACT US</span>
+                <h3 class="text-2xl font-extrabold text-slate-900 mt-2">Reach the Barangay Office</h3>
+                <p class="text-slate-500 mt-1 text-sm">For concerns that cannot be addressed through the system — or if you need direct assistance — reach out to the Barangay <?php echo $barangayName; ?> office.</p>
+
+                <div class="mt-6 space-y-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-700 text-sm">Address</p>
+                            <p class="text-sm text-slate-500"><?php echo htmlspecialchars($barangayAddress); ?></p>
+                        </div>
                     </div>
-                    <h3>Capture & Report</h3>
-                    <p>Snap a photo, describe the issue, and pin the location on our interactive map. Simple and fast for any residents.</p>
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-700 text-sm">Telephone</p>
+                            <p class="text-sm text-slate-500"><?php echo htmlspecialchars($barangayContact); ?></p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-700 text-sm">Email</p>
+                            <p class="text-sm text-slate-500"><?php echo htmlspecialchars($barangayEmail); ?></p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-700 text-sm">Office Hours</p>
+                            <p class="text-sm text-slate-500">Monday – Friday, 8:00 AM – 5:00 PM</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="step-card">
-                    <span class="step-num">02</span>
-                    <div class="step-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    </div>
-                    <h3>Track Progress</h3>
-                    <p>Watch your report move through Pending, Verified, and Resolved stages with live status updates and transparency.</p>
-                </div>
-                <div class="step-card">
-                    <span class="step-num">03</span>
-                    <div class="step-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                    </div>
-                    <h3>Stay Notified</h3>
-                    <p>Get real-time updates on your reports and stay informed about important barangay-wide waste notifications.</p>
+            </div>
+
+            <!-- CTA Card -->
+            <div class="lg:col-span-6 bg-[#07281E] rounded-2xl p-6 md:p-8 text-white shadow-[0_24px_60px_-30px_rgba(7,40,30,0.5)] flex flex-col justify-center">
+                <span class="text-[#10B981] text-[11px] font-bold uppercase tracking-[0.25em]">JOIN THE MOVEMENT</span>
+                <h3 class="text-2xl sm:text-3xl font-extrabold mt-2 tracking-tight">Join the Waste Reporting System</h3>
+                <p class="text-emerald-100/80 mt-2 text-sm leading-relaxed">
+                    Create an account to submit reports and track resolution in real time.
+                </p>
+                <div class="flex flex-wrap items-center gap-3 mt-6">
+                    <?php if ($isLoggedIn): ?>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>" class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#10B981] text-white font-bold rounded-full shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+                            Go to Dashboard
+                        </a>
+                    <?php else: ?>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#10B981] text-white font-bold rounded-full shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                            Register — It's Free
+                        </a>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="inline-flex items-center gap-2 px-6 py-2.5 border border-white/20 text-white font-semibold rounded-full hover:bg-white/10 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                            Already have an account? Login
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Built for everyone -->
-    
-
-    <!-- Testimonial -->
-    
-
-    <!-- FAQ -->
-    <section class="faq section-padding">
-        <div class="container">
-            <div class="text-center mb-12">
-                <span class="faq-badge">FREQUENTLY ASKED QUESTIONS</span>
-                <h2 class="section-title">Everything you need to know</h2>
-                <p class="section-desc">Can't find what you're looking for? Reach out to your barangay office.</p>
+<!-- ============================================================ -->
+<!-- FOOTER                                                     -->
+<!-- ============================================================ -->
+<footer class="bg-[#051E17] text-slate-300 py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Brand -->
+            <div class="md:col-span-1">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#10B981] flex items-center justify-center text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <span class="font-extrabold text-white text-lg">WasteWatch</span>
+                </div>
+                <p class="text-sm text-slate-400 mt-3 leading-relaxed">
+                    Barangay <?php echo $barangayName; ?> Waste Management Portal.<br>
+                    Community-powered waste reporting.
+                </p>
+                <p class="text-xs text-slate-500 mt-4">© <?php echo date('Y'); ?> WasteWatch. All rights reserved.</p>
             </div>
-            
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <button class="faq-question">
-                        What is WasteWatch?
-                        <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        WasteWatch is a digital platform designed for Barangay Dulong Bayan to streamline waste reporting, enabling residents to report issues directly and officials to resolve them efficiently.
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        How do I submit a waste report?
-                        <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        Once registered and logged in, click "Submit Report", take a photo of the waste, add a brief description, and pin the location on the map.
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Is my personal information safe?
-                        <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        Absolutely. We only use your basic info to verify residency and contact you regarding report updates. We do not share your data with third parties.
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        Can I track the status of my report?
-                        <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        Yes! Your dashboard shows a real-time list of all your reports and their current status: Pending, Verified, or Resolved.
-                    </div>
-                </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h4 class="text-white font-bold text-sm mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/brgy-waste-app-v3/public/" class="text-slate-400 hover:text-white transition-colors">Home</a></li>
+                    <li><a href="#features" class="text-slate-400 hover:text-white transition-colors">Features</a></li>
+                    <li><a href="#schedule" class="text-slate-400 hover:text-white transition-colors">Schedule</a></li>
+                    <li><a href="#announcements" class="text-slate-400 hover:text-white transition-colors">Announcements</a></li>
+                    <li><a href="#faq" class="text-slate-400 hover:text-white transition-colors">FAQs</a></li>
+                </ul>
+            </div>
+
+            <!-- Resources -->
+            <div>
+                <h4 class="text-white font-bold text-sm mb-4">Resources</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="text-slate-400 hover:text-white transition-colors">Create Account</a></li>
+                    <li><a href="/brgy-waste-app-v3/public/index.php?url=auth" class="text-slate-400 hover:text-white transition-colors">Login</a></li>
+                    <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                    <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h4 class="text-white font-bold text-sm mb-4">Contact</h4>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-start gap-2 text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="flex-shrink-0 mt-0.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <?php echo htmlspecialchars($barangayAddress); ?>
+                    </li>
+                    <li class="flex items-start gap-2 text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="flex-shrink-0 mt-0.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <?php echo htmlspecialchars($barangayContact); ?>
+                    </li>
+                    <li class="flex items-start gap-2 text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="flex-shrink-0 mt-0.5"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <?php echo htmlspecialchars($barangayEmail); ?>
+                    </li>
+                </ul>
             </div>
         </div>
-    </section>
 
-    <!-- Final CTA -->
-    
+        <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-500">
+            <p>Barangay <?php echo $barangayName; ?> Waste Management Portal · Smart Waste Solutions</p>
+        </div>
+    </div>
+</footer>
 
-    <!-- Footer -->
-    
+<!-- ============================================================ -->
+<!-- JAVASCRIPT                                                  -->
+<!-- ============================================================ -->
+<script>
+    // ====== FAQ Accordion ======
+    document.querySelectorAll('.faq-question').forEach(button => {
+        button.addEventListener('click', function() {
+            const target = document.getElementById(this.dataset.target);
+            const isOpen = target.style.maxHeight && target.style.maxHeight !== '0px';
 
-    <script>
-        // FAQ Toggle
-        document.querySelectorAll('.faq-question').forEach(button => {
-            button.addEventListener('click', () => {
-                const item = button.parentElement;
-                const isActive = item.classList.contains('active');
-                
-                // Close all others
-                document.querySelectorAll('.faq-item').forEach(other => {
-                    other.classList.remove('active');
-                });
-                
-                if (!isActive) {
-                    item.classList.add('active');
-                }
+            // Close all
+            document.querySelectorAll('.faq-answer').forEach(ans => {
+                ans.style.maxHeight = '0px';
+                ans.style.paddingTop = '0px';
+                ans.style.paddingBottom = '0px';
+                ans.parentElement.querySelector('.faq-question svg').style.transform = 'rotate(0deg)';
+            });
+
+            if (!isOpen) {
+                target.style.maxHeight = target.scrollHeight + 'px';
+                target.style.paddingTop = '16px';
+                target.style.paddingBottom = '16px';
+                this.querySelector('svg').style.transform = 'rotate(180deg)';
+            }
+        });
+    });
+
+    // ====== Mobile Menu ======
+    const menuToggle = document.getElementById('menuToggle');
+    const menuClose = document.getElementById('menuClose');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+        menuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+        // Close on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                document.body.style.overflow = '';
             });
         });
-    </script>
-</body>
-</html>
+    }
+
+    // ====== Smooth scroll for anchor links ======
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === '#') return;
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

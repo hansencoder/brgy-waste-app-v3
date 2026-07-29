@@ -1,0 +1,83 @@
+Build a clean, high-density "Admin Dashboard" for the "Wastewatch" administrator web portal based on the following specifications:
+
+1. Color Palette & Base Theme:
+   - Sidebar & Quick Access Background: Deep dark forest green (#07281E / #051E17)
+   - Primary Accent / Active States: Vibrant emerald green (#10B981) and light mint tint (#E6F4EA)
+   - Page Canvas: Light neutral off-white (#F8FAFC)
+   - Container Cards: White background (#FFFFFF), rounded-2xl (16px) corners, subtle borders (#E2E8F0), soft drop shadow.
+
+2. Navigation Sidebar (Fixed Left Column, Dark Green):
+   - Brand Header:
+     - Logo: Shield outline icon with leaf inside + text "Wastewatch" (white) and "ADMIN PORTAL" (muted green sublabel).
+   - Navigation Menu Items:
+     1. "Dashboard" -> Active State: Glowing emerald green pill background with white bold text.
+     2. "Reports" -> Includes red notification badge "2"
+     3. "User Mgmt"
+     4. "GIS Monitor"
+     5. "Schedule"
+     6. "Announcements"
+     7. "Analytics"
+     8. "Settings"
+     9. "Audit Logs"
+     10. "Profile"
+   - Profile Footer Card:
+     - Avatar "MS" inside a green circle.
+     - Name: "Maria Santos" (Bold white text) | Subtitle: "Administrator"
+     - Logout link with exit icon (`-> Logout`).
+
+3. Page Header Section:
+   - Header Tag: Small teal uppercase sublabel "ADMINISTRATOR PORTAL"
+   - Title: "Good morning, Maria 👋" (h1, bold dark text)
+   - Subtitle: "Barangay Dulong Bayan · July 24, 2026"
+
+4. Main Content Grid Layout:
+
+   a) Top Metrics Row (3-Column Grid):
+      - Card 1: Waste Report Overview (Green clipboard icon + right chevron)
+        * Numbers Row:
+          • Total: 245 (Bold Black)
+          • Pending: 18 (Orange #D97706)
+          • Verified: 180 (Green #059669)
+          • Resolved: 160 (Cyan #0891B2)
+          • Rejected: 47 (Red #DC2626)
+      - Card 2: Resident Accounts (Blue user group icon + right chevron)
+        * Numbers Row:
+          • Total: 312 (Bold Black)
+          • Active: 302 (Green #059669)
+          • Suspended: 5 (Orange #D97706)
+          • Disabled: 5 (Red #DC2626)
+      - Card 3: GIS Monitoring (Orange map icon + right chevron)
+        * Key Value List:
+          • Mapped Reports: 238
+          • Active Hotspots: 8 (Red text)
+          • Highest Concern: Purok 3 (Bold text)
+
+   b) Middle Row (3-Column Layout):
+      - Card 1: Collection Schedule (Calendar icon + right chevron)
+        * Inner Highlight Box (Soft mint background #EBF7F2):
+          • Sublabel: "NEXT COLLECTION" (Muted teal uppercase)
+          • Main Text: "Monday · 6:00 AM" (Bold)
+          • Subtext: "Purok 1, 2, 3 — Biodegradable"
+      - Card 2: Announcements (Megaphone icon + right chevron)
+        * Title: "Collection Schedule Update — August 2026"
+        * Date Subtext: "Published · Jul 22, 2026"
+        * Footer Badges: "Published" (Soft green badge) + "4 active announcements"
+      - Card 3: Quick Access (Dark Forest Green Card #07281E)
+        * Title: "QUICK ACCESS" (Uppercase, muted text)
+        * 6 Action Grid Buttons (2 Columns x 3 Rows, dark translucent pill buttons with green icons):
+          1. Review Reports (Document icon)
+          2. Manage Users (Users icon)
+          3. Open GIS Map (Map icon)
+          4. Make Announcement (Megaphone icon)
+          5. Update Schedule (Calendar icon)
+          6. View Analytics (Bar chart icon)
+
+   c) Bottom Section: Recent Reports Data Table:
+      - Header Bar: Title "Recent Reports" (Bold) | Right link "View All" (Green `#10B981`)
+      - Table Header (Uppercase bold light gray): `REPORT ID` | `RESIDENT` | `CATEGORY` | `PUROK` | `DATE` | `STATUS` | `ACTION`
+      - Table Rows:
+        1. `WR-2026-001` | Juan dela Cruz | Illegal Dumping | Purok 3 | Jul 20, 2026 | [Pending - Soft Yellow Badge] | Review (Green link)
+        2. `WR-2026-002` | Maria Santos | Overflowing Garbage Bin | Purok 1 | Jul 18, 2026 | [Verified - Soft Green Badge] | Review (Green link)
+        3. `WR-2026-003` | Pedro Reyes | Uncollected Garbage | Purok 5 | Jul 17, 2026 | [Resolved - Soft Cyan Badge] | Review (Green link)
+        4. `WR-2026-004` | Ana Lim | Hazardous Waste | Purok 2 | Jul 15, 2026 | [Rejected - Soft Red Badge] | Review (Green link)
+        5. `WR-2026-005` | Carlo Bautista | Construction Waste | Purok 4 | Jul 14, 2026 | [In Progress - Soft Orange Badge] | Review (Green link)

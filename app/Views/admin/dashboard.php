@@ -1,533 +1,333 @@
-<?php include __DIR__ . '/../layouts/header.php'; ?>
+﻿<?php include __DIR__ . '/../layouts/header.php'; ?>
 <?php
-$stats         = $data['stats']          ?? ['total'=>0,'pending'=>0,'verified'=>0,'resolved'=>0];
-$today_count   = $data['today_count']    ?? 0;
-$pending_count = $data['pending_count']  ?? 0;
-$active_res    = $data['active_residents'] ?? 0;
-$res_rate      = $data['resolution_rate'] ?? 0;
-$recent_rpts   = $data['recent_reports'] ?? [];
-$recent_act    = $data['recent_activity'] ?? [];
-$heatmap       = $data['heatmap']        ?? [];
+$stats = $data['stats'] ?? ['total' => 0, 'Pending' => 0, 'Verified' => 0, 'Resolved' => 0, 'Rejected' => 0];
+$resident_stats = $data['resident_stats'] ?? ['total' => 0, 'active' => 0, 'suspended' => 0, 'deactivated' => 0];
+$mapped_reports = $data['mapped_reports'] ?? 0;
+$active_hotspots = $data['active_hotspots'] ?? 0;
+$highest_purok = $data['highest_purok'] ?? 'N/A';
+$next_schedule = $data['next_schedule'] ?? null;
+$latest_announce = $data['latest_announcement'] ?? null;
+$active_announcements = $data['active_announcements'] ?? 0;
+$recent_reports = $data['recent_reports'] ?? [];
+$admin_name = $_SESSION['user_name'] ?? 'Admin';
+$today_date = date('F d, Y');
+$unread_count = $data['unread_count'] ?? 0;
 
-// Status colour map
-$statusDot = [
-    'pending'  => 'bg-amber-500',
-    'verified' => 'bg-blue-500',
-    'resolved' => 'bg-emerald-500',
-];
-$statusLabel = [
-    'pending'  => '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-600">Pending</span>',
-    'verified' => '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-600">Verified</span>',
-    'resolved' => '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600">Resolved</span>',
-];
+function getStatusBadge($status) {
+    $map = [
+        'Pending'     => ['bg' => '#FEF3C7', 'text' => '#92400E', 'label' => 'Pending'],
+        'Verified'    => ['bg' => '#DCFCE7', 'text' => '#15803D', 'label' => 'Verified'],
+        'Resolved'    => ['bg' => '#E0F2FE', 'text' => '#0369A1', 'label' => 'Resolved'],
+        'Rejected'    => ['bg' => '#FEE2E2', 'text' => '#B91C1C', 'label' => 'Rejected'],
+        'In Progress' => ['bg' => '#FFEDD5', 'text' => '#C2410C', 'label' => 'In Progress'],
+    ];
+    return $map[$status] ?? ['bg' => '#F3F4F6', 'text' => '#4B5563', 'label' => $status];
+}
 ?>
+<style>
+    .mobile-sidebar-open #mobileSidebar { transform: translateX(0) !important; }
+    #mobileSidebarOverlay { transition: opacity 0.25s ease, visibility 0.25s ease; }
+    .mobile-sidebar-open #mobileSidebarOverlay { opacity: 1; visibility: visible; }
+    #mobileSidebarOverlay { opacity: 0; visibility: hidden; }
+</style>
 
-<div class="flex h-screen bg-gray-50 overflow-hidden w-full">
-    <!-- Sidebar -->
-    <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
+<div class="min-h-screen bg-[#F8FAFC]">
+    <div id="mobileSidebarOverlay" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none lg:hidden"></div>
+    <div class="lg:flex lg:min-h-screen">
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
-    <!-- Main Content Wrapper -->
-    <div class="flex flex-col flex-1 w-0 overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
 
-        <!-- Top Nav -->
-        <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
+            <main class="flex-1 overflow-y-auto">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
-        <!-- Scrollable Content -->
-        <main class="flex-1 relative overflow-y-auto focus:outline-none">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-                <!-- ── Header ── -->
-                <div class="flex justify-between items-end mb-8">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-1"><?php echo ucfirst($_SESSION['user_role'] ?? 'Secretary'); ?> Dashboard</h1>
-                        <p class="text-gray-500 text-sm">Welcome back, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Secretary'); ?>! Here's what's happening in your barangay.</p>
-                    </div>
-                    <div class="flex space-x-3 text-sm">
-                        <a href="/brgy-waste-app-v3/public/admin/announcements"
-                        class="bg-[#118B50] hover:bg-[#15281f] text-white px-4 py-2 rounded-md font-medium flex items-center shadow-sm transition-colors">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                            </svg>
-                            Post Announcement
-                        </a>
-                        <a href="/brgy-waste-app-v3/public/admin/export?format=csv"
-                        class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md font-medium flex items-center shadow-sm transition-colors">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                            </svg>
-                            Export CSV
-                        </a>
-                    </div>
-                </div>
-
-                <!-- ── 4 Stat Cards ── -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-
-                    <!-- New Reports Today -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-gray-500 text-sm font-medium mb-1">New Reports Today</h3>
-                                <p class="text-4xl font-bold text-gray-900"><?php echo $today_count; ?></p>
-                            </div>
-                            <div class="bg-blue-50 p-2 rounded-lg text-blue-500">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                            </div>
+                    <div class="mb-8">
+                        <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.35em] text-emerald-700">Administrator Portal</span>
+                        <div class="mt-4 max-w-2xl">
+                            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">Good morning, <?php echo htmlspecialchars($admin_name); ?> 👋</h1>
                         </div>
-                        <p class="text-xs text-gray-400 mt-3"><?php echo $stats['total']; ?> total all-time</p>
+                        <p class="mt-1 text-sm text-slate-500">Barangay Dulong Bayan · <?php echo $today_date; ?></p>
                     </div>
 
-                    <!-- Pending Approvals -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-gray-500 text-sm font-medium mb-1">Pending Reports</h3>
-                                <p class="text-4xl font-bold text-gray-900"><?php echo $pending_count; ?></p>
-                            </div>
-                            <div class="bg-yellow-50 p-2 rounded-lg text-yellow-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-3"><?php echo $stats['verified'] ?? 0; ?> verified, awaiting resolution</p>
-                    </div>
-
-                    <!-- Active Residents -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-gray-500 text-sm font-medium mb-1">Active Residents</h3>
-                                <p class="text-4xl font-bold text-gray-900"><?php echo $active_res; ?></p>
-                            </div>
-                            <div class="bg-green-50 p-2 rounded-lg text-green-500">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-3">Registered & approved accounts</p>
-                    </div>
-
-                    <!-- Resolution Rate -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-gray-500 text-sm font-medium mb-1">Resolution Rate</h3>
-                                <p class="text-4xl font-bold text-gray-900"><?php echo $res_rate; ?>%</p>
-                            </div>
-                            <div class="bg-purple-50 p-2 rounded-lg text-purple-500">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-3"><?php echo $stats['resolved'] ?? 0; ?> of <?php echo $stats['total']; ?> reports resolved</p>
-                    </div>
-
-                </div>
-
-                <!-- ── Main Content Grid ── -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                    <!-- Left Column (Analytics + Reports Overview + Map) -->
-                    <div class="lg:col-span-2 space-y-8">
-
-                        <!-- Analytics Section -->
-                        <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
-                            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                                <h2 class="text-lg font-bold text-gray-900">Waste Reporting Analytics</h2>
-                                <a href="/brgy-waste-app-v3/public/admin/report_summaries" class="text-green-600 text-sm font-medium hover:underline">View detailed analytics →</a>
-                            </div>
-                            <div class="p-6">
-                                <!-- Charts Grid -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <!-- Daily Reports Chart -->
-                                    <div class="flex flex-col">
-                                        <h3 class="text-sm font-semibold text-gray-700 mb-4">Reports by Day of Week</h3>
-                                        <div class="flex-1" style="min-height: 250px;">
-                                            <canvas id="dailyReportsChart"></canvas>
-                                        </div>
+                    <!-- Top Metrics Row -->
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-8">
+                        <!-- Waste Report Overview -->
+                        <div class="rounded-[24px] bg-white border border-slate-200 p-6 shadow-sm">
+                            <div class="flex items-start justify-between gap-4 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Waste Report Overview</p>
                                     </div>
-
-                                    <!-- Monthly Trends Chart -->
-                                    <div class="flex flex-col">
-                                        <h3 class="text-sm font-semibold text-gray-700 mb-4">Monthly Trends (Last 6 Months)</h3>
-                                        <div class="flex-1" style="min-height: 250px;">
-                                            <canvas id="monthlyTrendsChart"></canvas>
-                                        </div>
-                                    </div>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 sm:grid-cols-5 sm:gap-3">
+                                <div class="rounded-3xl bg-slate-50 p-4 text-center">
+                                    <p class="text-sm text-slate-500">Total</p>
+                                    <p class="mt-2 text-2xl font-black text-slate-900"><?php echo $stats['total']; ?></p>
+                                </div>
+                                <div class="rounded-3xl bg-amber-50 p-4 text-center">
+                                    <p class="text-sm text-amber-700">Pending</p>
+                                    <p class="mt-2 text-2xl font-black text-amber-700"><?php echo $stats['Pending']; ?></p>
+                                </div>
+                                <div class="rounded-3xl bg-emerald-50 p-4 text-center">
+                                    <p class="text-sm text-emerald-700">Verified</p>
+                                    <p class="mt-2 text-2xl font-black text-emerald-700"><?php echo $stats['Verified']; ?></p>
+                                </div>
+                                <div class="rounded-3xl bg-cyan-50 p-4 text-center">
+                                    <p class="text-sm text-cyan-700">Resolved</p>
+                                    <p class="mt-2 text-2xl font-black text-cyan-700"><?php echo $stats['Resolved']; ?></p>
+                                </div>
+                                <div class="rounded-3xl bg-red-50 p-4 text-center">
+                                    <p class="text-sm text-red-700">Rejected</p>
+                                    <p class="mt-2 text-2xl font-black text-red-700"><?php echo $stats['Rejected']; ?></p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Reports Overview Card -->
-                        <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
-                            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                                <h2 class="text-lg font-bold text-gray-900">Reports Overview</h2>
-                                <a href="/brgy-waste-app-v3/public/admin/reports" class="text-green-600 text-sm font-medium hover:underline">View all →</a>
-                            </div>
-                            <div class="p-6">
-                                <!-- Stats Mini Bar -->
-                                <div class="flex justify-between text-center mb-8 px-4">
+                        <!-- Resident Accounts -->
+                        <div class="rounded-[24px] bg-white border border-slate-200 p-6 shadow-sm">
+                            <div class="flex items-start justify-between gap-4 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </span>
                                     <div>
-                                        <p class="text-2xl font-bold text-amber-500"><?php echo $stats['pending'] ?? 0; ?></p>
-                                        <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mt-1">Pending</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-2xl font-bold text-blue-500"><?php echo $stats['verified'] ?? 0; ?></p>
-                                        <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mt-1">Verified</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-2xl font-bold text-emerald-500"><?php echo $stats['resolved'] ?? 0; ?></p>
-                                        <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mt-1">Resolved</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-2xl font-bold text-gray-700"><?php echo $stats['total'] ?? 0; ?></p>
-                                        <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mt-1">Total</p>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Resident Accounts</p>
                                     </div>
                                 </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-3 text-center">
+                                <div class="rounded-3xl bg-slate-50 p-4">
+                                    <p class="text-sm text-slate-500">Total</p>
+                                    <p class="mt-2 text-2xl font-black text-slate-900"><?php echo $resident_stats['total']; ?></p>
+                                </div>
+                                <div class="rounded-3xl bg-emerald-50 p-4">
+                                    <p class="text-sm text-emerald-700">Active</p>
+                                    <p class="mt-2 text-2xl font-black text-emerald-700"><?php echo $resident_stats['active']; ?></p>
+                                </div>
+                                <div class="rounded-3xl bg-amber-50 p-4">
+                                    <p class="text-sm text-amber-700">Suspended</p>
+                                    <p class="mt-2 text-2xl font-black text-amber-700"><?php echo $resident_stats['suspended']; ?></p>
+                                </div>
+                                <div class="rounded-3xl bg-red-50 p-4">
+                                    <p class="text-sm text-red-700">Disabled</p>
+                                    <p class="mt-2 text-2xl font-black text-red-700"><?php echo $resident_stats['deactivated']; ?></p>
+                                </div>
+                            </div>
+                        </div>
 
-                                <!-- Recent Reports List -->
-                                <?php if (!empty($recent_rpts)): ?>
-                                <div class="space-y-4">
-                                    <?php foreach ($recent_rpts as $rpt): ?>
-                                    <?php
-                                        $dotClass = $statusDot[$rpt['status']] ?? 'bg-gray-400';
+                        <!-- GIS Monitoring -->
+                        <div class="rounded-[24px] bg-white border border-slate-200 p-6 shadow-sm">
+                            <div class="flex items-start justify-between gap-4 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 text-orange-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">GIS Monitoring</p>
+                                    </div>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </div>
+                            <div class="space-y-3 text-sm text-slate-600">
+                                <div class="flex items-center justify-between">
+                                    <span>Mapped Reports</span>
+                                    <span class="font-semibold text-slate-900"><?php echo $mapped_reports; ?></span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span>Active Hotspots</span>
+                                    <span class="font-semibold text-red-600"><?php echo $active_hotspots; ?></span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span>Highest Concern</span>
+                                    <span class="font-semibold text-slate-900"><?php echo htmlspecialchars($highest_purok); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Middle Row -->
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-8">
+                        <!-- Collection Schedule -->
+                        <div class="rounded-[24px] bg-white border border-slate-200 p-6 shadow-sm">
+                            <div class="flex items-start justify-between gap-4 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Collection Schedule</p>
+                                    </div>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </div>
+                            <?php if ($next_schedule): ?>
+                            <div class="rounded-3xl bg-[#EBF7F2] p-5">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.35em] text-emerald-700">Next Collection</p>
+                                <p class="mt-3 text-xl font-black text-slate-900"><?php echo htmlspecialchars($next_schedule['collection_day']); ?> · <?php echo date('g:i A', strtotime($next_schedule['start_time'])); ?></p>
+                                <p class="mt-2 text-sm text-slate-700"><?php echo htmlspecialchars($next_schedule['puroks'] ?? 'All Puroks'); ?> — <?php echo htmlspecialchars($next_schedule['waste_type'] ?? 'General'); ?></p>
+                            </div>
+                            <?php else: ?>
+                            <p class="text-sm text-slate-500">No active schedule available.</p>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Announcements -->
+                        <div class="rounded-[24px] bg-white border border-slate-200 p-6 shadow-sm">
+                            <div class="flex items-start justify-between gap-4 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-50 text-violet-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Announcements</p>
+                                    </div>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </div>
+                            <?php if ($latest_announce): ?>
+                            <div class="space-y-3">
+                                <p class="text-base font-bold text-slate-900"><?php echo htmlspecialchars($latest_announce['title']); ?></p>
+                                <p class="text-sm text-slate-500">Published · <?php echo date('M d, Y', strtotime($latest_announce['created_at'])); ?></p>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700">Published</span>
+                                    <span class="text-[11px] text-slate-400"><?php echo $active_announcements; ?> active announcements</span>
+                                </div>
+                            </div>
+                            <?php else: ?>
+                            <p class="text-sm text-slate-500">No announcements available.</p>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Quick Access (Dark Green) with Icons -->
+                        <div class="rounded-[24px] bg-[#07281E] p-6 shadow-lg text-white">
+                            <p class="text-[10px] font-semibold uppercase tracking-[0.4em] text-emerald-300 mb-6">Quick Access</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <a href="/brgy-waste-app-v3/public/index.php?url=admin/reports" class="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-3 py-4 text-center text-sm font-semibold transition hover:bg-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                    Review Reports
+                                </a>
+                                <a href="/brgy-waste-app-v3/public/index.php?url=admin/accounts" class="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-3 py-4 text-center text-sm font-semibold transition hover:bg-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Manage Users
+                                </a>
+                                <a href="/brgy-waste-app-v3/public/index.php?url=admin/gis" class="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-3 py-4 text-center text-sm font-semibold transition hover:bg-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    Open GIS Map
+                                </a>
+                                <a href="/brgy-waste-app-v3/public/index.php?url=admin/announcements" class="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-3 py-4 text-center text-sm font-semibold transition hover:bg-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                                    Make Announcement
+                                </a>
+                                <a href="/brgy-waste-app-v3/public/index.php?url=admin/schedule" class="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-3 py-4 text-center text-sm font-semibold transition hover:bg-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                                    Update Schedule
+                                </a>
+                                <a href="/brgy-waste-app-v3/public/index.php?url=admin/report_summaries" class="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-3 py-4 text-center text-sm font-semibold transition hover:bg-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                                    View Analytics
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Reports Table -->
+                    <div class="rounded-[32px] bg-white border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="flex flex-col gap-4 px-6 py-5 border-b border-slate-200 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-900">Recent Reports</h2>
+                            </div>
+                            <a href="/brgy-waste-app-v3/public/index.php?url=admin/reports" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700">View All →</a>
+                        </div>
+
+                        <div class="overflow-x-auto hidden md:block">
+                            <table class="min-w-full divide-y divide-slate-200 text-sm">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Report ID</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Resident</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Category</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Purok</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Date</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Status</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 bg-white">
+                                    <?php foreach ($recent_reports as $report):
+                                        $badge = getStatusBadge($report['status']);
+                                        $reportId = 'WR-' . str_pad($report['id'], 7, '0', STR_PAD_LEFT);
                                     ?>
-                                    <a href="/brgy-waste-app-v3/public/admin/reports" class="flex items-start justify-between group hover:bg-gray-50 -mx-2 px-2 py-2 rounded-lg transition-colors">
-                                        <div class="flex items-start">
-                                            <div class="w-2 h-2 rounded-full <?php echo $dotClass; ?> mt-2 mr-3 flex-shrink-0"></div>
-                                            <div>
-                                                <h4 class="text-sm font-bold text-gray-900 group-hover:text-green-700 transition-colors">
-                                                    RPT-<?php echo str_pad($rpt['id'], 5, '0', STR_PAD_LEFT); ?>
-                                                    &nbsp;<?php echo $statusLabel[$rpt['status']] ?? ''; ?>
-                                                </h4>
-                                                <p class="text-xs text-gray-500 mt-0.5 truncate max-w-sm"><?php echo htmlspecialchars($rpt['description']); ?></p>
-                                                <p class="text-xs text-gray-400 mt-0.5">by <?php echo htmlspecialchars($rpt['resident_name']); ?></p>
-                                            </div>
-                                        </div>
-                                        <span class="text-xs text-gray-400 whitespace-nowrap ml-4 mt-1"><?php echo date('M j, Y', strtotime($rpt['submission_date'])); ?></span>
-                                    </a>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-6 py-4 font-mono text-slate-900"><?php echo htmlspecialchars($reportId); ?></td>
+                                        <td class="px-6 py-4 text-slate-700"><?php echo htmlspecialchars($report['resident_name'] ?? 'N/A'); ?></td>
+                                        <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($report['category'] ?? 'N/A'); ?></td>
+                                        <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></td>
+                                        <td class="px-6 py-4 text-slate-500"><?php echo date('M d, Y', strtotime($report['submission_date'])); ?></td>
+                                        <td class="px-6 py-4">
+                                            <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold" style="background: <?php echo $badge['bg']; ?>; color: <?php echo $badge['text']; ?>;"><?php echo $badge['label']; ?></span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <a href="/brgy-waste-app-v3/public/index.php?url=admin/reports" class="text-emerald-600 font-semibold hover:text-emerald-700">Review</a>
+                                        </td>
+                                    </tr>
                                     <?php endforeach; ?>
-                                </div>
-                                <?php else: ?>
-                                <div class="text-center py-8 text-gray-400">
-                                    <svg class="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                    <p class="text-sm font-medium">No reports yet</p>
-                                </div>
-                                <?php endif; ?>
-                            </div>
+                                    <?php if (empty($recent_reports)): ?>
+                                    <tr><td colspan="7" class="px-6 py-6 text-center text-slate-500">No recent reports.</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
                         </div>
 
-                        <!-- Map Section -->
-                        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 overflow-hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h2 class="text-lg font-bold text-gray-900">Barangay Map — Reports Heatmap</h2>
-                                <a href="/brgy-waste-app-v3/public/admin/reports" class="text-green-600 text-sm font-medium hover:underline">Manage reports →</a>
+                        <div class="md:hidden px-4 py-4 space-y-4">
+                            <?php foreach ($recent_reports as $report):
+                                $badge = getStatusBadge($report['status']);
+                                $reportId = 'WR-' . str_pad($report['id'], 7, '0', STR_PAD_LEFT);
+                            ?>
+                            <div class="rounded-3xl bg-slate-50 p-4 border border-slate-200">
+                                <div class="flex items-center justify-between gap-4">
+                                    <div>
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400"><?php echo htmlspecialchars($reportId); ?></p>
+                                        <p class="mt-2 text-sm font-semibold text-slate-900"><?php echo htmlspecialchars($report['category'] ?? 'N/A'); ?></p>
+                                        <p class="mt-1 text-xs text-slate-500"><?php echo htmlspecialchars($report['resident_name'] ?? 'N/A'); ?> · <?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></p>
+                                        <p class="text-xs text-slate-400"><?php echo date('M d, Y', strtotime($report['submission_date'])); ?></p>
+                                    </div>
+                                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold" style="background: <?php echo $badge['bg']; ?>; color: <?php echo $badge['text']; ?>;"><?php echo $badge['label']; ?></span>
+                                </div>
+                                <a href="/brgy-waste-app-v3/public/index.php?url=admin/reports" class="mt-4 inline-flex items-center text-sm font-semibold text-emerald-600 hover:text-emerald-700">Review →</a>
                             </div>
-                            <div class="w-full h-[320px] rounded-lg overflow-hidden border border-gray-200">
-                                <div id="map" class="w-full h-full z-0"></div>
-                            </div>
-                            <!-- Map Legend -->
-                            <div class="flex items-center gap-5 mt-3 text-xs text-gray-500">
-                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>Pending</span>
-                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>Verified</span>
-                                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>Resolved</span>
-                            </div>
+                            <?php endforeach; ?>
+                            <?php if (empty($recent_reports)): ?>
+                            <p class="text-center text-slate-500 py-4">No recent reports.</p>
+                            <?php endif; ?>
                         </div>
                     </div>
 
-                    <!-- Right Column (Recent Activity) -->
-                    <div class="space-y-8">
-                        <!-- Recent Activity -->
-                        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                                <h2 class="text-lg font-bold text-gray-900">Recent Activity</h2>
-                                <a href="/brgy-waste-app-v3/public/admin/auditLogs" class="text-green-600 text-sm font-medium hover:underline">View logs →</a>
-                            </div>
-                            <div class="flex flex-col divide-y divide-gray-50">
-                                <?php if (!empty($recent_act)): ?>
-                                    <?php foreach ($recent_act as $act): ?>
-                                    <?php
-                                        // Pick icon/colour based on action keyword
-                                        $actBg  = 'bg-blue-50 text-blue-500';
-                                        $actIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>';
-
-                                        if (stripos($act['action'], 'Verified') !== false || stripos($act['action'], 'Resolved') !== false) {
-                                            $actBg   = 'bg-emerald-50 text-emerald-500';
-                                            $actIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>';
-                                        } elseif (stripos($act['action'], 'Approved') !== false) {
-                                            $actBg   = 'bg-green-50 text-green-500';
-                                            $actIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
-                                        } elseif (stripos($act['action'], 'Deleted') !== false || stripos($act['action'], 'Rejected') !== false) {
-                                            $actBg   = 'bg-red-50 text-red-500';
-                                            $actIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>';
-                                        } elseif (stripos($act['action'], 'Announcement') !== false) {
-                                            $actBg   = 'bg-purple-50 text-purple-500';
-                                            $actIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>';
-                                        }
-                                    ?>
-                                    <div class="p-5 hover:bg-gray-50 transition-colors flex items-start gap-4">
-                                        <div class="<?php echo $actBg; ?> p-2 rounded-lg flex-shrink-0 mt-0.5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <?php echo $actIcon; ?>
-                                            </svg>
-                                        </div>
-                                        <div class="min-w-0">
-                                            <h4 class="text-sm font-bold text-gray-900"><?php echo htmlspecialchars($act['action']); ?></h4>
-                                            <p class="text-xs text-gray-500 mt-0.5 truncate"><?php echo htmlspecialchars($act['details']); ?></p>
-                                            <p class="text-xs text-gray-400 mt-0.5"><?php echo date('M j, Y g:i A', strtotime($act['created_at'])); ?></p>
-                                        </div>
-                                    </div>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="p-8 text-center text-gray-400">
-                                        <p class="text-sm">No recent activity yet.</p>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>                    
-                    </div>
                 </div>
-
-            </div><!-- /max-w-7xl -->
-        </main>
+            </main>
+        </div>
     </div>
 </div>
 
-<!-- Chart.js Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
-<!-- Leaflet Heat Plugin -->
-<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-
 <script>
-// Chart instances - global so we can destroy and recreate
-let dailyChart = null;
-let monthlyChart = null;
-
-// Process reports by day of week
-function processDailyData(reports) {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dailyCounts = { Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0 };
-
-    // Count reports by day of week
-    reports.forEach(report => {
-        const reportDate = new Date(report.submission_date);
-        const dayName = days[reportDate.getDay()];
-        dailyCounts[dayName]++;
-    });
-
-    return {
-        labels: days,
-        values: days.map(day => dailyCounts[day])
-    };
-}
-
-// Process reports by month
-function processMonthlyData(reports) {
-    const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const today = new Date();
-    const months = [];
-    const monthLabels = [];
-    
-    for (let i = 5; i >= 0; i--) {
-        const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-        months.push(date);
-        monthLabels.push(allMonths[date.getMonth()] + ' ' + date.getFullYear());
-    }
-    
-    const data = [0, 0, 0, 0, 0, 0];
-    
-    reports.forEach(report => {
-        const reportDate = new Date(report.submission_date);
-        months.forEach((month, index) => {
-            const nextMonth = new Date(month.getFullYear(), month.getMonth() + 1, 1);
-            if (reportDate >= month && reportDate < nextMonth) {
-                data[index]++;
-            }
-        });
-    });
-    
-    return {
-        labels: monthLabels,
-        values: data
-    };
-}
-
-// Render Daily Reports Chart
-function renderDailyChart(data) {
-    const ctx = document.getElementById('dailyReportsChart');
-    
-    // Destroy existing chart if it exists
-    if (dailyChart) {
-        dailyChart.destroy();
-    }
-
-    dailyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: 'Reports',
-                data: data.values,
-                backgroundColor: '#16a34a',
-                borderColor: '#15803d',
-                borderWidth: 1,
-                borderRadius: 4,
-                hoverBackgroundColor: '#15803d'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    },
-                    grid: {
-                        color: '#f3f4f6'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuButton = document.getElementById('mobileMenuButton');
+        const overlay = document.getElementById('mobileSidebarOverlay');
+        if (menuButton && overlay) {
+            menuButton.addEventListener('click', function() {
+                document.body.classList.toggle('mobile-sidebar-open');
+            });
+            overlay.addEventListener('click', function() {
+                document.body.classList.remove('mobile-sidebar-open');
+            });
         }
     });
-}
-
-// Render Monthly Trends Chart
-function renderMonthlyChart(data) {
-    const ctx = document.getElementById('monthlyTrendsChart');
-    
-    // Destroy existing chart if it exists
-    if (monthlyChart) {
-        monthlyChart.destroy();
-    }
-
-    monthlyChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: 'Monthly Reports',
-                data: data.values,
-                borderColor: '#16a34a',
-                backgroundColor: 'rgba(22, 163, 74, 0.05)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#16a34a',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-                hoverBackgroundColor: '#15803d'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    },
-                    grid: {
-                        color: '#f3f4f6'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
-}
-
-// Load analytics data
-document.addEventListener('DOMContentLoaded', function() {
-    // Fetch and render charts
-    fetch('/brgy-waste-app-v3/public/api/getAllReports.php')
-        .then(response => response.json())
-        .then(data => {
-            console.log('API Response:', data);
-            if (data.success && data.reports && data.reports.length > 0) {
-                console.log('Reports loaded:', data.reports.length);
-                const dailyData = processDailyData(data.reports);
-                const monthlyData = processMonthlyData(data.reports);
-                console.log('Daily data:', dailyData);
-                console.log('Monthly data:', monthlyData);
-                renderDailyChart(dailyData);
-                renderMonthlyChart(monthlyData);
-            } else {
-                console.log('No reports found or API error:', data);
-            }
-        })
-        .catch(error => {
-            console.error('Failed to load analytics:', error);
-        });
-
-    // Initialize map
-    var map = L.map('map').setView([15.558, 120.803], 14);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        className: 'map-grayscale'
-    }).addTo(map);
-
-    var s = document.createElement('style');
-    s.innerHTML = '.map-grayscale { filter: grayscale(40%) opacity(0.85); }';
-    document.head.appendChild(s);
-
-    var boundary = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[120.8013517,15.5699279],[120.8008898,15.569572],[120.8008276,15.5686578],[120.8006126,15.5685788],[120.8005542,15.5678398],[120.8001844,15.5672858],[120.8000725,15.5668847],[120.8001665,15.566531],[120.7995785,15.5663685],[120.7989717,15.5657033],[120.7987031,15.5658025],[120.7984537,15.5654243],[120.7980956,15.5652],[120.7977553,15.5652043],[120.7975135,15.5652862],[120.7971285,15.5652259],[120.7964691,15.5648604],[120.7961709,15.5643821],[120.795562,15.5643993],[120.7951681,15.5637567],[120.7953561,15.5632478],[120.7952523,15.562581],[120.7950598,15.5617529],[120.7950416,15.5611835],[120.7945939,15.5608471],[120.7946431,15.5603295],[120.7943504,15.5596467],[120.7937415,15.5597848],[120.7930393,15.55916],[120.7928646,15.5570187],[120.7921781,15.555107],[120.7912123,15.554853],[120.7913399,15.5543176],[120.7915605,15.5533236],[120.7918092,15.5534046],[120.8001316,15.5478115],[120.8011058,15.5481325],[120.8021398,15.5484701],[120.8027807,15.5485113],[120.8032508,15.5489723],[120.8030798,15.5500426],[120.8038043,15.5501365],[120.8044282,15.5502517],[120.8049495,15.550614],[120.8058211,15.5508445],[120.8062911,15.551569],[120.8071584,15.5520964],[120.8076635,15.5520903],[120.8081181,15.5524005],[120.8083454,15.5523519],[120.8085979,15.5525708],[120.8088668,15.5528807],[120.8118007,15.5512389],[120.8126332,15.550257],[120.8153176,15.5523838],[120.817434,15.549628],[120.8219183,15.5518119],[120.8232918,15.5522367],[120.8253946,15.5516159],[120.8260956,15.5512188],[120.8281375,15.5526533],[120.8298546,15.5518644],[120.8310955,15.5519514],[120.8335885,15.5541358],[120.8325752,15.5557229],[120.8326161,15.5574083],[120.8332704,15.5602447],[120.8283841,15.5650646],[120.8236492,15.5703491],[120.82189,15.5689622],[120.8219651,15.5676998],[120.8203353,15.5645562],[120.8205697,15.5594636],[120.8185042,15.5617437],[120.8149287,15.5609879],[120.8126889,15.5623097],[120.8092582,15.5595308],[120.8032464,15.5673914],[120.8014669,15.5699463],[120.8013468,15.5699463]]]}}]};
-    L.geoJSON(boundary, { style: { color:'#16a34a', weight:2, fillColor:'#22c55e', fillOpacity:0.08, dashArray:'6,5' } }).addTo(map);
-
-    var reports = <?php
-        $db2 = new Database();
-        $db2->query("SELECT latitude, longitude, status FROM reports");
-        $pins = $db2->resultSet();
-        echo json_encode($pins ?: []);
-    ?>;
-
-    var pinColors = { pending: '#f59e0b', verified: '#3b82f6', resolved: '#10b981' };
-    reports.forEach(function(pin) {
-        var color = pinColors[pin.status] || '#9ca3af';
-        var icon = L.divIcon({
-            html: '<div style="background:' + color + ';width:12px;height:12px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div>',
-            className: '', iconSize: [12,12], iconAnchor: [6,6]
-        });
-        L.marker([parseFloat(pin.latitude), parseFloat(pin.longitude)], { icon: icon }).addTo(map);
-    });
-
-    var heatData = <?php echo json_encode(array_map(fn($p) => [(float)$p['latitude'], (float)$p['longitude'], 0.6], $heatmap)); ?>;
-    if (heatData.length > 0) {
-        L.heatLayer(heatData, { radius:30, blur:20, maxZoom:16 }).addTo(map);
-    }
-
-    setTimeout(function(){ map.invalidateSize(); }, 150);
-});
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

@@ -308,6 +308,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle tab switching via URL (already done by PHP, but we can listen for clicks if needed)
     // For now, we rely on full page reloads when tabs are clicked.
 
+
+
     // Resize map on window resize
     window.addEventListener('resize', function() {
         map.invalidateSize();
@@ -318,6 +320,216 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => map.invalidateSize(), 300);
     });
 });
+
+    // --- HOTSPOT HOVER & CLICK (ADD THIS BLOCK) ---
+    let hotspotLayer = null;
+    let hotspotTooltip = null;
+
+    // Function to load hotspot data
+    function loadHotspots() {
+        // Clear existing hotspot layer
+        if (hotspotLayer) {
+            map.removeLayer(hotspotLayer);
+        }
+        
+        // Fetch hotspot data with current filters
+        const params = new URLSearchParams(window.location.search);
+        fetch('/brgy-waste-app-v3/public/supervisor/getHotspots?' + params.toString())
+            .then(response => response.json())
+            .then(data => {
+                if (data.hotspots && data.hotspots.length > 0) {
+                    // Create GeoJSON layer for hotspots
+                    const geojson = {
+                        type: 'FeatureCollection',
+                        features: data.hotspots.map(h => ({
+                            type: 'Feature',
+                            properties: {
+                                purok: h.purok_name,
+                                count: h.report_count,
+                                category: h.dominant_category,
+                                severity: h.severity || 'medium'
+                            },
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [h.lng || 120.803, h.lat || 15.558]
+                            }
+                        }))
+                    };
+                    
+                    hotspotLayer = L.geoJSON(geojson, {
+                        pointToLayer: function(feature, latlng) {
+                            const severity = feature.properties.severity;
+                            const radius = severity === 'high' ? 20 : severity === 'medium' ? 14 : 10;
+                            const color = severity === 'high' ? '#EF4444' : severity === 'medium' ? '#F97316' : '#10B981';
+                            
+                            return L.circleMarker(latlng, {
+                                radius: radius,
+                                fillColor: color,
+                                color: '#ffffff',
+                                weight: 2,
+                                opacity: 1,
+                                fillOpacity: 0.7
+                            });
+                        }
+                    }).addTo(map);
+                    
+                    // Hover event
+                    hotspotLayer.on('mouseover', function(e) {
+                        const props = e.layer.feature.properties;
+                        const popupContent = `
+                            <div class="p-2 min-w-[180px]">
+                                <p class="font-bold text-sm">📍 ${props.purok}</p>
+                                <p class="text-xs text-slate-600">${props.count} reports</p>
+                                <p class="text-xs text-slate-500">${props.category || 'Various'}</p>
+                                <p class="text-xs font-semibold mt-1 ${props.severity === 'high' ? 'text-red-600' : props.severity === 'medium' ? 'text-orange-600' : 'text-emerald-600'}">
+                                    Priority: ${props.severity.toUpperCase()}
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">💡 ${getSuggestedAction(props)}</p>
+                            </div>
+                        `;
+                        
+                        if (hotspotTooltip) {
+                            map.closePopup(hotspotTooltip);
+                        }
+                        hotspotTooltip = L.popup({
+                            closeButton: true,
+                            className: 'hotspot-tooltip',
+                            offset: [0, -20]
+                        })
+                        .setLatLng(e.latlng)
+                        .setContent(popupContent)
+                        .openOn(map);
+                        
+                        // Highlight the marker
+                        e.layer.setStyle({
+                            fillOpacity: 1,
+                            radius: e.layer.options.radius * 1.3
+                        });
+                    });
+                    
+                    hotspotLayer.on('mouseout', function(e) {
+                        if (hotspotTooltip) {
+                            map.closePopup(hotspotTooltip);
+                            hotspotTooltip = null;
+                        }
+                        e.layer.setStyle({
+                            fillOpacity: 0.7,
+                            radius: e.layer.options.radius
+                        });
+                    });
+                    
+                    // Click event - open details panel
+                    hotspotLayer.on('click', function(e) {
+                        const props = e.layer.feature.properties;
+                        showHotspotDetails(props);
+                    });
+                }
+            })
+            .catch(error => console.error('Error loading hotspots:', error));
+    }
+
+    // Function to get suggested action
+    function getSuggestedAction(props) {
+        const count = props.count || 0;
+        const category = props.category || '';
+        
+        if (category.includes('Illegal Dumping')) {
+            return 'Conduct site inspection and investigate';
+        } else if (category.includes('Overflowing') || category.includes('Garbage Bin')) {
+            return 'Increase collection frequency';
+        } else if (category.includes('Blocking Drainage')) {
+            return 'Coordinate immediate clearing';
+        } else if (count >= 10) {
+            return 'Schedule immediate collection review';
+        } else if (count >= 5) {
+            return 'Monitor area closely';
+        } else {
+            return 'Continue regular monitoring';
+        }
+    }
+
+    // Show hotspot details panel
+    function showHotspotDetails(props) {
+        // Create or show a details panel
+        let panel = document.getElementById('hotspotDetails');
+        if (!panel) {
+            panel = document.createElement('div');
+            panel.id = 'hotspotDetails';
+            panel.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            panel.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
+                        <h2 class="text-xl font-bold text-slate-900">Hotspot Details</h2>
+                        <button onclick="this.closest('#hotspotDetails').remove()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                    <div id="hotspotContent" class="p-6">
+                        Loading...
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(panel);
+        }
+        
+        // Load detailed data
+        const content = document.getElementById('hotspotContent');
+        content.innerHTML = `
+            <div class="flex items-center justify-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+            </div>
+        `;
+        
+        fetch(`/brgy-waste-app-v3/public/supervisor/getHotspotDetails?purok=${encodeURIComponent(props.purok)}`)
+            .then(response => response.json())
+            .then(data => {
+                content.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-slate-50 rounded-xl p-4 text-center">
+                            <p class="text-3xl font-black text-slate-900">${data.total_reports || 0}</p>
+                            <p class="text-xs text-slate-500">Total Reports</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 text-center">
+                            <p class="text-3xl font-black text-emerald-600">${data.resolved || 0}</p>
+                            <p class="text-xs text-slate-500">Resolved</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 text-center">
+                            <p class="text-3xl font-black text-amber-600">${data.pending || 0}</p>
+                            <p class="text-xs text-slate-500">Pending</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 text-center">
+                            <p class="text-3xl font-black text-purple-600">${data.total_supports || 0}</p>
+                            <p class="text-xs text-slate-500">Total Supports</p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-slate-800 mb-2">Category Distribution</h4>
+                    <div class="space-y-2 mb-4">
+                        ${Object.entries(data.categories || {}).map(([name, count]) => `
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-600">${name}</span>
+                                <span class="font-bold text-slate-800">${count}</span>
+                            </div>
+                        `).join('') || '<p class="text-sm text-slate-400">No category data</p>'}
+                    </div>
+                    
+                    <h4 class="font-bold text-slate-800 mb-2">Suggested Actions</h4>
+                    <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+                        <p class="text-sm text-emerald-800">${data.suggested_action || 'Continue regular monitoring'}</p>
+                    </div>
+                `;
+            });
+    }
+
+    // Load hotspots on page load (call after map initialization)
+    loadHotspots();
+
+    // Also reload when filters change
+    document.querySelectorAll('select, input[type="date"]').forEach(el => {
+        el.addEventListener('change', function() {
+            loadHotspots();
+        });
+    });
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

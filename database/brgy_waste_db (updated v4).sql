@@ -1619,6 +1619,7 @@ CREATE TABLE `users` (
   `phone_number` varchar(20) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `profile_pic` varchar(255) DEFAULT NULL,
   `id_front` varchar(255) DEFAULT NULL,
   `id_back` varchar(255) DEFAULT NULL,
   `role_id` int(11) DEFAULT NULL,

@@ -121,7 +121,8 @@ function getStatusBadge($status) {
                     </div>
 
                     <!-- KPI Cards -->
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-8">
                         <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
                             <p class="text-sm text-slate-500">Total</p>
                             <p class="text-2xl font-black text-slate-900"><?php echo $totalReports; ?></p>
@@ -131,12 +132,16 @@ function getStatusBadge($status) {
                             <p class="text-2xl font-black text-amber-600"><?php echo $pending; ?></p>
                         </div>
                         <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
-                            <p class="text-sm text-emerald-600">Resolved</p>
-                            <p class="text-2xl font-black text-emerald-600"><?php echo $resolved; ?></p>
+                            <p class="text-sm text-blue-600">Verified</p>
+                            <p class="text-2xl font-black text-blue-600"><?php echo $verified ?? 0; ?></p>
                         </div>
                         <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
-                            <p class="text-sm text-slate-500">In Progress</p>
-                            <p class="text-2xl font-black text-slate-900"><?php echo $inProgress; ?></p>
+                            <p class="text-sm text-purple-600">In Progress</p>
+                            <p class="text-2xl font-black text-purple-600"><?php echo $inProgress; ?></p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
+                            <p class="text-sm text-emerald-600">Resolved</p>
+                            <p class="text-2xl font-black text-emerald-600"><?php echo $resolved; ?></p>
                         </div>
                         <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
                             <p class="text-sm text-red-600">Hotspots</p>
@@ -144,7 +149,41 @@ function getStatusBadge($status) {
                         </div>
                         <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
                             <p class="text-sm text-slate-500">Today</p>
-                            <p class="text-2xl font-black text-slate-900"><?php echo $todayReports; ?></p>
+                            <p class="text-2xl font-black text-slate-900"><?php echo $todayReports ?? 0; ?></p>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Second row for additional KPIs -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
+                            <p class="text-sm text-indigo-600">Total Supports</p>
+                            <p class="text-2xl font-black text-indigo-600"><?php echo $totalSupports ?? 0; ?></p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
+                            <p class="text-sm text-slate-500">Resolution Rate</p>
+                            <p class="text-2xl font-black text-slate-900">
+                                <?php echo $totalReports > 0 ? round(($resolved / $totalReports) * 100) : 0; ?>%
+                            </p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
+                            <p class="text-sm text-slate-500">Avg. Resolution</p>
+                            <p class="text-2xl font-black text-slate-900">
+                                <?php 
+                                    // Calculate average resolution time
+                                    $db = new Database();
+                                    $db->query("SELECT AVG(TIMESTAMPDIFF(HOUR, submission_date, updated_at)) as avg_hours FROM reports WHERE status_id = 4");
+                                    $avg = $db->single();
+                                    echo $avg && $avg['avg_hours'] ? round($avg['avg_hours'], 1) . 'h' : 'N/A';
+                                ?>
+                            </p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm text-center">
+                            <p class="text-sm text-slate-500">Support Ratio</p>
+                            <p class="text-2xl font-black text-slate-900">
+                                <?php echo $totalReports > 0 ? round(($totalSupports ?? 0) / $totalReports, 2) : 0; ?>
+                            </p>
                         </div>
                     </div>
 
@@ -178,6 +217,22 @@ function getStatusBadge($status) {
                                     <?php endforeach; ?>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports by Waste Category -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-900 mb-2">Reports by Waste Category</h3>
+                        <div class="chart-container" style="height: 180px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Reports by Purok -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-900 mb-2">Reports by Purok</h3>
+                        <div class="chart-container" style="height: 180px;">
+                            <canvas id="purokChart"></canvas>
                         </div>
                     </div>
 
@@ -348,6 +403,72 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Category Chart (Bar)
+const categoryCtx = document.getElementById('categoryChart');
+if (categoryCtx) {
+    // Fetch category data via AJAX
+    fetch('/brgy-waste-app-v3/public/supervisor/getCategoryData')
+        .then(response => response.json())
+        .then(data => {
+            new Chart(categoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels || ['No Data'],
+                    datasets: [{
+                        label: 'Reports',
+                        data: data.values || [0],
+                        backgroundColor: '#10B981',
+                        borderColor: '#059669',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 9 } }, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false }, ticks: { font: { size: 8 } } }
+                    }
+                }
+            });
+        });
+}
+
+    // Purok Chart (Horizontal Bar)
+    const purokCtx = document.getElementById('purokChart');
+    if (purokCtx) {
+        fetch('/brgy-waste-app-v3/public/supervisor/getPurokData')
+            .then(response => response.json())
+            .then(data => {
+                new Chart(purokCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels || ['No Data'],
+                        datasets: [{
+                            label: 'Reports',
+                            data: data.values || [0],
+                            backgroundColor: '#8B5CF6',
+                            borderColor: '#7C3AED',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 9 } }, grid: { color: '#f1f5f9' } },
+                            y: { grid: { display: false }, ticks: { font: { size: 9 } } }
+                        }
+                    }
+                });
+            });
+    }
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

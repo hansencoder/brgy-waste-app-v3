@@ -256,16 +256,81 @@ class Report {
     // ============================================================
     // DUPLICATE DETECTION (for future implementation)
     // ============================================================
-    public function findNearbyReports($latitude, $longitude, $category_id, $radius = 50, $days = 7) {
-        // Placeholder for duplicate detection – we'll implement later
-        return [];
+    public function findNearbyReports($latitude, $longitude, $categoryId, $radiusMeters = 50, $days = 7) {
+    $db = new Database();
+
+    // Exclude resolved and rejected
+    $excludedStatuses = ['Resolved', 'Rejected'];
+    $placeholders = implode(',', array_fill(0, count($excludedStatuses), '?'));
+
+    $query = "
+        SELECT 
+            r.id,
+            r.category_id,
+            r.description,
+            r.submission_date,
+            rs.status_name as status,
+            wc.category_name,
+            r.support_count,
+            (
+                6371 * acos(
+                    cos(radians(?)) * cos(radians(r.latitude)) *
+                    cos(radians(r.longitude) - radians(?)) +
+                    sin(radians(?)) * sin(radians(r.latitude))
+                )
+            ) AS distance_km
+        FROM reports r
+        JOIN report_statuses rs ON r.status_id = rs.status_id
+        LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+        WHERE r.category_id = ?
+            AND r.latitude IS NOT NULL
+            AND r.longitude IS NOT NULL
+            AND rs.status_name NOT IN ($placeholders)
+            AND r.submission_date >= DATE_SUB(NOW(), INTERVAL ? DAY)
+        HAVING distance_km <= (? / 1000)
+        ORDER BY distance_km ASC
+        LIMIT 10
+    ";
+
+    $db->query($query);
+    $db->bind(1, $latitude);
+    $db->bind(2, $longitude);
+    $db->bind(3, $latitude);
+    $db->bind(4, $categoryId);
+    // bind excluded statuses
+    foreach ($excludedStatuses as $idx => $status) {
+        $db->bind(5 + $idx, $status);
+    }
+    $offset = 5 + count($excludedStatuses);
+    $db->bind($offset, $days);
+    $db->bind($offset + 1, $radiusMeters);
+
+    return $db->resultSet();
     }
 
     // ============================================================
     // REPORT SUPPORT (for future implementation)
     // ============================================================
-    public function supportReport($report_id, $user_id) {
-        // Placeholder
+    public function supportReport($reportId, $userId) {
+    $db = new Database();
+    // Check if already supported
+    $db->query("SELECT * FROM report_supports WHERE report_id = :report_id AND user_id = :user_id");
+    $db->bind(':report_id', $reportId);
+    $db->bind(':user_id', $userId);
+    if ($db->single()) {
         return false;
     }
+    // Insert support
+    $db->query("INSERT INTO report_supports (report_id, user_id) VALUES (:report_id, :user_id)");
+    $db->bind(':report_id', $reportId);
+    $db->bind(':user_id', $userId);
+    if (!$db->execute()) {
+        return false;
+    }
+    // Increment support_count on report
+    $db->query("UPDATE reports SET support_count = support_count + 1 WHERE id = :id");
+    $db->bind(':id', $reportId);
+    return $db->execute();
+    }
+
 }

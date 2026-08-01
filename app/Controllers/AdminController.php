@@ -774,6 +774,84 @@ class AdminController extends Controller {
         $this->view('admin/flagged_reports', $data);
     }
 
+    /**
+ * Create staff accounts (Administrators and Supervisors).
+ */
+    public function createStaff()
+    {
+        if ($_SESSION['user_role'] != 'administrator') {
+            die("Unauthorized: Only administrators can create staff accounts.");
+        }
+
+        $data = ['error' => '', 'success' => '', 'positions' => [], 'roles' => [], 'puroks' => []];
+        $db = new Database();
+
+        // Load dropdown data
+        $db->query("SELECT * FROM positions WHERE is_active = 1 ORDER BY position_name");
+        $data['positions'] = $db->resultSet();
+        $db->query("SELECT * FROM roles WHERE role_name IN ('Administrator', 'Supervisor')");
+        $data['roles'] = $db->resultSet();
+        $db->query("SELECT * FROM puroks WHERE is_active = 1 ORDER BY purok_name");
+        $data['puroks'] = $db->resultSet();
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $position_id = (int)($_POST['position_id'] ?? 0);
+            $role_id = (int)($_POST['role_id'] ?? 0);
+            $purok_id = (int)($_POST['purok_id'] ?? 1);
+            $username = trim($_POST['username'] ?? '');
+
+            if (empty($name) || empty($email) || empty($phone) || empty($username) || !$position_id || !$role_id) {
+                $data['error'] = 'All fields are required.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $data['error'] = 'Invalid email format.';
+            } elseif (!preg_match('/^09\d{9}$/', $phone)) {
+                $data['error'] = 'Invalid Philippine phone number (must be 11 digits starting with 09).';
+            } elseif ($this->userModel->findUserByEmail($email)) {
+                $data['error'] = 'Email already registered.';
+            } elseif ($this->userModel->findUserByUsername($username)) {
+                $data['error'] = 'Username already taken.';
+            } else {
+                // Generate temporary password
+                $tempPassword = bin2hex(random_bytes(6)); // 12 chars
+                $hashed = password_hash($tempPassword, PASSWORD_DEFAULT);
+
+                $regData = [
+                    'name' => $name,
+                    'username' => $username,
+                    'account_type' => 'resident',
+                    'address' => '',
+                    'phone_number' => $phone,
+                    'email' => $email,
+                    'password' => $hashed,
+                    'role_id' => $role_id,
+                    'position_id' => $position_id,
+                    'purok_id' => $purok_id,
+                    'status' => 'active'
+                ];
+
+                if ($this->userModel->register($regData)) {
+                    // Send email with temporary password
+                    require_once '../app/Models/Helpers/OtpMailer.php';
+                    try {
+                        OtpMailer::sendTempPasswordEmail($email, $tempPassword, $name);
+                        $data['success'] = 'Staff account created. Temporary password sent to email.';
+                    } catch (Exception $e) {
+                        $data['error'] = 'Account created but failed to send email: ' . $e->getMessage();
+                    }
+                    // Reset POST
+                    $_POST = [];
+                } else {
+                    $data['error'] = 'Failed to create account. Please try again.';
+                }
+            }
+        }
+
+        $this->view('admin/create_staff', $data);
+    }
+
     // ============================================================
     // EXPORT
     // ============================================================
@@ -786,6 +864,18 @@ class AdminController extends Controller {
 
         if (isset($_GET['format'])) {
             $reports = $reportModel->getAllReports();
+            $format = $_GET['format'];
+
+            $db = new Database();
+            $db->query("INSERT INTO report_summaries (generated_by, filename, file_type, total_reports, filters) 
+                        VALUES (:generated_by, :filename, :file_type, :total, :filters)");
+            $db->bind(':generated_by', $_SESSION['user_id']);
+            $db->bind(':filename', 'report_summary_' . date('Y-m-d_H-i-s'));
+            $db->bind(':file_type', $format);
+            $db->bind(':total', count($reports));
+            $db->bind(':filters', json_encode($_GET));
+            $db->execute();
+            
 
             require_once __DIR__ . '/../Core/Geocoding.php';
             foreach ($reports as $key => $r) {
@@ -860,14 +950,36 @@ class AdminController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_SESSION['user_role'] == 'secretary' || $_SESSION['user_role'] == 'administrator')) {
             if (!empty($_POST['title']) && !empty($_POST['content'])) {
-                $visibility_id = isset($_POST['visibility_id']) ? (int)$_POST['visibility_id'] : 1; // Default: Public
+                $visibility_id = isset($_POST['visibility_id']) ? (int)$_POST['visibility_id'] : 1;
+                $publish_date = !empty($_POST['publish_date']) ? $_POST['publish_date'] : date('Y-m-d H:i:s');
+                $expiration_date = !empty($_POST['expiration_date']) ? $_POST['expiration_date'] : null;
+                $is_published = isset($_POST['is_published']) ? 1 : 0;
 
-                $db->query("INSERT INTO announcements (title, content, created_by, visibility_id) 
-                            VALUES (:title, :content, :created_by, :visibility_id)");
+                // Handle cover image upload
+                $cover_image = null;
+                if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
+                    $file = $_FILES['cover_image'];
+                    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                    if (in_array($file['type'], $allowedTypes) && $file['size'] <= 2 * 1024 * 1024) {
+                        $uploadDir = '../public/uploads/announcements/';
+                        if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                        $fileName = 'announce_' . time() . '_' . basename($file['name']);
+                        if (move_uploaded_file($file['tmp_name'], $uploadDir . $fileName)) {
+                            $cover_image = '/public/uploads/announcements/' . $fileName;
+                        }
+                    }
+                }
+
+                $db->query("INSERT INTO announcements (title, content, cover_image, created_by, visibility_id, publish_date, expiration_date, is_published) 
+                            VALUES (:title, :content, :cover_image, :created_by, :visibility_id, :publish_date, :expiration_date, :is_published)");
                 $db->bind(':title', htmlspecialchars($_POST['title'], ENT_QUOTES, 'UTF-8'));
                 $db->bind(':content', htmlspecialchars($_POST['content'], ENT_QUOTES, 'UTF-8'));
+                $db->bind(':cover_image', $cover_image);
                 $db->bind(':created_by', $_SESSION['user_id']);
                 $db->bind(':visibility_id', $visibility_id);
+                $db->bind(':publish_date', $publish_date);
+                $db->bind(':expiration_date', $expiration_date);
+                $db->bind(':is_published', $is_published);
                 $db->execute();
 
                 $announcementId = $db->lastInsertId();
@@ -919,6 +1031,80 @@ class AdminController extends Controller {
 
         header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/announcements'));
         exit;
+    }
+
+    /**
+     * Edit announcement
+     */
+    public function edit_announcement($id) {
+        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator'])) {
+            die("Unauthorized Access");
+        }
+
+        $db = new Database();
+        $db->query("SELECT * FROM announcements WHERE id = :id");
+        $db->bind(':id', $id);
+        $announcement = $db->single();
+
+        if (!$announcement) {
+            header('Location: /brgy-waste-app-v3/public/admin/announcements');
+            exit;
+        }
+
+        $data['announcement'] = $announcement;
+        $db->query("SELECT * FROM announcement_visibilities ORDER BY visibility_id");
+        $data['visibilities'] = $db->resultSet();
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $title = htmlspecialchars($_POST['title'], ENT_QUOTES, 'UTF-8');
+            $content = htmlspecialchars($_POST['content'], ENT_QUOTES, 'UTF-8');
+            $visibility_id = (int)$_POST['visibility_id'];
+            $is_published = isset($_POST['is_published']) ? 1 : 0;
+
+            // Handle cover image upload
+            $cover_image = null;
+            if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['cover_image'];
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                if (in_array($file['type'], $allowedTypes) && $file['size'] <= 2 * 1024 * 1024) {
+                    $uploadDir = '../public/uploads/announcements/';
+                    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                    $fileName = 'announce_' . time() . '_' . basename($file['name']);
+                    if (move_uploaded_file($file['tmp_name'], $uploadDir . $fileName)) {
+                        $cover_image = '/public/uploads/announcements/' . $fileName;
+                    }
+                }
+            }
+
+            $query = "UPDATE announcements SET 
+                title = :title,
+                content = :content,
+                visibility_id = :visibility_id,
+                is_published = :is_published";
+            if ($cover_image) {
+                $query .= ", cover_image = :cover_image";
+            }
+            $query .= " WHERE id = :id";
+
+            $db->query($query);
+            $db->bind(':title', $title);
+            $db->bind(':content', $content);
+            $db->bind(':visibility_id', $visibility_id);
+            $db->bind(':is_published', $is_published);
+            if ($cover_image) {
+                $db->bind(':cover_image', $cover_image);
+            }
+            $db->bind(':id', $id);
+
+            $db->execute();
+
+            $this->auditModel->logAction($_SESSION['user_id'], 'Edit Announcement', "Announcement ID $id", "Updated announcement", 'success');
+            $_SESSION['flash_success'] = 'Announcement updated successfully.';
+            header('Location: /brgy-waste-app-v3/public/admin/announcements');
+            exit;
+        }
+
+        $this->view('admin/edit_announcement', $data);
     }
 
     // ============================================================
@@ -1018,6 +1204,44 @@ private function generateCalendarData($month, $year, $schedules) {
 
     return $calendarDays;
 }
+
+    /**
+     * Export audit logs as CSV
+     */
+    public function exportAuditLogs() {
+        if ($_SESSION['user_role'] != 'administrator') {
+            die("Unauthorized");
+        }
+
+        $db = new Database();
+        $db->query("
+            SELECT a.*, u.name as user_name 
+            FROM audit_logs a 
+            LEFT JOIN users u ON a.user_id = u.id 
+            ORDER BY a.created_at DESC
+        ");
+        $logs = $db->resultSet();
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="audit_logs_' . date('Y-m-d') . '.csv"');
+
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['Date', 'User', 'Action', 'Affected Record', 'Details', 'Result']);
+
+        foreach ($logs as $log) {
+            fputcsv($output, [
+                date('Y-m-d H:i:s', strtotime($log['created_at'])),
+                $log['user_name'] ?? 'System',
+                $log['action'],
+                $log['affected_record'] ?? 'N/A',
+                $log['details'] ?? 'N/A',
+                $log['result'] ?? 'success'
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
 
     // ============================================================
     // ADD SCHEDULE
@@ -1195,6 +1419,50 @@ private function generateCalendarData($month, $year, $schedules) {
         $this->auditModel->logAction($_SESSION['user_id'], 'Delete Schedule', "Schedule ID $schedule_id", "Deleted schedule", 'success');
 
         $_SESSION['flash_success'] = 'Schedule deleted successfully!';
+        header('Location: /brgy-waste-app-v3/public/admin/schedule');
+        exit;
+    }
+
+    /**
+     * Postpone/Reschedule collection schedule
+     */
+    public function postpone_schedule() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator'])) {
+            header('Location: /brgy-waste-app-v3/public/admin/schedule');
+            exit;
+        }
+
+        $schedule_id = (int)$_POST['schedule_id'];
+        $new_date = $_POST['new_date'] ?? '';
+        $reason = htmlspecialchars($_POST['reason'] ?? '', ENT_QUOTES, 'UTF-8');
+
+        if (!$schedule_id || empty($new_date)) {
+            $_SESSION['flash_error'] = 'Please provide a new date.';
+            header('Location: /brgy-waste-app-v3/public/admin/schedule');
+            exit;
+        }
+
+        $db = new Database();
+        $db->query("SELECT collection_day FROM collection_schedules WHERE schedule_id = :id");
+        $db->bind(':id', $schedule_id);
+        $schedule = $db->single();
+
+        if ($schedule) {
+            // Create a special announcement
+            $title = "Schedule Postponed: " . $schedule['collection_day'];
+            $content = "The collection schedule for " . $schedule['collection_day'] . " has been postponed. New date: " . date('F d, Y', strtotime($new_date)) . ". Reason: " . $reason;
+
+            $db->query("INSERT INTO announcements (title, content, created_by, visibility_id, is_published) 
+                        VALUES (:title, :content, :created_by, 1, 1)");
+            $db->bind(':title', $title);
+            $db->bind(':content', $content);
+            $db->bind(':created_by', $_SESSION['user_id']);
+            $db->execute();
+
+            $this->auditModel->logAction($_SESSION['user_id'], 'Schedule Postponed', "Schedule ID $schedule_id", "Postponed to $new_date. Reason: $reason", 'success');
+            $_SESSION['flash_success'] = 'Schedule postponed. Residents have been notified.';
+        }
+
         header('Location: /brgy-waste-app-v3/public/admin/schedule');
         exit;
     }

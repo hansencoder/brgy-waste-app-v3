@@ -1,0 +1,267 @@
+<?php
+$reports = $data['reports'] ?? [];
+$stats = $data['stats'] ?? [];
+$dateFrom = $data['dateFrom'] ?? date('Y-m-d', strtotime('-30 days'));
+$dateTo = $data['dateTo'] ?? date('Y-m-d');
+$user_name = $data['user_name'] ?? 'Supervisor';
+$total = (int)($stats['total'] ?? 0);
+$resolved = (int)($stats['resolved'] ?? 0);
+$pending = (int)($stats['pending'] ?? 0);
+$verified = (int)($stats['verified'] ?? 0);
+$inProgress = (int)($stats['in_progress'] ?? 0);
+$resolutionRate = $total > 0 ? round(($resolved / $total) * 100) : 0;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Report</title>
+    <style>
+        /* Print & Screen Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: #fff;
+            color: #1e293b;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        @media print {
+            body { padding: 20px; }
+            .no-print { display: none !important; }
+            .page-break { page-break-after: always; }
+        }
+        .header {
+            border-bottom: 3px solid #10B981;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .header h1 {
+            font-size: 26px;
+            color: #0f172a;
+        }
+        .header .sub {
+            color: #64748b;
+            font-size: 14px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #10B981;
+        }
+        .stat-box .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .stat-box .label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .stat-box.resolved { border-left-color: #10B981; }
+        .stat-box.pending { border-left-color: #f59e0b; }
+        .stat-box.verified { border-left-color: #3b82f6; }
+        .stat-box.inprogress { border-left-color: #8b5cf6; }
+        .stat-box.rate { border-left-color: #8b5cf6; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+        th {
+            background: #0f172a;
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-resolved { background: #dcfce7; color: #15803d; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-verified { background: #dbeafe; color: #1d4ed8; }
+        .badge-inprogress { background: #ede9fe; color: #6d28d9; }
+        .badge-rejected { background: #fee2e2; color: #b91c1c; }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .btn-print {
+            display: inline-block;
+            padding: 10px 30px;
+            background: #10B981;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .btn-print:hover {
+            background: #059669;
+        }
+        .filter-info {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #475569;
+        }
+        .filter-info strong {
+            color: #0f172a;
+        }
+        @media print {
+            .stat-box { break-inside: avoid; }
+            table { break-inside: auto; }
+            tr { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <h1>Waste Report Analytics</h1>
+            <div class="sub">Barangay Dulong Bayan · <?php echo date('F d, Y'); ?></div>
+        </div>
+        <div class="sub">
+            Generated by: <?php echo htmlspecialchars($user_name); ?>
+        </div>
+    </div>
+
+    <!-- Filters Applied -->
+    <div class="filter-info">
+        <strong>Period:</strong> <?php echo date('M d, Y', strtotime($dateFrom)); ?> – <?php echo date('M d, Y', strtotime($dateTo)); ?>
+        <?php if (!empty($data['category']) && $data['category'] > 0): ?>
+            <span style="margin-left: 15px;"><strong>Category:</strong> 
+              <?php echo htmlspecialchars($data['category_name'] ?? ''); ?>
+            </span>
+        <?php endif; ?>
+        <?php if (!empty($data['purok']) && $data['purok'] > 0): ?>
+            <span style="margin-left: 15px;"><strong>Purok:</strong> <?php echo htmlspecialchars($data['purok_name'] ?? ''); ?></span>
+        <?php endif; ?>
+        <?php if (!empty($data['status'])): ?>
+            <span style="margin-left: 15px;"><strong>Status:</strong> <?php echo htmlspecialchars($data['status']); ?></span>
+        <?php endif; ?>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="number"><?php echo $total; ?></div>
+            <div class="label">Total Reports</div>
+        </div>
+        <div class="stat-box pending">
+            <div class="number"><?php echo $pending; ?></div>
+            <div class="label">Pending</div>
+        </div>
+        <div class="stat-box verified">
+            <div class="number"><?php echo $verified; ?></div>
+            <div class="label">Verified</div>
+        </div>
+        <div class="stat-box inprogress">
+            <div class="number"><?php echo $inProgress; ?></div>
+            <div class="label">In Progress</div>
+        </div>
+        <div class="stat-box resolved">
+            <div class="number"><?php echo $resolved; ?></div>
+            <div class="label">Resolved</div>
+        </div>
+        <div class="stat-box rate">
+            <div class="number"><?php echo $resolutionRate; ?>%</div>
+            <div class="label">Resolution Rate</div>
+        </div>
+    </div>
+
+    <!-- Report Table -->
+    <h3 style="margin: 20px 0 10px; font-size: 16px;">Report List</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Report ID</th>
+                <th>Date</th>
+                <th>Reporter</th>
+                <th>Category</th>
+                <th>Purok</th>
+                <th>Status</th>
+                <th>Supports</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!empty($reports)): ?>
+                <?php foreach ($reports as $r): 
+                    $statusClass = '';
+                    $statusLabel = $r['status'] ?? 'Unknown';
+                    if ($statusLabel == 'Resolved') $statusClass = 'badge-resolved';
+                    elseif ($statusLabel == 'Pending') $statusClass = 'badge-pending';
+                    elseif ($statusLabel == 'Verified') $statusClass = 'badge-verified';
+                    elseif ($statusLabel == 'In Progress') $statusClass = 'badge-inprogress';
+                    elseif ($statusLabel == 'Rejected') $statusClass = 'badge-rejected';
+                ?>
+                <tr>
+                    <td>WR-<?php echo str_pad($r['id'], 5, '0', STR_PAD_LEFT); ?></td>
+                    <td><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></td>
+                    <td><?php echo htmlspecialchars($r['reporter']); ?></td>
+                    <td><?php echo htmlspecialchars($r['category'] ?? 'N/A'); ?></td>
+                    <td><?php echo htmlspecialchars($r['purok'] ?? 'N/A'); ?></td>
+                    <td><span class="badge <?php echo $statusClass; ?>"><?php echo $statusLabel; ?></span></td>
+                    <td><?php echo (int)($r['support_count'] ?? 0); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="7" style="text-align:center; padding:20px; color:#94a3b8;">No reports found for the selected filters.</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="footer">
+        This report is for official use only. Generated by <?php echo htmlspecialchars($user_name); ?> on <?php echo date('M d, Y h:i A'); ?>.
+    </div>
+
+    <!-- Print Button -->
+    <div class="no-print" style="text-align: center; margin-top: 30px;">
+        <button onclick="window.print()" class="btn-print">🖨️ Print / Save as PDF</button>
+        <br>
+        <small style="color: #94a3b8;">Note: In the print dialog, select "Save as PDF" as the destination.</small>
+    </div>
+
+</body>
+</html>

@@ -36,6 +36,25 @@ class SupervisorController extends Controller {
     public function index() {
         $db = new Database();
 
+        // ---------- NEW: Total Support Count ----------
+        $db->query("SELECT SUM(support_count) as total_supports FROM reports");
+        $supportTotal = $db->single();
+        $totalSupports = (int)($supportTotal['total_supports'] ?? 0);
+
+        // ---------- NEW: Reports Submitted Today ----------
+        $db->query("SELECT COUNT(*) as count FROM reports WHERE DATE(submission_date) = CURDATE()");
+        $todayRow = $db->single();
+        $todayReports = (int)($todayRow['count'] ?? 0);
+
+        // ---------- NEW: Verified Reports ----------
+        $db->query("
+            SELECT COUNT(*) as count 
+            FROM reports r 
+            JOIN report_statuses rs ON r.status_id = rs.status_id 
+            WHERE rs.status_name = 'Verified'
+        ");
+        $verified = $db->single()['count'] ?? 0;
+
         // ---------- KPI Cards ----------
         // Total Reports
         $db->query("SELECT COUNT(*) as total FROM reports");
@@ -153,10 +172,12 @@ class SupervisorController extends Controller {
         $data = [
             'total_reports' => $totalReports,
             'pending' => $pending,
+            'verified' => $verified, 
             'in_progress' => $inProgress,
             'resolved' => $resolved,
             'today_reports' => $todayReports,
             'active_hotspots' => $activeHotspots,
+            'total_supports' => $totalSupports,
             'status_distribution' => $statusDistribution,
             'monthly_trends' => $monthlyTrends,
             'recent_reports' => $recentReports,
@@ -171,6 +192,211 @@ class SupervisorController extends Controller {
         $this->view('supervisor/dashboard', $data);
     }
 
+    /**
+ * API: Get hotspot data for map
+ */
+public function getHotspots() {
+    $db = new Database();
+    
+    // Get filters from GET
+    $category = isset($_GET['category']) ? (int)$_GET['category'] : 0;
+    $purok = isset($_GET['purok']) ? (int)$_GET['purok'] : 0;
+    $status = isset($_GET['status']) ? $_GET['status'] : '';
+    $dateFrom = isset($_GET['date_from']) ? $_GET['date_from'] : '';
+    $dateTo = isset($_GET['date_to']) ? $_GET['date_to'] : '';
+    
+    $query = "
+        SELECT 
+            p.purok_name,
+            p.purok_id,
+            COUNT(*) as report_count,
+            MAX(wc.category_name) as dominant_category,
+            AVG(r.latitude) as lat,
+            AVG(r.longitude) as lng,
+            CASE 
+                WHEN COUNT(*) >= 10 THEN 'high'
+                WHEN COUNT(*) >= 5 THEN 'medium'
+                ELSE 'low'
+            END as severity
+        FROM reports r
+        JOIN puroks p ON r.purok_id = p.purok_id
+        LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+        WHERE r.latitude IS NOT NULL AND r.longitude IS NOT NULL
+    ";
+    
+    if ($category > 0) {
+        $query .= " AND r.category_id = :category";
+    }
+    if ($purok > 0) {
+        $query .= " AND r.purok_id = :purok";
+    }
+    if (!empty($status)) {
+        $query .= " AND EXISTS (SELECT 1 FROM report_statuses rs WHERE r.status_id = rs.status_id AND rs.status_name = :status)";
+    }
+    if (!empty($dateFrom)) {
+        $query .= " AND DATE(r.submission_date) >= :date_from";
+    }
+    if (!empty($dateTo)) {
+        $query .= " AND DATE(r.submission_date) <= :date_to";
+    }
+    
+    $query .= " GROUP BY r.purok_id HAVING COUNT(*) >= 3 ORDER BY report_count DESC";
+    
+    $db->query($query);
+    if ($category > 0) $db->bind(':category', $category);
+    if ($purok > 0) $db->bind(':purok', $purok);
+    if (!empty($status)) $db->bind(':status', $status);
+    if (!empty($dateFrom)) $db->bind(':date_from', $dateFrom);
+    if (!empty($dateTo)) $db->bind(':date_to', $dateTo);
+    
+    $hotspots = $db->resultSet();
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'hotspots' => $hotspots]);
+    exit;
+}
+
+    /**
+     * API: Get hotspot details for a specific purok
+     */
+    public function getHotspotDetails() {
+        $purok = isset($_GET['purok']) ? $_GET['purok'] : '';
+        if (empty($purok)) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Missing purok']);
+            exit;
+        }
+        
+        $db = new Database();
+        
+        // Get purok_id from name
+        $db->query("SELECT purok_id FROM puroks WHERE purok_name = :name");
+        $db->bind(':name', $purok);
+        $purokRow = $db->single();
+        if (!$purokRow) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Purok not found']);
+            exit;
+        }
+        $purokId = $purokRow['purok_id'];
+        
+        // Get report counts
+        $db->query("
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN rs.status_name = 'Resolved' THEN 1 ELSE 0 END) as resolved,
+                SUM(CASE WHEN rs.status_name = 'Pending' THEN 1 ELSE 0 END) as pending,
+                SUM(r.support_count) as total_supports
+            FROM reports r
+            JOIN report_statuses rs ON r.status_id = rs.status_id
+            WHERE r.purok_id = :purok_id
+        ");
+        $db->bind(':purok_id', $purokId);
+        $stats = $db->single();
+        
+        // Get category distribution
+        $db->query("
+            SELECT wc.category_name, COUNT(*) as count
+            FROM reports r
+            JOIN waste_categories wc ON r.category_id = wc.category_id
+            WHERE r.purok_id = :purok_id
+            GROUP BY r.category_id
+            ORDER BY count DESC
+        ");
+        $db->bind(':purok_id', $purokId);
+        $categories = $db->resultSet();
+        $categoryMap = [];
+        foreach ($categories as $cat) {
+            $categoryMap[$cat['category_name']] = (int)$cat['count'];
+        }
+        
+        // Determine suggested action
+        $db->query("
+            SELECT COUNT(*) as count, wc.category_name
+            FROM reports r
+            JOIN waste_categories wc ON r.category_id = wc.category_id
+            WHERE r.purok_id = :purok_id
+            GROUP BY r.category_id
+            ORDER BY count DESC
+            LIMIT 1
+        ");
+        $db->bind(':purok_id', $purokId);
+        $topCategory = $db->single();
+        
+        $suggestedAction = 'Continue regular monitoring';
+        if ($topCategory) {
+            $catName = $topCategory['category_name'];
+            $count = (int)$topCategory['count'];
+            if (strpos($catName, 'Illegal Dumping') !== false) {
+                $suggestedAction = 'Conduct site inspection and investigate recurring dumping activities';
+            } elseif (strpos($catName, 'Overflowing') !== false || strpos($catName, 'Garbage Bin') !== false) {
+                $suggestedAction = 'Increase collection frequency and evaluate the need for additional garbage bins';
+            } elseif (strpos($catName, 'Blocking Drainage') !== false) {
+                $suggestedAction = 'Coordinate immediate clearing operations to reduce flooding risks';
+            } elseif (strpos($catName, 'Blocking Roadway') !== false) {
+                $suggestedAction = 'Immediate removal required for public safety';
+            } elseif ($count >= 10) {
+                $suggestedAction = 'Schedule immediate collection review and deploy additional personnel';
+            } elseif ($count >= 5) {
+                $suggestedAction = 'Schedule regular monitoring and assess long-term waste management measures';
+            }
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'total_reports' => (int)($stats['total'] ?? 0),
+            'resolved' => (int)($stats['resolved'] ?? 0),
+            'pending' => (int)($stats['pending'] ?? 0),
+            'total_supports' => (int)($stats['total_supports'] ?? 0),
+            'categories' => $categoryMap,
+            'suggested_action' => $suggestedAction
+        ]);
+        exit;
+    }
+
+    /**
+     * API: Get category data for charts
+     */
+    public function getCategoryData() {
+        $db = new Database();
+        $db->query("
+            SELECT wc.category_name, COUNT(*) as count
+            FROM reports r
+            JOIN waste_categories wc ON r.category_id = wc.category_id
+            GROUP BY r.category_id
+            ORDER BY count DESC
+            LIMIT 10
+        ");
+        $results = $db->resultSet();
+        header('Content-Type: application/json');
+        echo json_encode([
+            'labels' => array_column($results, 'category_name'),
+            'values' => array_column($results, 'count')
+        ]);
+        exit;
+    }
+
+    /**
+     * API: Get purok data for charts
+     */
+    public function getPurokData() {
+        $db = new Database();
+        $db->query("
+            SELECT p.purok_name, COUNT(*) as count
+            FROM reports r
+            JOIN puroks p ON r.purok_id = p.purok_id
+            GROUP BY r.purok_id
+            ORDER BY count DESC
+        ");
+        $results = $db->resultSet();
+        header('Content-Type: application/json');
+        echo json_encode([
+            'labels' => array_column($results, 'purok_name'),
+            'values' => array_column($results, 'count')
+        ]);
+        exit;
+    }
+
+
     // ============================================================
     // REPORTS MONITORING (Read-only)
     // ============================================================
@@ -184,6 +410,10 @@ class SupervisorController extends Controller {
         $purok = isset($_GET['purok']) ? (int)$_GET['purok'] : 0;
         $dateFrom = isset($_GET['date_from']) ? $_GET['date_from'] : '';
         $dateTo = isset($_GET['date_to']) ? $_GET['date_to'] : '';
+        $quantity = isset($_GET['quantity']) ? (int)$_GET['quantity'] : 0;
+        $condition = isset($_GET['condition']) ? (int)$_GET['condition'] : 0;
+
+        
 
         $query = "
             SELECT 
@@ -207,6 +437,27 @@ class SupervisorController extends Controller {
             WHERE 1=1
         ";
 
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'submission_date';
+        $order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+        $allowedSorts = ['id', 'date', 'category', 'status', 'support', 'submission_date'];
+        $allowedOrders = ['ASC', 'DESC'];
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'submission_date';
+        $order = in_array(strtoupper($order), $allowedOrders) ? strtoupper($order) : 'DESC';
+
+        // Map sort field to actual column
+        $sortMap = [
+            'id' => 'r.id',
+            'date' => 'r.submission_date',
+            'category' => 'wc.category_name',
+            'status' => 'rs.status_name',
+            'support' => 'r.support_count',
+            'submission_date' => 'r.submission_date'
+        ];
+        $sortColumn = $sortMap[$sort] ?? 'r.submission_date';
+
+        // In the query, change ORDER BY to use the sort column
+        $query .= " ORDER BY $sortColumn $order";   
+
         if (!empty($search)) {
             $query .= " AND (r.description LIKE :search OR u.name LIKE :search OR u.email LIKE :search)";
         }
@@ -225,8 +476,12 @@ class SupervisorController extends Controller {
         if (!empty($dateTo)) {
             $query .= " AND DATE(r.submission_date) <= :date_to";
         }
-
-        $query .= " ORDER BY r.submission_date DESC";
+        if ($quantity > 0) {
+            $query .= " AND r.quantity_id = :quantity";
+        }
+        if ($condition > 0) {
+            $query .= " AND r.condition_id = :condition";
+        }
 
         $db->query($query);
 
@@ -249,6 +504,12 @@ class SupervisorController extends Controller {
         if (!empty($dateTo)) {
             $db->bind(':date_to', $dateTo);
         }
+        if ($quantity > 0) {
+            $db->bind(':quantity', $quantity);
+        }
+        if ($condition > 0) {
+            $db->bind(':condition', $condition);
+        }
 
         $data['reports'] = $db->resultSet();
 
@@ -267,6 +528,9 @@ class SupervisorController extends Controller {
 
         $this->view('supervisor/reports', $data);
     }
+
+
+    
 
     // ============================================================
     // VIEW SINGLE REPORT (Read-only)
@@ -441,6 +705,105 @@ public function gis() {
 
     // ---- Load view ----
     $this->view('supervisor/gis', $data);
+}
+
+/**
+ * Export analytics as printable HTML (Save as PDF using browser print)
+ */
+public function exportAnalyticsPDF() {
+    // Get filters from GET
+    $dateFrom = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d', strtotime('-30 days'));
+    $dateTo = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
+    $category = isset($_GET['category']) ? (int)$_GET['category'] : 0;
+    $purok = isset($_GET['purok']) ? (int)$_GET['purok'] : 0;
+    $status = isset($_GET['status']) ? $_GET['status'] : '';
+    
+    // Build WHERE clause
+    $where = " WHERE DATE(r.submission_date) BETWEEN :date_from AND :date_to ";
+    $params = [':date_from' => $dateFrom, ':date_to' => $dateTo];
+    if ($category > 0) {
+        $where .= " AND r.category_id = :category ";
+        $params[':category'] = $category;
+    }
+    if ($purok > 0) {
+        $where .= " AND r.purok_id = :purok ";
+        $params[':purok'] = $purok;
+    }
+    if (!empty($status)) {
+        $where .= " AND rs.status_name = :status ";
+        $params[':status'] = $status;
+    }
+    
+    $db = new Database();  // <--- $db is defined HERE
+
+    // ---- PASTE CATEGORY/PUROK NAME FETCHING HERE ----
+    $categoryName = '';
+    $purokName = '';
+    if ($category > 0) {
+        $db->query("SELECT category_name FROM waste_categories WHERE category_id = :id");
+        $db->bind(':id', $category);
+        $cat = $db->single();
+        $categoryName = $cat['category_name'] ?? '';
+    }
+    if ($purok > 0) {
+        $db->query("SELECT purok_name FROM puroks WHERE purok_id = :id");
+        $db->bind(':id', $purok);
+        $p = $db->single();
+        $purokName = $p['purok_name'] ?? '';
+    }
+    // ---- END OF CATEGORY/PUROK FETCHING ----
+
+    // Get report data
+    $db->query("
+        SELECT r.id, r.description, r.submission_date, u.name as reporter,
+                rs.status_name as status, wc.category_name as category,
+                p.purok_name as purok, r.support_count
+        FROM reports r
+        JOIN users u ON r.resident_id = u.id
+        JOIN report_statuses rs ON r.status_id = rs.status_id
+        LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+        LEFT JOIN puroks p ON r.purok_id = p.purok_id
+        $where
+        ORDER BY r.submission_date DESC
+    ");
+    foreach ($params as $key => $val) {
+        $db->bind($key, $val);
+    }
+    $reports = $db->resultSet();
+    
+    // Get summary stats
+    $db->query("
+        SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN rs.status_name = 'Resolved' THEN 1 ELSE 0 END) as resolved,
+            SUM(CASE WHEN rs.status_name = 'Pending' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN rs.status_name = 'Verified' THEN 1 ELSE 0 END) as verified,
+            SUM(CASE WHEN rs.status_name = 'In Progress' THEN 1 ELSE 0 END) as in_progress
+        FROM reports r
+        JOIN report_statuses rs ON r.status_id = rs.status_id
+        $where
+    ");
+    foreach ($params as $key => $val) {
+        $db->bind($key, $val);
+    }
+    $stats = $db->single();
+    
+    // Prepare data for view
+    $data = [
+        'reports' => $reports,
+        'stats' => $stats,
+        'dateFrom' => $dateFrom,
+        'dateTo' => $dateTo,
+        'category' => $category,
+        'purok' => $purok,
+        'status' => $status,
+        'category_name' => $categoryName,   // <-- added
+        'purok_name' => $purokName,         // <-- added
+        'user_name' => $_SESSION['user_name'] ?? 'Supervisor'
+    ];
+    
+    $this->view('supervisor/analytics_print', $data);
+    exit;
 }
 
 

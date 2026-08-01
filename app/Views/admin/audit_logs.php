@@ -15,13 +15,25 @@
     <h1 class="text-3xl font-bold text-foreground mb-6">System Audit Logs</h1>
     
     <!-- Search Bar -->
-    <div class="mb-6">
-        <div class="relative">
-            <input type="text" id="searchInput" placeholder="Search by Date & Time, User, or Details..." class="w-70 px-4 py-2.5 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+
+    <div class="mb-6 flex flex-wrap items-center gap-3">
+        <div class="relative flex-1 min-w-[200px]">
+            <input type="text" id="searchInput" placeholder="Search by Date & Time, User, or Details..." class="w-full px-4 py-2.5 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
             <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
         </div>
+        <select id="moduleFilter" class="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+            <option value="all">All Modules</option>
+            <option value="User">User</option>
+            <option value="Dashboard">Dashboard</option>
+            <option value="Reports">Reports</option>
+            <option value="Settings">Settings</option>
+            <option value="GIS">GIS</option>
+            <option value="Schedule">Schedule</option>
+            <option value="Announcements">Announcements</option>
+        </select>
+        <a href="/brgy-waste-app-v3/public/admin/exportAuditLogs" class="px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition">Export CSV</a>
     </div>
     
     <div class="bg-white rounded-lg shadow overflow-hidden flex-grow flex flex-col max-h-[70vh]">
@@ -77,25 +89,28 @@
 
 <script>
 // Search functionality
-document.getElementById('searchInput').addEventListener('keyup', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
+document.getElementById('searchInput').addEventListener('keyup', filterLogs);
+document.getElementById('moduleFilter').addEventListener('change', filterLogs);
+
+function filterLogs() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const moduleFilter = document.getElementById('moduleFilter').value.toLowerCase();
     const rows = document.querySelectorAll('tbody tr.log-row');
-    let visibleCount = 0;
-    
+
     rows.forEach(row => {
-        // Get text from Date & Time (1st td), User (2nd td), and Details (5th td)
         const cells = row.querySelectorAll('td');
         if (cells.length < 6) return;
         
         const dateTime = cells[0].textContent.toLowerCase();
         const user = cells[1].textContent.toLowerCase();
         const details = cells[4].textContent.toLowerCase();
-        
-        // Show row if search term matches any of these fields
-        const matches = dateTime.includes(searchTerm) || user.includes(searchTerm) || details.includes(searchTerm);
-        row.style.display = matches ? '' : 'none';
-        if (matches) visibleCount++;
+        const action = cells[2].textContent.toLowerCase();
+
+        const matchesSearch = dateTime.includes(searchTerm) || user.includes(searchTerm) || details.includes(searchTerm) || action.includes(searchTerm);
+        const matchesModule = moduleFilter === 'all' || action.includes(moduleFilter) || user.includes(moduleFilter);
+
+        row.style.display = (matchesSearch && matchesModule) ? '' : 'none';
     });
-});
+}
 </script>
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

@@ -17,7 +17,7 @@
                 <?php if ($_SESSION['user_role'] == 'secretary' || $_SESSION['user_role'] == 'administrator'): ?>
                 <div class="bg-card rounded-lg shadow-md p-6 mb-8 border-t-4 border-secondary">
                     <h2 class="text-xl font-bold mb-4 text-foreground">Post New Announcement</h2>
-                    <form action="/brgy-waste-app-v3/public/admin/announcements" method="POST">
+                    <form action="/brgy-waste-app-v3/public/admin/announcements" method="POST" enctype="multipart/form-data">
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-foreground mb-1">Title</label>
                             <input type="text" name="title" required class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background">
@@ -29,12 +29,46 @@
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-foreground mb-1">Visibility</label>
                             <select name="visibility_id" class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background">
-                                <?php foreach ($data['visibilities'] as $vis): ?>
-                                    <option value="<?php echo $vis['visibility_id']; ?>"><?php echo htmlspecialchars($vis['visibility_name']); ?></option>
+                                <?php foreach (($data['visibilities'] ?? []) as $vis): ?>
+                                    <option value="<?php echo (int)($vis['visibility_id'] ?? 1); ?>"><?php echo htmlspecialchars((string)($vis['visibility_name'] ?? 'Public')); ?></option>
                                 <?php endforeach; ?>
+                                <?php if (empty($data['visibilities'])): ?>
+                                    <option value="1">Public</option>
+                                <?php endif; ?>
                             </select>
                             <p class="text-xs text-gray-500 mt-1">Public = visible to all; Registered = residents, staff; Internal = staff only.</p>
                         </div>
+
+                        <!-- Cover Image Upload -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-foreground mb-1">Cover Image (Optional)</label>
+                            <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp" class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background">
+                            <p class="text-xs text-gray-500 mt-1">Recommended size: 1200x600px. Max 2MB.</p>
+                        </div>
+
+                        <!-- Publish Date -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-foreground mb-1">Publish Date</label>
+                            <input type="datetime-local" name="publish_date" class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background">
+                            <p class="text-xs text-gray-500 mt-1">Leave empty to publish immediately.</p>
+                        </div>
+
+                        <!-- Expiration Date -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-foreground mb-1">Expiration Date (Optional)</label>
+                            <input type="datetime-local" name="expiration_date" class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background">
+                            <p class="text-xs text-gray-500 mt-1">Announcement will be hidden after this date.</p>
+                        </div>
+
+                        <!-- Published Status -->
+                        <div class="mb-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="is_published" checked class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-sm font-medium text-foreground">Publish immediately</span>
+                            </label>
+                        </div>
+
+
                         <div class="text-right">
                             <button type="submit" class="bg-[#15281F] hover:bg-[#15281F]/90 text-primary-foreground px-6 py-2 rounded-md shadow-sm font-semibold">Post Announcement</button>
                         </div>
@@ -53,6 +87,7 @@
                                         <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-100 text-gray-700"><?php echo htmlspecialchars($item['visibility_name'] ?? 'Public'); ?></span>
                                     </div>
                                     <?php if ($_SESSION['user_role'] == 'secretary' || $_SESSION['user_role'] == 'administrator'): ?>
+                                        <a href="/brgy-waste-app-v3/public/admin/edit_announcement/<?php echo $item['id']; ?>" class="text-blue-600 hover:text-blue-800 text-sm font-medium mr-2">Edit</a>
                                     <button onclick="showDeleteConfirm(<?php echo $item['id']; ?>, '<?php echo addslashes(htmlspecialchars($item['title'])); ?>')" class="shrink-0 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete Announcement">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                                     </button>

@@ -46,7 +46,7 @@ class AuthController extends Controller {
     // ============================================================
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $input = filter_var(trim($_POST['username_email']), FILTER_SANITIZE_STRING);
+            $input = filter_var(trim($_POST['email']), FILTER_SANITIZE_STRING);
             $password = $_POST['password'];
 
             if (empty($input) || empty($password)) {

@@ -65,10 +65,16 @@ $purokValues = array_column($purokData, 'total_reports');
                     <p class="text-xs text-slate-500 font-medium truncate">Waste reporting statistics and decision support</p>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
-                    <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 transition">
+                    <a href="/brgy-waste-app-v3/public/supervisor/exportAnalyticsPDF?<?php echo http_build_query($_GET); ?>" 
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 text-xs font-semibold rounded-lg hover:bg-red-100 transition" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Export
-                    </button>
+                        Open Print View
+                    </a>
+                    <a href="/brgy-waste-app-v3/public/supervisor/exportAnalyticsExcel?<?php echo http_build_query($_GET); ?>" 
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Export Excel
+                    </a>
                 </div>
             </header>
 

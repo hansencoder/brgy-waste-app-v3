@@ -56,6 +56,15 @@ if ($service_count === 0 && $total_count > 0) {
                     </div>
                 </div>
 
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2 mt-4 mb-4">
+                    <button onclick="filterNotifications('all')" class="filter-btn px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-semibold" data-filter="all">All</button>
+                    <button onclick="filterNotifications('report_update')" class="filter-btn px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300 transition" data-filter="report_update">📋 Reports</button>
+                    <button onclick="filterNotifications('announcement')" class="filter-btn px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300 transition" data-filter="announcement">📢 Announcements</button>
+                    <button onclick="filterNotifications('account')" class="filter-btn px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300 transition" data-filter="account">👤 Account</button>
+                    <button onclick="filterNotifications('collection_schedule')" class="filter-btn px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300 transition" data-filter="collection_schedule">🗓️ Schedule</button>
+                </div>
+
                 <div class="mt-5 space-y-3">
                     <?php if (!empty($notifications)): ?>
                         <?php foreach ($notifications as $item): ?>
@@ -81,7 +90,8 @@ if ($service_count === 0 && $total_count > 0) {
                                     ? date('M j, Y g:i A', strtotime($item['created_at']))
                                     : 'Recently';
                             ?>
-                            <a href="#" class="notification-card block rounded-[22px] border border-slate-200 <?php echo $isRead ? 'bg-white' : 'bg-slate-50/70'; ?> p-4 text-left transition hover:border-emerald-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300" data-unread="<?php echo $isRead ? 'false' : 'true'; ?>">
+                            <a href="#" class="notification-card block rounded-[22px] border border-slate-200 <?php echo $isRead ? 'bg-white' : 'bg-slate-50/70'; ?> p-4 text-left transition hover:border-emerald-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300" data-unread="<?php echo $isRead ? 'false' : 'true'; ?>" data-type="<?php echo $item['type'] ?? 'system'; ?>">
+
                                 <div class="flex items-start gap-3">
                                     <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl <?php echo htmlspecialchars($icon); ?>">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -98,6 +108,9 @@ if ($service_count === 0 && $total_count > 0) {
                                             <span class="rounded-full px-3 py-1 text-[11px] font-semibold <?php echo htmlspecialchars($tone); ?>"><?php echo htmlspecialchars(ucfirst($type)); ?></span>
                                             <?php if (!$isRead): ?>
                                                 <span class="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">New</span>
+                                                <button onclick="markAsRead(<?php echo $item['id']; ?>, this)" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition ml-2">
+                                                    Mark as read
+                                                </button>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -193,6 +206,77 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+function filterNotifications(type) {
+    const cards = document.querySelectorAll('.notification-card');
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    buttons.forEach(btn => {
+        btn.classList.remove('bg-emerald-600', 'text-white');
+        btn.classList.add('bg-slate-200', 'text-slate-700');
+        if (btn.dataset.filter === type) {
+            btn.classList.remove('bg-slate-200', 'text-slate-700');
+            btn.classList.add('bg-emerald-600', 'text-white');
+        }
+    });
+
+    cards.forEach(card => {
+        const cardType = card.dataset.type || 'system';
+        if (type === 'all' || cardType === type) {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+}
+
+// Mark a notification as read
+function markAsRead(id, button) {
+    fetch('/brgy-waste-app-v3/public/api/notifications.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notification_id: id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const card = button.closest('.notification-card');
+            card.classList.remove('bg-slate-50/70');
+            card.classList.add('bg-white');
+            button.remove();
+            // Update unread count badge (if exists)
+            const badge = document.querySelector('.bg-red-500');
+            if (badge) {
+                const count = parseInt(badge.textContent);
+                if (count > 1) {
+                    badge.textContent = count - 1;
+                } else {
+                    badge.remove();
+                }
+            }
+            // Update stats
+            const unreadStat = document.querySelector('.text-[#EF4444]');
+            if (unreadStat) {
+                const current = parseInt(unreadStat.textContent);
+                if (current > 0) {
+                    unreadStat.textContent = current - 1;
+                }
+            }
+            // Update header badge
+            const headerBadge = document.querySelector('.inline-flex .bg-[#10B981] + span');
+            if (headerBadge) {
+                const current = parseInt(headerBadge.textContent);
+                if (current > 1) {
+                    headerBadge.textContent = current - 1 + ' new updates';
+                } else {
+                    headerBadge.textContent = 'All read';
+                }
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

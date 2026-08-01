@@ -175,6 +175,16 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                                 Reject Report
                                             </button>
                                         </form>
+                                        <!-- Resolve Button -->
+                                        <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                            <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                            <input type="hidden" name="action" value="resolve">
+                                            <input type="hidden" name="remark" value="">
+                                            <button type="submit" class="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                                Resolve Report
+                                            </button>
+                                        </form>
                                     <?php else: ?>
                                         <p class="text-sm text-slate-500 text-center py-4">
                                             This report is already <strong class="text-slate-700"><?php echo strtolower($report['status']); ?></strong>.

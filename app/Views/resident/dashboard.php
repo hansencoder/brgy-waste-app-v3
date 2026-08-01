@@ -15,6 +15,9 @@ $resolutionRate = $total > 0 ? round(($resolved / $total) * 100) : 0;
 $pending = $data['stats']['pending'] ?? 0;
 $verified = $data['stats']['verified'] ?? 0;
 
+// Get supported reports count
+$supported_count = $data['supported_count'] ?? 0;
+
 function getStatusBadge($status) {
     $map = [
         'pending' => ['bg' => '#FEF3C7', 'text' => '#92400E', 'label' => 'Pending'],
@@ -107,7 +110,9 @@ function getStatusBadge($status) {
         ['label' => 'Pending', 'value' => $pending, 'color' => 'amber', 'icon' => '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'],
         ['label' => 'In Progress', 'value' => $verified, 'color' => 'sky', 'icon' => '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'],
         ['label' => 'Resolved', 'value' => $resolved, 'color' => 'emerald', 'icon' => '<polyline points="20 6 9 17 4 12"/>'],
-        ['label' => 'Resolution Rate', 'value' => $resolutionRate.'%', 'color' => 'purple', 'icon' => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>']
+        ['label' => 'Resolution Rate', 'value' => $resolutionRate.'%', 'color' => 'purple', 'icon' => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>'],
+        ['label' => 'Supported Reports', 'value' => $supported_count ?? 0, 'color' => 'purple', 'icon' => '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>']
+
     ];
     $colorMap = [
         'emerald' => ['bg' => 'bg-emerald-500/30', 'text' => 'text-emerald-300', 'border' => 'border-emerald-500/30'],
@@ -179,7 +184,50 @@ function getStatusBadge($status) {
                             <p class="mt-1.5 text-xs text-slate-500">Above barangay average (71%)</p>
                         </div>
                     </div>
+                    
                 </div>
+
+                <!-- Reporting Tips Section -->
+                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                        </div>
+                        <h3 class="text-lg font-black text-slate-900">💡 Waste Reporting Tips</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                            <span class="text-emerald-600 font-bold text-lg">1</span>
+                            <div>
+                                <p class="font-semibold text-slate-800">Check for existing reports first</p>
+                                <p class="text-slate-500 text-xs">Before submitting, check if someone already reported the same issue nearby.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                            <span class="text-emerald-600 font-bold text-lg">2</span>
+                            <div>
+                                <p class="font-semibold text-slate-800">Upload clear photos</p>
+                                <p class="text-slate-500 text-xs">Good photos help barangay officials verify and prioritize your report.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                            <span class="text-emerald-600 font-bold text-lg">3</span>
+                            <div>
+                                <p class="font-semibold text-slate-800">Select the correct category</p>
+                                <p class="text-slate-500 text-xs">Choosing the right waste category helps route your report efficiently.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                            <span class="text-emerald-600 font-bold text-lg">4</span>
+                            <div>
+                                <p class="font-semibold text-slate-800">Enable GPS for accuracy</p>
+                                <p class="text-slate-500 text-xs">Allow location access so the system can detect your exact location automatically.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
 
                 <!-- Recent Reports Section -->
                 <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden mb-8">

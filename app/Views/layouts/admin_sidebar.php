@@ -71,6 +71,28 @@ $isActive = function($path) use ($currentUri) {
         </a>
         <?php endif; ?>
 
+        <!-- Settings -->
+        <a href="/brgy-waste-app-v3/public/settings" class="flex items-center gap-2.5 rounded-xl <?php echo $isActive('/settings') ? 'bg-[#10B981] text-white shadow-lg shadow-emerald-500/20' : 'text-emerald-100/90 hover:bg-white/10 hover:text-white'; ?> px-3 py-2 text-xs font-semibold">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg <?php echo $isActive('/settings') ? 'bg-white/20' : 'bg-white/10'; ?>">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </span>
+            <span>
+                <span class="block text-[12px] leading-tight">Settings</span>
+                <span class="text-[9px] font-medium text-emerald-100/70 leading-tight">System configuration</span>
+            </span>
+        </a>
+
+        <!-- Create Staff link (add after the existing "User Mgmt" link) -->
+        <a href="/brgy-waste-app-v3/public/admin/createStaff" class="flex items-center gap-2.5 rounded-xl <?php echo $isActive('/admin/createStaff') ? 'bg-[#10B981] text-white shadow-lg shadow-emerald-500/20' : 'text-emerald-100/90 hover:bg-white/10 hover:text-white'; ?> px-3 py-2 text-xs font-semibold">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg <?php echo $isActive('/admin/createStaff') ? 'bg-white/20' : 'bg-white/10'; ?>">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            </span>
+            <span>
+                <span class="block text-[12px] leading-tight">Create Staff</span>
+                <span class="text-[9px] font-medium text-emerald-100/70 leading-tight">Add personnel</span>
+            </span>
+        </a>
+
         <!-- GIS Monitor -->
         <a href="/brgy-waste-app-v3/public/admin/gis" class="flex items-center gap-2.5 rounded-xl <?php echo $isActive('/admin/gis') ? 'bg-[#10B981] text-white shadow-lg shadow-emerald-500/20' : 'text-emerald-100/90 hover:bg-white/10 hover:text-white'; ?> px-3 py-2 text-xs font-semibold">
             <span class="flex h-7 w-7 items-center justify-center rounded-lg <?php echo $isActive('/admin/gis') ? 'bg-white/20' : 'bg-white/10'; ?>">
@@ -115,16 +137,6 @@ $isActive = function($path) use ($currentUri) {
             </span>
         </a>
 
-        <!-- Settings -->
-        <a href="/brgy-waste-app-v3/public/admin/settings" class="flex items-center gap-2.5 rounded-xl <?php echo $isActive('/admin/settings') ? 'bg-[#10B981] text-white shadow-lg shadow-emerald-500/20' : 'text-emerald-100/90 hover:bg-white/10 hover:text-white'; ?> px-3 py-2 text-xs font-semibold">
-            <span class="flex h-7 w-7 items-center justify-center rounded-lg <?php echo $isActive('/admin/settings') ? 'bg-white/20' : 'bg-white/10'; ?>">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </span>
-            <span>
-                <span class="block text-[12px] leading-tight">Settings</span>
-                <span class="text-[9px] font-medium text-emerald-100/70 leading-tight">System configuration</span>
-            </span>
-        </a>
 
         <!-- Audit Logs -->
         <a href="/brgy-waste-app-v3/public/admin/auditLogs" class="flex items-center gap-2.5 rounded-xl <?php echo $isActive('/admin/auditLogs') ? 'bg-[#10B981] text-white shadow-lg shadow-emerald-500/20' : 'text-emerald-100/90 hover:bg-white/10 hover:text-white'; ?> px-3 py-2 text-xs font-semibold">

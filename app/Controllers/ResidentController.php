@@ -17,11 +17,14 @@ class ResidentController extends Controller {
     public function collection_schedule() {
     $db = new Database();
 
+    // Get view mode from GET parameter (default: cards)
+    $view = isset($_GET['view']) ? $_GET['view'] : 'cards';
+
     // Fetch all active schedules with puroks
     $db->query("
         SELECT cs.*, 
-        GROUP_CONCAT(p.purok_name SEPARATOR ', ') as puroks,
-        MAX(cs.updated_at) as last_updated
+                GROUP_CONCAT(p.purok_name SEPARATOR ', ') as puroks,
+                MAX(cs.updated_at) as last_updated
         FROM collection_schedules cs
         LEFT JOIN collection_schedule_puroks csp ON cs.schedule_id = csp.schedule_id
         LEFT JOIN puroks p ON csp.purok_id = p.purok_id
@@ -29,24 +32,81 @@ class ResidentController extends Controller {
         GROUP BY cs.schedule_id
         ORDER BY FIELD(cs.collection_day, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
     ");
-    $data['schedules'] = $db->resultSet();
+    $schedules = $db->resultSet();
 
-    // Fetch the latest special notice (announcement about schedule)
+    // Fetch the latest special notice
     $db->query("
         SELECT * FROM announcements 
         WHERE visibility_id = 1 
         AND (title LIKE '%schedule%' OR title LIKE '%collection%')
         ORDER BY created_at DESC LIMIT 1
     ");
-    $data['special_notice'] = $db->single();
+    $special_notice = $db->single();
 
-    // Get last updated date (use the most recent schedule update or fallback)
+    // Get last updated date
     $db->query("SELECT MAX(updated_at) as last_updated FROM collection_schedules WHERE status = 'active'");
     $row = $db->single();
-    $data['last_updated'] = $row['last_updated'] ? date('F j, Y', strtotime($row['last_updated'])) : date('F j, Y');
+    $last_updated = $row['last_updated'] ? date('F j, Y', strtotime($row['last_updated'])) : date('F j, Y');
+
+    // Calendar view data
+    $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
+    $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
+    $calendar_days = $this->generateCalendarData($month, $year, $schedules);
+
+    $data = [
+        'schedules' => $schedules,
+        'special_notice' => $special_notice,
+        'last_updated' => $last_updated,
+        'view' => $view,
+        'month' => $month,
+        'year' => $year,
+        'calendar_days' => $calendar_days
+    ];
 
     $this->view('resident/collection_schedule', $data);
 }
+
+    /**
+     * Generate calendar data for collection schedule
+     */
+    private function generateCalendarData($month, $year, $schedules) {
+        $firstDay = mktime(0, 0, 0, $month, 1, $year);
+        $daysInMonth = date('t', $firstDay);
+        $firstDayOfWeek = date('N', $firstDay);
+
+        $dayMap = [
+            'Monday' => 1, 'Tuesday' => 2, 'Wednesday' => 3,
+            'Thursday' => 4, 'Friday' => 5, 'Saturday' => 6, 'Sunday' => 7
+        ];
+
+        $scheduleMap = [];
+        foreach ($schedules as $schedule) {
+            $dayNum = $dayMap[$schedule['collection_day']] ?? 0;
+            if ($dayNum > 0) {
+                $scheduleMap[$dayNum][] = $schedule;
+            }
+        }
+
+        $calendarDays = [];
+        $emptyDays = $firstDayOfWeek - 1;
+        for ($i = 0; $i < $emptyDays; $i++) {
+            $calendarDays[] = null;
+        }
+
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $dayOfWeek = date('N', mktime(0, 0, 0, $month, $day, $year));
+            $dayData = [
+                'day' => $day,
+                'is_today' => ($day == date('j') && $month == date('n') && $year == date('Y')),
+                'schedules' => $scheduleMap[$dayOfWeek] ?? []
+            ];
+            $calendarDays[] = $dayData;
+        }
+
+        return $calendarDays;
+    }
+
+
 
     // ============================================================
     // DASHBOARD
@@ -55,14 +115,37 @@ class ResidentController extends Controller {
         $data['reports'] = $this->reportModel->getReportsByResident($_SESSION['user_id']);
         $data['stats'] = $this->reportModel->getDashboardStatsByResident($_SESSION['user_id']);
         $data['map_pins'] = $this->reportModel->getHeatmapDataByResident($_SESSION['user_id']);
+        
+        // Get supported reports count
+        $db = new Database();
+        $db->query("
+            SELECT COUNT(*) as count 
+            FROM report_supports 
+            WHERE user_id = :user_id
+        ");
+        $db->bind(':user_id', $_SESSION['user_id']);
+        $supportedCount = $db->single();
+        $data['supported_count'] = (int)($supportedCount['count'] ?? 0);
+        
         $this->view('resident/dashboard', $data);
     }
 
     // ============================================================
     // SUBMIT REPORT
     // ============================================================
+
+    
+
     public function submit() {
         $data = ['error' => '', 'success' => ''];
+
+        // If resuming after duplicate check, restore pending data
+        if (isset($_GET['resume']) && isset($_SESSION['pending_report'])) {
+            $pending = $_SESSION['pending_report'];
+            // Pre-populate $data with pending values
+            $data['resume_data'] = $pending;
+            // We'll use this in the view to pre-fill fields.
+        }
 
         // Load dropdown data from database
         $categoryModel = $this->model('WasteCategory');
@@ -163,6 +246,34 @@ class ResidentController extends Controller {
                 // Detect purok (optional - can be improved later)
                 $purok_id = $this->detectPurok($lat, $lng);
 
+                // --- Duplicate Detection ---
+                $nearby = $this->reportModel->findNearbyReports(
+                    $lat,
+                    $lng,
+                    $category_id,
+                    50, // radius meters (should come from settings later)
+                    7   // days window (from settings)
+                );
+
+                if (!empty($nearby)) {
+                    // Store pending report data in session
+                    $_SESSION['pending_report'] = [
+                        'category_id'   => $category_id,
+                        'quantity_id'   => $quantity_id,
+                        'condition_id'  => $condition_id,
+                        'description'   => $description,
+                        'lat'           => $lat,
+                        'lng'           => $lng,
+                        'purok_id'      => $purok_id,
+                        'remarks'       => $remarks,
+                        'photo'         => $fileName, // uploaded photo name
+                        'nearby'        => $nearby
+                    ];
+                    // Redirect to duplicate check page
+                    header('Location: /brgy-waste-app-v3/public/resident/duplicate_check');
+                    exit;
+                }
+
                 $reportData = [
                     'resident_id' => $_SESSION['user_id'],
                     'description' => $description,
@@ -241,6 +352,56 @@ class ResidentController extends Controller {
         }
 
         $this->view('resident/view_report', $data);
+    }
+
+    /**
+     * Show the duplicate check popup with nearby reports.
+     */
+    public function duplicate_check()
+    {
+        if (!isset($_SESSION['pending_report'])) {
+            header('Location: /brgy-waste-app-v3/public/resident/submit');
+            exit;
+        }
+        $data = $_SESSION['pending_report'];
+        $this->view('resident/duplicate_check', ['data' => $data]);
+    }
+
+    /**
+     * Support an existing report and discard the new one.
+     */
+    public function support_report()
+    {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST['report_id'])) {
+            header('Location: /brgy-waste-app-v3/public/resident');
+            exit;
+        }
+        $reportId = (int)$_POST['report_id'];
+        $userId = $_SESSION['user_id'];
+        $this->reportModel->supportReport($reportId, $userId);
+        // Clear pending report
+        unset($_SESSION['pending_report']);
+        $_SESSION['success'] = 'You have supported an existing report. Thank you for your feedback!';
+        header('Location: /brgy-waste-app-v3/public/resident');
+        exit;
+    }
+
+    /**
+     * Continue with the new report (ignore duplicates).
+     */
+    public function continue_report()
+    {
+        if (!isset($_SESSION['pending_report'])) {
+            header('Location: /brgy-waste-app-v3/public/resident/submit');
+            exit;
+        }
+        $pending = $_SESSION['pending_report'];
+        // Remove nearby data
+        unset($pending['nearby']);
+        $_SESSION['pending_report'] = $pending;
+        // Redirect back to submit with resume flag to prefill
+        header('Location: /brgy-waste-app-v3/public/resident/submit?resume=1');
+        exit;
     }
 
     // ============================================================
@@ -368,12 +529,57 @@ class ResidentController extends Controller {
                 return $this->view('resident/profile', $data);
             }
 
+            // Handle profile picture upload
+            $profilePic = null;
+            if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['profile_pic'];
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                $maxSize = 2 * 1024 * 1024; // 2MB
+
+                if (!in_array($file['type'], $allowedTypes)) {
+                    $data['error'] = 'Invalid file format. Only JPG, JPEG, and PNG are allowed.';
+                    return $this->view('resident/profile', $data);
+                }
+                if ($file['size'] > $maxSize) {
+                    $data['error'] = 'File size exceeds 2MB limit.';
+                    return $this->view('resident/profile', $data);
+                }
+
+                $uploadDir = '../public/uploads/profiles/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $fileName = 'profile_' . $_SESSION['user_id'] . '_' . time() . '.' . $extension;
+                $targetPath = $uploadDir . $fileName;
+
+                if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                    $profilePic = '/public/uploads/profiles/' . $fileName;
+                    error_log("Profile picture uploaded: " . $targetPath); // <- ADD THIS
+                } else {
+                    error_log("Upload failed for " . $file['name']); // <- ADD THIS
+                    $data['error'] = 'Failed to upload profile picture.';
+                    return $this->view('resident/profile', $data);
+                }
+            }
+
             // Update profile
-            $db->query("UPDATE users SET name = :name, address = :address, phone_number = :phone WHERE id = :id");
+            $updateQuery = "UPDATE users SET name = :name, address = :address, phone_number = :phone";
+            if ($profilePic) {
+                $updateQuery .= ", profile_pic = :profile_pic";
+            }
+            $updateQuery .= " WHERE id = :id";
+
+            $db->query($updateQuery);
             $db->bind(':name', $name);
             $db->bind(':address', $address);
             $db->bind(':phone', $phone);
+            if ($profilePic) {
+                $db->bind(':profile_pic', $profilePic);
+            }
             $db->bind(':id', $_SESSION['user_id']);
+            
 
             if ($db->execute()) {
                 $_SESSION['user_name'] = $name;
@@ -398,6 +604,100 @@ class ResidentController extends Controller {
         }
 
         $this->view('resident/profile', $data);
+    }
+    
+    /**
+     * Request OTP for profile change verification
+     */
+    public function requestProfileOTP() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            header('Location: /brgy-waste-app-v3/public/resident/profile');
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $db = new Database();
+        $db->query("SELECT email, name FROM users WHERE id = :id");
+        $db->bind(':id', $userId);
+        $user = $db->single();
+
+        if (!$user || empty($user['email'])) {
+            echo json_encode(['success' => false, 'message' => 'No email address on file.']);
+            exit;
+        }
+
+        $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        
+        $db->query("DELETE FROM two_factor_tokens WHERE user_id = :user_id AND is_used = 0");
+        $db->bind(':user_id', $userId);
+        $db->execute();
+
+        $db->query("INSERT INTO two_factor_tokens (user_id, email, token, expires_at) 
+                    VALUES (:user_id, :email, :token, DATE_ADD(NOW(), INTERVAL 10 MINUTE))");
+        $db->bind(':user_id', $userId);
+        $db->bind(':email', $user['email']);
+        $db->bind(':token', $token);
+        $db->execute();
+
+        require_once '../app/Models/Helpers/OtpMailer.php';
+        try {
+            OtpMailer::sendOtpEmail($user['email'], $token, $user['name']);
+            $_SESSION['profile_otp_sent'] = true;
+            $_SESSION['profile_otp_email'] = $user['email'];
+            echo json_encode(['success' => true, 'message' => 'OTP sent to your email.']);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Failed to send OTP: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Verify OTP for profile change
+     */
+    public function verifyProfileOTP() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            header('Location: /brgy-waste-app-v3/public/resident/profile');
+            exit;
+        }
+
+        $otp = trim($_POST['otp'] ?? '');
+        $userId = $_SESSION['user_id'];
+        $db = new Database();
+
+        $db->query("SELECT * FROM two_factor_tokens WHERE user_id = :user_id AND is_used = 0 AND expires_at >= NOW() ORDER BY created_at DESC LIMIT 1");
+        $db->bind(':user_id', $userId);
+        $tokenRecord = $db->single();
+
+        if (!$tokenRecord) {
+            echo json_encode(['success' => false, 'message' => 'No valid OTP found. Please request a new one.']);
+            exit;
+        }
+
+        if ($tokenRecord['token'] !== $otp) {
+            $attempts = (int)($tokenRecord['attempts'] ?? 0) + 1;
+            if ($attempts >= 3) {
+                $db->query("DELETE FROM two_factor_tokens WHERE user_id = :user_id");
+                $db->bind(':user_id', $userId);
+                $db->execute();
+                echo json_encode(['success' => false, 'message' => 'Too many failed attempts. Please request a new OTP.']);
+                exit;
+            }
+            $db->query("UPDATE two_factor_tokens SET attempts = :attempts WHERE id = :id");
+            $db->bind(':attempts', $attempts);
+            $db->bind(':id', $tokenRecord['id']);
+            $db->execute();
+            echo json_encode(['success' => false, 'message' => 'Invalid OTP. Please try again.']);
+            exit;
+        }
+
+        $db->query("UPDATE two_factor_tokens SET is_used = 1 WHERE id = :id");
+        $db->bind(':id', $tokenRecord['id']);
+        $db->execute();
+
+        $_SESSION['profile_otp_verified'] = true;
+        
+        echo json_encode(['success' => true, 'message' => 'OTP verified successfully. You can now save your changes.']);
+        exit;
     }
 
     // ============================================================
@@ -527,9 +827,46 @@ class ResidentController extends Controller {
     // ============================================================
     // HELPER: Detect Purok from coordinates
     // ============================================================
-    private function detectPurok($lat, $lng) {
-        // For now, return default purok (Purok 1)
-        // In the future, you can implement point-in-polygon for each purok boundary
+    /**
+     * Detect purok using polygon geometry from purok_boundaries table.
+     * Fallback to nearest centroid or default (1).
+     */
+    private function detectPurok($lat, $lng)
+    {
+        $db = new Database();
+        // Try ST_Contains with geometry column
+        $db->query("
+            SELECT purok_id 
+            FROM purok_boundaries 
+            WHERE ST_Contains(polygon_geometry, POINT(:lng, :lat))
+            LIMIT 1
+        ");
+        $db->bind(':lat', $lat);
+        $db->bind(':lng', $lng);
+        $result = $db->single();
+
+        if ($result) {
+            return (int)$result['purok_id'];
+        }
+
+        // Fallback: nearest by centroid using ST_Centroid (if available)
+        // If your MySQL version doesn't support ST_Centroid, you can skip this fallback.
+        $db->query("
+            SELECT purok_id,
+                ST_Distance_Sphere(polygon_geometry, POINT(:lng, :lat)) AS distance
+            FROM purok_boundaries
+            ORDER BY distance ASC
+            LIMIT 1
+        ");
+        $db->bind(':lat', $lat);
+        $db->bind(':lng', $lng);
+        $fallback = $db->single();
+
+        if ($fallback) {
+            return (int)$fallback['purok_id'];
+        }
+
+        // Ultimate fallback
         return 1;
     }
 }

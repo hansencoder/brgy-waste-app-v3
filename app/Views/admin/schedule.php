@@ -148,12 +148,34 @@ function getCalendarWasteColor($type) {
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2 flex-shrink-0">
+                                        <button onclick="openPostponeModal(<?php echo $schedule['schedule_id']; ?>, '<?php echo htmlspecialchars($schedule['collection_day']); ?>')" class="text-amber-600 hover:text-amber-700 text-sm font-medium">Postpone</button>
                                         <button onclick="openEditModal(<?php echo $schedule['schedule_id']; ?>)" class="w-10 h-10 rounded-xl bg-[#F0FDF4] hover:bg-emerald-100 text-slate-600 hover:text-emerald-700 transition flex items-center justify-center" title="Edit Schedule">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
                                         </button>
                                         <button onclick="confirmDelete(<?php echo $schedule['schedule_id']; ?>, '<?php echo htmlspecialchars($schedule['collection_day']); ?>')" class="w-10 h-10 rounded-xl bg-[#FEF2F2] hover:bg-red-100 text-slate-600 hover:text-red-600 transition flex items-center justify-center" title="Delete Schedule">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                         </button>
+                                    </div>
+                                    <!-- Postpone Modal -->
+                                    <div id="postponeModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+                                        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+                                            <h2 class="text-xl font-bold text-slate-900 mb-4">Postpone Schedule</h2>
+                                            <form action="/brgy-waste-app-v3/public/admin/postpone_schedule" method="POST">
+                                                <input type="hidden" name="schedule_id" id="postponeScheduleId">
+                                                <div class="mb-4">
+                                                    <label class="block text-sm font-medium text-gray-700">New Date</label>
+                                                    <input type="date" name="new_date" required class="w-full px-3 py-2 border rounded-md focus:ring-emerald-500 outline-none">
+                                                </div>
+                                                <div class="mb-4">
+                                                    <label class="block text-sm font-medium text-gray-700">Reason</label>
+                                                    <textarea name="reason" rows="2" required class="w-full px-3 py-2 border rounded-md focus:ring-emerald-500 outline-none" placeholder="e.g., Holiday, weather conditions..."></textarea>
+                                                </div>
+                                                <div class="flex gap-3">
+                                                    <button type="button" onclick="closePostponeModal()" class="flex-1 px-4 py-2 border border-slate-200 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Cancel</button>
+                                                    <button type="submit" class="flex-1 px-4 py-2 bg-amber-600 text-white rounded-xl font-semibold text-sm hover:bg-amber-700">Postpone</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                                 <?php endforeach; ?>
@@ -437,6 +459,15 @@ function getCalendarWasteColor($type) {
             closeDeleteModal();
         }
     });
+
+    function openPostponeModal(id, day) {
+    document.getElementById('postponeScheduleId').value = id;
+    document.getElementById('postponeModal').classList.remove('hidden');
+    }
+
+    function closePostponeModal() {
+        document.getElementById('postponeModal').classList.add('hidden');
+    }
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

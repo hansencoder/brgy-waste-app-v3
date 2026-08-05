@@ -118,7 +118,7 @@ $metrics = [
                                                 <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold" style="background: <?php echo $badge['bg']; ?>; color: <?php echo $badge['text']; ?>;"><?php echo $badge['label']; ?></span>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <a href="/brgy-waste-app-v3/public/admin/reports?view=<?php echo $report['id']; ?>" class="text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1.5 text-sm font-semibold">
+                                                <a href="/brgy-waste-app-v3/public/admin/viewReport/<?php echo $report['id']; ?>" class="text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1.5 text-sm font-semibold">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                                     Review
                                                 </a>

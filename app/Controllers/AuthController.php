@@ -8,6 +8,15 @@ class AuthController extends Controller {
         $this->userModel = $this->model('User');
         $this->auditModel = $this->model('AuditLog');
     }
+    // ============================================================
+    // FORGOT PASSWORD PAGE
+    // ============================================================
+    public function forgotPassword() {
+        $data = ['error' => '', 'success' => ''];
+        $this->view('auth/forgot_password', $data);
+    }
+
+    
 
     private function formatRetryTime(int $seconds): string {
         $minutes = floor($seconds / 60);
@@ -16,6 +25,139 @@ class AuthController extends Controller {
             return $remaining > 0 ? "{$minutes}:" . str_pad($remaining, 2, '0', STR_PAD_LEFT) : "{$minutes} minutes";
         }
         return "{$remaining} seconds";
+    }
+
+    // ============================================================
+    // RESET PASSWORD PAGE (OTP & New Password Form)
+    // ============================================================
+    public function resetPassword() {
+        if (!isset($_SESSION['reset_email'])) {
+            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+            exit;
+        }
+        $data = ['error' => '', 'success' => ''];
+        $this->view('auth/reset_password', $data);
+    }
+
+    public function verifyResetOtp() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+            exit;
+        }
+
+        $otp = trim($_POST['otp'] ?? '');
+        $email = $_SESSION['reset_email'] ?? null;
+        $userId = $_SESSION['reset_user_id'] ?? null;
+
+        if (!$email || !$userId) {
+            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+            exit;
+        }
+
+        $tokenRecord = $this->userModel->validatePasswordResetToken($email, $otp);
+        if (!$tokenRecord) {
+            return $this->view('auth/reset_password', ['error' => 'Invalid or expired OTP. Please request a new one.']);
+        }
+
+        $_SESSION['reset_otp_verified'] = true;
+        $_SESSION['reset_otp'] = $otp;
+        header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/newPassword'));
+        exit;
+    }
+
+    public function newPassword() {
+        if (!isset($_SESSION['reset_email']) || !isset($_SESSION['reset_user_id']) || empty($_SESSION['reset_otp_verified'])) {
+            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+            exit;
+        }
+
+        $data = ['error' => '', 'success' => ''];
+        $this->view('auth/new_password', $data);
+    }
+    
+    // ============================================================
+    // PROCESS PASSWORD RESET (Verify OTP and Update Password)
+    // ============================================================
+    public function processResetPassword() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $otp = trim($_POST['otp'] ?? $_SESSION['reset_otp'] ?? '');
+            $new_password = $_POST['new_password'] ?? '';
+            $confirm_password = $_POST['confirm_password'] ?? '';
+            $email = $_SESSION['reset_email'] ?? null;
+            $user_id = $_SESSION['reset_user_id'] ?? null;
+
+            if (!$email || !$user_id || empty($_SESSION['reset_otp_verified'])) {
+                header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+                exit;
+            }
+
+            // Validate password requirements
+            if (strlen($new_password) < 8 || !preg_match("/[A-Z]/", $new_password) || !preg_match("/[0-9]/", $new_password) || !preg_match("/[\W]/", $new_password)) {
+                return $this->view('auth/new_password', ['error' => 'Password must be at least 8 chars with uppercase, number, and special char.']);
+            }
+            if ($new_password !== $confirm_password) {
+                return $this->view('auth/new_password', ['error' => 'Passwords do not match.']);
+            }
+
+            // Validate OTP
+            $tokenRecord = $this->userModel->validatePasswordResetToken($email, $otp);
+            if (!$tokenRecord) {
+                return $this->view('auth/new_password', ['error' => 'Invalid or expired OTP. Please request a new one.']);
+            }
+
+            // Update password
+            $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+            $this->userModel->updatePassword($user_id, $hashed);
+            $this->userModel->markResetTokenAsUsed($tokenRecord['id']);
+
+            // Clean session and audit
+            unset($_SESSION['reset_email']);
+            unset($_SESSION['reset_user_id']);
+            unset($_SESSION['reset_otp_verified']);
+            unset($_SESSION['reset_otp']);
+            $this->auditModel->logAction($user_id, 'Password Reset', 'User', 'Password reset via email OTP', 'success');
+
+            $_SESSION['flash_success'] = 'Password reset successfully. You can now log in.';
+            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth'));
+            exit;
+        }
+    }
+
+    // ============================================================
+    // SEND PASSWORD RESET OTP
+    // ============================================================
+    public function sendResetOtp() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return $this->view('auth/forgot_password', ['error' => 'Invalid email address.']);
+            }
+
+            $user = $this->userModel->getUserByEmail($email);
+            if (!$user) {
+                // Security: Do not reveal if email exists. Just say "If an account exists, an email was sent."
+                return $this->view('auth/forgot_password', ['success' => 'If an account exists with this email, a reset code has been sent.']);
+            }
+            
+
+            // Generate and save OTP
+            $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $this->userModel->savePasswordResetToken($user['id'], $email, $token);
+
+            // Send email
+            require_once '../app/Models/Helpers/OtpMailer.php';
+            try {
+                OtpMailer::sendPasswordResetEmail($email, $token, $user['name']);
+                $_SESSION['reset_email'] = $email;
+                $_SESSION['reset_user_id'] = $user['id'];
+                unset($_SESSION['reset_otp_verified']);
+                unset($_SESSION['reset_otp']);
+                header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/resetPassword'));
+                exit;
+            } catch (Exception $e) {
+                return $this->view('auth/forgot_password', ['error' => 'Could not send reset email. Please try again later.']);
+            }
+        }
     }
 
     private function getLockoutSeconds(): int {

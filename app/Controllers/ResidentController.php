@@ -4,6 +4,17 @@ class ResidentController extends Controller {
     private $reportModel;
     private $auditModel;
 
+    private function deleteUploadedPhotoFile($fileName) {
+        if (empty($fileName)) {
+            return;
+        }
+
+        $filePath = dirname(__DIR__, 2) . '/public/uploads/' . basename($fileName);
+        if (is_file($filePath)) {
+            unlink($filePath);
+        }
+    }
+
     public function __construct() {
         if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'resident') {
             header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth'));
@@ -134,20 +145,19 @@ class ResidentController extends Controller {
     // SUBMIT REPORT
     // ============================================================
 
-    
-
     public function submit() {
         $data = ['error' => '', 'success' => ''];
+        
 
-        // If resuming after duplicate check, restore pending data
         if (isset($_GET['resume']) && isset($_SESSION['pending_report'])) {
             $pending = $_SESSION['pending_report'];
-            // Pre-populate $data with pending values
             $data['resume_data'] = $pending;
-            // We'll use this in the view to pre-fill fields.
+
+            if (!empty($pending['photo'])) {
+                $data['resume_photo'] = $pending['photo'];
+            }
         }
 
-        // Load dropdown data from database
         $categoryModel = $this->model('WasteCategory');
         $quantityModel = $this->model('EstimatedQuantity');
         $conditionModel = $this->model('WasteCondition');
@@ -158,160 +168,169 @@ class ResidentController extends Controller {
         $data['conditions'] = $conditionModel->getAll();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $description = trim($_POST['description']);
-            $lat = $_POST['latitude'];
-            $lng = $_POST['longitude'];
+            $description = trim($_POST['description'] ?? '');
+            $lat = $_POST['latitude'] ?? 0;
+            $lng = $_POST['longitude'] ?? 0;
             $category_id = (int) ($_POST['category_id'] ?? 0);
             $quantity_id = (int) ($_POST['quantity_id'] ?? 0);
             $condition_id = (int) ($_POST['condition_id'] ?? 0);
             $remarks = trim($_POST['remarks'] ?? '');
+            $photoPath = null;
+            $targetPath = null;
+            $fileName = null;
 
-            // Validate description
             if (strlen($description) < 10 || strlen($description) > 500) {
                 $data['error'] = 'Description must be between 10 and 500 characters.';
+                $this->deleteUploadedPhotoFile($fileName);
                 return $this->view('resident/submit_report', $data);
             }
 
-            // Validate required fields
             if (empty($category_id) || empty($quantity_id) || empty($condition_id)) {
                 $data['error'] = 'Please select a waste category, quantity, and condition.';
+                $this->deleteUploadedPhotoFile($fileName);
                 return $this->view('resident/submit_report', $data);
             }
 
-            // Validate photo
-            if (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
+            $hasPhoto = isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK;
+            $hasResumePhoto = isset($data['resume_data']['photo']) && !empty($data['resume_data']['photo']);
+
+            if (!$hasPhoto && !$hasResumePhoto) {
                 $data['error'] = 'A photo of the waste is required.';
+                $this->deleteUploadedPhotoFile($fileName);
                 return $this->view('resident/submit_report', $data);
             }
 
-            // Image validation
-            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-            $fileType = $_FILES['photo']['type'];
-            $fileSize = $_FILES['photo']['size'];
+            if ($hasPhoto) {
+                $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                $fileType = $_FILES['photo']['type'] ?? '';
+                $fileSize = $_FILES['photo']['size'] ?? 0;
 
-            if (!in_array($fileType, $allowedTypes)) {
-                $data['error'] = 'Invalid file format. Only JPG, JPEG and PNG are allowed.';
-                return $this->view('resident/submit_report', $data);
-            }
-
-            if ($fileSize > 5 * 1024 * 1024) { // 5MB limit
-                $data['error'] = 'File size exceeds 5MB limit.';
-                return $this->view('resident/submit_report', $data);
-            }
-
-            // Upload photo
-            $uploadDir = '../public/uploads/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-
-            $fileName = uniqid() . '_' . basename($_FILES['photo']['name']);
-            $targetPath = $uploadDir . $fileName;
-
-            if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
-
-                // Boundary Check - Barangay Dulong Bayan
-                $barangayBoundary = [
-                    [15.56992, 120.80135], [15.56728, 120.80018], [15.56570, 120.79897],
-                    [15.56528, 120.79751], [15.56375, 120.79516], [15.56032, 120.79464],
-                    [15.55485, 120.79121], [15.54781, 120.80013], [15.55061, 120.80494],
-                    [15.55288, 120.80886], [15.54962, 120.81743], [15.55121, 120.82609],
-                    [15.55413, 120.83358], [15.55740, 120.83261], [15.56506, 120.82838],
-                    [15.57034, 120.82364], [15.56455, 120.82033], [15.56098, 120.81492],
-                    [15.56739, 120.80324], [15.56992, 120.80135]
-                ];
-
-                // Point-in-polygon check
-                $isInside = false;
-                $j = count($barangayBoundary) - 1;
-                for ($i = 0; $i < count($barangayBoundary); $i++) {
-                    $xi = $barangayBoundary[$i][0]; $yi = $barangayBoundary[$i][1];
-                    $xj = $barangayBoundary[$j][0]; $yj = $barangayBoundary[$j][1];
-
-                    $intersect = (($yi > $lng) != ($yj > $lng)) && ($lat < ($xj - $xi) * ($lng - $yi) / ($yj - $yi) + $xi);
-                    if ($intersect) $isInside = !$isInside;
-                    $j = $i;
-                }
-
-                if (!$isInside) {
-                    $data['error'] = 'This location is outside of Barangay Dulong Bayan coverage area. Reports can only be submitted within the barangay boundaries.';
-                    unlink($targetPath);
+                if (!in_array($fileType, $allowedTypes, true)) {
+                    $data['error'] = 'Invalid file format. Only JPG, JPEG and PNG are allowed.';
+                    $this->deleteUploadedPhotoFile($fileName);
                     return $this->view('resident/submit_report', $data);
                 }
 
-                // Get Pending status ID
-                $pendingStatus = $statusModel->getByName('Pending');
-                $status_id = $pendingStatus ? $pendingStatus['status_id'] : 1;
-
-                // Detect purok (optional - can be improved later)
-                $purok_id = $this->detectPurok($lat, $lng);
-
-                // --- Duplicate Detection ---
-                $nearby = $this->reportModel->findNearbyReports(
-                    $lat,
-                    $lng,
-                    $category_id,
-                    50, // radius meters (should come from settings later)
-                    7   // days window (from settings)
-                );
-
-                if (!empty($nearby)) {
-                    // Store pending report data in session
-                    $_SESSION['pending_report'] = [
-                        'category_id'   => $category_id,
-                        'quantity_id'   => $quantity_id,
-                        'condition_id'  => $condition_id,
-                        'description'   => $description,
-                        'lat'           => $lat,
-                        'lng'           => $lng,
-                        'purok_id'      => $purok_id,
-                        'remarks'       => $remarks,
-                        'photo'         => $fileName, // uploaded photo name
-                        'nearby'        => $nearby
-                    ];
-                    // Redirect to duplicate check page
-                    header('Location: /brgy-waste-app-v3/public/resident/duplicate_check');
-                    exit;
+                if ($fileSize > 5 * 1024 * 1024) {
+                    $data['error'] = 'File size exceeds 5MB limit.';
+                    $this->deleteUploadedPhotoFile($fileName);
+                    return $this->view('resident/submit_report', $data);
                 }
 
-                $reportData = [
-                    'resident_id' => $_SESSION['user_id'],
-                    'description' => $description,
-                    'latitude' => $lat,
-                    'longitude' => $lng,
-                    'location_verified' => true,
-                    'category_id' => $category_id,
-                    'quantity_id' => $quantity_id,
-                    'condition_id' => $condition_id,
-                    'status_id' => $status_id,
-                    'purok_id' => $purok_id,
-                    'location' => '', // Can be filled with reverse geocoding if needed
-                    'photos' => [$fileName]
+                $uploadDir = '../public/uploads/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $fileName = uniqid() . '_' . basename($_FILES['photo']['name']);
+                $targetPath = $uploadDir . $fileName;
+
+                if (!move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
+                    $data['error'] = 'Failed to upload photo.';
+                    $this->deleteUploadedPhotoFile($fileName);
+                    return $this->view('resident/submit_report', $data);
+                }
+
+                $photoPath = $fileName;
+            } elseif ($hasResumePhoto) {
+                $photoPath = $data['resume_data']['photo'];
+            }
+
+            $barangayBoundary = [
+                [15.56992, 120.80135], [15.56728, 120.80018], [15.56570, 120.79897],
+                [15.56528, 120.79751], [15.56375, 120.79516], [15.56032, 120.79464],
+                [15.55485, 120.79121], [15.54781, 120.80013], [15.55061, 120.80494],
+                [15.55288, 120.80886], [15.54962, 120.81743], [15.55121, 120.82609],
+                [15.55413, 120.83358], [15.55740, 120.83261], [15.56506, 120.82838],
+                [15.57034, 120.82364], [15.56455, 120.82033], [15.56098, 120.81492],
+                [15.56739, 120.80324], [15.56992, 120.80135]
+            ];
+
+            $isInside = false;
+            $j = count($barangayBoundary) - 1;
+            for ($i = 0; $i < count($barangayBoundary); $i++) {
+                $xi = $barangayBoundary[$i][0]; $yi = $barangayBoundary[$i][1];
+                $xj = $barangayBoundary[$j][0]; $yj = $barangayBoundary[$j][1];
+
+                $intersect = (($yi > $lng) != ($yj > $lng)) && ($lat < ($xj - $xi) * ($lng - $yi) / ($yj - $yi) + $xi);
+                if ($intersect) {
+                    $isInside = !$isInside;
+                }
+                $j = $i;
+            }
+
+            if (!$isInside) {
+                $data['error'] = 'This location is outside of Barangay Dulong Bayan coverage area. Reports can only be submitted within the barangay boundaries.';
+                $this->deleteUploadedPhotoFile($fileName);
+                return $this->view('resident/submit_report', $data);
+            }
+
+            $pendingStatus = $statusModel->getByName('Pending');
+            $status_id = $pendingStatus ? $pendingStatus['status_id'] : 1;
+            $purok_id = $this->detectPurok($lat, $lng);
+
+            $nearby = $this->reportModel->findNearbyReports(
+                $lat,
+                $lng,
+                $category_id,
+                50,
+                7
+            );
+
+            if (!empty($nearby)) {
+                $_SESSION['pending_report'] = [
+                    'category_id'   => $category_id,
+                    'quantity_id'   => $quantity_id,
+                    'condition_id'  => $condition_id,
+                    'description'   => $description,
+                    'lat'           => $lat,
+                    'lng'           => $lng,
+                    'purok_id'      => $purok_id,
+                    'remarks'       => $remarks,
+                    'photo'         => $fileName,
+                    'nearby'        => $nearby
                 ];
+                header('Location: /brgy-waste-app-v3/public/resident/duplicate_check');
+                exit;
+            }
 
-                $reportId = $this->reportModel->createReport($reportData);
+            $reportData = [
+                'resident_id' => $_SESSION['user_id'],
+                'description' => $description,
+                'latitude' => $lat,
+                'longitude' => $lng,
+                'location_verified' => true,
+                'category_id' => $category_id,
+                'quantity_id' => $quantity_id,
+                'condition_id' => $condition_id,
+                'status_id' => $status_id,
+                'purok_id' => $purok_id,
+                'location' => '',
+                'photos' => [$photoPath]
+            ];
 
-                if ($reportId) {
-                    $this->auditModel->logAction($_SESSION['user_id'], 'Report Submitted', 'Waste Report', "User submitted report ID $reportId", 'success');
+            $reportId = $this->reportModel->createReport($reportData);
 
-                    // Notify admins about new report submission
-                    require_once __DIR__ . '/../Models/Notification.php';
-                    $notificationModel = new Notification();
-                    $notificationModel->createReportSubmittedNotification($reportId);
+            if ($reportId) {
+                $this->auditModel->logAction($_SESSION['user_id'], 'Report Submitted', 'Waste Report', "User submitted report ID $reportId", 'success');
 
-                    $data['success'] = 'Report submitted successfully.';
-                } else {
-                    $data['error'] = 'Database error while saving report.';
-                    // Delete uploaded file since database insert failed
-                    unlink($targetPath);
-                }
+                require_once __DIR__ . '/../Models/Notification.php';
+                $notificationModel = new Notification();
+                $notificationModel->createReportSubmittedNotification($reportId);
+
+                $data['success'] = 'Report submitted successfully.';
             } else {
-                $data['error'] = 'Failed to upload photo.';
+                $data['error'] = 'Database error while saving report.';
+                $this->deleteUploadedPhotoFile($fileName);
             }
         }
 
         $this->view('resident/submit_report', $data);
     }
+
+    // ============================================================
+    // MY REPORTS LIST
+    // ============================================================
 
     // ============================================================
     // MY REPORTS LIST
@@ -379,7 +398,11 @@ class ResidentController extends Controller {
         $reportId = (int)$_POST['report_id'];
         $userId = $_SESSION['user_id'];
         $this->reportModel->supportReport($reportId, $userId);
-        // Clear pending report
+
+        if (isset($_SESSION['pending_report']['photo'])) {
+            $this->deleteUploadedPhotoFile($_SESSION['pending_report']['photo']);
+        }
+
         unset($_SESSION['pending_report']);
         $_SESSION['success'] = 'You have supported an existing report. Thank you for your feedback!';
         header('Location: /brgy-waste-app-v3/public/resident');
@@ -396,7 +419,7 @@ class ResidentController extends Controller {
             exit;
         }
         $pending = $_SESSION['pending_report'];
-        // Remove nearby data
+        // Remove nearby data but keep photo
         unset($pending['nearby']);
         $_SESSION['pending_report'] = $pending;
         // Redirect back to submit with resume flag to prefill
@@ -849,12 +872,13 @@ class ResidentController extends Controller {
             return (int)$result['purok_id'];
         }
 
-        // Fallback: nearest by centroid using ST_Centroid (if available)
-        // If your MySQL version doesn't support ST_Centroid, you can skip this fallback.
+        // Fallback: nearest centroid. ST_Distance_Sphere requires points, not a polygon.
+        // Use the centroid of each polygon boundary to avoid MySQL geometry errors.
         $db->query("
             SELECT purok_id,
-                ST_Distance_Sphere(polygon_geometry, POINT(:lng, :lat)) AS distance
+                ST_Distance_Sphere(ST_Centroid(polygon_geometry), POINT(:lng, :lat)) AS distance
             FROM purok_boundaries
+            WHERE polygon_geometry IS NOT NULL
             ORDER BY distance ASC
             LIMIT 1
         ");

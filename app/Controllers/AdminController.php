@@ -31,6 +31,97 @@ class AdminController extends Controller {
     }
 
     // ============================================================
+    // PROFILE OTP REQUEST & VERIFICATION
+    // ============================================================
+
+    public function requestProfileOTP() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile'));
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $db = new Database();
+        $db->query("SELECT email, name FROM users WHERE id = :id");
+        $db->bind(':id', $userId);
+        $user = $db->single();
+
+        if (!$user || empty($user['email'])) {
+            echo json_encode(['success' => false, 'message' => 'No email address on file.']);
+            exit;
+        }
+
+        $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        
+        $db->query("DELETE FROM two_factor_tokens WHERE user_id = :user_id AND purpose = 'profile_change' AND is_used = 0");
+        $db->bind(':user_id', $userId);
+        $db->execute();
+
+        $db->query("INSERT INTO two_factor_tokens (user_id, email, token, expires_at, purpose) 
+                    VALUES (:user_id, :email, :token, DATE_ADD(NOW(), INTERVAL 10 MINUTE), 'profile_change')");
+        $db->bind(':user_id', $userId);
+        $db->bind(':email', $user['email']);
+        $db->bind(':token', $token);
+        $db->execute();
+
+        require_once '../app/Models/Helpers/OtpMailer.php';
+        try {
+            OtpMailer::sendOtpEmail($user['email'], $token, $user['name']);
+            echo json_encode(['success' => true, 'message' => 'OTP sent to your email.']);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Failed to send OTP: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function verifyProfileOTP() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile'));
+            exit;
+        }
+
+        $otp = trim($_POST['otp'] ?? '');
+        $userId = $_SESSION['user_id'];
+        $db = new Database();
+
+        $db->query("SELECT * FROM two_factor_tokens 
+                    WHERE user_id = :user_id AND purpose = 'profile_change' AND is_used = 0 AND expires_at >= NOW() 
+                    ORDER BY created_at DESC LIMIT 1");
+        $db->bind(':user_id', $userId);
+        $tokenRecord = $db->single();
+
+        if (!$tokenRecord) {
+            echo json_encode(['success' => false, 'message' => 'No valid OTP found. Please request a new one.']);
+            exit;
+        }
+
+        if ($tokenRecord['token'] !== $otp) {
+            $attempts = (int)($tokenRecord['attempts'] ?? 0) + 1;
+            if ($attempts >= 3) {
+                $db->query("DELETE FROM two_factor_tokens WHERE user_id = :user_id AND purpose = 'profile_change'");
+                $db->bind(':user_id', $userId);
+                $db->execute();
+                echo json_encode(['success' => false, 'message' => 'Too many failed attempts. Please request a new OTP.']);
+                exit;
+            }
+            $db->query("UPDATE two_factor_tokens SET attempts = :attempts WHERE id = :id");
+            $db->bind(':attempts', $attempts);
+            $db->bind(':id', $tokenRecord['id']);
+            $db->execute();
+            echo json_encode(['success' => false, 'message' => 'Invalid OTP. Please try again.']);
+            exit;
+        }
+
+        $db->query("UPDATE two_factor_tokens SET is_used = 1 WHERE id = :id");
+        $db->bind(':id', $tokenRecord['id']);
+        $db->execute();
+
+        $_SESSION['profile_otp_verified'] = true;
+        echo json_encode(['success' => true, 'message' => 'OTP verified. You can now save your changes.']);
+        exit;
+    }
+
+    // ============================================================
     // DASHBOARD
     // ============================================================
 

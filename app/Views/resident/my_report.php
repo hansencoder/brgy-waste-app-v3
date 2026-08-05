@@ -1,4 +1,20 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+  /* Apply Nunito Sans to everything EXCEPT material-icons */
+    *:not(.material-icons) {
+        font-family: 'Nunito Sans', 'Roboto', sans-serif !important;
+    }
+    /* Ensure Material Icons render correctly */
+    .material-icons {
+        font-family: 'Material Icons' !important;
+        font-weight: normal;
+        font-style: normal;
+    }
+</style>
+
+
 <?php
 // Retrieve user info from session if available
 $fullName = $_SESSION['user_name'] ?? 'Juan Dela Cruz';

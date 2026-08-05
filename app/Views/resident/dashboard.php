@@ -1,4 +1,27 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+  /* Apply Nunito Sans to everything EXCEPT material-icons */
+  *:not(.material-icons) {
+    font-family: 'Lato', sans-serif !important;
+    }
+  /* Ensure Material Icons render correctly */
+    .material-icons {
+    font-family: 'Material Icons' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    vertical-align: middle;
+    }
+</style>
 <?php
 // Retrieve user info from session if available
 $fullName = $_SESSION['user_name'] ?? 'Juan Dela Cruz';
@@ -6,14 +29,14 @@ $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_n
 $purok = $_SESSION['user_purok'] ?? 'Purok 1';
 $unreadCount = $data['unread_count'] ?? 0;
 
-// Calculate resolution rate
-$total = $data['stats']['total'] ?? 0;
-$resolved = $data['stats']['resolved'] ?? 0;
+// Pull the real resident stats payload with backward-compatible fallbacks
+$stats = $data['stats'] ?? [];
+$total = (int)($stats['total'] ?? 0);
+$pending = (int)($stats['pending'] ?? $stats['Pending'] ?? 0);
+$verified = (int)($stats['verified'] ?? $stats['Verified'] ?? 0);
+$inProgress = (int)($stats['in_progress'] ?? $stats['In Progress'] ?? 0);
+$resolved = (int)($stats['resolved'] ?? $stats['Resolved'] ?? 0);
 $resolutionRate = $total > 0 ? round(($resolved / $total) * 100) : 0;
-
-// Get the actual pending count
-$pending = $data['stats']['pending'] ?? 0;
-$verified = $data['stats']['verified'] ?? 0;
 
 // Get supported reports count
 $supported_count = $data['supported_count'] ?? 0;
@@ -21,7 +44,8 @@ $supported_count = $data['supported_count'] ?? 0;
 function getStatusBadge($status) {
     $map = [
         'pending' => ['bg' => '#FEF3C7', 'text' => '#92400E', 'label' => 'Pending'],
-        'verified' => ['bg' => '#DCFCE7', 'text' => '#15803D', 'label' => 'In Progress'],
+        'verified' => ['bg' => '#DCFCE7', 'text' => '#15803D', 'label' => 'Verified'],
+        'in_progress' => ['bg' => '#E0F2FE', 'text' => '#0369A1', 'label' => 'In Progress'],
         'resolved' => ['bg' => '#E0F2FE', 'text' => '#0369A1', 'label' => 'Resolved'],
         'rejected' => ['bg' => '#FEE2E2', 'text' => '#B91C1C', 'label' => 'Rejected'],
     ];
@@ -35,45 +59,18 @@ function getStatusBadge($status) {
 
         <div class="flex-1 min-w-0">
             <!-- Enhanced Header -->
-            <header class="border-b border-slate-200 bg-white/95 backdrop-blur-sm px-4 sm:px-6 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <div>
-                        <div class="flex items-center gap-2.5 mb-1">
-                            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.35em] text-emerald-700">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                Resident Portal
-                            </span>
-                            <?php if ($unreadCount > 0): ?>
-                                <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                    <?php echo $unreadCount; ?> new
-                                </span>
-                            <?php endif; ?>
-                        </div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-                            Welcome back, <?php echo htmlspecialchars($firstName); ?>! 👋
-                        </h1>
-                        <p class="text-sm text-slate-500 mt-0.5">Barangay Dulong Bayan · <?php echo date('F d, Y'); ?></p>
-                    </div>
-                    <div class="flex items-center gap-2.5">
-                        <a href="/brgy-waste-app-v3/public/resident/submit" 
-                           class="inline-flex items-center gap-2 rounded-xl bg-[#10B981] px-4 sm:px-5 py-2.5 sm:py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 hover:bg-emerald-600 hover:shadow-emerald-500/40 transition-all duration-200 active:scale-[0.98]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            Report Waste Issue
-                        </a>
-                    </div>
-                </div>
-            </header>
+            
 
-            <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+            <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-4 py-6 sm:py-8 lg:py-4">
+                <div class="space-y-6 lg:space-y-8">
 
                 <!-- Hero Card -->
-                <section class="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#07281E] via-[#0B3024] to-[#1A4D3A] p-6 sm:p-8 lg:p-10 text-white shadow-2xl shadow-[#07281E]/30 mb-8">
+                <section class="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#07281E] via-[#0B3024] to-[#1A4D3A] p-6 sm:p-8 lg:p-10 text-white shadow-2xl shadow-[#07281E]/30">
                     <!-- Decorative Elements -->
                     <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
                     <div class="absolute bottom-0 left-0 w-48 h-48 bg-emerald-400/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
                     
-                    <div class="relative grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+                    <div class="relative flex flex-col gap-8">
                         <div>
                             <div class="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.35em] text-emerald-200 border border-white/5">
                                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -102,46 +99,54 @@ function getStatusBadge($status) {
                             </div>
                         </div>
 
-                        <!-- Stats Grid - Full Width with p-5 padding -->
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
-    <?php 
-    $statsItems = [
-        ['label' => 'Submitted', 'value' => $total, 'color' => 'emerald', 'icon' => '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/>'],
-        ['label' => 'Pending', 'value' => $pending, 'color' => 'amber', 'icon' => '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'],
-        ['label' => 'In Progress', 'value' => $verified, 'color' => 'sky', 'icon' => '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'],
-        ['label' => 'Resolved', 'value' => $resolved, 'color' => 'emerald', 'icon' => '<polyline points="20 6 9 17 4 12"/>'],
-        ['label' => 'Resolution Rate', 'value' => $resolutionRate.'%', 'color' => 'purple', 'icon' => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>'],
-        ['label' => 'Supported Reports', 'value' => $supported_count ?? 0, 'color' => 'purple', 'icon' => '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>']
+                        <!-- Stats Grid -->
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="text-[10px] font-bold uppercase tracking-[0.35em] text-emerald-200/70">Your Activity Overview</span>
+                                <span class="h-px flex-1 bg-white/10"></span>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4">
+                            <?php 
+                            $statsItems = [
+                                ['label' => 'Submitted', 'value' => $total, 'color' => 'emerald', 'icon' => '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/>'],
+                                ['label' => 'Pending', 'value' => $pending, 'color' => 'amber', 'icon' => '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'],
+                                ['label' => 'Verified', 'value' => $verified, 'color' => 'sky', 'icon' => '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'],
+                                ['label' => 'In Progress', 'value' => $inProgress, 'color' => 'violet', 'icon' => '<path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/>'],
+                                ['label' => 'Resolved', 'value' => $resolved, 'color' => 'emerald', 'icon' => '<polyline points="20 6 9 17 4 12"/>'],
+                                ['label' => 'Resolution Rate', 'value' => $resolutionRate.'%', 'color' => 'purple', 'icon' => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>'],
+                                ['label' => 'Supported Reports', 'value' => $supported_count ?? 0, 'color' => 'purple', 'icon' => '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>']
 
-    ];
-    $colorMap = [
-        'emerald' => ['bg' => 'bg-emerald-500/30', 'text' => 'text-emerald-300', 'border' => 'border-emerald-500/30'],
-        'amber' => ['bg' => 'bg-amber-500/30', 'text' => 'text-amber-300', 'border' => 'border-amber-500/30'],
-        'sky' => ['bg' => 'bg-sky-500/30', 'text' => 'text-sky-300', 'border' => 'border-sky-500/30'],
-        'purple' => ['bg' => 'bg-purple-500/30', 'text' => 'text-purple-300', 'border' => 'border-purple-500/30']
-    ];
-    foreach ($statsItems as $item): 
-        $color = $colorMap[$item['color']];
-    ?>
-    <div class="rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur-sm border <?php echo $color['border']; ?> p-5 text-center hover:bg-white/25 transition-all duration-200 hover:scale-[1.02] shadow-lg">
-        <div class="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl <?php echo $color['bg']; ?> <?php echo $color['text']; ?> mx-auto">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><?php echo $item['icon']; ?></svg>
-        </div>
-        <p class="mt-2 text-2xl sm:text-3xl lg:text-4xl font-black text-white drop-shadow-lg"><?php echo $item['value']; ?></p>
-        <p class="text-[10px] sm:text-[11px] lg:text-xs font-bold uppercase tracking-[0.3em] text-white/90 mt-0.5"><?php echo $item['label']; ?></p>
-    </div>
-    <?php endforeach; ?>
-</div>
+                            ];
+                            $colorMap = [
+                                'emerald' => ['bg' => 'bg-emerald-500/30', 'text' => 'text-emerald-300', 'border' => 'border-emerald-500/30'],
+                                'amber' => ['bg' => 'bg-amber-500/30', 'text' => 'text-amber-300', 'border' => 'border-amber-500/30'],
+                                'sky' => ['bg' => 'bg-sky-500/30', 'text' => 'text-sky-300', 'border' => 'border-sky-500/30'],
+                                'violet' => ['bg' => 'bg-violet-500/30', 'text' => 'text-violet-300', 'border' => 'border-violet-500/30'],
+                                'purple' => ['bg' => 'bg-purple-500/30', 'text' => 'text-purple-300', 'border' => 'border-purple-500/30']
+                            ];
+                            foreach ($statsItems as $item): 
+                                $color = $colorMap[$item['color']];
+                            ?>
+                            <div class="rounded-lg bg-white/15 backdrop-blur-sm border <?php echo $color['border']; ?> p-4 sm:p-5 text-center hover:bg-white/25 transition-all duration-200 hover:scale-[1.02] shadow-lg">
+                                <div class="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-lg <?php echo $color['bg']; ?> <?php echo $color['text']; ?> mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><?php echo $item['icon']; ?></svg>
+                                </div>
+                                <p class="mt-2.5 text-xl sm:text-2xl lg:text-3xl font-black text-white drop-shadow-lg"><?php echo $item['value']; ?></p>
+                                <p class="text-[9px] sm:text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.25em] text-white/90 mt-1"><?php echo $item['label']; ?></p>
+                            </div>
+                            <?php endforeach; ?>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
                 <!-- Two Column Section: Urgent Notice + Eco Tip -->
-                <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6 mb-8">
+                <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6">
                     <!-- Urgent Notice Card -->
-                    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200 p-6 sm:p-7 shadow-sm">
+                    <div class="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200 p-6 sm:p-7 lg:p-8 shadow-sm">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-red-200/30 rounded-full blur-2xl"></div>
                         <div class="relative flex items-start gap-4">
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-500/15 text-red-600">
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-red-500/15 text-red-600">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
                             </div>
                             <div>
@@ -162,9 +167,9 @@ function getStatusBadge($status) {
                     </div>
 
                     <!-- Eco Tip Card -->
-                    <div class="rounded-2xl bg-white border border-slate-200 p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
+                    <div class="rounded-lg bg-white border border-slate-200 p-6 sm:p-7 lg:p-8 shadow-sm hover:shadow-md transition-all">
                         <div class="flex items-center gap-3">
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3 4 7v6c0 5.5 3.8 8.7 7 10 3.2-1.3 7-4.5 7-10V7l-7-4Z"/></svg>
                             </div>
                             <div>
@@ -173,7 +178,7 @@ function getStatusBadge($status) {
                             </div>
                         </div>
                         <p class="mt-3 text-sm leading-relaxed text-slate-600">Proper segregation speeds up sorting at the Materials Recovery Facility and boosts barangay compliance scores.</p>
-                        <div class="mt-4 rounded-xl bg-slate-50 p-4 border border-slate-100">
+                        <div class="mt-4 rounded-lg bg-slate-50 p-4 border border-slate-100">
                             <div class="flex items-center justify-between text-sm font-semibold">
                                 <span class="text-slate-700">Zone A Compliance</span>
                                 <span class="text-emerald-600">84%</span>
@@ -188,36 +193,36 @@ function getStatusBadge($status) {
                 </div>
 
                 <!-- Reporting Tips Section -->
-                <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-8">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                <section class="bg-white rounded-lg border border-slate-200 shadow-sm p-6 sm:p-7">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
                         </div>
                         <h3 class="text-lg font-black text-slate-900">💡 Waste Reporting Tips</h3>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition">
                             <span class="text-emerald-600 font-bold text-lg">1</span>
                             <div>
                                 <p class="font-semibold text-slate-800">Check for existing reports first</p>
                                 <p class="text-slate-500 text-xs">Before submitting, check if someone already reported the same issue nearby.</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition">
                             <span class="text-emerald-600 font-bold text-lg">2</span>
                             <div>
                                 <p class="font-semibold text-slate-800">Upload clear photos</p>
                                 <p class="text-slate-500 text-xs">Good photos help barangay officials verify and prioritize your report.</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition">
                             <span class="text-emerald-600 font-bold text-lg">3</span>
                             <div>
                                 <p class="font-semibold text-slate-800">Select the correct category</p>
                                 <p class="text-slate-500 text-xs">Choosing the right waste category helps route your report efficiently.</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition">
                             <span class="text-emerald-600 font-bold text-lg">4</span>
                             <div>
                                 <p class="font-semibold text-slate-800">Enable GPS for accuracy</p>
@@ -227,11 +232,9 @@ function getStatusBadge($status) {
                     </div>
                 </section>
 
-
-
                 <!-- Recent Reports Section -->
-                <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden mb-8">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-5 border-b border-slate-200">
+                <section class="rounded-lg bg-white border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 sm:px-6 py-4 sm:py-5 border-b border-slate-200">
                         <div>
                             <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -328,8 +331,8 @@ function getStatusBadge($status) {
                 </section>
 
                 <!-- Map Section -->
-                <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="px-6 py-5 border-b border-slate-200">
+                <section class="rounded-lg bg-white border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-5 sm:px-6 py-4 sm:py-5 border-b border-slate-200">
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                             <div>
                                 <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
@@ -346,12 +349,13 @@ function getStatusBadge($status) {
                         </div>
                     </div>
                     <div class="p-4 sm:p-6">
-                        <div class="h-[280px] sm:h-[380px] rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+                        <div class="h-[280px] sm:h-[380px] rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
                             <div id="dashboardMap" class="h-full w-full"></div>
                         </div>
                     </div>
                 </section>
 
+                </div>
             </main>
         </div>
     </div>
@@ -359,11 +363,11 @@ function getStatusBadge($status) {
     <!-- Mobile Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-sm px-2 py-2.5 md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         <div class="mx-auto flex max-w-md items-center justify-between gap-0.5">
-            <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex-1 rounded-xl bg-emerald-50 px-2 py-2 text-center text-[9px] font-bold text-emerald-700">
+            <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex-1 rounded-lg bg-emerald-50 px-2 py-2 text-center text-[9px] font-bold text-emerald-700">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                 Home
             </a>
-            <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex-1 rounded-xl bg-white px-2 py-2 text-center text-[9px] font-semibold text-slate-600">
+            <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex-1 rounded-lg bg-white px-2 py-2 text-center text-[9px] font-semibold text-slate-600">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                 Reports
             </a>
@@ -371,11 +375,11 @@ function getStatusBadge($status) {
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Report
             </a>
-            <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex-1 rounded-xl bg-white px-2 py-2 text-center text-[9px] font-semibold text-slate-600">
+            <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex-1 rounded-lg bg-white px-2 py-2 text-center text-[9px] font-semibold text-slate-600">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><path d="M4 4h16v12H7l-3 3z"/></svg>
                 News
             </a>
-            <a href="/brgy-waste-app-v3/public/resident/profile" class="flex-1 rounded-xl bg-white px-2 py-2 text-center text-[9px] font-semibold text-slate-600">
+            <a href="/brgy-waste-app-v3/public/resident/profile" class="flex-1 rounded-lg bg-white px-2 py-2 text-center text-[9px] font-semibold text-slate-600">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>
                 Profile
             </a>

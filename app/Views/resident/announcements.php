@@ -1,4 +1,27 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+  /* Apply Nunito Sans to everything EXCEPT material-icons */
+  *:not(.material-icons) {
+    font-family: 'Lato', sans-serif !important;
+    }
+  /* Ensure Material Icons render correctly */
+    .material-icons {
+    font-family: 'Material Icons' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    vertical-align: middle;
+    }
+</style>
 <?php
 $fullName = $_SESSION['user_name'] ?? 'Juan Dela Cruz';
 $firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_name']))[0] : 'Juan';

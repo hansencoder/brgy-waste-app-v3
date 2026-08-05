@@ -1,4 +1,28 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+  /* Apply Lato to everything EXCEPT material-icons */
+  *:not(.material-icons) {
+    font-family: 'Lato', sans-serif !important;
+    }
+  /* Ensure Material Icons render correctly */
+    .material-icons {
+    font-family: 'Material Icons' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    vertical-align: middle;
+    }
+</style>
+
 <?php
 $user = $data['user'] ?? [];
 $firstName = isset($user['name']) ? explode(' ', trim($user['name']))[0] : 'User';
@@ -83,7 +107,7 @@ $statusStyle = getResidentStatusStyle($status);
                     
                     <!-- Avatar -->
                     <div class="relative flex-shrink-0 group">
-                        <div id="avatarContainer" class="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-[#1F8A5F] flex items-center justify-center text-white text-4xl font-display font-bold shadow-lg shadow-emerald-900/30 overflow-hidden ring-4 ring-white/10">
+                        <div id="avatarContainer" class="w-24 h-24 md:w-28 md:h-28 rounded-lg bg-[#1F8A5F] flex items-center justify-center text-white text-4xl font-display font-bold shadow-lg shadow-emerald-900/30 overflow-hidden ring-4 ring-white/10">
                             <?php if (!empty($profilePic)): ?>
                                 <img src="<?php echo htmlspecialchars($profilePic, ENT_QUOTES, 'UTF-8'); ?>" alt="Profile" class="w-full h-full object-cover">
                             <?php else: ?>
@@ -140,7 +164,7 @@ $statusStyle = getResidentStatusStyle($status);
             <!-- ============================================================ -->
             <!-- CARD 1: PERSONAL INFORMATION                                 -->
             <!-- ============================================================ -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.2)] p-6 md:p-8 mb-6">
+            <div class="bg-white rounded-lg border border-slate-200 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.2)] p-6 md:p-8 mb-6">
                 <div class="flex items-start justify-between mb-6">
                     <div>
                         <h2 class="text-lg font-display font-semibold text-slate-900 flex items-center gap-2">
@@ -211,7 +235,7 @@ $statusStyle = getResidentStatusStyle($status);
             <!-- ============================================================ -->
             <!-- CARD 2: CHANGE PASSWORD                                     -->
             <!-- ============================================================ -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.2)] p-6 md:p-8 mb-6">
+            <div class="bg-white rounded-lg border border-slate-200 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.2)] p-6 md:p-8 mb-6">
                 <h2 class="text-lg font-display font-semibold text-slate-900 flex items-center gap-2 mb-6">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F8A5F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     Change Password
@@ -290,7 +314,7 @@ $statusStyle = getResidentStatusStyle($status);
             <!-- ============================================================ -->
             <!-- CARD 3: NOTIFICATION PREFERENCES                             -->
             <!-- ============================================================ -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.2)] p-6 md:p-8 mb-6">
+            <div class="bg-white rounded-lg border border-slate-200 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.2)] p-6 md:p-8 mb-6">
                 <h2 class="text-lg font-display font-semibold text-slate-900 flex items-center gap-2 mb-6">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F8A5F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                     Notification Preferences
@@ -298,7 +322,7 @@ $statusStyle = getResidentStatusStyle($status);
 
                 <div class="space-y-4">
                     <!-- Toggle 1: Collection Day Reminders -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-slate-50/80 border border-slate-100 hover:border-[#1F8A5F]/40 transition-colors">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg bg-slate-50/80 border border-slate-100 hover:border-[#1F8A5F]/40 transition-colors">
                         <div>
                             <p class="font-bold text-slate-800 text-sm">Collection day reminders</p>
                             <p class="text-sm text-slate-500">Notified the day before your scheduled pick-up</p>
@@ -310,7 +334,7 @@ $statusStyle = getResidentStatusStyle($status);
                     </div>
 
                     <!-- Toggle 2: Barangay Announcements -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-slate-50/80 border border-slate-100 hover:border-[#1F8A5F]/40 transition-colors">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg bg-slate-50/80 border border-slate-100 hover:border-[#1F8A5F]/40 transition-colors">
                         <div>
                             <p class="font-bold text-slate-800 text-sm">Barangay announcements</p>
                             <p class="text-sm text-slate-500">Receive official notices and urgent alerts</p>
@@ -322,7 +346,7 @@ $statusStyle = getResidentStatusStyle($status);
                     </div>
 
                     <!-- Toggle 3: Report Status Updates -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-slate-50/80 border border-slate-100 hover:border-[#1F8A5F]/40 transition-colors">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg bg-slate-50/80 border border-slate-100 hover:border-[#1F8A5F]/40 transition-colors">
                         <div>
                             <p class="font-bold text-slate-800 text-sm">Report status updates</p>
                             <p class="text-sm text-slate-500">Track when your reports are reviewed/resolved</p>
@@ -345,7 +369,7 @@ $statusStyle = getResidentStatusStyle($status);
         <!-- ============================================================ -->
         <!-- BOTTOM ACTION BAR – Fixed Save / Logout                       -->
         <!-- ============================================================ -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.2)] p-4 md:p-6 mt-6">
+        <div class="bg-white rounded-lg border border-slate-200 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.2)] p-4 md:p-6 mt-6">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     
                     <!-- Left: Form validation status (optional) -->
@@ -381,11 +405,11 @@ $statusStyle = getResidentStatusStyle($status);
 <!-- ============================================================ -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 px-2 py-3 backdrop-blur shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
     <div class="mx-auto flex max-w-md items-center justify-between gap-1">
-        <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex-1 rounded-2xl bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
+        <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex-1 rounded-lg bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
             Home
         </a>
-        <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex-1 rounded-2xl bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
+        <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex-1 rounded-lg bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             Reports
         </a>
@@ -393,11 +417,11 @@ $statusStyle = getResidentStatusStyle($status);
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             Report
         </a>
-        <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex-1 rounded-2xl bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
+        <a href="/brgy-waste-app-v3/public/resident/announcements" class="flex-1 rounded-lg bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
             News
         </a>
-        <a href="/brgy-waste-app-v3/public/resident/profile" class="flex-1 rounded-2xl bg-[#E5F3EC] px-2 py-2 text-center text-[10px] font-semibold text-slate-900">
+        <a href="/brgy-waste-app-v3/public/resident/profile" class="flex-1 rounded-lg bg-[#E5F3EC] px-2 py-2 text-center text-[10px] font-semibold text-slate-900">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F8A5F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>
             Profile
         </a>
@@ -408,7 +432,7 @@ $statusStyle = getResidentStatusStyle($status);
 <!-- OTP VERIFICATION MODAL                                        -->
 <!-- ============================================================ -->
 <div id="otpModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative">
         <button onclick="closeOTPModal()" class="absolute top-4 right-4 p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -426,8 +450,8 @@ $statusStyle = getResidentStatusStyle($status);
         <div id="otpError" class="text-red-500 text-sm font-semibold text-center hidden mb-3"></div>
         <div id="otpSuccess" class="text-emerald-500 text-sm font-semibold text-center hidden mb-3"></div>
         <div class="flex gap-3">
-            <button onclick="closeOTPModal()" class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50 transition">Cancel</button>
-            <button onclick="verifyOTP()" id="verifyOTPBtn" class="flex-1 px-4 py-2.5 bg-[#1F8A5F] text-white rounded-xl font-semibold text-sm hover:bg-[#19754F] transition flex items-center justify-center gap-2">
+            <button onclick="closeOTPModal()" class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg font-semibold text-sm hover:bg-slate-50 transition">Cancel</button>
+            <button onclick="verifyOTP()" id="verifyOTPBtn" class="flex-1 px-4 py-2.5 bg-[#1F8A5F] text-white rounded-lg font-semibold text-sm hover:bg-[#19754F] transition flex items-center justify-center gap-2">
                 <span id="verifyOTPText">Verify</span>
                 <svg id="verifyOTPSpinner" class="animate-spin h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
             </button>
@@ -556,7 +580,7 @@ $statusStyle = getResidentStatusStyle($status);
         if (!name.value.trim()) {
             document.getElementById('nameError').classList.remove('hidden');
             name.classList.add('border-red-400');
-            document.querySelector('.bg-white.rounded-2xl').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('.bg-white.rounded-lg').scrollIntoView({ behavior: 'smooth' });
             return;
         }
         document.getElementById('nameError').classList.add('hidden');

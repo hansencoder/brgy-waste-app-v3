@@ -24,6 +24,52 @@ class User {
         $this->db->bind(':email', $email);
         return $this->db->single();
     }
+    // ============================================================
+    // PASSWORD RESET / FORGOT PASSWORD METHODS
+    // ============================================================
+
+    public function getUserByEmail($email) {
+        $this->db->query('SELECT * FROM users WHERE email = :email AND status = "active"');
+        $this->db->bind(':email', $email);
+        return $this->db->single();
+    }
+
+    public function savePasswordResetToken($user_id, $email, $token) {
+        // Delete previous unused reset tokens for this user
+        $this->db->query('DELETE FROM two_factor_tokens WHERE user_id = :user_id AND purpose = "password_reset" AND is_used = 0');
+        $this->db->bind(':user_id', $user_id);
+        $this->db->execute();
+
+        // Insert new token with 'password_reset' purpose
+        $this->db->query('INSERT INTO two_factor_tokens (user_id, email, token, expires_at, purpose) 
+                        VALUES (:user_id, :email, :token, DATE_ADD(NOW(), INTERVAL 10 MINUTE), "password_reset")');
+        $this->db->bind(':user_id', $user_id);
+        $this->db->bind(':email', $email);
+        $this->db->bind(':token', $token);
+        return $this->db->execute();
+    }
+
+    public function validatePasswordResetToken($email, $token) {
+        $this->db->query('SELECT * FROM two_factor_tokens 
+                        WHERE email = :email AND token = :token AND purpose = "password_reset" 
+                        AND expires_at >= NOW() AND is_used = 0 LIMIT 1');
+        $this->db->bind(':email', $email);
+        $this->db->bind(':token', $token);
+        return $this->db->single(); // Returns token record or false
+    }
+
+    public function markResetTokenAsUsed($token_id) {
+        $this->db->query('UPDATE two_factor_tokens SET is_used = 1 WHERE id = :id');
+        $this->db->bind(':id', $token_id);
+        return $this->db->execute();
+    }
+
+    public function updatePassword($user_id, $new_hashed_password) {
+        $this->db->query('UPDATE users SET password = :password WHERE id = :id');
+        $this->db->bind(':password', $new_hashed_password);
+        $this->db->bind(':id', $user_id);
+        return $this->db->execute();
+    }
 
     // ============================================================
     // FIND USER BY USERNAME

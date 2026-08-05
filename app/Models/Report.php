@@ -208,7 +208,7 @@ class Report {
     // DASHBOARD STATS FOR RESIDENT
     // ============================================================
     public function getDashboardStatsByResident($resident_id) {
-        $stats = ['total' => 0, 'pending' => 0, 'verified' => 0, 'resolved' => 0, 'rejected' => 0];
+        $stats = ['total' => 0, 'pending' => 0, 'verified' => 0, 'in_progress' => 0, 'resolved' => 0, 'rejected' => 0];
         $this->db->query("
             SELECT rs.status_name, COUNT(*) as count 
             FROM reports r
@@ -219,8 +219,9 @@ class Report {
         $this->db->bind(':resident_id', $resident_id);
         $results = $this->db->resultSet();
         foreach ($results as $row) {
-            $stats[$row['status_name']] = $row['count'];
-            $stats['total'] += $row['count'];
+            $statusKey = strtolower(str_replace(' ', '_', trim($row['status_name'])));
+            $stats[$statusKey] = (int)$row['count'];
+            $stats['total'] += (int)$row['count'];
         }
         return $stats;
     }

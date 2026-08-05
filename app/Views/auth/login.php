@@ -143,7 +143,7 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
                         <label for="password" class="block text-xs font-semibold text-slate-700">Password</label>
-                        <a href="/brgy-waste-app-v3/public/index.php?url=auth/forgot-password" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                        <a href="/brgy-waste-app-v3/public/index.php?url=auth/forgotPassword" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
                             Forgot password?
                         </a>
                     </div>

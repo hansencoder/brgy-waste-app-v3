@@ -61,7 +61,7 @@ function getStatusBadge($status) {
             <!-- Enhanced Header -->
             
 
-            <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-4 py-6 sm:py-8 lg:py-4">
+            <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-4 py-6 pb-24 sm:py-8 sm:pb-24 lg:py-4 lg:pb-4">
                 <div class="space-y-6 lg:space-y-8">
 
                 <!-- Hero Card -->
@@ -341,11 +341,12 @@ function getStatusBadge($status) {
                                 </h3>
                                 <p class="text-sm text-slate-500">Nearby reports and barangay boundaries</p>
                             </div>
-                            <div class="flex items-center gap-3 text-xs text-slate-500">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Pending</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Verified</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Resolved</span>
-                            </div>
+                                <div class="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Pending</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Verified</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Resolved</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>Rejected</span>
+                                </div>
                         </div>
                     </div>
                     <div class="p-4 sm:p-6">
@@ -389,166 +390,159 @@ function getStatusBadge($status) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Leaflet.js Map Initialization with boundaries from user config
-    const mapCenter = [15.558, 120.803]; 
-    
-    // Default Map Initialization
+    const mapCenter = [15.558, 120.803];
+
     const map = L.map('dashboardMap', {
-        zoomControl: window.innerWidth >= 768, 
-        dragging: window.innerWidth >= 768, 
-        scrollWheelZoom: true,
+        zoomControl: window.innerWidth >= 768,
+        dragging: window.innerWidth >= 768,
+        scrollWheelZoom: false,
         doubleClickZoom: false,
         touchZoom: window.innerWidth >= 768
     }).setView(mapCenter, 15);
 
-    // Using a clean minimal basemap like CartoDB Positron equivalent or standard OSM with grayscale filter via CSS
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OS',
-        className: 'map-tiles'
+    // Clean CartoDB light basemap
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>, &copy; CartoDB',
+        maxZoom: 19
     }).addTo(map);
 
-    // Dynamic clean map style injection
-    var mapStyle = document.createElement('style');
-    mapStyle.innerHTML = `
-        .map-tiles { filter: grayscale(1) opacity(0.7); }
-    `;
-    document.head.appendChild(mapStyle);
-
-    // Exact geo boundary configured
+    // Precise 66-point barangay boundary (GeoJSON)
     var barangayGeoJSON = {
         "type": "FeatureCollection",
-        "features": [
-            {
+        "features": [{
             "type": "Feature",
             "properties": {},
             "geometry": {
                 "type": "Polygon",
-                "coordinates": [
-                [
-                    [120.8013517, 15.5699279],
-                    [120.8008898, 15.569572],
-                    [120.8008276, 15.5686578],
-                    [120.8006126, 15.5685788],
-                    [120.8005542, 15.5678398],
-                    [120.8001844, 15.5672858],
-                    [120.8000725, 15.5668847],
-                    [120.8001665, 15.566531],
-                    [120.7995785, 15.5663685],
-                    [120.7989717, 15.5657033],
-                    [120.7987031, 15.5658025],
-                    [120.7984537, 15.5654243],
-                    [120.7980956, 15.5652],
-                    [120.7977553, 15.5652043],
-                    [120.7975135, 15.5652862],
-                    [120.7971285, 15.5652259],
-                    [120.7964691, 15.5648604],
-                    [120.7961709, 15.5643821],
-                    [120.795562, 15.5643993],
-                    [120.7951681, 15.5637567],
-                    [120.7953561, 15.5632478],
-                    [120.7952523, 15.562581],
-                    [120.7950598, 15.5617529],
-                    [120.7950416, 15.5611835],
-                    [120.7945939, 15.5608471],
-                    [120.7946431, 15.5603295],
-                    [120.7943504, 15.5596467],
-                    [120.7937415, 15.5597848],
-                    [120.7930393, 15.55916],
-                    [120.7928646, 15.5570187],
-                    [120.7921781, 15.555107],
-                    [120.7912123, 15.554853],
-                    [120.7913399, 15.5543176],
-                    [120.7915605, 15.5533236],
-                    [120.7918092, 15.5534046],
-                    [120.8001316, 15.5478115],
-                    [120.8011058, 15.5481325],
-                    [120.8021398, 15.5484701],
-                    [120.8027807, 15.5485113],
-                    [120.8032508, 15.5489723],
-                    [120.8030798, 15.5500426],
-                    [120.8038043, 15.5501365],
-                    [120.8044282, 15.5502517],
-                    [120.8049495, 15.550614],
-                    [120.8058211, 15.5508445],
-                    [120.8062911, 15.551569],
-                    [120.8071584, 15.5520964],
-                    [120.8076635, 15.5520903],
-                    [120.8081181, 15.5524005],
-                    [120.8083454, 15.5523519],
-                    [120.8085979, 15.5525708],
-                    [120.8088668, 15.5528807],
-                    [120.8118007, 15.5512389],
-                    [120.8126332, 15.550257],
-                    [120.8153176, 15.5523838],
-                    [120.817434, 15.549628],
-                    [120.8219183, 15.5518119],
-                    [120.8232918, 15.5522367],
-                    [120.8253946, 15.5516159],
-                    [120.8260956, 15.5512188],
-                    [120.8281375, 15.5526533],
-                    [120.8298546, 15.5518644],
-                    [120.8310955, 15.5519514],
-                    [120.8335885, 15.5541358],
-                    [120.8325752, 15.5557229],
-                    [120.8326161, 15.5574083],
-                    [120.8332704, 15.5602447],
-                    [120.8283841, 15.5650646],
-                    [120.8236492, 15.5703491],
-                    [120.82189, 15.5689622],
-                    [120.8219651, 15.5676998],
-                    [120.8203353, 15.5645562],
-                    [120.8205697, 15.5594636],
-                    [120.8185042, 15.5617437],
-                    [120.8149287, 15.5609879],
-                    [120.8126889, 15.5623097],
-                    [120.8092582, 15.5595308],
-                    [120.8032464, 15.5673914],
-                    [120.8014669, 15.5699463],
-                    [120.8013468, 15.5699463],
-                    [120.8013468, 15.5699463]
-                ]
-            ]
+                "coordinates": [[
+                    [120.8013517, 15.5699279],[120.8008898, 15.569572],[120.8008276, 15.5686578],
+                    [120.8006126, 15.5685788],[120.8005542, 15.5678398],[120.8001844, 15.5672858],
+                    [120.8000725, 15.5668847],[120.8001665, 15.566531],[120.7995785, 15.5663685],
+                    [120.7989717, 15.5657033],[120.7987031, 15.5658025],[120.7984537, 15.5654243],
+                    [120.7980956, 15.5652],[120.7977553, 15.5652043],[120.7975135, 15.5652862],
+                    [120.7971285, 15.5652259],[120.7964691, 15.5648604],[120.7961709, 15.5643821],
+                    [120.795562, 15.5643993],[120.7951681, 15.5637567],[120.7953561, 15.5632478],
+                    [120.7952523, 15.562581],[120.7950598, 15.5617529],[120.7950416, 15.5611835],
+                    [120.7945939, 15.5608471],[120.7946431, 15.5603295],[120.7943504, 15.5596467],
+                    [120.7937415, 15.5597848],[120.7930393, 15.55916],[120.7928646, 15.5570187],
+                    [120.7921781, 15.555107],[120.7912123, 15.554853],[120.7913399, 15.5543176],
+                    [120.7915605, 15.5533236],[120.7918092, 15.5534046],[120.8001316, 15.5478115],
+                    [120.8011058, 15.5481325],[120.8021398, 15.5484701],[120.8027807, 15.5485113],
+                    [120.8032508, 15.5489723],[120.8030798, 15.5500426],[120.8038043, 15.5501365],
+                    [120.8044282, 15.5502517],[120.8049495, 15.550614],[120.8058211, 15.5508445],
+                    [120.8062911, 15.551569],[120.8071584, 15.5520964],[120.8076635, 15.5520903],
+                    [120.8081181, 15.5524005],[120.8083454, 15.5523519],[120.8085979, 15.5525708],
+                    [120.8088668, 15.5528807],[120.8118007, 15.5512389],[120.8126332, 15.550257],
+                    [120.8153176, 15.5523838],[120.817434, 15.549628],[120.8219183, 15.5518119],
+                    [120.8232918, 15.5522367],[120.8253946, 15.5516159],[120.8260956, 15.5512188],
+                    [120.8281375, 15.5526533],[120.8298546, 15.5518644],[120.8310955, 15.5519514],
+                    [120.8335885, 15.5541358],[120.8325752, 15.5557229],[120.8326161, 15.5574083],
+                    [120.8332704, 15.5602447],[120.8283841, 15.5650646],[120.8236492, 15.5703491],
+                    [120.82189, 15.5689622],[120.8219651, 15.5676998],[120.8203353, 15.5645562],
+                    [120.8205697, 15.5594636],[120.8185042, 15.5617437],[120.8149287, 15.5609879],
+                    [120.8126889, 15.5623097],[120.8092582, 15.5595308],[120.8032464, 15.5673914],
+                    [120.8014669, 15.5699463],[120.8013517, 15.5699279]
+                ]]
             }
-        }
-        ]
+        }]
     };
-    
+
     L.geoJSON(barangayGeoJSON, {
         style: {
-            color: '#22c55e',     // Bright green dash 
+            color: '#10b981',
             weight: 2.5,
-            fillColor: '#ecfdf5', // Extremely light green fill
-            fillOpacity: 0.15,    
-            dashArray: '6, 6'
+            fillColor: '#d1fae5',
+            fillOpacity: 0.12,
+            dashArray: '6 5'
         }
     }).addTo(map);
 
-    // Marker Pins populated from database
-    const mapPins = <?php echo json_encode($data['map_pins'] ?? []); ?>;
-    
+    // Status config
     const statusColors = {
-    1: '#f59e0b', // Pending
-    2: '#3b82f6', // Verified
-    3: '#8b5cf6', // In Progress
-    4: '#10b981', // Resolved
-    5: '#ef4444'  // Rejected
+        1: { color: '#f59e0b', label: 'Pending' },
+        2: { color: '#3b82f6', label: 'Verified' },
+        3: { color: '#8b5cf6', label: 'In Progress' },
+        4: { color: '#10b981', label: 'Resolved' },
+        5: { color: '#ef4444', label: 'Rejected' }
     };
-    mapPins.forEach(pin => {
-    let color = statusColors[pin.status_id] || '#9ca3af'; // fallback gray
 
-        const markerHtml = `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`;
-        const icon = L.divIcon({
-            html: markerHtml,
-            className: '',
-            iconSize: [14, 14],
-            iconAnchor: [7, 7]
-        });
-        L.marker([pin.latitude, pin.longitude], { icon: icon }).addTo(map);
+    const mapPins = <?php echo json_encode($data['map_pins'] ?? []); ?>;
+
+    // Popup styles (injected once)
+    const popupStyle = document.createElement('style');
+    popupStyle.innerHTML = `
+        .map-popup-wrap { font-family: 'Lato', sans-serif; width: 220px; }
+        .map-popup-img  { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background: #f1f5f9; }
+        .map-popup-img-placeholder { width: 100%; height: 70px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border-radius: 8px; margin-bottom: 8px; color: #94a3b8; font-size: 11px; }
+        .map-popup-badge { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 10px; font-weight: 700; letter-spacing: .04em; margin-bottom: 5px; }
+        .map-popup-cat  { font-size: 13px; font-weight: 800; color: #1e293b; margin: 0 0 3px; }
+        .map-popup-desc { font-size: 11px; color: #64748b; margin: 0 0 7px; line-height: 1.5; }
+        .map-popup-date { font-size: 10px; color: #94a3b8; margin: 0 0 7px; }
+        .map-popup-btn  { display: block; text-align: center; background: #07281E; color: #fff; border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 700; text-decoration: none; }
+        .map-popup-btn:hover { background: #0b3d2d; }
+        .leaflet-popup-content-wrapper { border-radius: 14px !important; box-shadow: 0 8px 24px rgba(0,0,0,0.14) !important; padding: 0 !important; overflow: hidden; }
+        .leaflet-popup-content { margin: 12px !important; }
+        .leaflet-popup-tip-container { margin-top: -1px; }
+    `;
+    document.head.appendChild(popupStyle);
+
+    mapPins.forEach(pin => {
+        const cfg   = statusColors[pin.status_id] || { color: '#9ca3af', label: 'Unknown' };
+        const color = cfg.color;
+
+        // Dot marker
+        const markerHtml = `
+            <div style="
+                background-color:${color};
+                width:16px; height:16px;
+                border-radius:50%;
+                border:3px solid white;
+                box-shadow:0 2px 6px rgba(0,0,0,0.3);
+                transition: transform .15s;
+            "></div>`;
+        const icon = L.divIcon({ html: markerHtml, className: '', iconSize: [16,16], iconAnchor: [8,8] });
+
+        // Badge colours
+        const badgeBg   = { 1:'#fef3c7', 2:'#dbeafe', 3:'#ede9fe', 4:'#d1fae5', 5:'#fee2e2' }[pin.status_id] || '#f3f4f6';
+        const badgeTxt  = { 1:'#92400e', 2:'#1e40af', 3:'#4c1d95', 4:'#065f46', 5:'#991b1b' }[pin.status_id] || '#374151';
+
+        // Description (max 80 chars)
+        const desc = (pin.description || '').trim();
+        const shortDesc = desc.length > 80 ? desc.substring(0, 80) + '…' : desc;
+
+        // Date
+        const dateStr = pin.submission_date
+            ? new Date(pin.submission_date).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+            : '';
+
+        // Image
+        const imgHtml = pin.photo_path
+            ? `<img class="map-popup-img" src="/brgy-waste-app-v3/public/uploads/${pin.photo_path}" alt="Report photo" onerror="this.style.display='none'">`
+            : `<div class="map-popup-img-placeholder">📷 No photo</div>`;
+
+        const popupHtml = `
+            <div class="map-popup-wrap">
+                ${imgHtml}
+                <span class="map-popup-badge" style="background:${badgeBg};color:${badgeTxt}">${cfg.label}</span>
+                <p class="map-popup-cat">${pin.category_name || 'Waste Report'}</p>
+                ${shortDesc ? `<p class="map-popup-desc">${shortDesc}</p>` : ''}
+                ${dateStr   ? `<p class="map-popup-date">📅 ${dateStr}</p>` : ''}
+                <a class="map-popup-btn" href="/brgy-waste-app-v3/public/resident/view_report/${pin.id}">View Details →</a>
+            </div>`;
+
+        L.marker([pin.latitude, pin.longitude], { icon })
+            .addTo(map)
+            .bindPopup(popupHtml, { maxWidth: 240, minWidth: 220 });
     });
 
-    // Ensure map tiles load perfectly on viewport resizes
-    setTimeout(function() { map.invalidateSize(); }, 100);
-    window.addEventListener("resize", function() { map.invalidateSize(); });
+    // Fit boundary then keep user view
+    try {
+        var bounds = L.geoJSON(barangayGeoJSON).getBounds();
+        map.fitBounds(bounds, { padding: [12, 12] });
+    } catch(e) { map.setView(mapCenter, 15); }
+
+    setTimeout(() => map.invalidateSize(), 150);
+    window.addEventListener('resize', () => map.invalidateSize());
 });
 </script>
 

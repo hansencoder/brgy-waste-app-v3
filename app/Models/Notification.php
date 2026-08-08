@@ -116,6 +116,11 @@ class Notification {
                 $title = "Report Verified";
                 $message = "Your report has been verified by {$changerName}.";
                 break;
+            case 'in_progress':
+            case 'In Progress':
+                $title = "Report In Progress";
+                $message = "Your report is now in progress and being addressed.";
+                break;
             case 'resolved':
                 $title = "Report Resolved";
                 $message = "Your report has been resolved. Thank you for reporting!";

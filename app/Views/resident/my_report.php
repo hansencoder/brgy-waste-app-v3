@@ -50,7 +50,7 @@ if (!empty($data['reports'])) {
                 </div>
             </header>
 
-            <main class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+            <main class="mx-auto max-w-7xl px-4 py-5 pb-24 sm:px-6 lg:px-8 lg:py-8">
                 <?php if (isset($_SESSION['success'])): ?>
                 <div id="flashSuccess" class="mb-5 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -88,6 +88,7 @@ if (!empty($data['reports'])) {
                                     <option value="pending">Pending Verification</option>
                                     <option value="verified">In Progress</option>
                                     <option value="resolved">Resolved</option>
+                                    <option value="rejected">Rejected</option>
                                 </select>
                             </label>
 
@@ -122,11 +123,12 @@ if (!empty($data['reports'])) {
                                         <?php
                                             $status = strtolower($report['status'] ?? 'pending');
                                             $statusBadge = [
-                                                'pending' => ['label' => 'Pending Verification', 'classes' => 'bg-amber-50 text-amber-700 ring-1 ring-amber-100'],
-                                                'verified' => ['label' => 'In Progress', 'classes' => 'bg-cyan-50 text-cyan-700 ring-1 ring-cyan-100'],
-                                                'resolved' => ['label' => 'Resolved', 'classes' => 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100'],
+                                                'pending'  => ['label' => 'Pending Verification', 'classes' => 'bg-amber-50 text-amber-700 ring-1 ring-amber-100'],
+                                                'verified' => ['label' => 'In Progress',           'classes' => 'bg-cyan-50 text-cyan-700 ring-1 ring-cyan-100'],
+                                                'resolved' => ['label' => 'Resolved',               'classes' => 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100'],
+                                                'rejected' => ['label' => 'Rejected',               'classes' => 'bg-red-50 text-red-700 ring-1 ring-red-100'],
                                             ];
-                                            $badge = $statusBadge[$status] ?? $statusBadge['pending'];
+                                            $badge = $statusBadge[$status] ?? ['label' => ucfirst($status), 'classes' => 'bg-slate-100 text-slate-600 ring-1 ring-slate-200'];
                                             $quantity = $report['estimated_quantity'] ?? 'N/A';
                                             $categorySlug = strtolower(str_replace(' ', '-', $report['waste_category'] ?? ''));
                                             $reportId = 'WR-' . str_pad($report['id'], 4, '0', STR_PAD_LEFT);
@@ -158,11 +160,12 @@ if (!empty($data['reports'])) {
                                 <?php
                                     $status = strtolower($report['status'] ?? 'pending');
                                     $statusBadge = [
-                                        'pending' => ['label' => 'Pending Verification', 'classes' => 'bg-amber-50 text-amber-700'],
-                                        'verified' => ['label' => 'In Progress', 'classes' => 'bg-cyan-50 text-cyan-700'],
-                                        'resolved' => ['label' => 'Resolved', 'classes' => 'bg-emerald-50 text-emerald-700'],
+                                        'pending'  => ['label' => 'Pending Verification', 'classes' => 'bg-amber-50 text-amber-700'],
+                                        'verified' => ['label' => 'In Progress',           'classes' => 'bg-cyan-50 text-cyan-700'],
+                                        'resolved' => ['label' => 'Resolved',               'classes' => 'bg-emerald-50 text-emerald-700'],
+                                        'rejected' => ['label' => 'Rejected',               'classes' => 'bg-red-50 text-red-700'],
                                     ];
-                                    $badge = $statusBadge[$status] ?? $statusBadge['pending'];
+                                    $badge = $statusBadge[$status] ?? ['label' => ucfirst($status), 'classes' => 'bg-slate-100 text-slate-600'];
                                     $quantity = $report['estimated_quantity'] ?? 'N/A';
                                     $categorySlug = strtolower(str_replace(' ', '-', $report['waste_category'] ?? ''));
                                     $reportId = 'WR-' . str_pad($report['id'], 4, '0', STR_PAD_LEFT);

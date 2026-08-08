@@ -1,0 +1,51 @@
+Build a modern, clean, responsive web application page for a community waste reporting system called "Wastewatch" based on the following specifications:
+
+1. Color Palette & Styling:
+   - Primary Dark Background: Deep forest green (#07281E / #0B3024)
+   - Secondary Mint/Accent Green: Vibrant emerald green (#10B981 / #059669) and light mint tint (#E6F4EA)
+   - Body Background: Off-white / light neutral gray (#F8FAFC)
+   - Form Elements: Clean white card backgrounds with subtle borders, rounded-xl corners, soft shadows.
+
+2. Layout Structure:
+   - Left Sidebar (Fixed, Dark Green):
+     - Brand Header: "Wastewatch" logo with a leaf icon, subtitle "RESIDENT PORTAL".
+     - Navigation Items (with icons and subtitles):
+       * Dashboard (Overview & stats)
+       * Submit Report (Report a waste issue) -> Active state: glowing emerald green pill background
+       * My Reports (View your reports)
+       * Collection Schedule (Pickup schedule)
+       * Announcements (Barangay notices)
+       * Notifications (Alerts & updates) with a red badge count "2"
+       * Profile (Account settings)
+     - Bottom Profile Card: Avatar "M", Name "Manuel Santos", Role "Resident - Purok 3".
+     - Logout link with exit icon.
+
+   - Main Content Area (Two-column layout):
+     - Header Section: Small teal label "RESIDENT PORTAL", Title "Submit Waste Report" (h1, bold), subtitle "Report waste issues in Barangay Dulong Bayan. Your report goes directly to the barangay team."
+
+     - Left Form Column:
+       a) Location Selector Card:
+          - "Allow GPS Access — Auto-detect my location" button.
+          - "Or manually pin on the map" with a "Drop pin" pill button.
+          - Interactive preview box.
+       b) Waste Category (Single-select radio card list):
+          - Options: "Illegal Dumping", "Overflowing Garbage Bin" (Selected state: light green fill, green border, checked radio), "Uncollected Garbage", "Construction Waste", "Yard Waste", "Hazardous Waste", "Others".
+       c) Estimated Quantity:
+          - Options: "Small (1-2 garbage bags)", "Medium (3-5 garbage bags)", "Large (6-10 garbage bags)", "Very Large (More than 10 garbage bags)".
+       d) Waste Condition (2-column radio grid):
+          - Options: "Newly Dumped", "Accumulating", "Overflowing", "Scattered", "Blocking Drainage", "Blocking Roadway".
+       e) Photo Attachment:
+          - Upload dropzone box with light gray/dashed border, camera icon, text "Click or drag to upload photo", and dark green button "Browse Files".
+       f) Additional Remarks (Optional):
+          - Textarea with placeholder text, character limit indicator "0/300" at bottom right.
+       g) Submit Action:
+          - Large dark green full-width button with icon: "Submit Report".
+          - Subtext: "The system will check for nearby duplicate reports before saving your submission."
+
+     - Right Column:
+       - Interactive Map Container: Full-height map view showing local streets/routes with green dotted pathway overlay.
+
+   - Footer (Full Width, Dark Green):
+     - Left: Logo "Wastewatch SMART WASTE SOLUTIONS"
+     - Center: Copyright "© 2026 Wastewatch - Barangay Dulong Bayan Waste Reporting System"
+     - Right: Links "Privacy | Terms | Contact | ← Back to site"

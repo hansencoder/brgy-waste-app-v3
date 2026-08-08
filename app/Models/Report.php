@@ -230,7 +230,20 @@ class Report {
     // GET HEATMAP DATA FOR RESIDENT
     // ============================================================
     public function getHeatmapDataByResident($resident_id) {
-        $this->db->query("SELECT latitude, longitude, status_id FROM reports WHERE resident_id = :resident_id");
+        $this->db->query("
+            SELECT
+                r.id,
+                r.latitude,
+                r.longitude,
+                r.status_id,
+                r.description,
+                r.submission_date,
+                wc.category_name,
+                (SELECT photo_path FROM report_photos WHERE report_id = r.id AND is_primary = 1 LIMIT 1) AS photo_path
+            FROM reports r
+            LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+            WHERE r.resident_id = :resident_id
+        ");
         $this->db->bind(':resident_id', $resident_id);
         return $this->db->resultSet();
     }

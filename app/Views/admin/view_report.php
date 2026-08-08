@@ -22,7 +22,7 @@ $reportId = 'WR-' . str_pad($report['id'], 7, '0', STR_PAD_LEFT);
 $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' . $report['photo_path'] : null;
 ?>
 
-<div class="min-h-screen bg-[#F8FAFC]">
+<div class="min-h-screen bg-[#F1F1F1]">
     <div class="lg:flex lg:min-h-screen">
         <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
@@ -148,56 +148,107 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                     </div>
                                 <?php endif; ?>
                             </div>
+                                        <!-- Card 3: Take Action -->
+                                        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                                            <h2 class="text-sm font-bold text-slate-900 mb-4">Take Action</h2>
+                                            <div class="space-y-3">
 
-                            <!-- Card 3: Take Action -->
-                            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                                <h2 class="text-sm font-bold text-slate-900 mb-4">Take Action</h2>
-                                <div class="space-y-3">
-                                    <?php if ($report['status'] !== 'Verified' && $report['status'] !== 'Rejected'): ?>
-                                        <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
-                                            <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                            <input type="hidden" name="action" value="verify">
-                                            <input type="hidden" name="remark" value="">
-                                            <button type="submit" class="w-full rounded-full bg-[#10B981] hover:bg-emerald-600 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                                Verify Report
-                                            </button>
-                                        </form>
-                                        <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
-                                            <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                            <input type="hidden" name="action" value="reject">
-                                            <div class="mb-3">
-                                                <label class="block text-xs font-semibold text-slate-600 mb-1">Rejection Reason</label>
-                                                <input type="text" name="remark" placeholder="Enter reason..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none">
+                                                <!-- CASE 1: REPORT IS PENDING -->
+                                                <?php if ($report['status'] === 'Pending'): ?>
+                                                    <!-- Option: Verify Report -->
+                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                                        <input type="hidden" name="action" value="verify">
+                                                        <input type="hidden" name="remark" value="">
+                                                        <button type="submit" class="w-full rounded-full bg-[#10B981] hover:bg-emerald-600 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                                            Verify Report
+                                                        </button>
+                                                    </form>
+
+                                                    <!-- Option: Reject Report -->
+                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                                        <input type="hidden" name="action" value="reject">
+                                                        <div class="mb-3">
+                                                            <label class="block text-xs font-semibold text-slate-600 mb-1">Rejection Reason</label>
+                                                            <input type="text" name="remark" placeholder="Enter reason..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none">
+                                                        </div>
+                                                        <button type="submit" class="w-full rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 transition flex items-center justify-center gap-2 text-sm border border-red-200">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                                            Reject Report
+                                                        </button>
+                                                    </form>
+
+                                                <!-- CASE 2: REPORT IS VERIFIED -->
+                                                <?php elseif ($report['status'] === 'Verified'): ?>
+                                                    <!-- Option: Mark as In Progress -->
+                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                                        <input type="hidden" name="action" value="in_progress">
+                                                        <input type="hidden" name="remark" value="">
+                                                        <button type="submit" class="w-full rounded-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                            Start Progress
+                                                        </button>
+                                                    </form>
+
+                                                    <!-- Option: Reject Report -->
+                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                                        <input type="hidden" name="action" value="reject">
+                                                        <div class="mb-3">
+                                                            <label class="block text-xs font-semibold text-slate-600 mb-1">Rejection Reason</label>
+                                                            <input type="text" name="remark" placeholder="Enter reason..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none">
+                                                        </div>
+                                                        <button type="submit" class="w-full rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 transition flex items-center justify-center gap-2 text-sm border border-red-200">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                                            Reject Report
+                                                        </button>
+                                                    </form>
+
+                                                <!-- CASE 3: REPORT IS IN PROGRESS -->
+                                                <?php elseif ($report['status'] === 'In Progress'): ?>
+                                                    <!-- Option: Resolve Report -->
+                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                                        <input type="hidden" name="action" value="resolve">
+                                                        <input type="hidden" name="remark" value="">
+                                                        <button type="submit" class="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                                            Resolve Report
+                                                        </button>
+                                                    </form>
+
+                                                    <!-- Option: Reject Report -->
+                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                                        <input type="hidden" name="action" value="reject">
+                                                        <div class="mb-3">
+                                                            <label class="block text-xs font-semibold text-slate-600 mb-1">Rejection Reason</label>
+                                                            <input type="text" name="remark" placeholder="Enter reason..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none">
+                                                        </div>
+                                                        <button type="submit" class="w-full rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 transition flex items-center justify-center gap-2 text-sm border border-red-200">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                                            Reject Report
+                                                        </button>
+                                                    </form>
+
+                                                <!-- CASE 4: REPORT IS RESOLVED OR REJECTED -->
+                                                <?php else: ?>
+                                                    <p class="text-sm text-slate-500 text-center py-4">
+                                                        This report is already <strong class="text-slate-700"><?php echo strtolower($report['status']); ?></strong>.
+                                                    </p>
+                                                    <?php if ($report['status'] === 'Rejected' && !empty($report['reject_reason'])): ?>
+                                                        <div class="rounded-xl bg-red-50 p-3 border border-red-200">
+                                                            <p class="text-xs font-semibold text-red-700">Rejection Reason</p>
+                                                            <p class="text-sm text-red-800 mt-1"><?php echo htmlspecialchars($report['reject_reason']); ?></p>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+
                                             </div>
-                                            <button type="submit" class="w-full rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 transition flex items-center justify-center gap-2 text-sm border border-red-200">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                                                Reject Report
-                                            </button>
-                                        </form>
-                                        <!-- Resolve Button -->
-                                        <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
-                                            <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                            <input type="hidden" name="action" value="resolve">
-                                            <input type="hidden" name="remark" value="">
-                                            <button type="submit" class="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                                Resolve Report
-                                            </button>
-                                        </form>
-                                    <?php else: ?>
-                                        <p class="text-sm text-slate-500 text-center py-4">
-                                            This report is already <strong class="text-slate-700"><?php echo strtolower($report['status']); ?></strong>.
-                                        </p>
-                                        <?php if ($report['status'] === 'Rejected' && !empty($report['reject_reason'])): ?>
-                                            <div class="rounded-xl bg-red-50 p-3 border border-red-200">
-                                                <p class="text-xs font-semibold text-red-700">Rejection Reason</p>
-                                                <p class="text-sm text-red-800 mt-1"><?php echo htmlspecialchars($report['reject_reason']); ?></p>
-                                            </div>
-                                        <?php endif; ?>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
+                                        </div>
                         </div>
                     </div>
                 </div>
@@ -235,24 +286,100 @@ document.addEventListener('DOMContentLoaded', function() {
             iconAnchor: [8, 8]
         });
 
-        L.marker([lat, lng], { icon: greenIcon })
+        // Marker pin for report location
+        const marker = L.marker([lat, lng], { icon: greenIcon })
             .addTo(map)
-            .bindPopup('<strong><?php echo htmlspecialchars($report['purok'] ?? 'Location'); ?></strong>');
+            .bindPopup('<strong>Report Location</strong><br><?php echo htmlspecialchars($report['purok'] ?? 'Location'); ?>');
 
-        // Dotted route line (decorative)
-        const routePoints = [
-            [lat + 0.001, lng - 0.001],
-            [lat + 0.0005, lng - 0.0005],
-            [lat, lng]
-        ];
-        L.polyline(routePoints, {
-            color: '#10B981',
-            weight: 2,
-            dashArray: '5, 5',
-            opacity: 0.4
+        const mapFeatureGroup = L.featureGroup([marker]);
+
+        // 1. Render Barangay Boundary (overall barangay perimeter)
+        const barangayBoundary = {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [120.8013517, 15.5699279], [120.8008898, 15.569572], [120.8008276, 15.5686578],
+                    [120.8006126, 15.5685788], [120.8005542, 15.5678398], [120.8001844, 15.5672858],
+                    [120.8000725, 15.5668847], [120.8001665, 15.566531], [120.7995785, 15.5663685],
+                    [120.7989717, 15.5657033], [120.7987031, 15.5658025], [120.7984537, 15.5654243],
+                    [120.7980956, 15.5652], [120.7977553, 15.5652043], [120.7975135, 15.5652862],
+                    [120.7971285, 15.5652259], [120.7964691, 15.5648604], [120.7961709, 15.5643821],
+                    [120.795562, 15.5643993], [120.7951681, 15.5637567], [120.7953561, 15.5632478],
+                    [120.7952523, 15.562581], [120.7950598, 15.5617529], [120.7950416, 15.5611835],
+                    [120.7945939, 15.5608471], [120.7946431, 15.5603295], [120.7943504, 15.5596467],
+                    [120.7937415, 15.5597848], [120.7930393, 15.55916], [120.7928646, 15.5570187],
+                    [120.7921781, 15.555107], [120.7912123, 15.554853], [120.7913399, 15.5543176],
+                    [120.7915605, 15.5533236], [120.7918092, 15.5534046], [120.8001316, 15.5478115],
+                    [120.8011058, 15.5481325], [120.8021398, 15.5484701], [120.8027807, 15.5485113],
+                    [120.8032508, 15.5489723], [120.8030798, 15.5500426], [120.8038043, 15.5501365],
+                    [120.8044282, 15.5502517], [120.8049495, 15.550614], [120.8058211, 15.5508445],
+                    [120.8062911, 15.551569], [120.8071584, 15.5520964], [120.8076635, 15.5520903],
+                    [120.8081181, 15.5524005], [120.8083454, 15.5523519], [120.8085979, 15.5525708],
+                    [120.8088668, 15.5528807], [120.8118007, 15.5512389], [120.8126332, 15.550257],
+                    [120.8153176, 15.5523838], [120.817434, 15.549628], [120.8219183, 15.5518119],
+                    [120.8232918, 15.5522367], [120.8253946, 15.5516159], [120.8260956, 15.5512188],
+                    [120.8281375, 15.5526533], [120.8298546, 15.5518644], [120.8310955, 15.5519514],
+                    [120.8335885, 15.541358], [120.8325752, 15.5557229], [120.8326161, 15.5574083],
+                    [120.8332704, 15.5602447], [120.8283841, 15.5650646], [120.8236492, 15.5703491],
+                    [120.82189, 15.5689622], [120.8219651, 15.5676998], [120.8092582, 15.559308],
+                    [120.8032464, 15.5673914], [120.8014669, 15.5699463]
+                ]]
+            }
+        };
+
+        const brgyLayer = L.geoJSON(barangayBoundary, {
+            style: {
+                color: '#3B82F6',
+                weight: 2.5,
+                fillColor: '#3B82F6',
+                fillOpacity: 0.05,
+                dashArray: '5,5'
+            }
         }).addTo(map);
+        mapFeatureGroup.addLayer(brgyLayer);
 
-        setTimeout(() => map.invalidateSize(), 200);
+        // 2. Render all Purok Boundaries simultaneously
+        const purokBoundariesData = <?php echo json_encode($data['purok_boundaries'] ?? []); ?>;
+        const colorPalette = ['#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#3B82F6', '#06B6D4', '#14B8A6'];
+        
+        let colorIdx = 0;
+        purokBoundariesData.forEach(pb => {
+            if (pb.polygon_geometry) {
+                try {
+                    let geojson = (typeof pb.polygon_geometry === 'string') ? JSON.parse(pb.polygon_geometry) : pb.polygon_geometry;
+                    if (geojson) {
+                        const isCurrentPurok = (pb.purok_name === '<?php echo addslashes($report['purok'] ?? ''); ?>');
+                        const strokeColor = isCurrentPurok ? '#059669' : colorPalette[colorIdx % colorPalette.length];
+                        colorIdx++;
+
+                        const pLayer = L.geoJSON(geojson, {
+                            style: {
+                                color: strokeColor,
+                                weight: isCurrentPurok ? 3 : 2,
+                                fillColor: strokeColor,
+                                fillOpacity: isCurrentPurok ? 0.3 : 0.15
+                            }
+                        }).addTo(map);
+
+                        pLayer.bindPopup('<strong>Purok: ' + pb.purok_name + '</strong>' + (isCurrentPurok ? '<br><span style="color:#059669;font-weight:bold;">Reported Location Zone</span>' : ''));
+                        mapFeatureGroup.addLayer(pLayer);
+                    }
+                } catch(e) {
+                    console.warn('Could not parse geometry for purok:', pb.purok_name, e);
+                }
+            }
+        });
+
+        // Fit map view to encompass barangay, puroks, and marker
+        try {
+            map.fitBounds(mapFeatureGroup.getBounds().pad(0.1));
+        } catch(e) {
+            map.setView([lat, lng], 16);
+        }
+
+        setTimeout(() => map.invalidateSize(), 250);
     }
 });
 </script>

@@ -403,54 +403,56 @@ class SettingsController extends Controller {
         $db = new Database();
         $data = ['error' => '', 'success' => ''];
 
-        // Get puroks with their boundaries (if any)
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (isset($_POST['save_boundary'])) {
+                $purok_id = (int)($_POST['purok_id'] ?? 0);
+                $polygon_geojson = $_POST['polygon_geojson'] ?? '';
+                if ($purok_id && !empty($polygon_geojson)) {
+                    // Check if boundary record exists for this purok_id
+                    $db->query("SELECT boundary_id FROM purok_boundaries WHERE purok_id = :purok_id LIMIT 1");
+                    $db->bind(':purok_id', $purok_id);
+                    $existing = $db->single();
+
+                    if ($existing) {
+                        $db->query("UPDATE purok_boundaries 
+                                    SET polygon_geometry = ST_GeomFromGeoJSON(:geojson),
+                                        updated_by = :updated_by,
+                                        updated_at = NOW()
+                                    WHERE purok_id = :purok_id");
+                        $db->bind(':geojson', $polygon_geojson);
+                        $db->bind(':updated_by', $_SESSION['user_id']);
+                        $db->bind(':purok_id', $purok_id);
+                        $saved = $db->execute();
+                    } else {
+                        $db->query("INSERT INTO purok_boundaries (purok_id, polygon_geometry, updated_by) 
+                                    VALUES (:purok_id, ST_GeomFromGeoJSON(:geojson), :updated_by)");
+                        $db->bind(':purok_id', $purok_id);
+                        $db->bind(':geojson', $polygon_geojson);
+                        $db->bind(':updated_by', $_SESSION['user_id']);
+                        $saved = $db->execute();
+                    }
+
+                    if ($saved) {
+                        $data['success'] = 'Purok boundary saved successfully!';
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Update Purok Boundary', 'Settings', "Updated boundary for purok ID $purok_id", 'success');
+                    } else {
+                        $data['error'] = 'Failed to save boundary to database.';
+                    }
+                } else {
+                    $data['error'] = 'Please select a purok and draw a valid polygon first.';
+                }
+            }
+        }
+
+        // Get puroks with their boundaries formatted as GeoJSON text
         $db->query("
-            SELECT p.*, pb.polygon_geometry 
+            SELECT p.*, ST_AsGeoJSON(pb.polygon_geometry) AS polygon_geometry 
             FROM puroks p
             LEFT JOIN purok_boundaries pb ON p.purok_id = pb.purok_id
             WHERE p.is_active = 1
             ORDER BY p.purok_name
         ");
         $data['puroks'] = $db->resultSet();
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (isset($_POST['save_boundary'])) {
-                $purok_id = (int)$_POST['purok_id'];
-                $polygon_geojson = $_POST['polygon_geojson'] ?? '';
-                if ($purok_id && !empty($polygon_geojson)) {
-                    // Convert GeoJSON to MySQL geometry
-                    // For simplicity, we store the GeoJSON as text in a separate column (or we can use MySQL ST_GeomFromGeoJSON)
-                    // We'll assume polygon_geometry is a GEOMETRY type. Use ST_GeomFromGeoJSON.
-                    $db->query("INSERT INTO purok_boundaries (purok_id, polygon_geometry, updated_by) 
-                                VALUES (:purok_id, ST_GeomFromGeoJSON(:geojson), :updated_by)
-                                ON DUPLICATE KEY UPDATE 
-                                polygon_geometry = ST_GeomFromGeoJSON(:geojson),
-                                updated_by = :updated_by,
-                                updated_at = NOW()
-                    ");
-                    $db->bind(':purok_id', $purok_id);
-                    $db->bind(':geojson', $polygon_geojson);
-                    $db->bind(':updated_by', $_SESSION['user_id']);
-                    if ($db->execute()) {
-                        $data['success'] = 'Purok boundary saved.';
-                        $this->auditModel->logAction($_SESSION['user_id'], 'Update Purok Boundary', 'Settings', "Updated boundary for purok ID $purok_id", 'success');
-                    } else {
-                        $data['error'] = 'Failed to save boundary.';
-                    }
-                } else {
-                    $data['error'] = 'Missing purok or polygon data.';
-                }
-            }
-            // Refresh puroks list
-            $db->query("
-                SELECT p.*, pb.polygon_geometry 
-                FROM puroks p
-                LEFT JOIN purok_boundaries pb ON p.purok_id = pb.purok_id
-                WHERE p.is_active = 1
-                ORDER BY p.purok_name
-            ");
-            $data['puroks'] = $db->resultSet();
-        }
 
         $this->view('settings/purok_boundaries', $data);
     }

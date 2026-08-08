@@ -428,6 +428,26 @@ class ResidentController extends Controller {
     }
 
     // ============================================================
+    // NEARBY CHECK (AJAX – live duplicate detection on submit form)
+    // ============================================================
+    public function nearby_check() {
+        header('Content-Type: application/json');
+
+        $lat        = isset($_GET['lat'])  ? (float)$_GET['lat']  : null;
+        $lng        = isset($_GET['lng'])  ? (float)$_GET['lng']  : null;
+        $categoryId = isset($_GET['cat'])  ? (int)$_GET['cat']    : 0;
+
+        if ($lat === null || $lng === null) {
+            echo json_encode(['nearby' => []]);
+            exit;
+        }
+
+        $nearby = $this->reportModel->findNearbyReports($lat, $lng, $categoryId, 50, 7);
+        echo json_encode(['nearby' => $nearby]);
+        exit;
+    }
+
+    // ============================================================
     // DELETE REPORT
     // ============================================================
     public function delete_report($id) {

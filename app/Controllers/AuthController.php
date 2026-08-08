@@ -479,7 +479,7 @@ class AuthController extends Controller {
                 'password' => $hashed,
                 'role_id' => 3, // Resident
                 'position_id' => 6, // Resident position
-                'purok_id' => 1, // Default Purok 1
+                'purok_id' => (int)($post['purok_id'] ?? 1), // Default Purok 1
                 'status' => 'pending' // Will be set to 'active' after OTP verification
             ];
 

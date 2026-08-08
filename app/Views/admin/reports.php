@@ -93,7 +93,7 @@ $metrics = [
                                     <tr>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Report ID</th>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Date</th>
-                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Resident</th>
+                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Names</th>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Category</th>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Qty</th>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Purok</th>

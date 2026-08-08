@@ -33,12 +33,22 @@
                 <h3 class="font-bold text-gray-700 uppercase underline mb-2">Summary Statistics</h3>
                 <ul class="text-sm border p-4 bg-gray-50 rounded">
                     <?php 
-                        $stats = ['total'=>0, 'pending'=>0, 'verified'=>0, 'resolved'=>0];
-                        foreach($data['reports'] as $r) {
-                            $stats['total']++;
-                            $stats[$r['status']]++;
-                        }
-                    ?>
+                            // Make view robust: prefer $data['reports'] but fall back to $reports or empty array
+                            $reports_list = [];
+                            if (isset($data) && is_array($data) && isset($data['reports']) && is_array($data['reports'])) {
+                                $reports_list = $data['reports'];
+                            } elseif (isset($reports) && is_array($reports)) {
+                                $reports_list = $reports;
+                            }
+
+                            $stats = ['total'=>0, 'pending'=>0, 'verified'=>0, 'resolved'=>0];
+                            foreach($reports_list as $r) {
+                                $stats['total']++;
+                                $statusKey = $r['status'] ?? 'pending';
+                                if (!isset($stats[$statusKey])) $stats[$statusKey] = 0;
+                                $stats[$statusKey]++;
+                            }
+                        ?>
                     <li>Total Reports: <?php echo $stats['total']; ?></li>
                     <li>Pending: <?php echo $stats['pending']; ?></li>
                     <li>Verified: <?php echo $stats['verified']; ?></li>
@@ -59,7 +69,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($data['reports'] as $r): ?>
+                <?php foreach($reports_list as $r): ?>
                 <tr class="border-b even:bg-gray-50">
                     <td class="p-3 border"><?php echo $r['id']; ?></td>
                     <td class="p-3 border"><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></td>

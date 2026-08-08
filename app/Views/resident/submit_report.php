@@ -172,7 +172,7 @@ $resume_description = $resume_data['description'] ?? '';
                 </div>
             </header>
 
-            <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <main class="mx-auto max-w-7xl px-4 py-8 pb-24 sm:px-6 lg:px-8">
                 <?php if (!empty($error)): ?>
                     <div class="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
@@ -343,8 +343,24 @@ $resume_description = $resume_data['description'] ?? '';
                         </section>
 
                         <section class="rounded-xl border border-slate-200 bg-[#E6F4EA] p-6 shadow-[0_18px_50px_-24px_rgba(7,40,30,0.35)]">
-                            <h3 class="text-lg font-bold text-slate-900">Duplicate Check</h3>
-                            <p class="mt-2 text-sm text-slate-600">The system will compare your report with nearby submissions to reduce duplicates before it is saved.</p>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#0B3024]/10 text-[#0B3024]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900">Duplicate Check</h3>
+                                    <p class="text-xs text-slate-600 mt-0.5">Pin a location to scan for nearby reports within 50 m.</p>
+                                </div>
+                            </div>
+
+                            <!-- Live duplicate result panel -->
+                            <div id="dupCheckResult" class="hidden mt-3 rounded-xl border bg-white p-4">
+                                <div id="dupCheckContent"></div>
+                            </div>
+                            <div id="dupCheckIdle" class="mt-3 rounded-xl border border-dashed border-[#10B981]/40 bg-white/60 p-4 text-center text-sm text-slate-500">
+                                <svg class="mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                Waiting for location pin…
+                            </div>
                         </section>
                     </div>
                 </form>
@@ -402,13 +418,33 @@ $resume_description = $resume_data['description'] ?? '';
 
         // --- Barangay Boundary (Improved styling) ---
         var barangayBoundary = [
-            [15.56992, 120.80135], [15.56728, 120.80018], [15.56570, 120.79897],
-            [15.56528, 120.79751], [15.56375, 120.79516], [15.56032, 120.79464],
-            [15.55485, 120.79121], [15.54781, 120.80013], [15.55061, 120.80494],
-            [15.55288, 120.80886], [15.54962, 120.81743], [15.55121, 120.82609],
-            [15.55413, 120.83358], [15.55740, 120.83261], [15.56506, 120.82838],
-            [15.57034, 120.82364], [15.56455, 120.82033], [15.56098, 120.81492],
-            [15.56739, 120.80324], [15.56992, 120.80135]
+            [15.5699279, 120.8013517],[15.569572, 120.8008898],[15.5686578, 120.8008276],
+            [15.5685788, 120.8006126],[15.5678398, 120.8005542],[15.5672858, 120.8001844],
+            [15.5668847, 120.8000725],[15.566531, 120.8001665],[15.5663685, 120.7995785],
+            [15.5657033, 120.7989717],[15.5658025, 120.7987031],[15.5654243, 120.7984537],
+            [15.5652, 120.7980956],[15.5652043, 120.7977553],[15.5652862, 120.7975135],
+            [15.5652259, 120.7971285],[15.5648604, 120.7964691],[15.5643821, 120.7961709],
+            [15.5643993, 120.795562],[15.5637567, 120.7951681],[15.5632478, 120.7953561],
+            [15.562581, 120.7952523],[15.5617529, 120.7950598],[15.5611835, 120.7950416],
+            [15.5608471, 120.7945939],[15.5603295, 120.7946431],[15.5596467, 120.7943504],
+            [15.5597848, 120.7937415],[15.55916, 120.7930393],[15.5570187, 120.7928646],
+            [15.555107, 120.7921781],[15.554853, 120.7912123],[15.5543176, 120.7913399],
+            [15.5533236, 120.7915605],[15.5534046, 120.7918092],[15.5478115, 120.8001316],
+            [15.5481325, 120.8011058],[15.5484701, 120.8021398],[15.5485113, 120.8027807],
+            [15.5489723, 120.8032508],[15.5500426, 120.8030798],[15.5501365, 120.8038043],
+            [15.5502517, 120.8044282],[15.550614, 120.8049495],[15.5508445, 120.8058211],
+            [15.551569, 120.8062911],[15.5520964, 120.8071584],[15.5520903, 120.8076635],
+            [15.5524005, 120.8081181],[15.5523519, 120.8083454],[15.5525708, 120.8085979],
+            [15.5528807, 120.8088668],[15.5512389, 120.8118007],[15.550257, 120.8126332],
+            [15.5523838, 120.8153176],[15.549628, 120.817434],[15.5518119, 120.8219183],
+            [15.5522367, 120.8232918],[15.5516159, 120.8253946],[15.5512188, 120.8260956],
+            [15.5526533, 120.8281375],[15.5518644, 120.8298546],[15.5519514, 120.8310955],
+            [15.5541358, 120.8335885],[15.5557229, 120.8325752],[15.5574083, 120.8326161],
+            [15.5602447, 120.8332704],[15.5650646, 120.8283841],[15.5703491, 120.8236492],
+            [15.5689622, 120.82189],[15.5676998, 120.8219651],[15.5645562, 120.8203353],
+            [15.5594636, 120.8205697],[15.5617437, 120.8185042],[15.5609879, 120.8149287],
+            [15.5623097, 120.8126889],[15.5595308, 120.8092582],[15.5673914, 120.8032464],
+            [15.5699463, 120.8014669],[15.5699279, 120.8013517]
         ];
 
         var polygonStyle = {
@@ -486,12 +522,69 @@ $resume_description = $resume_data['description'] ?? '';
         };
         locateControlPreview.addTo(previewMap);
 
-        // --- Update location ---
+        // --- Update location + trigger live duplicate check ---
+        var dupCheckTimer = null;
         function updateLocation(lat, lng) {
             document.getElementById('latitude').value = lat.toFixed(6);
             document.getElementById('longitude').value = lng.toFixed(6);
             document.getElementById('locStatus').classList.remove('hidden');
+            // Trigger live dup-check (debounced 600 ms)
+            clearTimeout(dupCheckTimer);
+            dupCheckTimer = setTimeout(function() { runDupCheck(lat, lng); }, 600);
         }
+
+        function runDupCheck(lat, lng) {
+            var catInput = document.querySelector('input[name="category_id"]:checked');
+            var catId = catInput ? catInput.value : 0;
+            var idleEl   = document.getElementById('dupCheckIdle');
+            var resultEl = document.getElementById('dupCheckResult');
+            var contentEl = document.getElementById('dupCheckContent');
+
+            // Show loading state
+            if (idleEl)   idleEl.classList.add('hidden');
+            if (resultEl) resultEl.classList.remove('hidden');
+            if (contentEl) contentEl.innerHTML = '<p class="text-xs text-slate-400 text-center py-2">Checking for nearby reports\u2026</p>';
+
+            fetch('/brgy-waste-app-v3/public/resident/nearby_check?lat=' + lat + '&lng=' + lng + '&cat=' + catId)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    var nearby = data.nearby || [];
+                    if (nearby.length === 0) {
+                        contentEl.innerHTML = '<div class="flex items-center gap-2 text-emerald-700">' +
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+                            '<span class="text-xs font-semibold">No duplicate reports found nearby. You\u2019re good to submit!</span></div>';
+                        resultEl.className = 'mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4';
+                    } else {
+                        var html = '<div class="flex items-center gap-2 mb-3">' +
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+                            '<p class="text-xs font-bold text-amber-800">' + nearby.length + ' similar report(s) found within 50\u202fm</p></div>';
+                        nearby.forEach(function(r) {
+                            var dist = Math.round((r.distance_km || 0) * 1000);
+                            var date = r.submission_date ? new Date(r.submission_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+                            html += '<div class="flex items-center justify-between py-2 border-t border-amber-100">' +
+                                '<div><p class="text-xs font-semibold text-slate-700">' + (r.category_name || 'Report') + '</p>' +
+                                '<p class="text-[10px] text-slate-400">' + dist + '\u202fm away &middot; ' + date + ' &middot; ' + (r.support_count||0) + ' supports</p></div>' +
+                                '<a href="/brgy-waste-app-v3/public/resident/view_report/' + r.id + '" target="_blank" class="ml-3 shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-800 hover:bg-amber-200 transition">View</a></div>';
+                        });
+                        resultEl.className = 'mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4';
+                        contentEl.innerHTML = html;
+                    }
+                })
+                .catch(function() {
+                    if (resultEl) resultEl.classList.add('hidden');
+                    if (idleEl)   idleEl.classList.remove('hidden');
+                });
+        }
+
+        // Re-run dup check if category changes
+        document.querySelectorAll('input[name="category_id"]').forEach(function(el) {
+            el.addEventListener('change', function() {
+                var lat = parseFloat(document.getElementById('latitude').value);
+                var lng = parseFloat(document.getElementById('longitude').value);
+                if (lat && lng) runDupCheck(lat, lng);
+            });
+        });
+
 
         // --- Marker drag events ---
         marker.on('dragend', function() {

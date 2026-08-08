@@ -28,7 +28,7 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
     <!-- ============================================================ -->
     <!-- LEFT PANEL: Brand Narrative & Proof                         -->
     <!-- ============================================================ -->
-    <div class="hidden lg:flex lg:col-span-5 xl:col-span-4 bg-[#081C15] text-white p-12 flex-col justify-between relative overflow-hidden">
+    <div class="hidden lg:flex lg:col-span-6 xl:col-span-6 bg-[#081C15] text-white p-12 flex-col justify-between relative overflow-hidden">
         
         <!-- Subtle Ambient Background Gradient -->
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/30 via-transparent to-transparent pointer-events-none"></div>
@@ -84,9 +84,17 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
     <!-- ============================================================ -->
     <!-- RIGHT PANEL: Authentication Form                             -->
     <!-- ============================================================ -->
-    <div class="lg:col-span-7 xl:col-span-8 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-16 bg-slate-50 min-h-screen lg:min-h-0">
+    <div class="lg:col-span-6 xl:col-span-6 flex flex-col justify-center items-center p-6 sm:p-12 bg-slate-50 min-h-screen lg:min-h-0">
         
         <div class="w-full max-w-[420px]">
+            <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 text-sm font-semibold mb-4 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5" />
+                        <path d="m12 5-7 7 7 7" />
+                    </svg>
+                    Back to home page
+            </a>
+        
 
             <!-- Navigation Switcher (Tabs) -->
             <div class="mb-8 p-1 bg-slate-200/70 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
@@ -99,7 +107,8 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
             </div>
 
             <!-- Header -->
-            <div class="mb-8">
+            <div class="mb-6">
+                
                 <h1 class="text-2xl font-bold tracking-tight text-slate-900">Welcome back</h1>
                 <p class="text-sm text-slate-500 mt-1">Enter your credentials to access your account</p>
             </div>

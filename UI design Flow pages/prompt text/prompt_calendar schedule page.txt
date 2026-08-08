@@ -1,0 +1,66 @@
+Build a clean, high-precision "Collection Schedule - Calendar View" page for the "Wastewatch" Administrator Portal using React, Tailwind CSS, and Lucide icons based on the following specifications:
+
+1. Layout & Sticky Architecture:
+   - Overall Wrapper: `flex min-h-screen bg-[#F8FAFC]`
+   - Sidebar Wrapper: `sticky top-0 h-screen w-64 flex-shrink-0 bg-[#07281E] z-30 overflow-y-auto`
+   - Main Content Wrapper: `flex-1 min-w-0 p-6 md:p-8 space-y-6 overflow-y-auto max-w-6xl mx-auto`
+
+2. Navigation Sidebar (Sticky Left Column, Dark Green #07281E):
+   - Brand Header: Shield icon with leaf inside + "Wastewatch" (white bold) and "ADMIN PORTAL" (muted teal sublabel).
+   - Navigation Menu Items:
+     1. "Dashboard", "Reports" (with red badge "2"), "User Mgmt", "GIS Monitor"
+     2. "Schedule" -> Active State: Glowing emerald green pill background (#10B981) with bold white text.
+     3. "Announcements", "Analytics", "Settings", "Audit Logs", "Profile".
+   - Profile Footer (Pinned to bottom): Avatar "MS" inside a green circle, "Maria Santos" (Administrator), and exit icon "Logout".
+
+3. Page Header & Top Action Controls:
+   - Left Header:
+     - Title: "Collection Schedule Management" (h1, bold dark text)
+     - Subtitle: "Create, edit, and publish official collection schedules" (muted text)
+   - Right Controls (`flex items-center gap-3`):
+     - View Switcher Toggle (Segmented Pill Container `#F1F5F9`):
+       * Inactive View: "Cards" (Transparent background, layout grid icon, dark text)
+       * Active View: "Calendar" (Solid emerald green pill `#10B981`, calendar icon, white text)
+     - Primary Button: "+ Add Schedule" (Solid emerald green `#10B981`, rounded-xl, white bold text).
+
+4. Main Content Stack:
+
+   a) Interactive Calendar Card Container (`bg-white rounded-2xl border border-slate-200 shadow-sm p-6`):
+      - Calendar Header Bar (`flex flex-wrap items-center justify-between pb-6 border-b border-slate-100 gap-4`):
+        * Left Month Display: "July 2026" (h2, bold dark text)
+        * Right Legend Row (`flex items-center gap-4 text-xs font-medium text-slate-600`):
+          • Green Dot (`#10B981`) -> "Biodegradable"
+          • Blue Dot (`#0284C7`) -> "Non-Bio"
+          • Orange Dot (`#EA580C`) -> "Residual"
+          • Purple Dot (`#8B5CF6`) -> "Special"
+      
+      - Month Grid (`grid grid-cols-7 border-collapse`):
+        * Days of Week Header (`grid grid-cols-7 text-center py-3 text-xs font-bold text-slate-400 uppercase tracking-wider`): `SUN` | `MON` | `TUE` | `WED` | `THU` | `FRI` | `SAT`
+        * Date Grid Cells (`grid grid-cols-7 gap-px bg-slate-100 rounded-b-xl overflow-hidden`):
+          - Each day box has white background (`bg-white min-h-[90px] p-2 flex flex-col justify-between border-t border-slate-100`)
+          - July 2026 starts on Wednesday (Jul 1). Empty cells before Jul 1.
+          - Date Numbers: Top-left text. Current day (Jul 24) has an emerald green solid circle `#10B981` behind white number "24".
+          - Schedule Pills inside Date Cells:
+            • Jul 5 (Sun): "Special / Hazardous" (Purple pill `#8B5CF6`, white text)
+            • Jul 6, 13, 20, 27 (Mon): "Biodegradable" (Emerald green pill `#10B981`, white text)
+            • Jul 8, 15, 22, 29 (Wed): "Non-Bio" (Blue pill `#0284C7`, white text)
+            • Jul 10, 17, 24, 31 (Fri): "Residual" (Orange pill `#EA580C`, white text)
+            • Jul 26 (Sun): "Residual (moved)" (Orange pill `#EA580C`, white text)
+
+   b) Special Collection Notice Banner (Bottom Section):
+      - Container: Light amber background (`bg-amber-50/80 rounded-2xl border border-amber-200 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4`)
+      - Left Info Box (`flex items-center gap-3`):
+        * Warning Icon: Orange alert triangle (`text-amber-600 bg-amber-100 p-2 rounded-lg`).
+        * Text: Title "Special Collection Notice" (Bold dark amber `#92400E`) + Subtext "Publish an update for collection postponements or reschedules."
+      - Right Action: Button "+ Publish Notice" (Solid dark amber/orange `#D97706`, white bold text, rounded-xl).
+
+5. Responsive Design Rules:
+   - Mobile (< 640px):
+     * Sticky sidebar collapses to mobile hamburger drawer.
+     * Header controls stack vertically (`Add Schedule` button full-width).
+     * Calendar grid enables horizontal scrolling or collapses into an agenda/list schedule view to keep date pills readable.
+   - Tablet (640px – 1024px):
+     * Sidebar collapses to icon-only 64px vertical rail (`sticky top-0 h-screen w-16`).
+     * Calendar cells scale proportionally (`min-h-[75px]`).
+   - Desktop (> 1024px):
+     * Full sticky sidebar (`sticky top-0 h-screen w-64`) with spacious 7-column calendar grid.

@@ -1,6 +1,8 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
 <?php
-$user = $data['user'];
+/** @var array $data */
+$data = $data ?? [];
+$user = $data['user'] ?? $user ?? [];
 $firstName = isset($user['name']) ? explode(' ', trim($user['name']))[0] : 'Admin';
 $fullName = $user['name'] ?? 'Barangay Secretary';
 ?>

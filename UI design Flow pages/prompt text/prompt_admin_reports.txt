@@ -1,0 +1,68 @@
+Build a clean, responsive "Waste Report Management" page for the "Wastewatch" Administrator Portal using React, Tailwind CSS, and Lucide icons based on the following specifications:
+
+1. Palette & Design Tokens:
+   - Sidebar & Accent Background: Deep dark forest green (#07281E / #051E17)
+   - Primary Active Accent: Vibrant emerald green (#10B981) with light mint tint (#E6F4EA)
+   - Canvas Background: Off-white neutral (#F8FAFC)
+   - Card/Table Container: White background (#FFFFFF) with rounded-2xl (16px) corners, thin borders (#E2E8F0), soft shadow.
+
+2. Navigation Sidebar (Fixed/Collapsible Left Navigation):
+   - Header:
+     - Logo: Shield icon with a leaf inside + "Wastewatch" (white bold) and "ADMIN PORTAL" (muted teal sublabel).
+   - Navigation Menu Items:
+     1. "Dashboard"
+     2. "Reports" -> Active state: Glowing emerald green pill background (#10B981) with red circle badge "2".
+     3. "User Mgmt", "GIS Monitor", "Schedule", "Announcements", "Analytics", "Settings", "Audit Logs", "Profile".
+   - Profile Footer:
+     - Avatar "MS" inside a green circle.
+     - Name: "Maria Santos" (Administrator) with exit icon "Logout".
+
+3. Main Page Header & Action:
+   - Title: "Waste Report Management" (h1, bold dark text)
+   - Subtitle: "10 total reports" (muted text)
+   - Top Right Action: Emerald green button `#10B981` with download/export icon + text "Export".
+
+4. Key Metrics Grid (6 Metric Cards Row):
+   - Grid Layout: `grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4`
+   - Total Card (Selected state): Active border (#10B981), Number "245", Label "Total"
+   - Pending Card: Number "18" (#D97706 amber text), Label "Pending"
+   - Verified Card: Number "180" (#059669 green text), Label "Verified"
+   - Rejected Card: Number "47" (#DC2626 red text), Label "Rejected"
+   - In Progress Card: Number "5" (#C2410C orange text), Label "In Progress"
+   - Resolved Card: Number "5" (#0891B2 cyan text), Label "Resolved"
+
+5. Search & Filter Bar:
+   - Layout: `flex flex-col sm:flex-row gap-3 items-center justify-between`
+   - Left: Search input field with magnifying glass icon and placeholder "Search by ID, resident, category..." (`w-full sm:w-80 lg:w-96`)
+   - Right: "All Status" dropdown selection pill.
+
+6. Data Table (Waste Reports Table):
+   - Container: Full-width white card with light neutral borders and rounded-2xl edges.
+   - Column Headers (Uppercase light gray text):
+     `REPORT ID` | `DATE` | `RESIDENT` | `CATEGORY` | `QTY` | `PUROK` | `STATUS` | `ACTIONS`
+   - Sample Rows (Include subtle row hover effect):
+     1. `WR-2026-001` | Jul 20, 2026 | Juan dela Cruz | Illegal Dumping | Large | Purok 3 | [Pending - Soft Yellow Badge] | Review (Eye icon + link)
+     2. `WR-2026-002` | Jul 18, 2026 | Maria Santos | Overflowing Garbage Bin | Medium | Purok 1 | [Verified - Soft Green Badge] | Review
+     3. `WR-2026-003` | Jul 17, 2026 | Pedro Reyes | Uncollected Garbage | Small | Purok 5 | [Resolved - Soft Blue Badge] | Review
+     4. `WR-2026-004` | Jul 15, 2026 | Ana Lim | Hazardous Waste | Small | Purok 2 | [Rejected - Soft Red Badge] | Review
+     5. `WR-2026-005` | Jul 14, 2026 | Carlo Bautista | Construction Waste | Large | Purok 4 | [In Progress - Soft Orange Badge] | Review
+     6. `WR-2026-006` | Jul 12, 2026 | Ligaya Mercado | Yard Waste | Medium | Purok 6 | [Resolved - Soft Blue Badge] | Review
+     7. `WR-2026-007` | Jul 11, 2026 | Rodel Cruz | Illegal Dumping | Very Large | Purok 3 | [Verified - Soft Green Badge] | Review
+     8. `WR-2026-008` | Jul 10, 2026 | Nena Flores | Uncollected Garbage | Small | Purok 2 | [Pending - Soft Yellow Badge] | Review
+     9. `WR-2026-009` | Jul 8, 2026 | Danilo Aguilar | Overflowing Garbage Bin | Large | Purok 1 | [Resolved - Soft Blue Badge] | Review
+     10. `WR-2026-010` | Jul 6, 2026 | Susan Mendoza | Hazardous Waste | Small | Purok 5 | [Rejected - Soft Red Badge] | Review
+
+7. Responsive Layout Rules (Strict Specs):
+   - Mobile (< 640px):
+     * Sidebar converts into a hidden slide-over drawer triggered by a top-left hamburger menu button.
+     * Header layout stacks vertically: Title, subtext, and Export button full-width at the bottom.
+     * Metric Summary Cards render as a 2-column grid (`grid-cols-2`).
+     * Search bar and Status filter dropdown stack vertically (`w-full`).
+     * Data table is wrapped inside a scrollable container (`overflow-x-auto min-w-[700px]`) with smooth horizontal touch swipe, preserving table layout on small screens.
+   - Tablet (640px – 1024px):
+     * Sidebar collapses into a compact 64px icon-only navigation bar.
+     * Metric Summary Cards render as a 3-column grid (`grid-cols-3`).
+     * Search bar and filter dropdown sit side-by-side (`flex-row`).
+   - Desktop (> 1024px):
+     * Sidebar expands to full 260px fixed width with icons and labels.
+     * Metric Summary Cards render in a single 6-column row (`grid-cols-6`).

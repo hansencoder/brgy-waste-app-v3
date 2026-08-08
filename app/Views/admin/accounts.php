@@ -5,15 +5,16 @@ $tab = $data['tab'] ?? 'resident';
 $search = $data['search'] ?? '';
 $residentCount = $data['resident_count'] ?? 0;
 $staffCount = $data['staff_count'] ?? 0;
+$suspendedCount = $data['suspended_count'] ?? 0;
 
 function getStatusBadge($status) {
     $map = [
         'active'      => ['bg' => '#DCFCE7', 'text' => '#15803D', 'label' => 'Active'],
         'pending'     => ['bg' => '#FEF3C7', 'text' => '#92400E', 'label' => 'Pending'],
-        'suspended'   => ['bg' => '#FEF3C7', 'text' => '#92400E', 'label' => 'Suspended'],
-        'deactivated' => ['bg' => '#FEE2E2', 'text' => '#B91C1C', 'label' => 'Deactivated'],
+        'suspended'   => ['bg' => '#FEE2E2', 'text' => '#991B1B', 'label' => 'Suspended'],
+        'deactivated' => ['bg' => '#F3F4F6', 'text' => '#4B5563', 'label' => 'Deactivated'],
     ];
-    return $map[$status] ?? ['bg' => '#F3F4F6', 'text' => '#4B5563', 'label' => $status];
+    return $map[$status] ?? ['bg' => '#F3F4F6', 'text' => '#4B5563', 'label' => ucfirst($status)];
 }
 ?>
 
@@ -30,19 +31,23 @@ function getStatusBadge($status) {
                     <!-- Page Header -->
                     <div class="mb-6">
                         <h1 class="text-2xl font-extrabold text-slate-900">User Management</h1>
-                        <p class="text-sm text-slate-500">Manage resident and staff accounts</p>
+                        <p class="text-sm text-slate-500">Manage resident, staff, and suspended accounts</p>
                     </div>
 
                     <!-- Segmented Control (Tabs) -->
                     <div class="flex justify-center mb-6">
-                        <div class="inline-flex rounded-full bg-slate-100 p-1 shadow-sm">
+                        <div class="inline-flex rounded-full bg-slate-100 p-1 shadow-sm flex-wrap gap-1 justify-center">
                             <a href="?tab=resident<?php echo $search ? '&search='.urlencode($search) : ''; ?>" 
-                               class="rounded-full px-6 py-2 text-sm font-semibold transition <?php echo $tab === 'resident' ? 'bg-[#10B981] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-200'; ?>">
+                               class="rounded-full px-5 py-2 text-sm font-semibold transition <?php echo $tab === 'resident' ? 'bg-[#10B981] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-200'; ?>">
                                 Resident Accounts <span class="inline-flex items-center justify-center rounded-full bg-white/20 px-2 py-0.5 text-xs ml-1"><?php echo $residentCount; ?></span>
                             </a>
                             <a href="?tab=staff<?php echo $search ? '&search='.urlencode($search) : ''; ?>" 
-                               class="rounded-full px-6 py-2 text-sm font-semibold transition <?php echo $tab === 'staff' ? 'bg-[#10B981] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-200'; ?>">
+                               class="rounded-full px-5 py-2 text-sm font-semibold transition <?php echo $tab === 'staff' ? 'bg-[#10B981] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-200'; ?>">
                                 Staff Accounts <span class="inline-flex items-center justify-center rounded-full bg-white/20 px-2 py-0.5 text-xs ml-1"><?php echo $staffCount; ?></span>
+                            </a>
+                            <a href="?tab=suspended<?php echo $search ? '&search='.urlencode($search) : ''; ?>" 
+                               class="rounded-full px-5 py-2 text-sm font-semibold transition <?php echo $tab === 'suspended' ? 'bg-red-500 text-white shadow-sm' : 'text-slate-700 hover:bg-slate-200'; ?>">
+                                Suspended Accounts <span class="inline-flex items-center justify-center rounded-full bg-white/20 px-2 py-0.5 text-xs ml-1"><?php echo $suspendedCount; ?></span>
                             </a>
                         </div>
                     </div>
@@ -54,7 +59,7 @@ function getStatusBadge($status) {
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                             </div>
-                            <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search residents..." class="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
+                            <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search accounts..." class="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition">
                         </div>
                     </form>
 
@@ -69,7 +74,9 @@ function getStatusBadge($status) {
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Contact</th>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Purok</th>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Registered</th>
-                                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Reports</th>
+                                        <?php if ($tab === 'resident'): ?>
+                                            <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Reports</th>
+                                        <?php endif; ?>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Status</th>
                                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-[0.18em] text-slate-500 text-xs">Actions</th>
                                     </tr>
@@ -87,24 +94,33 @@ function getStatusBadge($status) {
                                                     <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">
                                                         <?php echo htmlspecialchars($initials); ?>
                                                     </div>
-                                                    <span class="font-semibold text-slate-900"><?php echo htmlspecialchars($user['name']); ?></span>
+                                                    <div>
+                                                        <span class="font-semibold text-slate-900 block"><?php echo htmlspecialchars($user['name']); ?></span>
+                                                        <?php if ($tab === 'suspended' && !empty($user['role_name'])): ?>
+                                                            <span class="text-xs text-slate-400 capitalize"><?php echo htmlspecialchars($user['role_name']); ?></span>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($user['email']); ?></td>
                                             <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($user['phone_number']); ?></td>
                                             <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($user['purok_name'] ?? 'N/A'); ?></td>
                                             <td class="px-6 py-4 text-slate-500"><?php echo date('M d, Y', strtotime($user['created_at'])); ?></td>
-                                            <td class="px-6 py-4 text-center font-bold text-slate-800"><?php echo $reportCount; ?></td>
+                                            <?php if ($tab === 'resident'): ?>
+                                                <td class="px-6 py-4 text-center font-bold text-slate-800"><?php echo $reportCount; ?></td>
+                                            <?php endif; ?>
                                             <td class="px-6 py-4">
                                                 <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold" style="background: <?php echo $badge['bg']; ?>; color: <?php echo $badge['text']; ?>;"><?php echo $badge['label']; ?></span>
                                             </td>
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-3">
-                                                    <a href="#" class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">View</a>
-                                                    <?php if ($user['status'] === 'active'): ?>
-                                                        <button onclick="openActionModal('suspend', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">Suspend</button>
-                                                    <?php elseif ($user['status'] === 'suspended'): ?>
-                                                        <button onclick="openActionModal('reactivate', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="text-teal-600 hover:text-teal-700 font-semibold text-sm">Reactivate</button>
+                                                    <?php if ($user['status'] === 'suspended'): ?>
+                                                        <button onclick="openActionModal('reactivate', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 font-semibold text-sm">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                                            Reactivate
+                                                        </button>
+                                                    <?php else: ?>
+                                                        <button onclick="openActionModal('suspend', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" class="text-red-600 hover:text-red-700 font-semibold text-sm">Suspend</button>
                                                     <?php endif; ?>
                                                 </div>
                                             </td>
@@ -112,7 +128,7 @@ function getStatusBadge($status) {
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="8" class="px-6 py-8 text-center text-slate-500">No accounts found.</td>
+                                            <td colspan="<?php echo $tab === 'resident' ? 8 : 7; ?>" class="px-6 py-8 text-center text-slate-500">No accounts found in this view.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>

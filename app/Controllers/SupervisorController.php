@@ -632,9 +632,9 @@ public function getHotspots() {
         $db->query("
             SELECT 
                 r.*,
-                u.name as reporter_name,
+                COALESCE(u.name, r.guest_name, 'Guest') as reporter_name,
                 u.email as reporter_email,
-                u.phone_number as reporter_phone,
+                COALESCE(u.phone_number, r.guest_phone) as reporter_phone,
                 rs.status_name as status,
                 rs.color_code as status_color,
                 wc.category_name as waste_category,
@@ -643,7 +643,7 @@ public function getHotspots() {
                 p.purok_name as purok,
                 (SELECT photo_path FROM report_photos WHERE report_id = r.id AND is_primary = 1 LIMIT 1) as photo_path
             FROM reports r
-            JOIN users u ON r.resident_id = u.id
+            LEFT JOIN users u ON r.resident_id = u.id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN estimated_quantities eq ON r.quantity_id = eq.quantity_id
@@ -669,6 +669,15 @@ public function getHotspots() {
             $data['report']['latitude'],
             $data['report']['longitude']
         );
+
+        // Fetch active purok boundaries for map preview
+        $db->query("
+            SELECT p.purok_id, p.purok_name, ST_AsGeoJSON(pb.polygon_geometry) AS polygon_geometry
+            FROM puroks p
+            JOIN purok_boundaries pb ON p.purok_id = pb.purok_id
+            WHERE pb.polygon_geometry IS NOT NULL
+        ");
+        $data['purok_boundaries'] = $db->resultSet();
 
         // Log access
         $this->auditModel->logAction($_SESSION['user_id'], 'View Report', "Report ID $id", 'Supervisor viewed report details', 'success');

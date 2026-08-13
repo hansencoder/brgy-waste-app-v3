@@ -530,124 +530,136 @@ class ResidentController extends Controller {
     $this->view('resident/announcements', $data);
 }
 
-    // ============================================================
-    // PROFILE
-    // ============================================================
-    public function profile() {
-        $data = ['error' => '', 'success' => ''];
-        $db = new Database();
+        // ============================================================
+        // PROFILE (with working profile picture upload)
+        // ============================================================
+        public function profile() {
+            $data = ['error' => '', 'success' => ''];
+            $db = new Database();
 
-        // Fetch user with role, position, purok names
-        $db->query("
-            SELECT u.*, 
-                    r.role_name, 
-                    p.position_name, 
-                    pk.purok_name
-            FROM users u
-            LEFT JOIN roles r ON u.role_id = r.role_id
-            LEFT JOIN positions p ON u.position_id = p.position_id
-            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
-            WHERE u.id = :id
-        ");
-        $db->bind(':id', $_SESSION['user_id']);
-        $data['user'] = $db->single();
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $name = trim($_POST['name'] ?? '');
-            $address = trim($_POST['address'] ?? '');
-            $phone = trim($_POST['phone_number'] ?? '');
-
-            if (empty($name)) {
-                $data['error'] = 'Full name is required.';
-                return $this->view('resident/profile', $data);
-            }
-
-            if (empty($address)) {
-                $data['error'] = 'Address is required.';
-                return $this->view('resident/profile', $data);
-            }
-
-            if (!preg_match('/^09\d{9}$/', $phone)) {
-                $data['error'] = 'Invalid Philippine phone number. Must be 11 digits starting with 09.';
-                return $this->view('resident/profile', $data);
-            }
-
-            // Handle profile picture upload
-            $profilePic = null;
-            if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
-                $file = $_FILES['profile_pic'];
-                $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-                $maxSize = 2 * 1024 * 1024; // 2MB
-
-                if (!in_array($file['type'], $allowedTypes)) {
-                    $data['error'] = 'Invalid file format. Only JPG, JPEG, and PNG are allowed.';
-                    return $this->view('resident/profile', $data);
-                }
-                if ($file['size'] > $maxSize) {
-                    $data['error'] = 'File size exceeds 2MB limit.';
-                    return $this->view('resident/profile', $data);
-                }
-
-                $uploadDir = '../public/uploads/profiles/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-
-                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $fileName = 'profile_' . $_SESSION['user_id'] . '_' . time() . '.' . $extension;
-                $targetPath = $uploadDir . $fileName;
-
-                if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-                    $profilePic = '/public/uploads/profiles/' . $fileName;
-                    error_log("Profile picture uploaded: " . $targetPath); // <- ADD THIS
-                } else {
-                    error_log("Upload failed for " . $file['name']); // <- ADD THIS
-                    $data['error'] = 'Failed to upload profile picture.';
-                    return $this->view('resident/profile', $data);
-                }
-            }
-
-            // Update profile
-            $updateQuery = "UPDATE users SET name = :name, address = :address, phone_number = :phone";
-            if ($profilePic) {
-                $updateQuery .= ", profile_pic = :profile_pic";
-            }
-            $updateQuery .= " WHERE id = :id";
-
-            $db->query($updateQuery);
-            $db->bind(':name', $name);
-            $db->bind(':address', $address);
-            $db->bind(':phone', $phone);
-            if ($profilePic) {
-                $db->bind(':profile_pic', $profilePic);
-            }
+            // Fetch user data
+            $db->query("
+                SELECT u.*, 
+                        r.role_name, 
+                        p.position_name, 
+                        pk.purok_name
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.role_id
+                LEFT JOIN positions p ON u.position_id = p.position_id
+                LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                WHERE u.id = :id
+            ");
             $db->bind(':id', $_SESSION['user_id']);
-            
+            $data['user'] = $db->single();
 
-            if ($db->execute()) {
-                $_SESSION['user_name'] = $name;
-                $data['success'] = 'Profile updated successfully.';
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $name = trim($_POST['name'] ?? '');
+                $address = trim($_POST['address'] ?? '');
+                $hasPhone = isset($_POST['phone_number']) && trim($_POST['phone_number']) !== '';
+                $phone = $hasPhone ? trim($_POST['phone_number']) : ($data['user']['phone_number'] ?? '');
 
-                // Refresh user data
-                $db->query("
-                    SELECT u.*, r.role_name, p.position_name, pk.purok_name
-                    FROM users u
-                    LEFT JOIN roles r ON u.role_id = r.role_id
-                    LEFT JOIN positions p ON u.position_id = p.position_id
-                    LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
-                    WHERE u.id = :id
-                ");
+                // Validate inputs
+                if (empty($name)) {
+                    $data['error'] = 'Full name is required.';
+                    return $this->view('resident/profile', $data);
+                }
+
+                if (empty($address)) {
+                    $data['error'] = 'Address is required.';
+                    return $this->view('resident/profile', $data);
+                }
+
+                if ($hasPhone && !preg_match('/^09\d{9}$/', $phone)) {
+                    $data['error'] = 'Invalid Philippine phone number. Must be 11 digits starting with 09.';
+                    return $this->view('resident/profile', $data);
+                }
+
+                // --- Handle profile picture upload ---
+                $profilePic = null;
+                $uploadSuccess = false;
+
+                if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+                    $file = $_FILES['profile_pic'];
+                    $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/gif'];
+                    $allowedExts  = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+                    $maxSize = 5 * 1024 * 1024; // 5MB
+
+                    $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+                    if (!in_array(strtolower($file['type']), $allowedMimes) && !in_array($extension, $allowedExts)) {
+                        $data['error'] = 'Invalid file format. Only JPG, PNG, WEBP, and GIF are allowed.';
+                        return $this->view('resident/profile', $data);
+                    }
+                    if ($file['size'] > $maxSize) {
+                        $data['error'] = 'File size exceeds 5MB limit.';
+                        return $this->view('resident/profile', $data);
+                    }
+
+                    $uploadDir = dirname(__DIR__, 2) . '/public/uploads/profiles/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+
+                    $fileName = 'profile_' . $_SESSION['user_id'] . '_' . time() . '.' . $extension;
+                    $targetPath = $uploadDir . $fileName;
+
+                    if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                        // Store path for web access
+                        $profilePic = '/public/uploads/profiles/' . $fileName;
+                        $uploadSuccess = true;
+                        error_log("Profile picture uploaded: " . $targetPath);
+                    } else {
+                        error_log("Upload failed for " . $file['name']);
+                        $data['error'] = 'Failed to upload profile picture.';
+                        return $this->view('resident/profile', $data);
+                    }
+                }
+
+                // --- Update database ---
+                $updateQuery = "UPDATE users SET name = :name, address = :address";
+                if ($hasPhone) {
+                    $updateQuery .= ", phone_number = :phone";
+                }
+                if ($uploadSuccess && $profilePic !== null) {
+                    $updateQuery .= ", profile_pic = :profile_pic";
+                }
+                $updateQuery .= " WHERE id = :id";
+
+                $db->query($updateQuery);
+                $db->bind(':name', $name);
+                $db->bind(':address', $address);
+                if ($hasPhone) {
+                    $db->bind(':phone', $phone);
+                }
+                if ($uploadSuccess && $profilePic !== null) {
+                    $db->bind(':profile_pic', $profilePic);
+                }
                 $db->bind(':id', $_SESSION['user_id']);
-                $data['user'] = $db->single();
 
-                $this->auditModel->logAction($_SESSION['user_id'], 'Profile Updated', 'Profile', 'Updated personal information', 'success');
-            } else {
-                $data['error'] = 'Failed to update profile.';
+                if ($db->execute()) {
+                    $_SESSION['user_name'] = $name;
+                    $data['success'] = 'Profile updated successfully.';
+
+                    // Refresh user data
+                    $db->query("
+                        SELECT u.*, r.role_name, p.position_name, pk.purok_name
+                        FROM users u
+                        LEFT JOIN roles r ON u.role_id = r.role_id
+                        LEFT JOIN positions p ON u.position_id = p.position_id
+                        LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                        WHERE u.id = :id
+                    ");
+                    $db->bind(':id', $_SESSION['user_id']);
+                    $data['user'] = $db->single();
+
+                    $this->auditModel->logAction($_SESSION['user_id'], 'Profile Updated', 'Profile', 'Updated personal information', 'success');
+                } else {
+                    $data['error'] = 'Failed to update profile.';
+                }
             }
-        }
 
-        $this->view('resident/profile', $data);
-    }
+            $this->view('resident/profile', $data);
+        }
     
     /**
      * Request OTP for profile change verification

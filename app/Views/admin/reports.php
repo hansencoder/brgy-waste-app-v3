@@ -110,7 +110,14 @@ $metrics = [
                                         <tr class="hover:bg-slate-50 transition">
                                             <td class="px-6 py-4 font-mono text-slate-900"><?php echo htmlspecialchars($reportId); ?></td>
                                             <td class="px-6 py-4 text-slate-500"><?php echo date('M d, Y', strtotime($report['submission_date'])); ?></td>
-                                            <td class="px-6 py-4 text-slate-700"><?php echo htmlspecialchars($report['name'] ?? 'N/A'); ?></td>
+                                            <td class="px-6 py-4 text-slate-700">
+                                                <div class="flex items-center gap-2">
+                                                    <span><?php echo htmlspecialchars($report['name'] ?? 'N/A'); ?></span>
+                                                    <?php if (!empty($report['reporter_type']) && $report['reporter_type'] === 'guest'): ?>
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-semibold border border-amber-200">Guest</span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </td>
                                             <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($report['waste_category'] ?? 'N/A'); ?></td>
                                             <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($report['estimated_quantity'] ?? 'N/A'); ?></td>
                                             <td class="px-6 py-4 text-slate-600"><?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></td>

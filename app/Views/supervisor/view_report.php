@@ -201,33 +201,138 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof L !== 'undefined') {
-        const lat = <?php echo $report['latitude']; ?>;
-        const lng = <?php echo $report['longitude']; ?>;
+        const lat = <?php echo (float)($report['latitude'] ?? 0); ?>;
+        const lng = <?php echo (float)($report['longitude'] ?? 0); ?>;
         const map = L.map('reportLocationMap', {
             center: [lat, lng],
             zoom: 16,
-            zoomControl: false,
+            zoomControl: true,
             dragging: true,
             scrollWheelZoom: true
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OSM',
-            className: 'map-tiles'
-        }).addTo(map);
-
-        const greenIcon = L.divIcon({
-            html: `<div style="background-color: #10B981; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.4);"></div>`,
-            className: '',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
+        const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+            maxZoom: 19
+        });
+        const labelsMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '',
+            maxZoom: 19
+        });
+        const streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
         });
 
-        L.marker([lat, lng], { icon: greenIcon })
-            .addTo(map)
-            .bindPopup('<strong><?php echo htmlspecialchars($report['purok'] ?? 'Location'); ?></strong>');
+        satelliteMap.addTo(map);
+        labelsMap.addTo(map);
 
-        setTimeout(() => map.invalidateSize(), 200);
+        L.control.layers({
+            "Satellite (Homes & Buildings)": L.layerGroup([satelliteMap, labelsMap]),
+            "Street Map": streetMap
+        }, null, { position: 'topright' }).addTo(map);
+
+        const greenIcon = L.divIcon({
+            html: `<div style="background-color: #10B981; width: 18px; height: 18px; border-radius: 50%; border: 3px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.5);"></div>`,
+            className: '',
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+        });
+
+        // Marker pin for report location
+        const marker = L.marker([lat, lng], { icon: greenIcon })
+            .addTo(map)
+            .bindPopup('<strong>Report Location</strong><br><?php echo htmlspecialchars($report['purok'] ?? 'Location'); ?>');
+
+        // 1. Render Barangay Boundary (precise coordinates from settings)
+        const barangayBoundary = [
+            [15.5699279,120.8013517],[15.569572,120.8008898],[15.5686578,120.8008276],
+            [15.5685788,120.8006126],[15.5678398,120.8005542],[15.5672858,120.8001844],
+            [15.5668847,120.8000725],[15.566531,120.8001665],[15.5663685,120.7995785],
+            [15.5657033,120.7989717],[15.5658025,120.7987031],[15.5654243,120.7984537],
+            [15.5652,120.7980956],[15.5652043,120.7977553],[15.5652862,120.7975135],
+            [15.5652259,120.7971285],[15.5648604,120.7964691],[15.5643821,120.7961709],
+            [15.5643993,120.795562],[15.5637567,120.7951681],[15.5632478,120.7953561],
+            [15.562581,120.7952523],[15.5617529,120.7950598],[15.5611835,120.7950416],
+            [15.5608471,120.7945939],[15.5603295,120.7946431],[15.5596467,120.7943504],
+            [15.5597848,120.7937415],[15.55916,120.7930393],[15.5570187,120.7928646],
+            [15.555107,120.7921781],[15.554853,120.7912123],[15.5543176,120.7913399],
+            [15.5533236,120.7915605],[15.5534046,120.7918092],[15.5478115,120.8001316],
+            [15.5481325,120.8011058],[15.5484701,120.8021398],[15.5485113,120.8027807],
+            [15.5489723,120.8032508],[15.5500426,120.8030798],[15.5501365,120.8038043],
+            [15.5502517,120.8044282],[15.550614,120.8049495],[15.5508445,120.8058211],
+            [15.551569,120.8062911],[15.5520964,120.8071584],[15.5520903,120.8076635],
+            [15.5524005,120.8081181],[15.5523519,120.8083454],[15.5525708,120.8085979],
+            [15.5528807,120.8088668],[15.5512389,120.8118007],[15.550257,120.8126332],
+            [15.5523838,120.8153176],[15.549628,120.817434],[15.5518119,120.8219183],
+            [15.5522367,120.8232918],[15.5516159,120.8253946],[15.5512188,120.8260956],
+            [15.5526533,120.8281375],[15.5518644,120.8298546],[15.5519514,120.8310955],
+            [15.5541358,120.8335885],[15.5557229,120.8325752],[15.5574083,120.8326161],
+            [15.5602447,120.8332704],[15.5650646,120.8283841],[15.5703491,120.8236492],
+            [15.5689622,120.82189],[15.5676998,120.8219651],[15.5645562,120.8203353],
+            [15.5594636,120.8205697],[15.5617437,120.8185042],[15.5609879,120.8149287],
+            [15.5623097,120.8126889],[15.559308,120.8092582],[15.5673914,120.8032464],
+            [15.5699463,120.8014669],[15.5699279,120.8013517]
+        ];
+
+        L.polygon(barangayBoundary, {
+            color: '#3B82F6',
+            weight: 2,
+            fillColor: '#3B82F6',
+            fillOpacity: 0.05,
+            dashArray: '5,5'
+        }).addTo(map);
+
+        // 2. Render all Purok Boundaries with precise matching for reported zone
+        const purokBoundariesData = <?php echo json_encode($data['purok_boundaries'] ?? []); ?>;
+        const colorPalette = ['#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#3B82F6', '#06B6D4', '#14B8A6'];
+        const reportPurok = <?php echo json_encode(trim(strtolower($report['purok'] ?? ''))); ?>;
+        
+        let colorIdx = 0;
+        let activePurokLayer = null;
+
+        purokBoundariesData.forEach(pb => {
+            if (pb.polygon_geometry) {
+                try {
+                    let geojson = (typeof pb.polygon_geometry === 'string') ? JSON.parse(pb.polygon_geometry) : pb.polygon_geometry;
+                    if (geojson) {
+                        const nameTrim = (pb.purok_name || '').trim().toLowerCase();
+                        const isCurrentPurok = reportPurok && (nameTrim === reportPurok || nameTrim.includes(reportPurok) || reportPurok.includes(nameTrim));
+                        const strokeColor = isCurrentPurok ? '#059669' : colorPalette[colorIdx % colorPalette.length];
+                        colorIdx++;
+
+                        const pLayer = L.geoJSON(geojson, {
+                            style: {
+                                color: strokeColor,
+                                weight: isCurrentPurok ? 3 : 2,
+                                fillColor: strokeColor,
+                                fillOpacity: isCurrentPurok ? 0.35 : 0.12
+                            }
+                        }).addTo(map);
+
+                        pLayer.bindPopup('<strong>Purok: ' + pb.purok_name + '</strong>' + (isCurrentPurok ? '<br><span style="color:#059669;font-weight:bold;">Reported Location Zone</span>' : ''));
+                        if (isCurrentPurok) {
+                            activePurokLayer = pLayer;
+                        }
+                    }
+                } catch(e) {
+                    console.warn('Could not parse geometry for purok:', pb.purok_name, e);
+                }
+            }
+        });
+
+        // Smart Map Bounds: focus on reported marker + active purok polygon with optimal zoom
+        if (activePurokLayer) {
+            try {
+                const bounds = L.featureGroup([marker, activePurokLayer]).getBounds();
+                map.fitBounds(bounds.pad(0.2));
+            } catch(e) {
+                map.setView([lat, lng], 16);
+            }
+        } else {
+            map.setView([lat, lng], 16);
+        }
+
+        setTimeout(() => map.invalidateSize(), 250);
     }
 });
 </script>

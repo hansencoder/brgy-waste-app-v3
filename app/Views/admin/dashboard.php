@@ -53,7 +53,7 @@ function getStatusBadge($status) {
                     <!-- Top Metrics Row -->
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-8">
                         <!-- Waste Report Overview -->
-                        <div class="rounded-xl bg-white border border-slate-200 p-6 shadow-sm">
+                        <div class="rounded-xl bg-white border border-black-200 p-6 shadow-sm">
                             <div class="flex items-start justify-between gap-4 mb-5">
                                 <div class="flex items-center gap-3">
                                     <span class="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
@@ -90,7 +90,7 @@ function getStatusBadge($status) {
                         </div>
 
                         <!-- Resident Accounts -->
-                        <div class="rounded-xl bg-white border border-slate-200 p-6 shadow-sm">
+                        <div class="rounded-xl bg-white border border-black-200 p-6 shadow-sm">
                             <div class="flex items-start justify-between gap-4 mb-5">
                                 <div class="flex items-center gap-3">
                                     <span class="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-sky-50 text-sky-700">
@@ -123,7 +123,7 @@ function getStatusBadge($status) {
                         </div>
 
                         <!-- GIS Monitoring -->
-                        <div class="rounded-xl bg-white border border-slate-200 p-6 shadow-sm">
+                        <div class="rounded-xl bg-white border border-black-200 p-6 shadow-sm">
                             <div class="flex items-start justify-between gap-4 mb-5">
                                 <div class="flex items-center gap-3">
                                     <span class="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-orange-50 text-orange-700">
@@ -155,7 +155,7 @@ function getStatusBadge($status) {
                     <!-- Middle Row -->
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-8">
                         <!-- Collection Schedule -->
-                        <div class="rounded-xl bg-white border border-slate-200 p-6 shadow-sm">
+                        <div class="rounded-xl bg-white border border-black-200 p-6 shadow-sm">
                             <div class="flex items-start justify-between gap-4 mb-5">
                                 <div class="flex items-center gap-3">
                                     <span class="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-sky-50 text-sky-700">
@@ -179,7 +179,7 @@ function getStatusBadge($status) {
                         </div>
 
                         <!-- Announcements -->
-                        <div class="rounded-xl bg-white border border-slate-200 p-6 shadow-sm">
+                        <div class="rounded-xl bg-white border border-black-200 p-6 shadow-sm">
                             <div class="flex items-start justify-between gap-4 mb-5">
                                 <div class="flex items-center gap-3">
                                     <span class="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-violet-50 text-violet-700">

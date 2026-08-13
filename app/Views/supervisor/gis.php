@@ -232,13 +232,25 @@ document.addEventListener('DOMContentLoaded', function() {
         zoomControl: true
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OSM',
-        className: 'map-tiles'
-    }).addTo(map);
+    const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+        maxZoom: 19
+    });
+    const labelsMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '',
+        maxZoom: 19
+    });
+    const streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
+    });
 
-    // Add grayscale filter for cleaner look
-    document.head.insertAdjacentHTML('beforeend', '<style>.map-tiles { filter: grayscale(0.3) opacity(0.9); }</style>');
+    satelliteMap.addTo(map);
+    labelsMap.addTo(map);
+
+    L.control.layers({
+        "Satellite (Homes & Buildings)": L.layerGroup([satelliteMap, labelsMap]),
+        "Street Map": streetMap
+    }, null, { position: 'topright' }).addTo(map);
 
     // Status colors for markers
     const statusColors = {

@@ -17,7 +17,18 @@ $isActive = function($path) use ($currentUri) {
 // Fetch pending reports count for badge
 $db = new Database();
 $db->query("SELECT COUNT(*) as count FROM reports r JOIN report_statuses rs ON r.status_id = rs.status_id WHERE rs.status_name = 'Pending'");
-$pendingCount = $db->single()['count'] ?? 0;
+$pendingCount = (int)($db->single()['count'] ?? 0);
+
+// Check if currently on Reports page
+$isReportsPage = $isActive('/admin/reports') || strpos($currentUri, '/admin/viewReport') !== false;
+
+// If visiting the reports page, store that current pending reports have been viewed
+if ($isReportsPage) {
+    $_SESSION['reports_seen_count'] = $pendingCount;
+}
+
+$seenCount = (int)($_SESSION['reports_seen_count'] ?? 0);
+$showPendingBadge = ($pendingCount > 0) && ($pendingCount > $seenCount) && !$isReportsPage;
 ?>
 
 <!-- Mobile Topbar Header with Hamburger Menu Toggle -->
@@ -74,7 +85,7 @@ $pendingCount = $db->single()['count'] ?? 0;
                 </a>
 
                 <!-- Reports -->
-                <?php $activeReports = $isActive('/admin/reports') || strpos($currentUri, '/admin/viewReport') !== false; ?>
+                <?php $activeReports = $isReportsPage; ?>
                 <a href="/brgy-waste-app-v3/public/admin/reports" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeReports ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                     <?php if ($activeReports): ?>
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-[0_0_8px_#10B981]"></span>
@@ -83,10 +94,8 @@ $pendingCount = $db->single()['count'] ?? 0;
                         <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
                     </svg>
                     <span>Reports</span>
-                    <?php if ($pendingCount > 0): ?>
+                    <?php if ($showPendingBadge): ?>
                         <span class="ml-auto rounded-full bg-[#FF4D4D] text-white text-[10px] font-black px-2 py-0.5 shadow-sm"><?php echo $pendingCount; ?></span>
-                    <?php else: ?>
-                        <span class="ml-auto rounded-full bg-[#FF4D4D] text-white text-[10px] font-black px-2 py-0.5 shadow-sm">12</span>
                     <?php endif; ?>
                 </a>
 

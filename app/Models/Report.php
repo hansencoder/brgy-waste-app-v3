@@ -347,4 +347,204 @@ class Report {
     return $db->execute();
     }
 
+    // ============================================================
+    // GUEST REPORT: CREATE
+    // ============================================================
+    public function createGuestReport($data) {
+        // Generate unique tracking number: WRS-YYYY-NNNNN
+        $trackingNumber = $this->generateTrackingNumber();
+
+        $this->db->query('INSERT INTO reports (
+            resident_id,
+            reporter_type,
+            tracking_number,
+            guest_name,
+            guest_phone,
+            description,
+            latitude,
+            longitude,
+            location_verified,
+            reporter_latitude,
+            reporter_longitude,
+            location_plausibility,
+            is_duplicate,
+            category_id,
+            quantity_id,
+            condition_id,
+            status_id,
+            purok_id,
+            location
+        ) VALUES (
+            NULL,
+            \'guest\',
+            :tracking_number,
+            :guest_name,
+            :guest_phone,
+            :description,
+            :latitude,
+            :longitude,
+            0,
+            :reporter_latitude,
+            :reporter_longitude,
+            :location_plausibility,
+            :is_duplicate,
+            :category_id,
+            :quantity_id,
+            :condition_id,
+            :status_id,
+            :purok_id,
+            :location
+        )');
+
+        $this->db->bind(':tracking_number',      $trackingNumber);
+        $this->db->bind(':guest_name',           $data['guest_name'] ?? '');
+        $this->db->bind(':guest_phone',          $data['guest_phone']);
+        $this->db->bind(':description',          $data['description']);
+        $this->db->bind(':latitude',             $data['latitude']);
+        $this->db->bind(':longitude',            $data['longitude']);
+        $this->db->bind(':reporter_latitude',    $data['reporter_latitude'] ?? null);
+        $this->db->bind(':reporter_longitude',   $data['reporter_longitude'] ?? null);
+        $this->db->bind(':location_plausibility', $data['location_plausibility'] ?? 'plausible');
+        $this->db->bind(':is_duplicate',         $data['is_duplicate'] ?? 0);
+        $this->db->bind(':category_id',          $data['category_id']);
+        $this->db->bind(':quantity_id',          $data['quantity_id']);
+        $this->db->bind(':condition_id',         $data['condition_id']);
+        $this->db->bind(':status_id',            1); // 1 = Pending
+        $this->db->bind(':purok_id',             $data['purok_id'] ?? null);
+        $this->db->bind(':location',             $data['location'] ?? '');
+
+        if ($this->db->execute()) {
+            $reportId = $this->db->lastInsertId();
+
+            // Insert photos if any
+            if (!empty($data['photos']) && is_array($data['photos'])) {
+                foreach ($data['photos'] as $index => $photoPath) {
+                    $isPrimary = ($index === 0) ? 1 : 0;
+                    $this->db->query('INSERT INTO report_photos (report_id, photo_path, is_primary) 
+                                        VALUES (:report_id, :photo_path, :is_primary)');
+                    $this->db->bind(':report_id',  $reportId);
+                    $this->db->bind(':photo_path', $photoPath);
+                    $this->db->bind(':is_primary', $isPrimary);
+                    $this->db->execute();
+                }
+            }
+
+            return ['id' => $reportId, 'tracking_number' => $trackingNumber];
+        }
+
+        return false;
+    }
+
+    // ============================================================
+    // GUEST REPORT: GET BY TRACKING NUMBER + PHONE
+    // ============================================================
+    public function getReportByTrackingAndPhone($trackingNumber, $phone) {
+        $this->db->query('
+            SELECT r.*,
+                   rs.status_name as status,
+                   wc.category_name as waste_category,
+                   eq.quantity_name as estimated_quantity,
+                   wcnd.condition_name as waste_condition,
+                   p.purok_name as purok,
+                   (SELECT photo_path FROM report_photos WHERE report_id = r.id AND is_primary = 1 LIMIT 1) as photo_path
+            FROM reports r
+            LEFT JOIN report_statuses rs ON r.status_id = rs.status_id
+            LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+            LEFT JOIN estimated_quantities eq ON r.quantity_id = eq.quantity_id
+            LEFT JOIN waste_conditions wcnd ON r.condition_id = wcnd.condition_id
+            LEFT JOIN puroks p ON r.purok_id = p.purok_id
+            WHERE r.tracking_number = :tracking_number
+              AND r.guest_phone = :phone
+              AND r.reporter_type = \'guest\'
+            LIMIT 1
+        ');
+        $this->db->bind(':tracking_number', $trackingNumber);
+        $this->db->bind(':phone', $phone);
+        return $this->db->single();
+    }
+
+    // ============================================================
+    // GUEST REPORT: CHECK DUPLICATE (same category within 200m, last 2 hrs)
+    // ============================================================
+    public function checkDuplicateReport($lat, $lng, $categoryId) {
+        // Haversine in SQL to find nearby reports within 200m submitted in last 2 hours
+        $this->db->query('
+            SELECT id FROM reports
+            WHERE category_id = :category_id
+              AND submission_date >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
+              AND (
+                6371000 * 2 * ASIN(SQRT(
+                    POWER(SIN((RADIANS(:lat) - RADIANS(latitude)) / 2), 2) +
+                    COS(RADIANS(:lat2)) * COS(RADIANS(latitude)) *
+                    POWER(SIN((RADIANS(:lng) - RADIANS(longitude)) / 2), 2)
+                ))
+              ) < 200
+            LIMIT 1
+        ');
+        $this->db->bind(':category_id', $categoryId);
+        $this->db->bind(':lat',  $lat);
+        $this->db->bind(':lat2', $lat);
+        $this->db->bind(':lng',  $lng);
+        return $this->db->single() ? true : false;
+    }
+
+    // ============================================================
+    // GUEST REPORT: RATE LIMIT CHECK (max 3 reports per phone per hour)
+    // ============================================================
+    public function canGuestSubmit($phone) {
+        $this->db->query('
+            SELECT COUNT(*) as cnt FROM reports
+            WHERE guest_phone = :phone
+              AND reporter_type = \'guest\'
+              AND submission_date >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+        ');
+        $this->db->bind(':phone', $phone);
+        $row = $this->db->single();
+        return ($row['cnt'] ?? 0) < 3;
+    }
+
+    // ============================================================
+    // GUEST REPORT: COUNT BY PHONE
+    // ============================================================
+    public function getGuestReportCount($phone) {
+        $this->db->query('
+            SELECT COUNT(*) as cnt FROM reports
+            WHERE guest_phone = :phone
+              AND reporter_type = \'guest\'
+        ');
+        $this->db->bind(':phone', $phone);
+        $row = $this->db->single();
+        return (int)($row['cnt'] ?? 0);
+    }
+
+    public function getGuestHourlyReportCount($phone) {
+        $this->db->query('
+            SELECT COUNT(*) as cnt FROM reports
+            WHERE guest_phone = :phone
+              AND reporter_type = \'guest\'
+              AND submission_date >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+        ');
+        $this->db->bind(':phone', $phone);
+        $row = $this->db->single();
+        return (int)($row['cnt'] ?? 0);
+    }
+
+    // ============================================================
+    // INTERNAL: Generate Unique Tracking Number
+    // ============================================================
+    private function generateTrackingNumber() {
+        $year = date('Y');
+        $maxTries = 10;
+        for ($i = 0; $i < $maxTries; $i++) {
+            $number = strtoupper('WRS-' . $year . '-' . str_pad((string) random_int(0, 99999), 5, '0', STR_PAD_LEFT));
+            $this->db->query('SELECT id FROM reports WHERE tracking_number = :tn LIMIT 1');
+            $this->db->bind(':tn', $number);
+            if (!$this->db->single()) {
+                return $number;
+            }
+        }
+        // Fallback: timestamp-based unique
+        return 'WRS-' . $year . '-' . strtoupper(substr(md5(uniqid()), 0, 6));
+    }
+
 }

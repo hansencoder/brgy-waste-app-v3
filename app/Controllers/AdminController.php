@@ -574,9 +574,9 @@ class AdminController extends Controller {
 
             $db = new Database();
 
-            // Get old status name for notification
+            // Get old status name and guest info for notification
             $db->query("
-                SELECT r.resident_id, rs.status_name as status 
+                SELECT r.resident_id, r.reporter_type, r.guest_phone, r.guest_name, r.tracking_number, rs.status_name as status 
                 FROM reports r
                 JOIN report_statuses rs ON r.status_id = rs.status_id
                 WHERE r.id = :id
@@ -586,22 +586,27 @@ class AdminController extends Controller {
             $oldStatus = $oldReport ? $oldReport['status'] : 'pending';
             $resident_id = $oldReport ? $oldReport['resident_id'] : null;
 
+            $newStatusKey = '';
             if ($action == 'verify') {
+                $newStatusKey = 'verified';
                 $status_id = $this->getStatusId('Verified');
                 $reportModel->updateReportStatus($report_id, $status_id, $_SESSION['user_id']);
                 $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'verified', $_SESSION['user_id']);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Verified', "Report ID $report_id", "Verified report. Remark: $remark", 'success');
             } elseif ($action == 'in_progress') {
+                $newStatusKey = 'in_progress';
                 $status_id = $this->getStatusId('In Progress');
                 $reportModel->updateReportStatus($report_id, $status_id, $_SESSION['user_id']);
                 $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'in_progress', $_SESSION['user_id']);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report In Progress', "Report ID $report_id", "Marked report in progress. Remark: $remark", 'success');
             } elseif ($action == 'resolve') {
+                $newStatusKey = 'resolved';
                 $status_id = $this->getStatusId('Resolved');
                 $reportModel->updateReportStatus($report_id, $status_id, $_SESSION['user_id']);
                 $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'resolved', $_SESSION['user_id']);
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Resolved', "Report ID $report_id", "Resolved report. Remark: $remark", 'success');
             } elseif ($action == 'reject') {
+                $newStatusKey = 'rejected';
                 $status_id = $this->getStatusId('Rejected');
                 $reportModel->updateReportStatus($report_id, $status_id, $_SESSION['user_id']);
 
@@ -637,6 +642,16 @@ class AdminController extends Controller {
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Rejected', "Report ID $report_id", "Rejected report. Reason: $remark. Resident notified.", 'success');
             }
 
+            // Send SMS notification if report is from a guest
+            if (!empty($oldReport['reporter_type']) && $oldReport['reporter_type'] === 'guest' && !empty($oldReport['guest_phone']) && !empty($newStatusKey)) {
+                require_once __DIR__ . '/../Models/Helpers/SmsHelper.php';
+                try {
+                    SmsHelper::sendStatusUpdate($oldReport['guest_phone'], $oldReport['tracking_number'] ?? '', $newStatusKey, $oldReport['guest_name'] ?? '');
+                } catch (Exception $e) {
+                    error_log('[AdminController] Guest status SMS update failed: ' . $e->getMessage());
+                }
+            }
+
             header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/reports'));
             exit;
         }
@@ -662,10 +677,11 @@ class AdminController extends Controller {
         }
         $data['status_counts'] = $statusMap;
 
-        // Build query with joins to get all related data
+        // Build query with joins to get all related data (LEFT JOIN so guest reports are included)
         $query = "
-            SELECT r.*, 
-                   u.name, u.email, 
+            SELECT r.*,
+                   COALESCE(u.name, r.guest_name, 'Guest') as name,
+                   u.email,
                    rf.flag_reason,
                    rs.status_name as status,
                    rs.color_code as status_color,
@@ -673,8 +689,8 @@ class AdminController extends Controller {
                    eq.quantity_name as estimated_quantity,
                    wcnd.condition_name as waste_condition,
                    p.purok_name as purok
-            FROM reports r 
-            JOIN users u ON r.resident_id = u.id 
+            FROM reports r
+            LEFT JOIN users u ON r.resident_id = u.id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN estimated_quantities eq ON r.quantity_id = eq.quantity_id
@@ -685,7 +701,7 @@ class AdminController extends Controller {
         ";
 
         if (!empty($search)) {
-            $query .= " AND (r.description LIKE :search OR u.name LIKE :search OR u.email LIKE :search)";
+            $query .= " AND (r.description LIKE :search OR u.name LIKE :search OR u.email LIKE :search OR r.guest_name LIKE :search OR r.guest_phone LIKE :search OR r.tracking_number LIKE :search)";
         }
 
         if (!empty($status)) {
@@ -731,10 +747,10 @@ class AdminController extends Controller {
         $db = new Database();
         $reportModel = $this->model('Report');
 
-        // Fetch report details with all joins
+        // Fetch report details with all joins (LEFT JOIN so guest reports are included)
         $db->query("
-            SELECT r.*, 
-                u.name as resident_name, 
+            SELECT r.*,
+                u.name as resident_name,
                 u.email as resident_email,
                 u.phone_number as resident_phone,
                 u.purok_id as resident_purok_id,
@@ -746,7 +762,7 @@ class AdminController extends Controller {
                 p.purok_name as purok,
                 (SELECT photo_path FROM report_photos WHERE report_id = r.id AND is_primary = 1 LIMIT 1) as photo_path
             FROM reports r
-            JOIN users u ON r.resident_id = u.id
+            LEFT JOIN users u ON r.resident_id = u.id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN estimated_quantities eq ON r.quantity_id = eq.quantity_id
@@ -762,9 +778,14 @@ class AdminController extends Controller {
             exit;
         }
 
-        // Get total reports for this resident
-        $db->query("SELECT COUNT(*) as total FROM reports WHERE resident_id = :resident_id");
-        $db->bind(':resident_id', $report['resident_id']);
+        // Get total reports count - for residents use resident_id, for guests use phone number
+        if (!empty($report['resident_id'])) {
+            $db->query("SELECT COUNT(*) as total FROM reports WHERE resident_id = :resident_id");
+            $db->bind(':resident_id', $report['resident_id']);
+        } else {
+            $db->query("SELECT COUNT(*) as total FROM reports WHERE guest_phone = :phone AND reporter_type = 'guest'");
+            $db->bind(':phone', $report['guest_phone']);
+        }
         $totalReports = $db->single();
         $report['total_reports'] = $totalReports ? (int)$totalReports['total'] : 0;
 
@@ -835,9 +856,9 @@ class AdminController extends Controller {
         require_once __DIR__ . '/../Models/Notification.php';
         $notificationModel = new Notification();
 
-        // Get old status and resident_id
+        // Get old status and guest info
         $db->query("
-            SELECT r.resident_id, rs.status_name as status 
+            SELECT r.resident_id, r.reporter_type, r.guest_phone, r.guest_name, r.tracking_number, rs.status_name as status 
             FROM reports r
             JOIN report_statuses rs ON r.status_id = rs.status_id
             WHERE r.id = :id
@@ -847,12 +868,15 @@ class AdminController extends Controller {
         $oldStatus = $oldReport ? $oldReport['status'] : 'Pending';
         $resident_id = $oldReport ? $oldReport['resident_id'] : null;
 
+        $newStatusKey = '';
         if ($action == 'verify') {
+            $newStatusKey = 'verified';
             $status_id = $this->getStatusId('Verified');
             $reportModel->updateReportStatus($report_id, $status_id, $_SESSION['user_id']);
             $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'verified', $_SESSION['user_id']);
             $this->auditModel->logAction($_SESSION['user_id'], 'Report Verified', "Report ID $report_id", "Verified report", 'success');
         } elseif ($action == 'reject') {
+            $newStatusKey = 'rejected';
             $status_id = $this->getStatusId('Rejected');
             $reportModel->updateReportStatus($report_id, $status_id, $_SESSION['user_id']);
 
@@ -888,6 +912,7 @@ class AdminController extends Controller {
             $this->auditModel->logAction($_SESSION['user_id'], 'Report Rejected', "Report ID $report_id", "Rejected report. Reason: $remark", 'success');
 
         } elseif ($action == 'in_progress') {
+            $newStatusKey = 'in_progress';
             $status_id = $this->getStatusId('In Progress');
             $reportModel->updateReportStatus($report_id, $status_id, $_SESSION['user_id']);
             $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'in_progress', $_SESSION['user_id']);
@@ -895,10 +920,21 @@ class AdminController extends Controller {
 
         // Handle Resolve action
         } elseif ($action == 'resolve') {
+            $newStatusKey = 'resolved';
             $status_id = $this->getStatusId('Resolved');
             $reportModel->updateReportStatus($report_id, $status_id, $_SESSION['user_id']);
             $notificationModel->createReportStatusNotification($report_id, $oldStatus, 'resolved', $_SESSION['user_id']);
             $this->auditModel->logAction($_SESSION['user_id'], 'Report Resolved', "Report ID $report_id", "Resolved report. Remark: $remark", 'success');
+        }
+
+        // Send SMS notification if report is from a guest
+        if (!empty($oldReport['reporter_type']) && $oldReport['reporter_type'] === 'guest' && !empty($oldReport['guest_phone']) && !empty($newStatusKey)) {
+            require_once __DIR__ . '/../Models/Helpers/SmsHelper.php';
+            try {
+                SmsHelper::sendStatusUpdate($oldReport['guest_phone'], $oldReport['tracking_number'] ?? '', $newStatusKey, $oldReport['guest_name'] ?? '');
+            } catch (Exception $e) {
+                error_log('[AdminController] Guest status SMS update failed: ' . $e->getMessage());
+            }
         }
 
         // Redirect back to the detail page
@@ -1921,7 +1957,45 @@ private function generateCalendarData($month, $year, $schedules) {
                 return $this->view('admin/profile', $data);
             }
 
-            $db->query("UPDATE users SET name = :name, address = :address, phone_number = :phone WHERE id = :id");
+            // Handle Profile Picture Upload
+            $profilePic = null;
+            if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['profile_pic'];
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+                $maxSize = 5 * 1024 * 1024; // 5MB
+
+                if (!in_array($file['type'], $allowedTypes)) {
+                    $data['error'] = 'Invalid image type. Please upload JPG, PNG, or WEBP.';
+                    return $this->view('admin/profile', $data);
+                }
+                if ($file['size'] > $maxSize) {
+                    $data['error'] = 'File size too large. Maximum size is 5MB.';
+                    return $this->view('admin/profile', $data);
+                }
+
+                $uploadDir = dirname(__DIR__, 2) . '/public/uploads/profiles/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $fileName = 'profile_' . $_SESSION['user_id'] . '_' . time() . '.' . $extension;
+                $targetPath = $uploadDir . $fileName;
+
+                if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                    $profilePic = '/public/uploads/profiles/' . $fileName;
+                } else {
+                    $data['error'] = 'Failed to upload profile picture.';
+                    return $this->view('admin/profile', $data);
+                }
+            }
+
+            if ($profilePic !== null) {
+                $db->query("UPDATE users SET name = :name, address = :address, phone_number = :phone, profile_pic = :profile_pic WHERE id = :id");
+                $db->bind(':profile_pic', $profilePic);
+            } else {
+                $db->query("UPDATE users SET name = :name, address = :address, phone_number = :phone WHERE id = :id");
+            }
             $db->bind(':name', $name);
             $db->bind(':address', $address);
             $db->bind(':phone', $phone);

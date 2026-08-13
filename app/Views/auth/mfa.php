@@ -7,8 +7,14 @@
                 <svg class="w-8 h-8 text-[#15281f]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
             </div>
 
+            <?php 
+            $isPhone = ($_SESSION['mfa_type'] ?? '') === 'phone';
+            $contact = $_SESSION['mfa_email'] ?? '';
+            ?>
             <h2 class="text-2xl font-bold text-foreground mb-2">Two-factor authentication</h2>
-            <p class="text-muted-foreground text-sm mb-6">Enter the 6-digit code sent to your email address.</p>
+            <p class="text-muted-foreground text-sm mb-6">
+                Enter the 6-digit code sent to your <?php echo $isPhone ? 'mobile number (<strong>' . htmlspecialchars($contact, ENT_QUOTES, 'UTF-8') . '</strong>)' : 'email address'; ?>.
+            </p>
 
             <?php if (!empty($data['error'])): ?>
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 mb-6 rounded-md text-sm text-left">

@@ -7,8 +7,12 @@
                 <svg class="w-8 h-8 text-[#15281f]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
 
-            <h2 class="text-2xl font-bold text-foreground mb-2">Verify your email</h2>
-            <p class="text-muted-foreground text-sm mb-2">We sent a 6-digit code to <strong><?php echo htmlspecialchars($_SESSION['reg_email'] ?? ''); ?></strong></p>
+            <?php 
+            $isPhone = ($_SESSION['reg_type'] ?? '') === 'phone';
+            $contact = $_SESSION['reg_email'] ?? '';
+            ?>
+            <h2 class="text-2xl font-bold text-foreground mb-2">Verify your <?php echo $isPhone ? 'mobile number' : 'email'; ?></h2>
+            <p class="text-muted-foreground text-sm mb-2">We sent a 6-digit code to <strong><?php echo htmlspecialchars($contact, ENT_QUOTES, 'UTF-8'); ?></strong></p>
             <p class="text-muted-foreground text-sm mb-6">Enter it below to activate your account.</p>
 
             <?php if (!empty($data['error'])): ?>

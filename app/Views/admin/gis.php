@@ -77,7 +77,7 @@ function getPriorityBadge($count) {
                         <div class="lg:col-span-8">
                             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 relative">
                                 <div class="bg-emerald-50/60 rounded-xl overflow-hidden relative border border-emerald-100" style="min-height: 520px;">
-                                    <div id="gisMap" class="w-full h-[520px]"></div>
+                                    <div id="gisMap" class="w-full" style="height: clamp(320px, 55vh, 560px);"></div>
                                     
                                     <!-- Legend Overlay (Bottom Left) -->
                                     <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-md border border-slate-100 text-xs">
@@ -161,20 +161,39 @@ function getPriorityBadge($count) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Initialize Map ---
+    // -------------------------------------------------------
+    // Initialize Map
+    // -------------------------------------------------------
     const map = L.map('gisMap', {
         center: [15.558, 120.803],
         zoom: 15,
         zoomControl: true
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        className: 'map-tiles'
-    }).addTo(map);
+    const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+        maxZoom: 19
+    });
+    const labelsMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '',
+        maxZoom: 19
+    });
+    const streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
+    });
 
-    // --- Barangay Boundary (from your data) ---
-    const boundary = {
+    satelliteMap.addTo(map);
+    labelsMap.addTo(map);
+
+    L.control.layers({
+        "Satellite (Homes & Buildings)": L.layerGroup([satelliteMap, labelsMap]),
+        "Street Map": streetMap
+    }, null, { position: 'topright' }).addTo(map);
+
+    // -------------------------------------------------------
+    // Barangay Boundary — added ONCE, never re-added
+    // -------------------------------------------------------
+    const boundaryGeoJSON = {
         "type": "FeatureCollection",
         "features": [{
             "type": "Feature",
@@ -208,178 +227,137 @@ document.addEventListener('DOMContentLoaded', function() {
                     [120.82189, 15.5689622], [120.8219651, 15.5676998], [120.8203353, 15.5645562],
                     [120.8205697, 15.5594636], [120.8185042, 15.5617437], [120.8149287, 15.5609879],
                     [120.8126889, 15.5623097], [120.8092582, 15.5595308], [120.8032464, 15.5673914],
-                    [120.8014669, 15.5699463], [120.8013468, 15.5699463]
+                    [120.8014669, 15.5699463], [120.8013517, 15.5699279]
                 ]]
             }
         }]
     };
 
-    L.geoJSON(boundary, {
-        style: {
-            color: '#10B981',
-            weight: 2.5,
-            fillColor: '#D1FAE5',
-            fillOpacity: 0.15,
-            dashArray: '6, 6'
-        }
-    }).addTo(map);
+    // Store boundary layer reference — never removed/re-added
+    const boundaryStyle = { color: '#10B981', weight: 2.5, fillColor: '#D1FAE5', fillOpacity: 0.15, dashArray: '6, 6' };
+    const boundaryLayer = L.geoJSON(boundaryGeoJSON, { style: boundaryStyle }).addTo(map);
 
-    // --- Report Data from PHP ---
+    // -------------------------------------------------------
+    // Tracked layers — only these are cleared on filter change
+    // -------------------------------------------------------
+    let markerLayers = [];  // array of L.Marker
+    let heatLayer    = null; // single L.HeatLayer
+
+    function clearDynamicLayers() {
+        markerLayers.forEach(m => map.removeLayer(m));
+        markerLayers = [];
+        if (heatLayer) { map.removeLayer(heatLayer); heatLayer = null; }
+    }
+
+    // -------------------------------------------------------
+    // Report Data from PHP
+    // -------------------------------------------------------
     const reports = <?php echo json_encode($reports ?: []); ?>;
 
-    // Status color mapping
     const statusColors = {
-        'Pending': '#F59E0B',
-        'Verified': '#10B981',
-        'Resolved': '#06B6D4',
-        'Rejected': '#EF4444',
+        'Pending':     '#F59E0B',
+        'Verified':    '#10B981',
+        'Resolved':    '#06B6D4',
+        'Rejected':    '#EF4444',
         'In Progress': '#F97316'
     };
 
-    // Create custom marker icons
     function getMarkerIcon(status) {
         const color = statusColors[status] || '#6B7280';
         return L.divIcon({
-            html: `<div style="background: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>`,
-            className: '',
-            iconSize: [14, 14],
-            iconAnchor: [7, 7]
+            html: `<div style="background:${color};width:14px;height:14px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>`,
+            className: '', iconSize: [14, 14], iconAnchor: [7, 7]
         });
     }
 
-    // Add markers and prepare heatmap data
-    const heatData = [];
-    reports.forEach(report => {
-        const lat = parseFloat(report.latitude);
-        const lng = parseFloat(report.longitude);
-        if (!isNaN(lat) && !isNaN(lng)) {
-            // Add marker
-            const icon = getMarkerIcon(report.status);
-            const marker = L.marker([lat, lng], { icon: icon }).addTo(map);
-            marker.bindPopup(`
-                <strong>${report.id}</strong><br>
-                ${report.waste_category || 'N/A'}<br>
-                Status: ${report.status}<br>
-                Purok: ${report.purok || 'N/A'}<br>
-                <a href="/brgy-waste-app-v3/public/admin/viewReport/${report.id}" target="_blank">View Details</a>
-            `);
-
-            // Add to heat data (with intensity 0.6)
-            heatData.push([lat, lng, 0.6]);
-        }
-    });
-
-    // Add heatmap layer
-    if (heatData.length > 0) {
-        const heat = L.heatLayer(heatData, {
-            radius: <?php echo $heatmap_settings['radius_meters'] ?? 40; ?>,
-            blur: 20,
-            maxZoom: 16,
-            gradient: {
-                0.0: '#FDE68A',
-                0.3: '#F97316',
-                0.6: '#EF4444',
-                1.0: '#7F1D1D'
-            }
-        }).addTo(map);
+    function buildPopup(r) {
+        return `<div style="font-family:Inter,sans-serif;min-width:160px;">
+            <p style="font-size:12px;font-weight:700;color:#1e293b;margin:0 0 4px">${r.waste_category || 'N/A'}</p>
+            <p style="font-size:11px;color:#64748b;margin:0 0 2px">Status: <b>${r.status}</b></p>
+            <p style="font-size:11px;color:#64748b;margin:0 0 6px">Purok: ${r.purok || 'N/A'}</p>
+            <a href="/brgy-waste-app-v3/public/admin/viewReport/${r.id}" target="_blank"
+               style="font-size:11px;font-weight:600;color:#10b981;">View Details →</a>
+        </div>`;
     }
 
-    // --- Filter Functions ---
+    function renderReports(reportList) {
+        clearDynamicLayers();
+        const heatData = [];
+        reportList.forEach(r => {
+            const lat = parseFloat(r.latitude);
+            const lng = parseFloat(r.longitude);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                const marker = L.marker([lat, lng], { icon: getMarkerIcon(r.status) })
+                    .bindPopup(buildPopup(r))
+                    .addTo(map);
+                markerLayers.push(marker);
+                heatData.push([lat, lng, 0.6]);
+            }
+        });
+        if (heatData.length > 0) {
+            heatLayer = L.heatLayer(heatData, {
+                radius: <?php echo $heatmap_settings['radius_meters'] ?? 40; ?>,
+                blur: 20,
+                maxZoom: 16,
+                gradient: { 0.0: '#FDE68A', 0.3: '#F97316', 0.6: '#EF4444', 1.0: '#7F1D1D' }
+            }).addTo(map);
+        }
+    }
+
+    // Initial render
+    renderReports(reports);
+
+    // -------------------------------------------------------
+    // Filter Functions
+    // -------------------------------------------------------
     window.filterCategory = function(categoryId) {
-        // Update button styles
         document.querySelectorAll('.category-filter').forEach(btn => {
             btn.classList.remove('bg-[#10B981]', 'text-white');
             btn.classList.add('bg-slate-100', 'text-slate-700');
         });
         document.querySelector(`[data-category="${categoryId}"]`)?.classList.add('bg-[#10B981]', 'text-white');
-        
         applyFilters();
     };
 
     function applyFilters() {
-        const category = document.querySelector('.category-filter.bg-\\[\\#10B981\\]')?.dataset?.category || 0;
-        const purok = document.getElementById('purokFilter').value;
-        const status = document.getElementById('statusFilter').value;
+        const activeCatBtn = document.querySelector('.category-filter.bg-\\[\\#10B981\\]');
+        const category = activeCatBtn ? activeCatBtn.dataset.category : '0';
+        const purok    = document.getElementById('purokFilter').value;
+        const status   = document.getElementById('statusFilter').value;
 
-        // Build URL with filters
         let url = '/brgy-waste-app-v3/public/admin/getGisData?';
         if (category > 0) url += `category=${category}&`;
-        if (purok > 0) url += `purok=${purok}&`;
-        if (status) url += `status=${encodeURIComponent(status)}&`;
+        if (purok > 0)    url += `purok=${purok}&`;
+        if (status)       url += `status=${encodeURIComponent(status)}&`;
 
-        // Fetch filtered data and update map
         fetch(url)
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    // Clear existing markers and heatmap
-                    map.eachLayer(function(layer) {
-                        if (layer instanceof L.Marker || layer instanceof L.HeatLayer) {
-                            map.removeLayer(layer);
-                        }
-                    });
-                    
-                    // Re-add boundary
-                    L.geoJSON(boundary, {
-                        style: {
-                            color: '#10B981',
-                            weight: 2.5,
-                            fillColor: '#D1FAE5',
-                            fillOpacity: 0.15,
-                            dashArray: '6, 6'
-                        }
-                    }).addTo(map);
-
-                    // Add new markers and heat data
-                    const newHeatData = [];
-                    data.reports.forEach(report => {
-                        const lat = parseFloat(report.latitude);
-                        const lng = parseFloat(report.longitude);
-                        if (!isNaN(lat) && !isNaN(lng)) {
-                            const icon = getMarkerIcon(report.status);
-                            const marker = L.marker([lat, lng], { icon: icon }).addTo(map);
-                            marker.bindPopup(`
-                                <strong>${report.id}</strong><br>
-                                ${report.waste_category || 'N/A'}<br>
-                                Status: ${report.status}<br>
-                                Purok: ${report.purok || 'N/A'}<br>
-                                <a href="/brgy-waste-app-v3/public/admin/viewReport/${report.id}" target="_blank">View Details</a>
-                            `);
-                            newHeatData.push([lat, lng, 0.6]);
-                        }
-                    });
-
-                    if (newHeatData.length > 0) {
-                        L.heatLayer(newHeatData, {
-                            radius: <?php echo $heatmap_settings['radius_meters'] ?? 40; ?>,
-                            blur: 20,
-                            maxZoom: 16,
-                            gradient: {
-                                0.0: '#FDE68A',
-                                0.3: '#F97316',
-                                0.6: '#EF4444',
-                                1.0: '#7F1D1D'
-                            }
-                        }).addTo(map);
-                    }
+                    // Only clear markers + heatmap — boundary stays untouched
+                    renderReports(data.reports || []);
                 }
             })
-            .catch(error => console.error('Error fetching filtered data:', error));
+            .catch(err => console.error('GIS filter error:', err));
     }
 
-    // Event listeners for filter changes
     document.getElementById('purokFilter')?.addEventListener('change', applyFilters);
     document.getElementById('statusFilter')?.addEventListener('change', applyFilters);
 
-    // Resize map after loading
+    // Fit boundary on load
+    try {
+        map.fitBounds(boundaryLayer.getBounds(), { padding: [20, 20] });
+    } catch(e) {}
+
     setTimeout(() => map.invalidateSize(), 300);
+    window.addEventListener('resize', () => map.invalidateSize());
 });
 </script>
 
 <style>
-    .map-tiles {
-        filter: grayscale(40%) opacity(0.85);
-    }
+    /* Leaflet popup font override */
+    .leaflet-popup-content { font-family: 'Inter', sans-serif; }
+    .leaflet-popup-content-wrapper { border-radius: 12px !important; box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important; }
 </style>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

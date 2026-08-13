@@ -130,19 +130,16 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
             <form action="/brgy-waste-app-v3/public/auth/login" method="POST" class="space-y-5" onsubmit="return validateLoginForm()">
                 <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
 
-                <!-- Account Type Selector (Pure CSS Peer Variant) -->
-                
-
-                <!-- Email Input -->
+                <!-- Email / Phone Input -->
                 <div>
-                    <label for="email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email address</label>
+                    <label for="email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email or Phone number</label>
                     <input 
-                        type="email" 
+                        type="text" 
                         id="email" 
                         name="email" 
                         required 
-                        autocomplete="email"
-                        placeholder="name@example.com"
+                        autocomplete="username"
+                        placeholder="Email or phone number"
                         value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8') : ''; ?>"
                         class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
                     >
@@ -206,6 +203,21 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
                     </a>
                 </p>
 
+                <!-- Guest Reporting Option -->
+                <div class="pt-4 border-t border-slate-100 text-center space-y-2">
+                    <p class="text-xs text-slate-500 font-medium">Visiting or don't have an account?</p>
+                    <div class="flex items-center justify-center gap-2">
+                        <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-semibold transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            Report as Guest
+                        </a>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            Track Report
+                        </a>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>
@@ -233,7 +245,7 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
         const password = document.getElementById('password');
         let isValid = true;
 
-        if (!email.value.trim() || !email.checkValidity()) {
+        if (!email.value.trim()) {
             email.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
             isValid = false;
         } else {

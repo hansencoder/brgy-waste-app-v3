@@ -219,16 +219,21 @@ class AuthController extends Controller {
                     return $this->view('auth/login', ['error' => 'Account is deactivated.']);
                 }
 
-                // Generate and send OTP via email
+                // Handle OTP verification for both Email and Phone-only users
                 require_once '../app/Models/Helpers/OtpMailer.php';
+                require_once '../app/Models/Helpers/SmsHelper.php';
 
                 $email = $user['email'];
-                if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    return $this->view('auth/login', ['error' => 'No valid email address on file.']);
+                $phone = $user['phone_number'];
+                $contactTarget = !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : $phone;
+                $isPhoneOnly = empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL);
+
+                if (empty($contactTarget)) {
+                    return $this->view('auth/login', ['error' => 'No valid email or phone number on file for authentication.']);
                 }
 
                 $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-                $can = $this->userModel->canSendEmailOtp($email, $ip);
+                $can = $this->userModel->canSendEmailOtp($contactTarget, $ip);
                 if (!$can['ok']) {
                     if ($can['reason'] === 'cooldown') {
                         $wait = isset($can['retry_after']) ? $can['retry_after'] : 60;
@@ -239,25 +244,32 @@ class AuthController extends Controller {
                 }
 
                 $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-                $saved = $this->userModel->saveMfaToken($user['id'], $email, $token);
+                $saved = $this->userModel->saveMfaToken($user['id'], $contactTarget, $token);
                 if (!$saved) {
                     return $this->view('auth/login', ['error' => 'Could not generate OTP.']);
                 }
 
                 try {
-                    OtpMailer::sendOtpEmail($email, $token, $user['name']);
-                    $this->userModel->recordEmailRate($email, $ip);
+                    if ($isPhoneOnly) {
+                        SmsHelper::sendOtp($phone, $token, $user['name']);
+                        $_SESSION['mfa_type'] = 'phone';
+                    } else {
+                        OtpMailer::sendOtpEmail($email, $token, $user['name']);
+                        $_SESSION['mfa_type'] = 'email';
+                    }
+
+                    $this->userModel->recordEmailRate($contactTarget, $ip);
 
                     $_SESSION['mfa_user_id'] = $user['id'];
-                    $_SESSION['mfa_email'] = $email;
+                    $_SESSION['mfa_email'] = $contactTarget;
 
-                    $this->auditModel->logAction($user['id'], 'Login partial success', 'User', 'OTP Email sent', 'success');
+                    $this->auditModel->logAction($user['id'], 'Login partial success', 'User', 'OTP sent to ' . ($isPhoneOnly ? 'phone' : 'email'), 'success');
 
                     header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/mfa'));
                     exit;
                 } catch (Exception $e) {
-                    $this->auditModel->logAction($user['id'], 'OTP Email failed', 'User', $e->getMessage(), 'failed');
-                    return $this->view('auth/login', ['error' => 'We could not send the verification email. Please try again later.']);
+                    $this->auditModel->logAction($user['id'], 'OTP send failed', 'User', $e->getMessage(), 'failed');
+                    return $this->view('auth/login', ['error' => 'We could not send the verification code. Please try again later.']);
                 }
             } else {
                 $_SESSION['login_attempts'] = isset($_SESSION['login_attempts']) ? $_SESSION['login_attempts'] + 1 : 1;
@@ -362,13 +374,16 @@ class AuthController extends Controller {
         // Handle Resend
         if (isset($_GET['action']) && $_GET['action'] == 'resend') {
             require_once '../app/Models/Helpers/OtpMailer.php';
+            require_once '../app/Models/Helpers/SmsHelper.php';
 
-            $email = $_SESSION['mfa_email'] ?? null;
-            if (!$email) {
-                $data['error'] = 'No email available to resend code.';
+            $contactTarget = $_SESSION['mfa_email'] ?? null;
+            $mfaType = $_SESSION['mfa_type'] ?? 'email';
+
+            if (!$contactTarget) {
+                $data['error'] = 'No contact information available to resend code.';
             } else {
                 $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-                $can = $this->userModel->canSendEmailOtp($email, $ip);
+                $can = $this->userModel->canSendEmailOtp($contactTarget, $ip);
                 if (!$can['ok']) {
                     if ($can['reason'] === 'cooldown') {
                         $wait = (int)$can['retry_after'];
@@ -380,7 +395,7 @@ class AuthController extends Controller {
                     }
                 } else {
                     $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-                    $saved = $this->userModel->saveMfaToken($_SESSION['mfa_user_id'], $email, $token);
+                    $saved = $this->userModel->saveMfaToken($_SESSION['mfa_user_id'], $contactTarget, $token);
                     if (!$saved) {
                         $data['error'] = 'Could not generate OTP.';
                     } else {
@@ -390,14 +405,20 @@ class AuthController extends Controller {
                             $db->bind(':id', $_SESSION['mfa_user_id']);
                             $userName = $db->single()['name'] ?? '';
 
-                            OtpMailer::sendOtpEmail($email, $token, $userName);
-                            $this->userModel->recordEmailRate($email, $ip);
-                            $this->auditModel->logAction($_SESSION['mfa_user_id'], '2FA Resend', 'User', 'Code resent', 'success');
-                            $data['success'] = 'A new OTP has been sent to your email address.';
+                            if ($mfaType === 'phone') {
+                                SmsHelper::sendOtp($contactTarget, $token, $userName);
+                                $data['success'] = 'A new OTP has been sent via SMS to your mobile number.';
+                            } else {
+                                OtpMailer::sendOtpEmail($contactTarget, $token, $userName);
+                                $data['success'] = 'A new OTP has been sent to your email address.';
+                            }
+
+                            $this->userModel->recordEmailRate($contactTarget, $ip);
+                            $this->auditModel->logAction($_SESSION['mfa_user_id'], '2FA Resend', 'User', 'Code resent to ' . $mfaType, 'success');
                             unset($data['retry_after_seconds']);
                         } catch (Exception $e) {
                             $this->auditModel->logAction($_SESSION['mfa_user_id'], 'OTP resend failed', 'User', $e->getMessage(), 'failed');
-                            $data['error'] = 'We could not resend the verification email. Please try again.';
+                            $data['error'] = 'We could not resend the verification code. Please try again.';
                         }
                     }
                 }
@@ -433,11 +454,35 @@ class AuthController extends Controller {
                 return $this->view('auth/register', $data);
             }
 
-            // Validate email
-            $email = trim(strtolower($post['email']));
-            if ($this->userModel->findUserByEmail($email)) {
-                $data['error'] = "Email is already registered.";
+            // Validate contact info (either Email OR Phone Number must be provided)
+            $email = trim(strtolower($post['email'] ?? ''));
+            $phone_number = trim($post['phone_number'] ?? '');
+
+            if (empty($email) && empty($phone_number)) {
+                $data['error'] = "Please provide either an email address or a phone number.";
                 return $this->view('auth/register', $data);
+            }
+
+            if (!empty($email)) {
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $data['error'] = "Invalid email address format.";
+                    return $this->view('auth/register', $data);
+                }
+                if ($this->userModel->findUserByEmail($email)) {
+                    $data['error'] = "This email address is already registered.";
+                    return $this->view('auth/register', $data);
+                }
+            }
+
+            if (!empty($phone_number)) {
+                if (!preg_match("/^09\d{9}$/", $phone_number)) {
+                    $data['error'] = "Invalid PH mobile number format. Standard format: 09XXXXXXXXX.";
+                    return $this->view('auth/register', $data);
+                }
+                if ($this->userModel->findUserByPhone($phone_number)) {
+                    $data['error'] = "This phone number is already registered.";
+                    return $this->view('auth/register', $data);
+                }
             }
 
             // Validate username (if provided)
@@ -455,12 +500,6 @@ class AuthController extends Controller {
                 return $this->view('auth/register', $data);
             }
 
-            // Validate phone number (PH format)
-            if (!preg_match("/^09\d{9}$/", $post['phone_number'])) {
-                $data['error'] = "Invalid PH mobile number format. Standard format: 09XXXXXXXXX.";
-                return $this->view('auth/register', $data);
-            }
-
             // Account type
             $account_type = $post['account_type'] ?? 'resident';
             if (!in_array($account_type, ['resident', 'non-resident'])) {
@@ -474,35 +513,44 @@ class AuthController extends Controller {
                 'username' => $username,
                 'account_type' => $account_type,
                 'address' => trim($post['address'] ?? ''),
-                'phone_number' => trim($post['phone_number']),
+                'phone_number' => $phone_number,
                 'email' => $email,
                 'password' => $hashed,
                 'role_id' => 3, // Resident
                 'position_id' => 6, // Resident position
                 'purok_id' => (int)($post['purok_id'] ?? 1), // Default Purok 1
-                'status' => 'pending' // Will be set to 'active' after OTP verification
+                'status' => 'pending' // Always pending until OTP verified
             ];
 
             if ($this->userModel->register($regData)) {
                 $db = new Database();
                 $userId = $db->lastInsertId();
 
+                $contactTarget = !empty($email) ? $email : $phone_number;
+                $isPhoneOnly = empty($email);
+
                 // Generate OTP token
                 $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-                $this->userModel->saveMfaToken($userId, $email, $token);
+                $this->userModel->saveMfaToken($userId, $contactTarget, $token);
 
-                // Send OTP email
                 require_once '../app/Models/Helpers/OtpMailer.php';
+                require_once '../app/Models/Helpers/SmsHelper.php';
                 try {
-                    OtpMailer::sendOtpEmail($email, $token, $regData['name']);
-                    $this->auditModel->logAction(null, 'Registration OTP sent', 'User', "OTP sent to {$email}", 'success');
+                    if ($isPhoneOnly) {
+                        SmsHelper::sendOtp($phone_number, $token, $regData['name']);
+                        $this->auditModel->logAction(null, 'Registration OTP sent', 'User', "SMS OTP sent to {$phone_number}", 'success');
+                    } else {
+                        OtpMailer::sendOtpEmail($email, $token, $regData['name']);
+                        $this->auditModel->logAction(null, 'Registration OTP sent', 'User', "Email OTP sent to {$email}", 'success');
+                    }
                 } catch (Exception $e) {
                     $this->auditModel->logAction(null, 'Registration OTP failed', 'User', $e->getMessage(), 'failed');
                 }
 
                 $_SESSION['reg_user_id'] = $userId;
-                $_SESSION['reg_email'] = $email;
-                $_SESSION['reg_name'] = $regData['name'];
+                $_SESSION['reg_email']   = $contactTarget;
+                $_SESSION['reg_type']    = $isPhoneOnly ? 'phone' : 'email';
+                $_SESSION['reg_name']    = $regData['name'];
 
                 header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/verifyRegistration'));
                 exit;
@@ -525,6 +573,7 @@ class AuthController extends Controller {
 
         $data = ['error' => '', 'success' => ''];
         $email = $_SESSION['reg_email'];
+        $regType = $_SESSION['reg_type'] ?? 'email';
         $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
         // Check for existing cooldown
@@ -541,10 +590,11 @@ class AuthController extends Controller {
             if ($res['ok']) {
                 // Activate user
                 $this->userModel->updateUserStatus($user_id, 'active');
-                $this->auditModel->logAction($user_id, 'Registration verified', 'User', "Account activated via email OTP", 'success');
+                $this->auditModel->logAction($user_id, 'Registration verified', 'User', "Account activated via OTP", 'success');
 
                 unset($_SESSION['reg_user_id']);
                 unset($_SESSION['reg_email']);
+                unset($_SESSION['reg_type']);
                 unset($_SESSION['reg_name']);
 
                 $_SESSION['flash_success'] = 'Your account has been verified. You can now log in.';
@@ -563,6 +613,7 @@ class AuthController extends Controller {
         // Handle Resend
         if (isset($_GET['action']) && $_GET['action'] == 'resend') {
             require_once '../app/Models/Helpers/OtpMailer.php';
+            require_once '../app/Models/Helpers/SmsHelper.php';
 
             $user_id = $_SESSION['reg_user_id'];
             $email = $_SESSION['reg_email'];
@@ -581,14 +632,19 @@ class AuthController extends Controller {
                 $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
                 $this->userModel->saveMfaToken($user_id, $email, $token);
                 try {
-                    OtpMailer::sendOtpEmail($email, $token, $name);
+                    if ($regType === 'phone') {
+                        SmsHelper::sendOtp($email, $token, $name);
+                        $data['success'] = 'A new verification code has been sent via SMS to your mobile number.';
+                    } else {
+                        OtpMailer::sendOtpEmail($email, $token, $name);
+                        $data['success'] = 'A new OTP has been sent to your email address.';
+                    }
                     $this->userModel->recordEmailRate($email, $ip);
                     $this->auditModel->logAction($user_id, 'Registration OTP resent', 'User', 'Code resent', 'success');
-                    $data['success'] = 'A new OTP has been sent to your email address.';
                     unset($data['retry_after_seconds']);
                 } catch (Exception $e) {
                     $this->auditModel->logAction($user_id, 'Registration OTP resend failed', 'User', $e->getMessage(), 'failed');
-                    $data['error'] = 'Could not resend the verification email. Please try again.';
+                    $data['error'] = 'Could not resend the verification code. Please try again.';
                 }
             }
         }

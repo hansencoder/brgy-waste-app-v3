@@ -135,24 +135,13 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
             <form action="/brgy-waste-app-v3/public/auth/register" method="POST" class="space-y-5" onsubmit="return validateRegisterForm()">
                 <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
 
-                <!-- Account Type Selector (Pill Design) -->
-                <div class="mb-4 p-1 bg-slate-200/70 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
-                    <label class="account-type-label py-2 text-center rounded-lg bg-white text-slate-900 shadow-sm cursor-pointer transition-all flex items-center justify-center gap-2" onclick="selectAccountType('resident')">
-                        <input type="radio" name="account_type" value="resident" checked class="hidden">
-                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        Resident
-                    </label>
-                    <label class="account-type-label py-2 text-center rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer transition-all flex items-center justify-center gap-2" onclick="selectAccountType('non-resident')">
-                        <input type="radio" name="account_type" value="non-resident" class="hidden">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
-                        Non-Resident
-                    </label>
-                </div>
+                <input type="hidden" name="account_type" value="resident">
 
                 <!-- Full Name -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Full Name</label>
                     <input type="text" id="name" name="name" required placeholder="Juan Dela Cruz"
+                        value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8') : ''; ?>"
                         class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
                         oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s\-.]/g, ''); validateInput(this)">
                 </div>
@@ -161,45 +150,63 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Username</label>
                     <input type="text" id="username" name="username" required placeholder="juandc"
+                        value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8') : ''; ?>"
                         class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
                         oninput="this.value = this.value.replace(/[^a-zA-Z0-9_]/g, ''); validateInput(this)">
                 </div>
 
-                <!-- Row: Email + Phone Number -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Email address</label>
-                        <input type="email" id="email" name="email" required placeholder="juan@example.com"
-                            class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
+                <!-- Contact Information (Segmented Pill Switcher from contact.png) -->
+                <div>
+                    <label class="block text-xs font-bold tracking-wider text-slate-700 uppercase mb-2">CONTACT INFORMATION</label>
+                    
+                    <!-- Pill Switcher Container -->
+                    <div class="inline-flex p-1 bg-slate-200/70 border border-slate-200/80 rounded-full mb-3 text-xs font-medium">
+                        <button type="button" id="contact-tab-email" onclick="switchContactType('email')" 
+                            class="px-4 py-1.5 rounded-full bg-white text-slate-900 font-semibold shadow-sm transition-all duration-200">
+                            Email address
+                        </button>
+                        <button type="button" id="contact-tab-phone" onclick="switchContactType('phone')" 
+                            class="px-4 py-1.5 rounded-full text-slate-600 hover:text-slate-900 font-medium transition-all duration-200">
+                            Phone number
+                        </button>
+                    </div>
+
+                    <input type="hidden" id="selected_contact_type" name="contact_type" value="<?php echo (isset($_POST['contact_type']) && $_POST['contact_type'] === 'phone') || (!empty($_POST['phone_number']) && empty($_POST['email'])) ? 'phone' : 'email'; ?>">
+
+                    <!-- Single Input Box per selected option -->
+                    <div id="email-input-container">
+                        <input type="email" id="email" name="email" placeholder="you@example.com"
+                            value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8') : ''; ?>"
+                            class="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
                             oninput="this.value = this.value.replace(/[^a-zA-Z0-9._%+\-@]/g, ''); validateInput(this)">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Phone number</label>
-                        <input type="text" id="phone_number" name="phone_number" required placeholder="09XX XXX XXXX"
-                            class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
-                            maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateInput(this)">
+
+                    <div id="phone-input-container" class="hidden">
+                        <input type="text" id="phone_number" name="phone_number" placeholder="09XX XXX XXXX" maxlength="11"
+                            value="<?php echo isset($_POST['phone_number']) ? htmlspecialchars($_POST['phone_number'], ENT_QUOTES, 'UTF-8') : ''; ?>"
+                            class="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateInput(this)">
                     </div>
                 </div>
 
                 <!-- Purok Selection -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Purok</label>
-                    <select name="purok_id" required class="w-full h-11 px-3.5 rounded-xl border border-slate-200 outline-none bg-white text-slate-900 text-sm focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10">
+                    <select id="purok_id" name="purok_id" required class="w-full h-11 px-3.5 rounded-xl border border-slate-200 outline-none bg-white text-slate-900 text-sm focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10" onchange="validateInput(this)">
                         <option value="">Select your Purok</option>
-                        <?php if (!empty($data['puroks'])): ?>
-                            <?php foreach ($data['puroks'] as $p): ?>
-                                <option value="<?php echo htmlspecialchars($p['purok_id']); ?>">
+                        <?php 
+                        $selPurok = $_POST['purok_id'] ?? '';
+                        if (!empty($data['puroks'])): 
+                            foreach ($data['puroks'] as $p): ?>
+                                <option value="<?php echo htmlspecialchars($p['purok_id']); ?>" <?php echo $selPurok == $p['purok_id'] ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($p['purok_name']); ?>
                                 </option>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <!-- Fallback if Puroks aren't passed to view by controller yet -->
-                            <option value="1">Purok 1</option>
-                            <option value="2">Purok 2</option>
-                            <option value="3">Purok 3</option>
-                            <option value="4">Purok 4</option>
-                            <option value="5">Purok 5</option>
-                        <?php endif; ?>
+                            <?php endforeach; 
+                        else: 
+                            for ($i = 1; $i <= 5; $i++): ?>
+                                <option value="<?php echo $i; ?>" <?php echo $selPurok == $i ? 'selected' : ''; ?>>Purok <?php echo $i; ?></option>
+                            <?php endfor;
+                        endif; ?>
                     </select>
                 </div>
 
@@ -406,6 +413,43 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
     }
 
     // ============================
+    // Contact Type Switcher (Email vs Phone)
+    // ============================
+    function switchContactType(type) {
+        const emailBtn = document.getElementById('contact-tab-email');
+        const phoneBtn = document.getElementById('contact-tab-phone');
+        const emailContainer = document.getElementById('email-input-container');
+        const phoneContainer = document.getElementById('phone-input-container');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone_number');
+        const contactTypeInput = document.getElementById('selected_contact_type');
+
+        contactTypeInput.value = type;
+
+        if (type === 'email') {
+            emailBtn.className = "px-4 py-1.5 rounded-full bg-white text-slate-900 font-semibold shadow-sm transition-all duration-200";
+            phoneBtn.className = "px-4 py-1.5 rounded-full text-slate-600 hover:text-slate-900 font-medium transition-all duration-200";
+            
+            emailContainer.classList.remove('hidden');
+            phoneContainer.classList.add('hidden');
+
+            phoneInput.value = '';
+            phoneInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+            emailInput.focus();
+        } else {
+            phoneBtn.className = "px-4 py-1.5 rounded-full bg-white text-slate-900 font-semibold shadow-sm transition-all duration-200";
+            emailBtn.className = "px-4 py-1.5 rounded-full text-slate-600 hover:text-slate-900 font-medium transition-all duration-200";
+            
+            phoneContainer.classList.remove('hidden');
+            emailContainer.classList.add('hidden');
+
+            emailInput.value = '';
+            emailInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+            phoneInput.focus();
+        }
+    }
+
+    // ============================
     // Input Validation (Clean red border)
     // ============================
     function validateInput(el) {
@@ -418,18 +462,45 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
     // Form Validation
     // ============================
     function validateRegisterForm() {
-        const requiredIds = ['name', 'username', 'email', 'phone_number', 'password', 'confirm_password', 'purok_id'];
+        const contactType = document.getElementById('selected_contact_type').value;
+        const requiredIds = ['name', 'username', 'password', 'confirm_password', 'purok_id'];
         let valid = true;
 
         requiredIds.forEach(id => {
             const el = document.getElementById(id);
-            if (!el.checkValidity() || el.value.trim() === '') {
-                el.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+            if (!el || !el.checkValidity() || el.value.trim() === '') {
+                if (el) el.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
                 valid = false;
             } else {
                 el.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
             }
         });
+
+        // Contact input validation (Email OR Phone based on selected tab)
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone_number');
+
+        if (contactType === 'email') {
+            phoneInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+            const emailVal = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailVal || !emailRegex.test(emailVal)) {
+                emailInput.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+                valid = false;
+            } else {
+                emailInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+            }
+        } else {
+            emailInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+            const phoneVal = phoneInput.value.trim();
+            const phoneRegex = /^09\d{9}$/;
+            if (!phoneVal || !phoneRegex.test(phoneVal)) {
+                phoneInput.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+                valid = false;
+            } else {
+                phoneInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+            }
+        }
 
         // Username additional validation
         const username = document.getElementById('username').value;
@@ -448,6 +519,17 @@ $barangayEmail   = 'brgy.dulongbayan@email.com';
 
         return valid;
     }
+
+    // Auto-restore tab selection on error reload if phone was used
+    <?php if ((isset($_POST['contact_type']) && $_POST['contact_type'] === 'phone') || (!empty($_POST['phone_number']) && empty($_POST['email']))): ?>
+    document.addEventListener('DOMContentLoaded', function() {
+        switchContactType('phone');
+        const phoneInput = document.getElementById('phone_number');
+        if (phoneInput) {
+            phoneInput.value = <?php echo json_encode($_POST['phone_number'] ?? ''); ?>;
+        }
+    });
+    <?php endif; ?>
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

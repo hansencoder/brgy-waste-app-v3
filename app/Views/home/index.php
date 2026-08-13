@@ -148,7 +148,7 @@ $wasteTypeColors = [
         <div class="absolute inset-0 hero-slide active" style="background-image: url('../assets/images/hero/hero1.jpg'); background-size: cover; background-position: center;"></div>
         <div class="absolute inset-0 hero-slide" style="background-image: url('../assets/images/hero/hero2.jpg'); background-size: cover; background-position: center;"></div>
         
-        <div class="absolute inset-0 bg-gradient-to-br from-[#07281E]/90 via-[#07281E]/70 to-[#10B981]/30 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-[#07281E]/100 via-[#07281E]/80 to-[#10B981]/30 pointer-events-none"></div>
         
         <button id="heroPrev" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -181,14 +181,18 @@ $wasteTypeColors = [
                 Track resolution status in real-time.
             </p>
             <!-- CTAs -->
-            <div class="flex flex-wrap items-center justify-center gap-4 mt-8">
+            <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
                 <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo $isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register'; ?>" class="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] text-white font-bold rounded-full shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-                    Report Waste Now
+                    Report Waste (Resident)
                 </a>
-                <a href="#features" class="inline-flex items-center gap-2 px-6 py-3 border border-white/25 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors">
-                    Learn More
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold rounded-full hover:bg-white/20 transition-colors shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Report as Guest
+                </a>
+                <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-2 px-5 py-3 text-emerald-200 hover:text-white font-semibold text-sm transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    Track Report
                 </a>
             </div>
         </div>

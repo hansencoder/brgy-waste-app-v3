@@ -11,7 +11,7 @@ class User {
     // FIND USER BY EMAIL OR USERNAME (for login)
     // ============================================================
     public function findUserByEmailOrUsername($input) {
-        $this->db->query('SELECT * FROM users WHERE email = :input OR username = :input');
+        $this->db->query('SELECT * FROM users WHERE email = :input OR username = :input OR phone_number = :input');
         $this->db->bind(':input', $input);
         return $this->db->single();
     }
@@ -20,8 +20,19 @@ class User {
     // FIND USER BY EMAIL (for registration check)
     // ============================================================
     public function findUserByEmail($email) {
-        $this->db->query('SELECT * FROM users WHERE email = :email');
+        if (empty($email)) return false;
+        $this->db->query('SELECT * FROM users WHERE email = :email AND email != "" AND email IS NOT NULL');
         $this->db->bind(':email', $email);
+        return $this->db->single();
+    }
+
+    // ============================================================
+    // FIND USER BY PHONE NUMBER (for registration check)
+    // ============================================================
+    public function findUserByPhone($phone) {
+        if (empty($phone)) return false;
+        $this->db->query('SELECT * FROM users WHERE phone_number = :phone AND phone_number != "" AND phone_number IS NOT NULL');
+        $this->db->bind(':phone', $phone);
         return $this->db->single();
     }
     // ============================================================

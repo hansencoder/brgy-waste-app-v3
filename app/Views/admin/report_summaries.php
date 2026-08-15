@@ -58,478 +58,521 @@ $exportQuery = http_build_query([
 
 function statusBadgeClass($status) {
     $map = [
-        'Pending' => 'bg-amber-50 text-amber-600',
-        'Verified' => 'bg-blue-50 text-blue-600',
-        'In Progress' => 'bg-orange-50 text-orange-600',
-        'Resolved' => 'bg-emerald-50 text-emerald-600',
-        'Rejected' => 'bg-red-50 text-red-600',
+        'Pending' => 'bg-amber-50 text-amber-700 border border-amber-200',
+        'Verified' => 'bg-sky-50 text-sky-700 border border-sky-200',
+        'In Progress' => 'bg-orange-50 text-orange-700 border border-orange-200',
+        'Resolved' => 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+        'Rejected' => 'bg-red-50 text-red-700 border border-red-200',
     ];
-    return $map[$status] ?? 'bg-gray-50 text-gray-600';
+    return $map[$status] ?? 'bg-slate-50 text-slate-700 border border-slate-200';
 }
 ?>
+
+<!-- Load Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
 <style>
-    .chart-container { position: relative; height: 250px; width: 100%; }
+    body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
+    .chart-container { position: relative; height: 260px; width: 100%; }
     .chart-container canvas { width: 100% !important; height: 100% !important; }
-    .kpi-card { transition: all 0.2s ease; }
-    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08); }
-    .donut-container { position: relative; max-width: 140px; max-height: 140px; margin: 0 auto; }
+    .kpi-card { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px -6px rgba(0,0,0,0.08); }
+    .donut-container { position: relative; max-width: 170px; max-height: 170px; margin: 0 auto; }
     .donut-container canvas { width: 100% !important; height: 100% !important; }
     .donut-center-text {
         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         text-align: center; pointer-events: none; line-height: 1.15;
     }
-    .donut-center-text .number { font-size: 1.2rem; font-weight: 700; color: #0f172a; }
-    .donut-center-text .label { font-size: 0.5rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
+    .donut-center-text .number { font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+    .donut-center-text .label { font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; }
 </style>
 
-<div class="flex h-screen bg-gray-50 overflow-hidden w-full">
-    <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
+<div class="min-h-screen bg-slate-50 text-slate-900 w-full flex font-sans antialiased">
+    <div class="lg:flex lg:min-h-screen w-full">
+        <!-- Sidebar Component -->
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
-    <div class="flex flex-col flex-1 w-0 overflow-hidden">
-        <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Top App Bar Component -->
+            <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
 
-        <main class="flex-1 relative overflow-y-auto focus:outline-none">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main class="flex-1 overflow-y-auto">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
-                <!-- Page Header -->
-                <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Statistics &amp; Analytics</h1>
-                        <p class="mt-1 text-sm text-gray-600">Waste reporting statistics, trends, and decision support</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <a href="/brgy-waste-app-v3/public/admin/exportAnalyticsPDF?<?php echo $exportQuery; ?>"
-                           target="_blank"
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 rounded-lg font-semibold text-sm hover:bg-red-100 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            Open Print View
-                        </a>
-                        <a href="/brgy-waste-app-v3/public/admin/exportAnalyticsExcel?<?php echo $exportQuery; ?>"
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            Export Excel
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Filter Panel -->
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
-                    <div class="flex items-center gap-2 mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-700"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-                        <h2 class="text-lg font-bold text-gray-900">Filter Analytics</h2>
-                    </div>
-                    <form method="GET" action="/brgy-waste-app-v3/public/admin/report_summaries" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Page Action Header -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xs">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Date From</label>
-                            <input type="date" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Date To</label>
-                            <input type="date" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                            <select name="category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                                <option value="0">All Categories</option>
-                                <?php foreach ($categories as $c): ?>
-                                    <option value="<?php echo $c['category_id']; ?>" <?php echo $selectedCategory == $c['category_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($c['category_name']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Purok</label>
-                            <select name="purok" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                                <option value="0">All Puroks</option>
-                                <?php foreach ($puroks as $p): ?>
-                                    <option value="<?php echo $p['purok_id']; ?>" <?php echo $selectedPurok == $p['purok_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($p['purok_name']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                            <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                                <option value="">All Status</option>
-                                <?php foreach ($statuses as $s): ?>
-                                    <option value="<?php echo htmlspecialchars($s['status_name']); ?>" <?php echo $selectedStatus === $s['status_name'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['status_name']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Quantity</label>
-                            <select name="quantity" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                                <option value="0">All Quantities</option>
-                                <?php foreach ($quantities as $q): ?>
-                                    <option value="<?php echo $q['quantity_id']; ?>" <?php echo $selectedQuantity == $q['quantity_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($q['quantity_name']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Waste Condition</label>
-                            <select name="condition" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                                <option value="0">All Conditions</option>
-                                <?php foreach ($conditions as $c): ?>
-                                    <option value="<?php echo $c['condition_id']; ?>" <?php echo $selectedCondition == $c['condition_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($c['condition_name']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Trend Granularity</label>
-                            <select name="trend_granularity" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                                <?php foreach (['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly', 'yearly' => 'Yearly'] as $val => $label): ?>
-                                    <option value="<?php echo $val; ?>" <?php echo $trendGranularity === $val ? 'selected' : ''; ?>><?php echo $label; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="flex items-end gap-2 col-span-full sm:col-span-2 lg:col-span-4">
-                            <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#118B50] hover:bg-[#15281f] text-white rounded-md font-medium text-sm shadow-sm transition-colors">Apply Filters</button>
-                            <a href="/brgy-waste-app-v3/public/admin/report_summaries" class="inline-flex items-center px-6 py-2.5 border border-gray-300 text-gray-700 rounded-md font-medium text-sm hover:bg-gray-50 transition-colors">Clear</a>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- KPI Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4 mb-8">
-                    <div class="kpi-card bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-                        <p class="text-xs text-gray-500 font-medium">Total</p>
-                        <p class="text-2xl font-black text-gray-900 mt-1"><?php echo $kpis['total'] ?? 0; ?></p>
-                    </div>
-                    <div class="kpi-card bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-                        <p class="text-xs text-amber-600 font-medium">Pending</p>
-                        <p class="text-2xl font-black text-amber-600 mt-1"><?php echo $kpis['pending'] ?? 0; ?></p>
-                    </div>
-                    <div class="kpi-card bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-                        <p class="text-xs text-blue-600 font-medium">Verified</p>
-                        <p class="text-2xl font-black text-blue-600 mt-1"><?php echo $kpis['verified'] ?? 0; ?></p>
-                    </div>
-                    <div class="kpi-card bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-                        <p class="text-xs text-orange-600 font-medium">In Progress</p>
-                        <p class="text-2xl font-black text-orange-600 mt-1"><?php echo $kpis['in_progress'] ?? 0; ?></p>
-                    </div>
-                    <div class="kpi-card bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-                        <p class="text-xs text-emerald-600 font-medium">Resolved</p>
-                        <p class="text-2xl font-black text-emerald-600 mt-1"><?php echo $kpis['resolved'] ?? 0; ?></p>
-                    </div>
-                    <div class="kpi-card bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-                        <p class="text-xs text-gray-500 font-medium">Resolution Rate</p>
-                        <p class="text-2xl font-black text-gray-900 mt-1"><?php echo $kpis['resolution_rate'] ?? 0; ?>%</p>
-                    </div>
-                    <div class="kpi-card bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-                        <p class="text-xs text-gray-500 font-medium">Avg Resolution</p>
-                        <p class="text-2xl font-black text-gray-900 mt-1"><?php echo $avgResolutionHours; ?><span class="text-sm font-normal"> hrs</span></p>
-                    </div>
-                    <div class="kpi-card bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
-                        <p class="text-xs text-red-600 font-medium">Hotspots</p>
-                        <p class="text-2xl font-black text-red-600 mt-1"><?php echo $kpis['active_hotspots'] ?? 0; ?></p>
-                    </div>
-                </div>
-
-                <!-- Report Trends -->
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
-                    <h2 class="text-lg font-bold text-gray-900 mb-4">Report Trends</h2>
-                    <div class="chart-container">
-                        <canvas id="trendChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Distribution Charts -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h3 class="text-sm font-bold text-gray-900 mb-4">By Category</h3>
-                        <div class="chart-container" style="height:200px;">
-                            <canvas id="categoryChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h3 class="text-sm font-bold text-gray-900 mb-4">By Status</h3>
-                        <div class="flex justify-center">
-                            <div class="donut-container">
-                                <canvas id="statusChart"></canvas>
-                                <div class="donut-center-text">
-                                    <div class="number"><?php echo $kpis['total'] ?? 0; ?></div>
-                                    <div class="label">Total</div>
-                                </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                                    Intelligence &amp; Insights
+                                </span>
+                                <span class="text-sm text-slate-300 font-bold">•</span>
+                                <span class="text-xs sm:text-sm font-bold text-slate-500">Live Analytics</span>
                             </div>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h3 class="text-sm font-bold text-gray-900 mb-4">By Waste Condition</h3>
-                        <div class="chart-container" style="height:200px;">
-                            <canvas id="conditionChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Purok Analysis -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Purok Analysis</h2>
-                        <div class="chart-container" style="height:220px;">
-                            <canvas id="purokChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Category by Purok</h2>
-                        <div class="chart-container" style="height:220px;">
-                            <canvas id="purokStackedChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Hotspot Intelligence -->
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
-                    <h2 class="text-lg font-bold text-gray-900 mb-4">Hotspot Intelligence</h2>
-                    <?php if (!empty($hotspotIntelligence)): ?>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Purok</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reports</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unresolved</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dominant Category</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Latest Report</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Suggested Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100">
-                                    <?php $priority = 1; foreach ($hotspotIntelligence as $spot): ?>
-                                        <?php
-                                            $action = 'Monitor area';
-                                            if ($spot['report_count'] >= 10) $action = 'Immediate site inspection';
-                                            elseif ($spot['report_count'] >= 6) $action = 'Schedule collection review';
-                                            elseif (($spot['unresolved_count'] ?? 0) >= 3) $action = 'Prioritize unresolved reports';
-                                        ?>
-                                        <tr class="hover:bg-gray-50">
-                                            <td class="px-4 py-3">
-                                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full <?php echo $priority <= 2 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'; ?> text-xs font-bold"><?php echo $priority++; ?></span>
-                                            </td>
-                                            <td class="px-4 py-3 font-semibold text-gray-900"><?php echo htmlspecialchars($spot['purok_name']); ?></td>
-                                            <td class="px-4 py-3 text-gray-600"><?php echo $spot['report_count']; ?></td>
-                                            <td class="px-4 py-3 text-gray-600"><?php echo $spot['unresolved_count'] ?? 0; ?></td>
-                                            <td class="px-4 py-3 text-gray-600"><?php echo htmlspecialchars($spot['dominant_category'] ?? 'N/A'); ?></td>
-                                            <td class="px-4 py-3 text-gray-500"><?php echo date('M d, Y', strtotime($spot['latest_report'])); ?></td>
-                                            <td class="px-4 py-3"><span class="inline-flex rounded-full px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold"><?php echo $action; ?></span></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-sm text-gray-500 text-center py-6">No hotspot data for the selected period (requires 3+ reports per purok).</p>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Community & Operational Performance -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Community Participation</h2>
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-gray-600">Total Supports</span>
-                                <span class="font-bold text-gray-900"><?php echo $totalSupports; ?></span>
-                            </div>
-                            <div class="flex justify-between items-center py-2">
-                                <span class="text-gray-600">Support-to-Report Ratio</span>
-                                <span class="font-bold text-gray-900"><?php echo $supportToReportRatio; ?></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h2 class="text-lg font-bold text-gray-900 mb-4">Operational Performance</h2>
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-gray-600">Avg Verification Time</span>
-                                <span class="font-bold text-gray-900"><?php echo $avgVerificationHours; ?> hrs</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-gray-600">Avg Resolution Time</span>
-                                <span class="font-bold text-gray-900"><?php echo $avgResolutionHours; ?> hrs</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-gray-600">Fastest Resolution</span>
-                                <span class="font-bold text-emerald-600"><?php echo $fastestResolution; ?> hrs</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2">
-                                <span class="text-gray-600">Longest Resolution</span>
-                                <span class="font-bold text-red-600"><?php echo $longestResolution; ?> hrs</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Trend Comparison -->
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
-                    <h2 class="text-lg font-bold text-gray-900 mb-4">Trend Comparison</h2>
-                    <?php
-                        $totalChange = $trendComparison['total_reports']['change'] ?? 0;
-                        $resolutionChange = $trendComparison['resolution_rate']['change'] ?? 0;
-                    ?>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="p-4 rounded-xl bg-gray-50">
-                            <p class="text-xs text-gray-500">Total Reports</p>
-                            <p class="text-lg font-bold text-gray-900 mt-1"><?php echo $trendComparison['total_reports']['current'] ?? 0; ?></p>
-                            <p class="text-xs <?php echo $totalChange >= 0 ? 'text-emerald-600' : 'text-red-600'; ?>">
-                                <?php echo $totalChange >= 0 ? '↑' : '↓'; ?> <?php echo abs($totalChange); ?>% vs previous period
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                                Waste Analytics &amp; Reports Summary
+                            </h1>
+                            <p class="text-sm sm:text-base text-slate-600 font-semibold mt-1">
+                                Real-time reporting metrics, waste classification breakdown, purok hotspots, and decision support.
                             </p>
                         </div>
-                        <div class="p-4 rounded-xl bg-gray-50">
-                            <p class="text-xs text-gray-500">Resolution Rate</p>
-                            <p class="text-lg font-bold text-gray-900 mt-1"><?php echo $trendComparison['resolution_rate']['current'] ?? 0; ?>%</p>
-                            <p class="text-xs <?php echo $resolutionChange >= 0 ? 'text-emerald-600' : 'text-red-600'; ?>">
-                                <?php echo $resolutionChange >= 0 ? '↑' : '↓'; ?> <?php echo abs($resolutionChange); ?>% vs previous period
-                            </p>
-                        </div>
-                        <div class="p-4 rounded-xl bg-gray-50">
-                            <p class="text-xs text-gray-500">Active Hotspots</p>
-                            <p class="text-lg font-bold text-gray-900 mt-1"><?php echo $kpis['active_hotspots'] ?? 0; ?></p>
-                            <p class="text-xs text-gray-400">Current period</p>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Decision Support -->
-                <div class="bg-gradient-to-r from-emerald-50 to-emerald-100/40 rounded-xl border border-emerald-200 p-6 mb-8">
-                    <h2 class="text-lg font-bold text-gray-900 mb-4">Decision Support Summary</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <?php if (!empty($decisionSupport['highest_hotspot'])): ?>
-                            <div class="flex items-start gap-2 bg-white/80 rounded-xl p-3">
-                                <span class="text-red-600 mt-0.5">⚠</span>
-                                <div>
-                                    <p class="font-semibold text-gray-800">Highest-priority hotspot</p>
-                                    <p class="text-gray-600"><?php echo htmlspecialchars($decisionSupport['highest_hotspot']['purok_name']); ?> — <?php echo $decisionSupport['highest_hotspot']['report_count']; ?> reports</p>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-                        <?php if (!empty($decisionSupport['emerging_hotspot'])): ?>
-                            <div class="flex items-start gap-2 bg-white/80 rounded-xl p-3">
-                                <span class="text-amber-600 mt-0.5">●</span>
-                                <div>
-                                    <p class="font-semibold text-gray-800">Emerging hotspot</p>
-                                    <p class="text-gray-600"><?php echo htmlspecialchars($decisionSupport['emerging_hotspot']['purok_name']); ?> — <?php echo $decisionSupport['emerging_hotspot']['report_count']; ?> reports</p>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-                        <div class="flex items-start gap-2 bg-white/80 rounded-xl p-3">
-                            <span class="text-blue-600 mt-0.5">↗</span>
-                            <div>
-                                <p class="font-semibold text-gray-800">Trend analysis</p>
-                                <p class="text-gray-600">
-                                    Reports are <?php echo ($decisionSupport['trend_increasing'] ?? false) ? '<span class="text-red-600 font-semibold">increasing</span>' : '<span class="text-emerald-600 font-semibold">stable or decreasing</span>'; ?> over time
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-2 bg-white/80 rounded-xl p-3">
-                            <span class="text-purple-600 mt-0.5">●</span>
-                            <div>
-                                <p class="font-semibold text-gray-800">Recommended interventions</p>
-                                <p class="text-gray-600 text-xs">
-                                    <?php
-                                        if ($totalSupports > 0 && $avgResolutionHours > 48) {
-                                            echo 'Prioritize collection scheduling in high-density areas.';
-                                        } elseif ($avgResolutionHours > 24) {
-                                            echo 'Improve response time — consider additional collection routes.';
-                                        } else {
-                                            echo 'Continue current operations — performance is satisfactory.';
-                                        }
-                                    ?>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Filtered Report Table -->
-                <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mb-8">
-                    <div class="flex flex-wrap items-center justify-between gap-3 p-6 border-b border-gray-100">
-                        <div>
-                            <h2 class="text-lg font-bold text-gray-900">Filtered Reports</h2>
-                            <p class="text-sm text-gray-500"><?php echo count($filteredReports); ?> report(s) matching filters</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <a href="/brgy-waste-app-v3/public/admin/exportReportSummaryXLSX?<?php echo $exportQuery; ?>"
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold text-sm transition-colors">
-                                Export CSV
-                            </a>
-                            <a href="/brgy-waste-app-v3/public/admin/exportReportSummaryPDF?<?php echo $exportQuery; ?>"
+                        <!-- Header Action Buttons -->
+                        <div class="flex flex-wrap items-center gap-3">
+                            <a href="/brgy-waste-app-v3/public/admin/exportAnalyticsPDF?<?php echo $exportQuery; ?>"
                                target="_blank"
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-sm transition-colors">
-                                Export PDF
+                               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-extrabold text-xs sm:text-sm border border-red-200 shadow-xs transition active:scale-[0.98]">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                Print Report View
+                            </a>
+                            <a href="/brgy-waste-app-v3/public/admin/exportAnalyticsExcel?<?php echo $exportQuery; ?>"
+                               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#084232] text-white font-extrabold text-xs sm:text-sm shadow-xs transition active:scale-[0.98] border border-emerald-900">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Export Dataset
                             </a>
                         </div>
                     </div>
-                    <?php if (empty($filteredReports)): ?>
-                        <p class="p-8 text-center text-gray-500 text-sm">No reports found for selected filters.</p>
-                    <?php else: ?>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Report ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resident</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Purok</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <?php foreach ($filteredReports as $report): ?>
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-6 py-4 text-sm font-mono text-gray-700"><?php echo $report['id']; ?></td>
-                                            <td class="px-6 py-4 text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($report['name']); ?></td>
-                                            <td class="px-6 py-4 text-sm text-gray-600"><?php echo htmlspecialchars($report['waste_category'] ?? 'N/A'); ?></td>
-                                            <td class="px-6 py-4 text-sm text-gray-600"><?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></td>
-                                            <td class="px-6 py-4 text-sm text-gray-600"><?php echo htmlspecialchars($report['location'] ?? ''); ?></td>
-                                            <td class="px-6 py-4 text-center">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold <?php echo statusBadgeClass($report['status']); ?>"><?php echo htmlspecialchars($report['status']); ?></span>
-                                            </td>
-                                            <td class="px-6 py-4 text-sm text-gray-600"><?php echo date('M d, Y', strtotime($report['submission_date'])); ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endif; ?>
-                </div>
 
-                <!-- Previous Exports -->
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                    <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Previous Exports
-                    </h2>
-                    <div class="space-y-3">
-                        <?php if (!empty($exports)): ?>
-                            <?php foreach ($exports as $export): ?>
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <!-- Filter Analytics Panel -->
+                    <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-slate-200 shadow-xs space-y-5">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                                </div>
+                                <h2 class="text-base sm:text-lg font-extrabold text-slate-900">Filter Parameters &amp; Granularity</h2>
+                            </div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Multi-Variable Analytics</span>
+                        </div>
+
+                        <form method="GET" action="/brgy-waste-app-v3/public/admin/report_summaries" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Date From</label>
+                                <input type="date" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>" class="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-xs sm:text-sm font-bold text-slate-900 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Date To</label>
+                                <input type="date" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>" class="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-xs sm:text-sm font-bold text-slate-900 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Waste Category</label>
+                                <select name="category" class="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-xs sm:text-sm font-bold text-slate-900 outline-none transition">
+                                    <option value="0">All Categories</option>
+                                    <?php foreach ($categories as $c): ?>
+                                        <option value="<?php echo $c['category_id']; ?>" <?php echo $selectedCategory == $c['category_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($c['category_name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Purok Area</label>
+                                <select name="purok" class="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-xs sm:text-sm font-bold text-slate-900 outline-none transition">
+                                    <option value="0">All Puroks</option>
+                                    <?php foreach ($puroks as $p): ?>
+                                        <option value="<?php echo $p['purok_id']; ?>" <?php echo $selectedPurok == $p['purok_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($p['purok_name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Report Status</label>
+                                <select name="status" class="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-xs sm:text-sm font-bold text-slate-900 outline-none transition">
+                                    <option value="">All Statuses</option>
+                                    <?php foreach ($statuses as $s): ?>
+                                        <option value="<?php echo htmlspecialchars($s['status_name']); ?>" <?php echo $selectedStatus === $s['status_name'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['status_name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Estimated Quantity</label>
+                                <select name="quantity" class="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-xs sm:text-sm font-bold text-slate-900 outline-none transition">
+                                    <option value="0">All Quantities</option>
+                                    <?php foreach ($quantities as $q): ?>
+                                        <option value="<?php echo $q['quantity_id']; ?>" <?php echo $selectedQuantity == $q['quantity_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($q['quantity_name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Waste Condition</label>
+                                <select name="condition" class="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-xs sm:text-sm font-bold text-slate-900 outline-none transition">
+                                    <option value="0">All Conditions</option>
+                                    <?php foreach ($conditions as $c): ?>
+                                        <option value="<?php echo $c['condition_id']; ?>" <?php echo $selectedCondition == $c['condition_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($c['condition_name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Trend Granularity</label>
+                                <select name="trend_granularity" class="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-xs sm:text-sm font-bold text-slate-900 outline-none transition">
+                                    <?php foreach (['daily' => 'Daily Intervals', 'weekly' => 'Weekly Intervals', 'monthly' => 'Monthly Intervals', 'yearly' => 'Yearly Intervals'] as $val => $label): ?>
+                                        <option value="<?php echo $val; ?>" <?php echo $trendGranularity === $val ? 'selected' : ''; ?>><?php echo $label; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-3 col-span-full pt-2">
+                                <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-[#0B2E22] hover:bg-[#084232] text-white rounded-xl font-extrabold text-xs sm:text-sm shadow-xs transition active:scale-[0.98] cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    Apply Filter Criteria
+                                </button>
+                                <a href="/brgy-waste-app-v3/public/admin/report_summaries" class="inline-flex items-center px-5 py-3 border-2 border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-extrabold text-xs sm:text-sm transition cursor-pointer">
+                                    Reset Filters
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- KPI Cards (6 Cards: Resolution Rate and Avg Resolution removed as requested) -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                        <!-- Total Reports -->
+                        <div class="kpi-card bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs text-center flex flex-col justify-between">
+                            <span class="text-xs font-black text-slate-500 uppercase tracking-wider">Total Reports</span>
+                            <p class="text-3xl font-extrabold text-slate-900 mt-2 mb-1 tracking-tight"><?php echo $kpis['total'] ?? 0; ?></p>
+                            <span class="text-[11px] font-bold text-slate-400">All submissions</span>
+                        </div>
+
+                        <!-- Pending -->
+                        <div class="kpi-card bg-white p-5 rounded-2xl border-2 border-amber-200/80 shadow-xs text-center flex flex-col justify-between">
+                            <span class="text-xs font-black text-amber-700 uppercase tracking-wider">
+                                Pending
+                            </span>
+                            <p class="text-3xl font-extrabold text-amber-600 mt-2 mb-1 tracking-tight"><?php echo $kpis['pending'] ?? 0; ?></p>
+                            <span class="text-[11px] font-bold text-amber-700/70">Awaiting validation</span>
+                        </div>
+
+                        <!-- Verified -->
+                        <div class="kpi-card bg-white p-5 rounded-2xl border-2 border-sky-200/80 shadow-xs text-center flex flex-col justify-between">
+                            <span class="text-xs font-black text-sky-700 uppercase tracking-wider">
+                                Verified
+                            </span>
+                            <p class="text-3xl font-extrabold text-sky-600 mt-2 mb-1 tracking-tight"><?php echo $kpis['verified'] ?? 0; ?></p>
+                            <span class="text-[11px] font-bold text-sky-700/70">Confirmed reports</span>
+                        </div>
+
+                        <!-- In Progress -->
+                        <div class="kpi-card bg-white p-5 rounded-2xl border-2 border-orange-200/80 shadow-xs text-center flex flex-col justify-between">
+                            <span class="text-xs font-black text-orange-700 uppercase tracking-wider">
+                                In Progress
+                            </span>
+                            <p class="text-3xl font-extrabold text-orange-600 mt-2 mb-1 tracking-tight"><?php echo $kpis['in_progress'] ?? 0; ?></p>
+                            <span class="text-[11px] font-bold text-orange-700/70">Collection dispatched</span>
+                        </div>
+
+                        <!-- Resolved -->
+                        <div class="kpi-card bg-white p-5 rounded-2xl border-2 border-emerald-200/80 shadow-xs text-center flex flex-col justify-between">
+                            <span class="text-xs font-black text-emerald-700 uppercase tracking-wider">
+                                Resolved
+                            </span>
+                            <p class="text-3xl font-extrabold text-emerald-600 mt-2 mb-1 tracking-tight"><?php echo $kpis['resolved'] ?? 0; ?></p>
+                            <span class="text-[11px] font-bold text-emerald-700/70">Cleaned &amp; cleared</span>
+                        </div>
+
+                        <!-- Active Hotspots -->
+                        <div class="kpi-card bg-white p-5 rounded-2xl border-2 border-red-200/80 shadow-xs text-center flex flex-col justify-between">
+                            <span class="text-xs font-black text-red-700 uppercase tracking-wider">
+                                Hotspots
+                            </span>
+                            <p class="text-3xl font-extrabold text-red-600 mt-2 mb-1 tracking-tight"><?php echo $kpis['active_hotspots'] ?? 0; ?></p>
+                            <span class="text-[11px] font-bold text-red-700/70">Critical cluster zones</span>
+                        </div>
+                    </div>
+
+                    <!-- Report Trends Timeline -->
+                    <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-slate-200 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">Report Volume Trends</h2>
+                                <p class="text-xs sm:text-sm font-semibold text-slate-500">Chronological incident frequency and volume over time</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-extrabold text-slate-700">
+                                <?php echo ucfirst($trendGranularity); ?> View
+                            </span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Distribution Charts Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- By Category -->
+                        <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-base font-extrabold text-slate-900">Waste Classification</h3>
+                                <p class="text-xs font-semibold text-slate-500 mb-4">Volume by waste category</p>
+                            </div>
+                            <div class="chart-container" style="height:210px;">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- By Status -->
+                        <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-base font-extrabold text-slate-900">Status Distribution</h3>
+                                <p class="text-xs font-semibold text-slate-500 mb-4">Current stage of reported cases</p>
+                            </div>
+                            <div class="flex justify-center items-center py-2">
+                                <div class="donut-container">
+                                    <canvas id="statusChart"></canvas>
+                                    <div class="donut-center-text">
+                                        <div class="number"><?php echo $kpis['total'] ?? 0; ?></div>
+                                        <div class="label">Reports</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- By Waste Condition -->
+                        <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-base font-extrabold text-slate-900">Condition Severity</h3>
+                                <p class="text-xs font-semibold text-slate-500 mb-4">Scattered, bagged, or hazardous</p>
+                            </div>
+                            <div class="chart-container" style="height:210px;">
+                                <canvas id="conditionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Purok Spatial Analysis -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-slate-200 shadow-xs">
+                            <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Reports by Purok Zone</h2>
+                            <p class="text-xs font-semibold text-slate-500 mb-4">Incident density ranked across puroks</p>
+                            <div class="chart-container" style="height:240px;">
+                                <canvas id="purokChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-slate-200 shadow-xs">
+                            <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Waste Breakdown per Purok</h2>
+                            <p class="text-xs font-semibold text-slate-500 mb-4">Stacked distribution of categories by sector</p>
+                            <div class="chart-container" style="height:240px;">
+                                <canvas id="purokStackedChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hotspot Intelligence Table -->
+                    <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-slate-200 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+                                    Hotspot Intelligence &amp; Priority Zones
+                                </h2>
+                                <p class="text-xs sm:text-sm font-semibold text-slate-500">Clusters identified by high report density requiring immediate intervention</p>
+                            </div>
+                            <span class="px-3.5 py-1.5 rounded-full bg-red-50 text-red-900 text-xs font-extrabold border border-red-200">
+                                Priority Matrix
+                            </span>
+                        </div>
+
+                        <?php if (!empty($hotspotIntelligence)): ?>
+                            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                                <table class="min-w-full divide-y divide-slate-200 text-xs sm:text-sm">
+                                    <thead class="bg-slate-100">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Priority</th>
+                                            <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Purok Area</th>
+                                            <th class="px-4 py-3 text-center text-xs font-black text-slate-600 uppercase tracking-wider">Total Reports</th>
+                                            <th class="px-4 py-3 text-center text-xs font-black text-slate-600 uppercase tracking-wider">Unresolved</th>
+                                            <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Dominant Waste</th>
+                                            <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Latest Activity</th>
+                                            <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Recommended Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 bg-white">
+                                        <?php $priority = 1; foreach ($hotspotIntelligence as $spot): ?>
+                                            <?php
+                                                $action = 'Monitor regular collection';
+                                                $actionClass = 'bg-slate-100 text-slate-800 border-slate-200';
+                                                if ($spot['report_count'] >= 10) {
+                                                    $action = 'Immediate site inspection';
+                                                    $actionClass = 'bg-red-100 text-red-900 border-red-300';
+                                                } elseif ($spot['report_count'] >= 6) {
+                                                    $action = 'Schedule special truck route';
+                                                    $actionClass = 'bg-amber-100 text-amber-900 border-amber-300';
+                                                } elseif (($spot['unresolved_count'] ?? 0) >= 3) {
+                                                    $action = 'Clear pending backlogs';
+                                                    $actionClass = 'bg-orange-100 text-orange-900 border-orange-300';
+                                                }
+                                            ?>
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="px-4 py-3 font-extrabold">
+                                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-xl <?php echo $priority <= 2 ? 'bg-red-100 text-red-800 border border-red-300' : 'bg-slate-100 text-slate-800 border border-slate-200'; ?> text-xs font-extrabold">
+                                                        #<?php echo $priority++; ?>
+                                                    </span>
+                                                </td>
+                                                <td class="px-4 py-3 font-extrabold text-slate-900"><?php echo htmlspecialchars($spot['purok_name']); ?></td>
+                                                <td class="px-4 py-3 text-center font-extrabold text-slate-900"><?php echo $spot['report_count']; ?></td>
+                                                <td class="px-4 py-3 text-center font-extrabold text-red-600"><?php echo $spot['unresolved_count'] ?? 0; ?></td>
+                                                <td class="px-4 py-3 font-bold text-slate-700"><?php echo htmlspecialchars($spot['dominant_category'] ?? 'N/A'); ?></td>
+                                                <td class="px-4 py-3 font-bold text-slate-500"><?php echo date('M d, Y', strtotime($spot['latest_report'])); ?></td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold border <?php echo $actionClass; ?>">
+                                                        <?php echo $action; ?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php else: ?>
+                            <div class="p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
+                                <p class="text-sm font-bold text-slate-500">No active hotspot clusters detected for the filtered criteria.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Decision Support & Community Intelligence Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Community Engagement -->
+                        <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-xs flex flex-col justify-between">
+                            <h2 class="text-base font-extrabold text-slate-900 mb-3">Community Engagement</h2>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-200">
+                                    <span class="text-xs font-bold text-slate-600">Resident Upvotes &amp; Supports</span>
+                                    <span class="text-base font-extrabold text-slate-900"><?php echo $totalSupports; ?></span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-200">
+                                    <span class="text-xs font-bold text-slate-600">Support-to-Report Ratio</span>
+                                    <span class="text-base font-extrabold text-slate-900"><?php echo $supportToReportRatio; ?></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Decision Support Summary -->
+                        <div class="lg:col-span-2 bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent rounded-2xl border-2 border-emerald-200 p-6 shadow-xs flex flex-col justify-between">
+                            <div>
+                                <h2 class="text-base font-extrabold text-emerald-950 mb-2 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                    Automated Decision Support Summary
+                                </h2>
+                                <p class="text-xs font-semibold text-emerald-800 mb-4">Strategic recommendations generated from current dataset patterns</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <?php if (!empty($decisionSupport['highest_hotspot'])): ?>
+                                    <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-start gap-2.5 shadow-2xs">
+                                        <span class="text-red-600 text-sm mt-0.5">⚠️</span>
+                                        <div>
+                                            <p class="font-extrabold text-slate-900">Highest Hotspot</p>
+                                            <p class="text-slate-600 font-semibold mt-0.5"><?php echo htmlspecialchars($decisionSupport['highest_hotspot']['purok_name']); ?> (<?php echo $decisionSupport['highest_hotspot']['report_count']; ?> incidents)</p>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-start gap-2.5 shadow-2xs">
+                                    <span class="text-emerald-700 text-sm mt-0.5">📊</span>
                                     <div>
-                                        <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($export['filename']); ?></p>
-                                        <p class="text-sm text-gray-600">
-                                            <?php echo date('M d, Y', strtotime($export['generated_at'])); ?>
-                                            · <?php echo strtoupper(htmlspecialchars($export['file_type'] ?? '')); ?>
-                                            · <?php echo (int)($export['total_reports'] ?? 0); ?> reports
+                                        <p class="font-extrabold text-slate-900">Volume Trend</p>
+                                        <p class="text-slate-600 font-semibold mt-0.5">
+                                            Reports are <?php echo ($decisionSupport['trend_increasing'] ?? false) ? '<strong class="text-red-600">increasing</strong>' : '<strong class="text-emerald-700">stable or decreasing</strong>'; ?>
                                         </p>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtered Report Table -->
+                    <div class="bg-white rounded-2xl border-2 border-slate-200 shadow-xs overflow-hidden">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-slate-200">
+                            <div>
+                                <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Filtered Case Records</h2>
+                                <p class="text-xs sm:text-sm font-semibold text-slate-500"><?php echo count($filteredReports); ?> record(s) matching selected parameters</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <a href="/brgy-waste-app-v3/public/admin/exportReportSummaryXLSX?<?php echo $exportQuery; ?>"
+                                   class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-extrabold text-xs shadow-xs transition active:scale-[0.98]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    Export CSV
+                                </a>
+                                <a href="/brgy-waste-app-v3/public/admin/exportReportSummaryPDF?<?php echo $exportQuery; ?>"
+                                   target="_blank"
+                                   class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-extrabold text-xs shadow-xs transition active:scale-[0.98]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    Export PDF
+                                </a>
+                            </div>
+                        </div>
+
+                        <?php if (empty($filteredReports)): ?>
+                            <p class="p-8 text-center text-slate-500 font-bold text-sm">No reports matching current filter parameters.</p>
                         <?php else: ?>
-                            <p class="text-gray-500 text-sm py-4">No previous exports yet</p>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-slate-200 text-xs sm:text-sm">
+                                    <thead class="bg-slate-50">
+                                        <tr>
+                                            <th class="px-5 py-3.5 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Report ID</th>
+                                            <th class="px-5 py-3.5 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Resident / Reporter</th>
+                                            <th class="px-5 py-3.5 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Waste Category</th>
+                                            <th class="px-5 py-3.5 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Purok Area</th>
+                                            <th class="px-5 py-3.5 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Exact Location</th>
+                                            <th class="px-5 py-3.5 text-center text-xs font-black text-slate-600 uppercase tracking-wider">Status</th>
+                                            <th class="px-5 py-3.5 text-left text-xs font-black text-slate-600 uppercase tracking-wider">Reported Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-slate-100">
+                                        <?php foreach ($filteredReports as $report): ?>
+                                            <tr class="hover:bg-slate-50/80 transition">
+                                                <td class="px-5 py-3.5 font-mono font-bold text-slate-700">#<?php echo $report['id']; ?></td>
+                                                <td class="px-5 py-3.5 font-extrabold text-slate-900"><?php echo htmlspecialchars($report['name']); ?></td>
+                                                <td class="px-5 py-3.5 font-bold text-slate-700"><?php echo htmlspecialchars($report['waste_category'] ?? 'N/A'); ?></td>
+                                                <td class="px-5 py-3.5 font-bold text-slate-700"><?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></td>
+                                                <td class="px-5 py-3.5 font-medium text-slate-600 truncate max-w-xs"><?php echo htmlspecialchars($report['location'] ?? ''); ?></td>
+                                                <td class="px-5 py-3.5 text-center">
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold <?php echo statusBadgeClass($report['status']); ?>">
+                                                        <?php echo htmlspecialchars($report['status']); ?>
+                                                    </span>
+                                                </td>
+                                                <td class="px-5 py-3.5 font-bold text-slate-600"><?php echo date('M d, Y', strtotime($report['submission_date'])); ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         <?php endif; ?>
                     </div>
-                </div>
 
-            </div>
-        </main>
+                    <!-- Previous Exports -->
+                    <div class="bg-white p-6 sm:p-7 rounded-2xl border-2 border-slate-200 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <h2 class="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Recent Export Archives
+                            </h2>
+                            <span class="text-xs font-bold text-slate-400">Generated Reports History</span>
+                        </div>
+                        <div class="space-y-2.5">
+                            <?php if (!empty($exports)): ?>
+                                <?php foreach ($exports as $export): ?>
+                                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                        <div>
+                                            <p class="font-extrabold text-slate-900 text-sm"><?php echo htmlspecialchars($export['filename']); ?></p>
+                                            <p class="text-xs font-semibold text-slate-500 mt-0.5">
+                                                <?php echo date('M d, Y', strtotime($export['generated_at'])); ?>
+                                                · <?php echo strtoupper(htmlspecialchars($export['file_type'] ?? '')); ?>
+                                                · <?php echo (int)($export['total_reports'] ?? 0); ?> records
+                                            </p>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="text-slate-500 font-bold text-xs py-4 text-center">No export archives generated yet.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.font.family = "'Miranda Sans', sans-serif";
 
     const trendLabels = <?php echo json_encode($trendLabels); ?>;
     const trendValues = <?php echo json_encode(array_map('intval', $trendValues)); ?>;
@@ -541,25 +584,34 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: trendLabels,
                 datasets: [{
-                    label: 'Reports',
+                    label: 'Report Volume',
                     data: trendValues,
-                    borderColor: '#10B981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                    borderColor: '#059669',
+                    backgroundColor: 'rgba(5, 150, 105, 0.08)',
                     fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#10B981',
+                    tension: 0.35,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#059669',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
-                    pointRadius: 4
+                    pointRadius: 5,
+                    pointHoverRadius: 7
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        padding: 10,
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 12 }
+                    }
+                },
                 scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
-                    x: { grid: { display: false } }
+                    y: { beginAtZero: true, ticks: { stepSize: 1, font: { weight: '600' } }, grid: { color: '#f1f5f9' } },
+                    x: { grid: { display: false }, ticks: { font: { weight: '600' } } }
                 }
             }
         });
@@ -574,8 +626,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Reports',
                     data: <?php echo json_encode(array_map('intval', $categoryValues)); ?>,
-                    backgroundColor: '#10B981',
-                    borderRadius: 4
+                    backgroundColor: '#059669',
+                    borderRadius: 6
                 }]
             },
             options: {
@@ -584,7 +636,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: { legend: { display: false } },
                 scales: {
                     y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
-                    x: { grid: { display: false }, ticks: { font: { size: 9 } } }
+                    x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } }
                 }
             }
         });
@@ -599,14 +651,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     data: <?php echo json_encode(array_map('intval', $statusValues)); ?>,
                     backgroundColor: <?php echo json_encode($statusColors); ?>,
-                    borderWidth: 2,
+                    borderWidth: 3,
                     borderColor: '#fff'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                cutout: '70%',
+                cutout: '72%',
                 plugins: { legend: { display: false } }
             }
         });
@@ -614,7 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const conditionCtx = document.getElementById('conditionChart');
     if (conditionCtx && <?php echo json_encode(!empty($conditionValues)); ?>) {
-        const colors = ['#10B981', '#F59E0B', '#3B82F6', '#EF4444', '#8B5CF6', '#EC4899', '#F97316'];
+        const colors = ['#059669', '#D97706', '#0284C7', '#DC2626', '#7C3AED', '#DB2777', '#EA580C'];
         new Chart(conditionCtx, {
             type: 'pie',
             data: {
@@ -622,14 +674,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     data: <?php echo json_encode(array_map('intval', $conditionValues)); ?>,
                     backgroundColor: colors.slice(0, <?php echo count($conditionValues); ?>),
-                    borderWidth: 2,
+                    borderWidth: 3,
                     borderColor: '#fff'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 9 } } } }
+                plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } }
             }
         });
     }
@@ -643,8 +695,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Reports',
                     data: <?php echo json_encode(array_map('intval', $purokValues)); ?>,
-                    backgroundColor: '#10B981',
-                    borderRadius: 4
+                    backgroundColor: '#059669',
+                    borderRadius: 6
                 }]
             },
             options: {
@@ -654,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: { legend: { display: false } },
                 scales: {
                     x: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
-                    y: { grid: { display: false } }
+                    y: { grid: { display: false }, ticks: { font: { weight: '600' } } }
                 }
             }
         });
@@ -673,10 +725,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } },
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } },
                 scales: {
                     x: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } },
-                    y: { stacked: true, grid: { display: false } }
+                    y: { stacked: true, grid: { display: false }, ticks: { font: { weight: '600' } } }
                 }
             }
         });

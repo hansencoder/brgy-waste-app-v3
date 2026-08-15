@@ -250,34 +250,64 @@ class AdminController extends Controller {
         $activeAnnounce = $db->single();
         $data['active_announcements'] = (int)($activeAnnounce['count'] ?? 0);
 
-        // ---- Recent 5 Reports (existing) ----
+        // ---- Recent 10 Reports (Including Guest Reports) ----
         $db->query("
-            SELECT r.id, r.description, r.submission_date, 
-                    u.name as resident_name,
+            SELECT r.id, r.description, r.submission_date, r.reporter_type, r.guest_name, r.guest_phone,
+                    COALESCE(u.name, r.guest_name, 'Guest') as resident_name,
                     rs.status_name as status,
                     rs.color_code as status_color,
                     wc.category_name as category,
                     p.purok_name as purok
             FROM reports r
-            JOIN users u ON r.resident_id = u.id
+            LEFT JOIN users u ON r.resident_id = u.id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN puroks p ON r.purok_id = p.purok_id
             ORDER BY r.submission_date DESC
-            LIMIT 5
+            LIMIT 10
         ");
         $data['recent_reports'] = $db->resultSet();
 
-        // ---- Recent Activity (existing) ----
+        // ---- Recent Activity (audit logs) ----
         $db->query("
             SELECT a.action, a.details, a.created_at, u.name as user_name
             FROM audit_logs a
             LEFT JOIN users u ON a.user_id = u.id
             WHERE a.action != 'Dashboard Access'
             ORDER BY a.created_at DESC
-            LIMIT 5
+            LIMIT 7
         ");
         $data['recent_activity'] = $db->resultSet();
+
+        // ---- Chart Data 1: Purok Distribution Breakdown ----
+        $db->query("
+            SELECT p.purok_name, COUNT(r.id) as count
+            FROM puroks p
+            LEFT JOIN reports r ON p.purok_id = r.purok_id
+            GROUP BY p.purok_id, p.purok_name
+            ORDER BY count DESC
+        ");
+        $data['purok_chart_data'] = $db->resultSet();
+
+        // ---- Chart Data 2: Waste Category Breakdown ----
+        $db->query("
+            SELECT wc.category_name, COUNT(r.id) as count
+            FROM waste_categories wc
+            LEFT JOIN reports r ON wc.category_id = r.category_id
+            GROUP BY wc.category_id, wc.category_name
+            ORDER BY count DESC
+        ");
+        $data['category_chart_data'] = $db->resultSet();
+
+        // ---- Chart Data 3: Monthly Submission Trends ----
+        $db->query("
+            SELECT DATE_FORMAT(submission_date, '%b %Y') as period, COUNT(*) as count
+            FROM reports
+            WHERE submission_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            GROUP BY YEAR(submission_date), MONTH(submission_date)
+            ORDER BY submission_date ASC
+        ");
+        $data['monthly_trend_data'] = $db->resultSet();
 
         // Log access
         $this->auditModel->logAction($_SESSION['user_id'], 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', 'success');
@@ -367,6 +397,20 @@ class AdminController extends Controller {
         // Get report statuses for filter
         $db->query("SELECT * FROM report_statuses ORDER BY status_id");
         $data['statuses'] = $db->resultSet();
+
+        // Get landmarks for map overlay
+        $db->query("SELECT * FROM map_landmarks ORDER BY landmark_name");
+        $data['landmarks'] = $db->resultSet();
+
+        // Get puroks with GeoJSON polygon boundaries
+        $db->query("
+            SELECT p.purok_id, p.purok_name, ST_AsGeoJSON(pb.polygon_geometry) AS polygon_geometry 
+            FROM puroks p
+            LEFT JOIN purok_boundaries pb ON p.purok_id = pb.purok_id
+            WHERE p.is_active = 1
+            ORDER BY p.purok_name
+        ");
+        $data['purok_polygons'] = $db->resultSet();
 
         // Log access
         $this->auditModel->logAction($_SESSION['user_id'], 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', 'success');
@@ -723,14 +767,10 @@ class AdminController extends Controller {
 
         $data['reports'] = $db->resultSet();
 
-        // Add location names to each report
-        require_once __DIR__ . '/../Core/Geocoding.php';
-        foreach ($data['reports'] as $key => $report) {
-            $data['reports'][$key]['location_name'] = Geocoding::getLocationName(
-                $report['latitude'],
-                $report['longitude']
-            );
-        }
+        $db->query("SELECT * FROM report_generation_settings LIMIT 1");
+        $data['report_settings'] = $db->single() ?: [];
+        $db->query("SELECT * FROM barangays LIMIT 1");
+        $data['barangay'] = $db->single() ?: [];
 
         $this->view('admin/reports', $data);
     }
@@ -738,6 +778,10 @@ class AdminController extends Controller {
     // ============================================================
     // VIEW SINGLE REPORT (Admin)
     // ============================================================
+    public function view_report($id) {
+        return $this->viewReport($id);
+    }
+
     public function viewReport($id) {
         // Check permission
         if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
@@ -1000,7 +1044,7 @@ class AdminController extends Controller {
             $phone = trim($_POST['phone'] ?? '');
             $position_id = (int)($_POST['position_id'] ?? 0);
             $role_id = (int)($_POST['role_id'] ?? 0);
-            $purok_id = (int)($_POST['purok_id'] ?? 1);
+            $purok_id = !empty($_POST['purok_id']) ? (int)$_POST['purok_id'] : 1;
             $username = trim($_POST['username'] ?? '');
 
             if (empty($name) || empty($email) || empty($phone) || empty($username) || !$position_id || !$role_id) {
@@ -1014,8 +1058,21 @@ class AdminController extends Controller {
             } elseif ($this->userModel->findUserByUsername($username)) {
                 $data['error'] = 'Username already taken.';
             } else {
-                // Generate temporary password
-                $tempPassword = bin2hex(random_bytes(6)); // 12 chars
+                // Check if manual password provided or auto-generate
+                $passwordType = $_POST['password_type'] ?? 'auto';
+                $manualPass = trim($_POST['manual_password'] ?? '');
+                
+                if ($passwordType === 'manual' && !empty($manualPass)) {
+                    if (strlen($manualPass) < 6) {
+                        $data['error'] = 'Manual password must be at least 6 characters long.';
+                        $this->view('admin/create_staff', $data);
+                        return;
+                    }
+                    $tempPassword = $manualPass;
+                } else {
+                    $tempPassword = bin2hex(random_bytes(6)); // 12 chars
+                }
+                
                 $hashed = password_hash($tempPassword, PASSWORD_DEFAULT);
 
                 $regData = [
@@ -1033,13 +1090,15 @@ class AdminController extends Controller {
                 ];
 
                 if ($this->userModel->register($regData)) {
+                    $data['generated_password'] = $tempPassword;
                     // Send email with temporary password
                     require_once '../app/Models/Helpers/OtpMailer.php';
                     try {
                         OtpMailer::sendTempPasswordEmail($email, $tempPassword, $name);
-                        $data['success'] = 'Staff account created. Temporary password sent to email.';
+                        $data['success'] = 'Staff account created successfully! Credentials sent to ' . htmlspecialchars($email);
                     } catch (Exception $e) {
-                        $data['error'] = 'Account created but failed to send email: ' . $e->getMessage();
+                        $data['success'] = 'Staff account created successfully!';
+                        $data['error'] = 'Note: Automated email sending failed (' . $e->getMessage() . '). Please provide credentials directly.';
                     }
                     // Reset POST
                     $_POST = [];
@@ -1056,54 +1115,101 @@ class AdminController extends Controller {
     // EXPORT
     // ============================================================
     public function export() {
-        if ($_SESSION['user_role'] != 'secretary' && $_SESSION['user_role'] != 'administrator') {
-            die("Unauthorized Access: Only Secretary can generate summaries.");
+        if (!in_array($_SESSION['user_role'] ?? '', ['secretary', 'administrator', 'captain'])) {
+            die("Unauthorized Access");
         }
 
-        $reportModel = $this->model('Report');
-        $data = [];
+        $db = new Database();
+        $status = $_GET['status'] ?? '';
+        $search = $_GET['search'] ?? '';
 
-        if (isset($_GET['format'])) {
-            $reports = $reportModel->getAllReports();
-            $format = $_GET['format'];
+        $query = "
+            SELECT 
+                r.id,
+                COALESCE(r.tracking_number, CONCAT('WR-', LPAD(r.id, 6, '0'))) as tracking_number,
+                r.submission_date,
+                COALESCE(u.name, r.guest_name, 'Guest') as reporter_name,
+                COALESCE(u.phone_number, r.guest_phone, 'N/A') as contact_number,
+                r.reporter_type,
+                wc.category_name as waste_category,
+                eq.quantity_name as estimated_quantity,
+                wcnd.condition_name as waste_condition,
+                p.purok_name as purok,
+                r.description,
+                rs.status_name as status,
+                r.latitude,
+                r.longitude
+            FROM reports r
+            LEFT JOIN users u ON r.resident_id = u.id
+            JOIN report_statuses rs ON r.status_id = rs.status_id
+            LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+            LEFT JOIN estimated_quantities eq ON r.quantity_id = eq.quantity_id
+            LEFT JOIN waste_conditions wcnd ON r.condition_id = wcnd.condition_id
+            LEFT JOIN puroks p ON r.purok_id = p.purok_id
+            WHERE 1=1
+        ";
 
-            $db = new Database();
-            $db->query("INSERT INTO report_summaries (generated_by, filename, file_type, total_reports, filters) 
-                        VALUES (:generated_by, :filename, :file_type, :total, :filters)");
-            $db->bind(':generated_by', $_SESSION['user_id']);
-            $db->bind(':filename', 'report_summary_' . date('Y-m-d_H-i-s'));
-            $db->bind(':file_type', $format);
-            $db->bind(':total', count($reports));
-            $db->bind(':filters', json_encode($_GET));
-            $db->execute();
-            
-
-            require_once __DIR__ . '/../Core/Geocoding.php';
-            foreach ($reports as $key => $r) {
-                $reports[$key]['location_name'] = Geocoding::getLocationName(
-                    $r['latitude'],
-                    $r['longitude']
-                );
-            }
-
-            $this->auditModel->logAction($_SESSION['user_id'], 'Report Generated', 'Report Summary', "Format: {$format}", 'success');
-
-            if ($format == 'csv') {
-                header('Content-Type: text/csv; charset=utf-8');
-                header('Content-Disposition: attachment; filename=waste_report_summary.csv');
-                $output = fopen('php://output', 'w');
-                fputcsv($output, array('ID', 'Date Submitted', 'Reporter Name', 'Email', 'Description', 'Location', 'Status'));
-                foreach ($reports as $r) {
-                    fputcsv($output, array($r['id'], $r['submission_date'], $r['name'], $r['email'], $r['description'], $r['location_name'], $r['status']));
-                }
-                fclose($output);
-                exit;
-            } elseif ($format == 'print') {
-                $data['reports'] = $reports;
-                $this->view('admin/export_print', $data);
-                exit;
-            }
+        if (!empty($search)) {
+            $query .= " AND (r.description LIKE :search OR u.name LIKE :search OR u.email LIKE :search OR r.guest_name LIKE :search OR r.guest_phone LIKE :search OR r.tracking_number LIKE :search)";
         }
+        if (!empty($status)) {
+            $query .= " AND rs.status_name = :status";
+        }
+        $query .= " ORDER BY r.submission_date DESC";
+
+        $db->query($query);
+        if (!empty($search)) {
+            $db->bind(':search', "%{$search}%");
+        }
+        if (!empty($status)) {
+            $db->bind(':status', $status);
+        }
+
+        $reports = $db->resultSet();
+
+        // Audit Log
+        $this->auditModel->logAction($_SESSION['user_id'], 'Export Reports', 'Reports', 'Admin exported waste reports to CSV', 'success');
+
+        // Send CSV Headers
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="Waste_Reports_Export_' . date('Y-m-d_H-i') . '.csv"');
+
+        $output = fopen('php://output', 'w');
+        fputcsv($output, [
+            'Report ID / Tracking',
+            'Submission Date',
+            'Reporter Name',
+            'Contact Number',
+            'Reporter Type',
+            'Waste Category',
+            'Estimated Quantity',
+            'Condition',
+            'Purok / Zone',
+            'Status',
+            'Description',
+            'Latitude',
+            'Longitude'
+        ]);
+
+        foreach ($reports as $row) {
+            fputcsv($output, [
+                $row['tracking_number'],
+                $row['submission_date'],
+                $row['reporter_name'],
+                $row['contact_number'],
+                ucfirst($row['reporter_type'] ?? 'resident'),
+                $row['waste_category'] ?? 'N/A',
+                $row['estimated_quantity'] ?? 'N/A',
+                $row['waste_condition'] ?? 'N/A',
+                $row['purok'] ?? 'N/A',
+                $row['status'],
+                $row['description'],
+                $row['latitude'],
+                $row['longitude']
+            ]);
+        }
+        fclose($output);
+        exit;
     }
 
     // ============================================================
@@ -1121,15 +1227,117 @@ class AdminController extends Controller {
     // AUDIT LOGS
     // ============================================================
     public function auditLogs() {
+        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+            die("Unauthorized Access");
+        }
+
         $db = new Database();
+
+        // Fetch logs with user and role details
         $db->query("
-            SELECT a.*, u.name as user_name 
+            SELECT a.*, u.name as user_name, u.email as user_email, r.role_name
             FROM audit_logs a 
             LEFT JOIN users u ON a.user_id = u.id 
+            LEFT JOIN roles r ON u.role_id = r.role_id
+            ORDER BY a.created_at DESC
+            LIMIT 500
+        ");
+        $logs = $db->resultSet();
+
+        // Calculate KPI Metrics
+        $totalLogs = count($logs);
+        $todayLogs = 0;
+        $successLogs = 0;
+        $failedLogs = 0;
+        $uniqueUsers = [];
+        $uniqueActions = [];
+
+        $todayStr = date('Y-m-d');
+        foreach ($logs as $l) {
+            if (substr($l['created_at'], 0, 10) === $todayStr) {
+                $todayLogs++;
+            }
+            if (strtolower($l['result'] ?? '') === 'success') {
+                $successLogs++;
+            } else {
+                $failedLogs++;
+            }
+            if (!empty($l['user_name'])) {
+                $uniqueUsers[$l['user_name']] = true;
+            }
+            if (!empty($l['action'])) {
+                $uniqueActions[$l['action']] = true;
+            }
+        }
+
+        // Fetch Barangay branding for print view
+        $db->query("SELECT * FROM barangays LIMIT 1");
+        $barangay = $db->single();
+
+        $data = [
+            'logs' => $logs,
+            'stats' => [
+                'total' => $totalLogs,
+                'today' => $todayLogs,
+                'success' => $successLogs,
+                'failed' => $failedLogs,
+                'unique_users_count' => count($uniqueUsers)
+            ],
+            'unique_users' => array_keys($uniqueUsers),
+            'unique_actions' => array_keys($uniqueActions),
+            'barangay' => $barangay
+        ];
+
+        $this->auditModel->logAction($_SESSION['user_id'], 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', 'success');
+        $this->view('admin/audit_logs', $data);
+    }
+
+    /**
+     * Export Audit Logs as CSV
+     */
+    public function exportAuditLogs() {
+        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+            die("Unauthorized Access");
+        }
+
+        $db = new Database();
+        $db->query("
+            SELECT a.*, u.name as user_name, u.email as user_email, r.role_name
+            FROM audit_logs a 
+            LEFT JOIN users u ON a.user_id = u.id 
+            LEFT JOIN roles r ON u.role_id = r.role_id
             ORDER BY a.created_at DESC
         ");
-        $data['logs'] = $db->resultSet();
-        $this->view('admin/audit_logs', $data);
+        $logs = $db->resultSet();
+
+        $this->auditModel->logAction($_SESSION['user_id'], 'Export Audit Logs', 'Audit Logs', 'Admin exported system audit trail to CSV', 'success');
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=System_Audit_Logs_' . date('Y-m-d_His') . '.csv');
+
+        $output = fopen('php://output', 'w');
+        // UTF-8 BOM for Excel
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        fputcsv($output, ['Log ID', 'Timestamp', 'User', 'Email', 'Role', 'Action', 'Affected Record', 'Details', 'Result', 'IP Address', 'User Agent']);
+
+        foreach ($logs as $log) {
+            fputcsv($output, [
+                $log['id'],
+                $log['created_at'],
+                $log['user_name'] ?? 'System / Anonymous',
+                $log['user_email'] ?? 'N/A',
+                $log['role_name'] ?? 'System',
+                $log['action'],
+                $log['affected_record'] ?? 'N/A',
+                $log['details'] ?? 'N/A',
+                strtoupper($log['result'] ?? 'SUCCESS'),
+                $log['ip_address'] ?? 'N/A',
+                $log['user_agent'] ?? 'N/A'
+            ]);
+        }
+        fclose($output);
+        exit;
     }
 
     // ============================================================
@@ -1394,44 +1602,6 @@ private function generateCalendarData($month, $year, $schedules) {
 
     return $calendarDays;
 }
-
-    /**
-     * Export audit logs as CSV
-     */
-    public function exportAuditLogs() {
-        if ($_SESSION['user_role'] != 'administrator') {
-            die("Unauthorized");
-        }
-
-        $db = new Database();
-        $db->query("
-            SELECT a.*, u.name as user_name 
-            FROM audit_logs a 
-            LEFT JOIN users u ON a.user_id = u.id 
-            ORDER BY a.created_at DESC
-        ");
-        $logs = $db->resultSet();
-
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="audit_logs_' . date('Y-m-d') . '.csv"');
-
-        $output = fopen('php://output', 'w');
-        fputcsv($output, ['Date', 'User', 'Action', 'Affected Record', 'Details', 'Result']);
-
-        foreach ($logs as $log) {
-            fputcsv($output, [
-                date('Y-m-d H:i:s', strtotime($log['created_at'])),
-                $log['user_name'] ?? 'System',
-                $log['action'],
-                $log['affected_record'] ?? 'N/A',
-                $log['details'] ?? 'N/A',
-                $log['result'] ?? 'success'
-            ]);
-        }
-
-        fclose($output);
-        exit;
-    }
 
     // ============================================================
     // ADD SCHEDULE
@@ -1724,6 +1894,12 @@ private function generateCalendarData($month, $year, $schedules) {
             'decision_support' => $analytics['decision_support'],
             'user_name' => $_SESSION['user_name'] ?? 'Administrator',
         ];
+
+        $db = new Database();
+        $db->query("SELECT * FROM report_generation_settings LIMIT 1");
+        $data['report_settings'] = $db->single() ?: [];
+        $db->query("SELECT * FROM barangays LIMIT 1");
+        $data['barangay'] = $db->single() ?: [];
 
         $this->logReportExport('analytics_' . date('Y-m-d_H-i-s'), 'pdf', count($data['reports']), $filters);
         $this->auditModel->logAction($_SESSION['user_id'], 'Analytics Export', 'Analytics', 'Exported analytics PDF', 'success');

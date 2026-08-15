@@ -560,6 +560,9 @@ class GuestController extends Controller {
         // Pre-fill from query string (e.g. redirect from confirmation)
         $data['tracking_number'] = $_GET['tn'] ?? '';
 
+        $this->db->query("SELECT * FROM barangays LIMIT 1");
+        $data['barangay'] = $this->db->single() ?: [];
+
         $this->view('guest/track', $data);
     }
 
@@ -572,11 +575,19 @@ class GuestController extends Controller {
             exit;
         }
 
+        $this->db->query("SELECT * FROM barangays LIMIT 1");
+        $barangay = $this->db->single() ?: [];
+
         $trackingNumber = trim($_POST['tracking_number'] ?? '');
         $phone          = trim($_POST['phone'] ?? '');
 
         if (empty($trackingNumber) || empty($phone)) {
-            $this->view('guest/track', ['error' => 'Please enter your tracking number and phone number.', 'success' => '', 'tracking_number' => $trackingNumber]);
+            $this->view('guest/track', [
+                'error'           => 'Please enter your tracking number and phone number.',
+                'success'         => '',
+                'tracking_number' => $trackingNumber,
+                'barangay'        => $barangay
+            ]);
             return;
         }
 
@@ -586,11 +597,12 @@ class GuestController extends Controller {
                 'error'           => 'No report found with that tracking number and phone number combination.',
                 'success'         => '',
                 'tracking_number' => $trackingNumber,
+                'barangay'        => $barangay
             ]);
             return;
         }
 
-        $data = ['report' => $report, 'error' => '', 'success' => ''];
+        $data = ['report' => $report, 'error' => '', 'success' => '', 'barangay' => $barangay];
         $this->view('guest/track_status', $data);
     }
 }

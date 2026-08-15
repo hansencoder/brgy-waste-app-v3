@@ -15,11 +15,11 @@ class SettingsController extends Controller {
     }
 
     /**
-     * Settings Dashboard – list all settings sections.
+     * Settings Dashboard – defaults directly to Barangay Information section.
      */
     public function index() {
-        $data = [];
-        $this->view('settings/index', $data);
+        header('Location: /brgy-waste-app-v3/public/settings/barangay');
+        exit;
     }
 
     // ============================================================
@@ -30,19 +30,33 @@ class SettingsController extends Controller {
         $db = new Database();
         $data = ['error' => '', 'success' => ''];
 
+        // Ensure columns exist
+        $cols = ['system_name', 'system_short_name', 'system_motto', 'system_logo'];
+        foreach ($cols as $col) {
+            try {
+                $db->query("SHOW COLUMNS FROM barangays LIKE '$col'");
+                if (!$db->single()) {
+                    $db->query("ALTER TABLE barangays ADD COLUMN $col VARCHAR(255) DEFAULT NULL");
+                    $db->execute();
+                }
+            } catch (Exception $e) {}
+        }
+
         // Get existing barangay info (assume only one record, id=1)
         $db->query("SELECT * FROM barangays LIMIT 1");
         $barangay = $db->single();
         if (!$barangay) {
             // Insert default if not exists
-            $db->query("INSERT INTO barangays (barangay_name, municipality, province, region) VALUES ('Dulong Bayan', 'Talavera', 'Nueva Ecija', 'Central Luzon')");
+            $db->query("INSERT INTO barangays (barangay_name, municipality, province, region, system_name, system_short_name) VALUES ('Dulong Bayan', 'Talavera', 'Nueva Ecija', 'Central Luzon', 'Barangay Waste Management System', 'WasteWatch')");
             $db->execute();
             $db->query("SELECT * FROM barangays LIMIT 1");
             $barangay = $db->single();
         }
-        $data['barangay'] = $barangay;
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $system_name = trim($_POST['system_name'] ?? '');
+            $system_short_name = trim($_POST['system_short_name'] ?? '');
+            $system_motto = trim($_POST['system_motto'] ?? '');
             $barangay_name = trim($_POST['barangay_name'] ?? '');
             $municipality = trim($_POST['municipality'] ?? '');
             $province = trim($_POST['province'] ?? '');
@@ -51,7 +65,46 @@ class SettingsController extends Controller {
             $contact_number = trim($_POST['contact_number'] ?? '');
             $official_email = trim($_POST['official_email'] ?? '');
 
+            $system_logo_path = $barangay['system_logo'] ?? null;
+            $barangay_logo_path = $barangay['barangay_logo'] ?? null;
+
+            $uploadDir = dirname(__DIR__, 2) . '/public/uploads/logos/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            // Handle System Logo Upload
+            if (isset($_FILES['system_logo']) && $_FILES['system_logo']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['system_logo'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                $allowed = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
+                if (in_array($ext, $allowed) && $file['size'] <= 5 * 1024 * 1024) {
+                    $newFile = 'sys_logo_' . time() . '.' . $ext;
+                    if (move_uploaded_file($file['tmp_name'], $uploadDir . $newFile)) {
+                        $system_logo_path = '/brgy-waste-app-v3/public/uploads/logos/' . $newFile;
+                    }
+                }
+            }
+
+            // Handle Barangay Seal Upload
+            if (isset($_FILES['barangay_logo']) && $_FILES['barangay_logo']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['barangay_logo'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                $allowed = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
+                if (in_array($ext, $allowed) && $file['size'] <= 5 * 1024 * 1024) {
+                    $newFile = 'brgy_seal_' . time() . '.' . $ext;
+                    if (move_uploaded_file($file['tmp_name'], $uploadDir . $newFile)) {
+                        $barangay_logo_path = '/brgy-waste-app-v3/public/uploads/logos/' . $newFile;
+                    }
+                }
+            }
+
             $db->query("UPDATE barangays SET 
+                system_name = :system_name,
+                system_short_name = :system_short_name,
+                system_motto = :system_motto,
+                system_logo = :system_logo,
+                barangay_logo = :barangay_logo,
                 barangay_name = :barangay_name,
                 municipality = :municipality,
                 province = :province,
@@ -61,6 +114,11 @@ class SettingsController extends Controller {
                 official_email = :official_email
                 WHERE barangay_id = :id
             ");
+            $db->bind(':system_name', $system_name);
+            $db->bind(':system_short_name', $system_short_name);
+            $db->bind(':system_motto', $system_motto);
+            $db->bind(':system_logo', $system_logo_path);
+            $db->bind(':barangay_logo', $barangay_logo_path);
             $db->bind(':barangay_name', $barangay_name);
             $db->bind(':municipality', $municipality);
             $db->bind(':province', $province);
@@ -69,17 +127,19 @@ class SettingsController extends Controller {
             $db->bind(':contact_number', $contact_number);
             $db->bind(':official_email', $official_email);
             $db->bind(':id', $barangay['barangay_id']);
+
             if ($db->execute()) {
-                $data['success'] = 'Barangay information updated successfully.';
-                $this->auditModel->logAction($_SESSION['user_id'], 'Update Barangay Info', 'Settings', 'Updated barangay information', 'success');
+                $data['success'] = 'System branding & barangay details updated successfully!';
+                $this->auditModel->logAction($_SESSION['user_id'], 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', 'success');
                 // Refresh data
                 $db->query("SELECT * FROM barangays LIMIT 1");
-                $data['barangay'] = $db->single();
+                $barangay = $db->single();
             } else {
-                $data['error'] = 'Failed to update barangay information.';
+                $data['error'] = 'Failed to update system branding details.';
             }
         }
 
+        $data['barangay'] = $barangay;
         $this->view('settings/barangay', $data);
     }
 
@@ -286,11 +346,35 @@ class SettingsController extends Controller {
         $db = new Database();
         $data = ['error' => '', 'success' => ''];
 
+        // Ensure all required columns exist in report_generation_settings
+        $cols = [
+            'header_logo_left' => 'VARCHAR(255) DEFAULT NULL',
+            'header_logo_right' => 'VARCHAR(255) DEFAULT NULL',
+            'sub_header' => 'VARCHAR(255) DEFAULT NULL',
+            'republic_header' => 'VARCHAR(255) DEFAULT "Republic of the Philippines"',
+            'office_name' => 'VARCHAR(255) DEFAULT "Office of the Barangay Solid Waste Management Committee"',
+            'signatory_approved_name' => 'VARCHAR(255) DEFAULT NULL',
+            'signatory_approved_position' => 'VARCHAR(255) DEFAULT "Punong Barangay"'
+        ];
+        foreach ($cols as $colName => $colDef) {
+            try {
+                $db->query("SHOW COLUMNS FROM report_generation_settings LIKE '$colName'");
+                if (!$db->single()) {
+                    $db->query("ALTER TABLE report_generation_settings ADD COLUMN $colName $colDef");
+                    $db->execute();
+                }
+            } catch (Exception $e) {}
+        }
+
+        // Fetch Barangay information for fallback logos & context
+        $db->query("SELECT * FROM barangays LIMIT 1");
+        $data['barangay'] = $db->single() ?: [];
+
         $db->query("SELECT * FROM report_generation_settings LIMIT 1");
         $settings = $db->single();
         if (!$settings) {
-            $db->query("INSERT INTO report_generation_settings (report_header, report_footer, signatory_name, signatory_position, disclaimer) 
-                        VALUES ('Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', '')");
+            $db->query("INSERT INTO report_generation_settings (report_header, report_footer, signatory_name, signatory_position, disclaimer, republic_header, sub_header, office_name) 
+                        VALUES ('Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', '', 'Republic of the Philippines', 'Province of Nueva Ecija · Municipality of Talavera', 'Office of the Barangay Solid Waste Management Committee')");
             $db->execute();
             $db->query("SELECT * FROM report_generation_settings LIMIT 1");
             $settings = $db->single();
@@ -298,32 +382,94 @@ class SettingsController extends Controller {
         $data['settings'] = $settings;
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $republic_header = trim($_POST['republic_header'] ?? 'Republic of the Philippines');
+            $sub_header = trim($_POST['sub_header'] ?? '');
             $header = trim($_POST['report_header'] ?? '');
+            $office_name = trim($_POST['office_name'] ?? '');
             $footer = trim($_POST['report_footer'] ?? '');
             $signatory = trim($_POST['signatory_name'] ?? '');
             $position = trim($_POST['signatory_position'] ?? '');
+            $approved_name = trim($_POST['signatory_approved_name'] ?? '');
+            $approved_position = trim($_POST['signatory_approved_position'] ?? '');
             $disclaimer = trim($_POST['disclaimer'] ?? '');
 
+            $logo_left_path = $settings['header_logo_left'] ?? null;
+            $logo_right_path = $settings['header_logo_right'] ?? null;
+
+            // Handle Reset Flags
+            if (isset($_POST['remove_logo_left']) && $_POST['remove_logo_left'] == '1') {
+                $logo_left_path = null;
+            }
+            if (isset($_POST['remove_logo_right']) && $_POST['remove_logo_right'] == '1') {
+                $logo_right_path = null;
+            }
+
+            // Upload directory
+            $uploadDir = dirname(__DIR__, 2) . '/public/uploads/logos/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            // Handle Left Logo Upload (Primary / Barangay Seal)
+            if (isset($_FILES['header_logo_left']) && $_FILES['header_logo_left']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['header_logo_left'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                $allowed = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
+                if (in_array($ext, $allowed) && $file['size'] <= 5 * 1024 * 1024) {
+                    $newFile = 'rep_logo_left_' . time() . '.' . $ext;
+                    if (move_uploaded_file($file['tmp_name'], $uploadDir . $newFile)) {
+                        $logo_left_path = '/brgy-waste-app-v3/public/uploads/logos/' . $newFile;
+                    }
+                }
+            }
+
+            // Handle Right Logo Upload (Secondary / Department / System Logo)
+            if (isset($_FILES['header_logo_right']) && $_FILES['header_logo_right']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['header_logo_right'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                $allowed = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
+                if (in_array($ext, $allowed) && $file['size'] <= 5 * 1024 * 1024) {
+                    $newFile = 'rep_logo_right_' . time() . '.' . $ext;
+                    if (move_uploaded_file($file['tmp_name'], $uploadDir . $newFile)) {
+                        $logo_right_path = '/brgy-waste-app-v3/public/uploads/logos/' . $newFile;
+                    }
+                }
+            }
+
             $db->query("UPDATE report_generation_settings SET 
+                republic_header = :republic_header,
+                sub_header = :sub_header,
                 report_header = :header,
+                office_name = :office_name,
                 report_footer = :footer,
                 signatory_name = :signatory,
                 signatory_position = :position,
+                signatory_approved_name = :approved_name,
+                signatory_approved_position = :approved_position,
                 disclaimer = :disclaimer,
+                header_logo_left = :logo_left,
+                header_logo_right = :logo_right,
                 updated_by = :updated_by,
                 updated_at = NOW()
                 WHERE setting_id = :id
             ");
+            $db->bind(':republic_header', $republic_header);
+            $db->bind(':sub_header', $sub_header);
             $db->bind(':header', $header);
+            $db->bind(':office_name', $office_name);
             $db->bind(':footer', $footer);
             $db->bind(':signatory', $signatory);
             $db->bind(':position', $position);
+            $db->bind(':approved_name', $approved_name);
+            $db->bind(':approved_position', $approved_position);
             $db->bind(':disclaimer', $disclaimer);
+            $db->bind(':logo_left', $logo_left_path);
+            $db->bind(':logo_right', $logo_right_path);
             $db->bind(':updated_by', $_SESSION['user_id']);
             $db->bind(':id', $settings['setting_id']);
             if ($db->execute()) {
-                $data['success'] = 'Report generation settings updated.';
-                $this->auditModel->logAction($_SESSION['user_id'], 'Update Report Generation Settings', 'Settings', 'Updated report generation settings', 'success');
+                $data['success'] = 'Report generation & letterhead settings updated successfully.';
+                $this->auditModel->logAction($_SESSION['user_id'], 'Update Report Generation Settings', 'Settings', 'Updated dual logo and report letterhead settings', 'success');
                 $db->query("SELECT * FROM report_generation_settings LIMIT 1");
                 $data['settings'] = $db->single();
             } else {
@@ -345,6 +491,16 @@ class SettingsController extends Controller {
         // Get all landmarks
         $db->query("SELECT * FROM map_landmarks ORDER BY landmark_name");
         $data['landmarks'] = $db->resultSet();
+
+        // Get active puroks with GeoJSON polygon boundaries
+        $db->query("
+            SELECT p.purok_id, p.purok_name, ST_AsGeoJSON(pb.polygon_geometry) AS polygon_geometry 
+            FROM puroks p
+            LEFT JOIN purok_boundaries pb ON p.purok_id = pb.purok_id
+            WHERE p.is_active = 1
+            ORDER BY p.purok_name
+        ");
+        $data['puroks'] = $db->resultSet();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Add landmark
@@ -387,9 +543,18 @@ class SettingsController extends Controller {
                 }
             }
 
-            // Refresh landmarks
+            // Refresh landmarks and puroks
             $db->query("SELECT * FROM map_landmarks ORDER BY landmark_name");
             $data['landmarks'] = $db->resultSet();
+
+            $db->query("
+                SELECT p.purok_id, p.purok_name, ST_AsGeoJSON(pb.polygon_geometry) AS polygon_geometry 
+                FROM puroks p
+                LEFT JOIN purok_boundaries pb ON p.purok_id = pb.purok_id
+                WHERE p.is_active = 1
+                ORDER BY p.purok_name
+            ");
+            $data['puroks'] = $db->resultSet();
         }
 
         $this->view('settings/landmarks', $data);

@@ -103,3 +103,15 @@ MSG: WasteWatch: Your verification code is 766824. Valid for 5 minutes. Do not s
 [2026-08-10 06:55:21] TO:09121212121
 MSG: Your waste report WRS-2026-58782 has been received and is pending verification. - WasteWatch
 ------------------------------------------------------------
+[2026-08-14 18:00:10] TO:09951281511
+MSG: Good news! Your waste report WRS-2026-55350 has been verified and will be actioned. - WasteWatch
+------------------------------------------------------------
+[2026-08-14 18:00:13] TO:09951281511
+MSG: Update: Your waste report WRS-2026-55350 is now being actively addressed by our team. - WasteWatch
+------------------------------------------------------------
+[2026-08-14 18:00:17] TO:09951281511
+MSG: Your waste report WRS-2026-55350 could not be processed. Track your report at: /brgy-waste-app-v3/public/index.php?url=guest/track - WasteWatch
+------------------------------------------------------------
+[2026-08-15 05:53:27] TO:09121212121
+MSG: Good news! Your waste report WRS-2026-58782 has been verified and will be actioned. - WasteWatch
+------------------------------------------------------------

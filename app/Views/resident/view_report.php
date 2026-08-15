@@ -1,4 +1,7 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <?php
 $data = $data ?? [];
 $report = $data['report'] ?? [];
@@ -6,326 +9,279 @@ $timeline = $data['timeline'] ?? [];
 
 if (empty($report)) {
     echo '<div class="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-        <div class="max-w-md w-full rounded-[28px] border border-slate-200 bg-white p-8 text-center shadow-[0_18px_45px_-30px_rgba(15,23,42,0.18)]">
-            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div class="max-w-md w-full rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-md">
+            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 border border-red-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
-            <h1 class="text-2xl font-black text-slate-900">Report not found</h1>
-            <p class="mt-3 text-sm text-slate-600">The report you are trying to view is missing or unavailable.</p>
-            <a href="/brgy-waste-app-v3/public/resident/my_report" class="mt-6 inline-flex items-center justify-center rounded-full bg-[#0D9488] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0f766e]">Back to Reports</a>
+            <h1 class="text-xl font-bold text-slate-900">Report Not Found</h1>
+            <p class="mt-2 text-xs text-slate-500">The waste report you are looking for does not exist or has been removed.</p>
+            <a href="/brgy-waste-app-v3/public/resident/my_report" class="mt-5 inline-flex items-center justify-center rounded-xl bg-[#0B2E22] px-5 py-2.5 text-xs font-bold text-white transition hover:bg-[#083528]">Back to My Reports</a>
         </div>
     </div>';
     include __DIR__ . '/../layouts/footer.php';
     exit;
 }
 
-$statusColors = [
-    'pending' => ['bg' => 'amber-50', 'text' => 'amber-700', 'dot' => 'amber-500', 'label' => 'Pending'],
-    'verified' => ['bg' => 'sky-50', 'text' => 'sky-700', 'dot' => 'sky-500', 'label' => 'Verified'],
-    'resolved' => ['bg' => 'emerald-50', 'text' => 'emerald-700', 'dot' => 'emerald-500', 'label' => 'Resolved'],
-    'rejected' => ['bg' => 'red-50', 'text' => 'red-700', 'dot' => 'red-500', 'label' => 'Rejected'],
+$rawStatus = strtolower($report['status'] ?? 'pending');
+$statusConfig = [
+    'pending'     => ['bg' => 'bg-amber-50 text-amber-900 border-amber-200', 'dot' => '#f59e0b', 'label' => 'Pending Verification', 'step' => 1],
+    'verified'    => ['bg' => 'bg-blue-50 text-blue-900 border-blue-200', 'dot' => '#3b82f6', 'label' => 'Verified by Admin', 'step' => 2],
+    'in_progress' => ['bg' => 'bg-purple-50 text-purple-900 border-purple-200', 'dot' => '#8b5cf6', 'label' => 'Collection In Progress', 'step' => 3],
+    'resolved'    => ['bg' => 'bg-emerald-50 text-emerald-900 border-emerald-200', 'dot' => '#10b981', 'label' => 'Resolved & Cleaned', 'step' => 4],
+    'rejected'    => ['bg' => 'bg-red-50 text-red-900 border-red-200', 'dot' => '#ef4444', 'label' => 'Rejected', 'step' => 0],
 ];
-$color = $statusColors[strtolower($report['status'] ?? 'pending')] ?? $statusColors['pending'];
-$imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' . $report['photo_path'] : 'https://placehold.co/800x400?text=No+Image';
+$cfg = $statusConfig[$rawStatus] ?? $statusConfig['pending'];
+$currentStep = $cfg['step'];
 
+$reportId = 'WR-' . str_pad($report['id'], 6, '0', STR_PAD_LEFT);
+$imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' . $report['photo_path'] : '';
+
+// Build timeline events
 $events = [];
 $events[] = [
     'status' => 'pending',
-    'title' => 'Report submitted',
-    'date' => date('M j, Y, h:i A', strtotime($report['submission_date'])),
-    'color' => $statusColors['pending']
+    'title' => 'Report Submitted',
+    'desc' => 'Incident reported with evidence photos and GPS coordinates.',
+    'date' => date('M d, Y • h:i A', strtotime($report['submission_date'])),
 ];
 
 if (!empty($timeline)) {
     foreach ($timeline as $t) {
-        $newStatus = strtolower($t['new_status'] ?? 'pending');
+        $st = strtolower($t['new_status'] ?? 'pending');
+        $title = 'Status changed to ' . ucfirst($st);
+        if ($st === 'verified') $title = 'Report Verified by Staff';
+        elseif ($st === 'in_progress') $title = 'Collection Dispatched';
+        elseif ($st === 'resolved') $title = 'Waste Cleaned & Completed';
+        elseif ($st === 'rejected') $title = 'Report Rejected';
 
-        if ($newStatus === 'verified') {
-            $title = 'Report verified by ' . ($t['changed_by_name'] ?? 'secretary');
-        } elseif ($newStatus === 'resolved') {
-            $title = 'Cleanup completed';
-        } elseif ($newStatus === 'rejected') {
-            $title = 'Report rejected';
-        } else {
-            $title = 'Status updated to ' . ucfirst($newStatus);
-        }
-
-        $tColor = $statusColors[$newStatus] ?? $statusColors['pending'];
-        $event = [
-            'status' => $newStatus,
+        $events[] = [
+            'status' => $st,
             'title' => $title,
-            'date' => date('M j, Y, h:i A', strtotime($t['changed_at'])),
-            'color' => $tColor,
+            'desc' => !empty($t['remark']) ? $t['remark'] : 'System status transition recorded.',
+            'date' => date('M d, Y • h:i A', strtotime($t['changed_at'])),
         ];
-
-        if ($newStatus === 'rejected' && !empty($t['remark'])) {
-            $event['reason'] = $t['remark'];
-        }
-
-        $events[] = $event;
-    }
-} else {
-    if (in_array(strtolower($report['status'] ?? ''), ['verified', 'resolved', 'rejected'], true)) {
-        $currentStatus = strtolower($report['status']);
-
-        if ($currentStatus === 'verified') {
-            $events[] = [
-                'status' => 'verified',
-                'title' => 'Report verified by secretary',
-                'date' => date('M j, Y, h:i A', strtotime($report['updated_at'] ?? $report['submission_date'])),
-                'color' => $statusColors['verified']
-            ];
-        }
-
-        if ($currentStatus === 'resolved') {
-            $events[] = [
-                'status' => 'resolved',
-                'title' => 'Cleanup completed',
-                'date' => date('M j, Y, h:i A', strtotime($report['updated_at'] ?? $report['submission_date'])),
-                'color' => $statusColors['resolved']
-            ];
-        }
-
-        if ($currentStatus === 'rejected') {
-            $event = [
-                'status' => 'rejected',
-                'title' => 'Report rejected',
-                'date' => date('M j, Y, h:i A', isset($data['flag_date']) ? strtotime($data['flag_date']) : strtotime($report['updated_at'] ?? $report['submission_date'])),
-                'color' => $statusColors['rejected'],
-            ];
-            if (!empty($data['flag_reason'])) {
-                $event['reason'] = $data['flag_reason'];
-            }
-            $events[] = $event;
-        }
     }
 }
 ?>
 
-<div class="min-h-screen bg-[#F8FAFC] text-slate-800">
-    <div class="lg:flex">
-        <?php include __DIR__ . '/../layouts/resident_sidebar.php'; ?>
+<style>
+    body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
+</style>
 
-        <div class="flex-1">
-            <header class="border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur sm:px-6 lg:px-8 lg:py-6">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold uppercase tracking-[0.35em] text-[#0D9488]">Resident Portal</p>
-                        <h1 class="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">Report Details</h1>
-                        <p class="mt-1 text-sm text-slate-500">Track the status and location of this submitted waste report.</p>
+<div class="flex h-screen bg-slate-50 overflow-hidden w-full">
+    <!-- Resident Sidebar -->
+    <?php include __DIR__ . '/../layouts/resident_sidebar.php'; ?>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <!-- Resident Topbar -->
+        <?php include __DIR__ . '/../layouts/resident_topbar.php'; ?>
+
+        <!-- Scrollable Main Content -->
+        <main class="flex-1 overflow-y-auto bg-slate-50 focus:outline-none">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+                <!-- Header Title Bar -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
+                    <div class="flex items-center gap-3">
+                        <a href="/brgy-waste-app-v3/public/resident/my_report" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition" title="Back to Reports">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                        </a>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono text-xl sm:text-2xl font-black text-slate-900"><?php echo $reportId; ?></span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border <?php echo $cfg['bg']; ?>">
+                                    <?php echo $cfg['label']; ?>
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500 font-medium mt-0.5">Submitted on <?php echo date('F d, Y \a\t h:i A', strtotime($report['submission_date'])); ?></p>
+                        </div>
                     </div>
-                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-                        Back to Reports
+                    
+                    <a href="/brgy-waste-app-v3/public/resident/submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B2E22] hover:bg-[#083528] text-white font-bold text-xs shadow-xs self-start sm:self-auto transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                        <span>New Report</span>
                     </a>
                 </div>
-            </header>
 
-            <main class="mx-auto max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 lg:py-8">
-                <div class="mb-6 flex flex-col gap-4 rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.18)] sm:p-6 lg:flex-row lg:items-center lg:justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E6F4EA] text-[#0D9488]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                <!-- Visual Progress Stepper (if not rejected) -->
+                <?php if ($rawStatus !== 'rejected'): ?>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Resolution Progress</p>
+                    <div class="grid grid-cols-4 gap-2 relative">
+                        <!-- Step 1: Submitted -->
+                        <div class="text-center space-y-1.5">
+                            <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 1 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'; ?>">
+                                ✓
+                            </div>
+                            <p class="text-xs font-bold text-slate-900">Submitted</p>
+                            <p class="text-[10px] text-slate-400">Incident logged</p>
                         </div>
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-400">Report ID</p>
-                            <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-900">RPT-<?php echo str_pad($report['id'], 5, '0', STR_PAD_LEFT); ?></h2>
+                        <!-- Step 2: Verified -->
+                        <div class="text-center space-y-1.5">
+                            <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 2 ? 'bg-emerald-600 text-white' : ($currentStep === 1 ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-400'); ?>">
+                                <?php echo $currentStep >= 2 ? '✓' : '2'; ?>
+                            </div>
+                            <p class="text-xs font-bold text-slate-900">Verified</p>
+                            <p class="text-[10px] text-slate-400">Admin confirmed</p>
                         </div>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-3">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-<?php echo $color['bg']; ?> px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-<?php echo $color['text']; ?>">
-                            <span class="h-2.5 w-2.5 rounded-full bg-<?php echo $color['dot']; ?>"></span>
-                            <?php echo ucfirst($color['label']); ?>
-                        </span>
+                        <!-- Step 3: In Progress -->
+                        <div class="text-center space-y-1.5">
+                            <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 3 ? 'bg-emerald-600 text-white' : ($currentStep === 2 ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-400'); ?>">
+                                <?php echo $currentStep >= 3 ? '✓' : '3'; ?>
+                            </div>
+                            <p class="text-xs font-bold text-slate-900">Dispatched</p>
+                            <p class="text-[10px] text-slate-400">Truck en route</p>
+                        </div>
+                        <!-- Step 4: Resolved -->
+                        <div class="text-center space-y-1.5">
+                            <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 4 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'; ?>">
+                                <?php echo $currentStep >= 4 ? '✓' : '4'; ?>
+                            </div>
+                            <p class="text-xs font-bold text-slate-900">Resolved</p>
+                            <p class="text-[10px] text-slate-400">Site cleaned</p>
+                        </div>
                     </div>
                 </div>
+                <?php endif; ?>
 
-                <div class="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-                    <div class="space-y-6">
-                        <section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_45px_-30px_rgba(15,23,42,0.18)]">
-                            <div class="aspect-[16/9] w-full overflow-hidden bg-slate-100">
-                                <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Waste Report Photo" class="h-full w-full object-cover" />
+                <!-- Two-Column Report Details Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Left Section (2 cols): Evidence Photos, Description, Timeline -->
+                    <div class="lg:col-span-2 space-y-6">
+
+                        <!-- Evidence Photo Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                                <h3 class="text-sm font-extrabold text-slate-900">Evidence Photo Attachment</h3>
+                                <span class="text-xs text-slate-400 font-semibold">Original Upload</span>
                             </div>
-                        </section>
-
-                        <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.18)]">
-                            <h3 class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-400">Description</h3>
-                            <p class="mt-3 text-base leading-relaxed text-slate-700"><?php echo nl2br(htmlspecialchars($report['description'])); ?></p>
-                        </section>
-
-                        <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.18)]">
-                            <div class="flex items-center justify-between gap-3">
-                                <div>
-                                    <h3 class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-400">Status Timeline</h3>
-                                    <p class="mt-2 text-sm text-slate-500">Latest updates and resolution history for this report.</p>
-                                </div>
+                            <div class="p-4 sm:p-6 bg-slate-900/5 flex items-center justify-center">
+                                <?php if (!empty($imgPath)): ?>
+                                    <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Report Evidence" class="max-h-96 w-auto rounded-xl object-contain shadow-md bg-white">
+                                <?php else: ?>
+                                    <div class="py-16 text-center text-slate-400 text-xs">
+                                        📷 No photo attached to this report.
+                                    </div>
+                                <?php endif; ?>
                             </div>
+                        </div>
 
-                            <div class="relative mt-6 pl-3">
-                                <div class="absolute left-[10px] top-1 h-[calc(100%-10px)] w-px bg-slate-200"></div>
-                                <div class="space-y-5">
-                                    <?php foreach ($events as $event): ?>
-                                        <div class="relative flex gap-4">
-                                            <div class="relative z-10 flex h-5 w-5 items-center justify-center rounded-full bg-white ring-4 ring-white">
-                                                <span class="h-2.5 w-2.5 rounded-full bg-<?php echo $event['color']['dot']; ?>"></span>
+                        <!-- Incident Description -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-3">
+                            <h3 class="text-sm font-extrabold text-slate-900 pb-2 border-b border-slate-100">Incident Description</h3>
+                            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line font-medium">
+                                <?php echo htmlspecialchars($report['description'] ?: 'No additional description provided.'); ?>
+                            </p>
+                        </div>
+
+                        <!-- Status History Timeline -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+                            <h3 class="text-sm font-extrabold text-slate-900 pb-2 border-b border-slate-100">Status History</h3>
+                            <div class="relative pl-6 space-y-6 border-l-2 border-slate-200 ml-2">
+                                <?php foreach ($events as $ev): ?>
+                                    <div class="relative">
+                                        <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white ring-2 ring-emerald-100"></div>
+                                        <div>
+                                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                                <h4 class="text-xs font-extrabold text-slate-900"><?php echo htmlspecialchars($ev['title']); ?></h4>
+                                                <span class="text-[10px] font-mono text-slate-400"><?php echo htmlspecialchars($ev['date']); ?></span>
                                             </div>
-                                            <div class="flex-1 pb-2">
-                                                <span class="inline-flex rounded-full bg-<?php echo $event['color']['bg']; ?> px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-<?php echo $event['color']['text']; ?>"><?php echo htmlspecialchars($event['status']); ?></span>
-                                                <h4 class="mt-2 text-sm font-bold text-slate-900"><?php echo htmlspecialchars($event['title']); ?></h4>
-                                                <p class="mt-1 text-xs text-slate-400"><?php echo htmlspecialchars($event['date']); ?></p>
-                                                <?php if (!empty($event['reason'])): ?>
-                                                    <div class="mt-3 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                                                        <p class="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-red-500">Rejection reason</p>
-                                                        <?php echo htmlspecialchars($event['reason']); ?>
-                                                    </div>
-                                                <?php endif; ?>
-                                            </div>
+                                            <p class="text-xs text-slate-500 mt-1"><?php echo htmlspecialchars($ev['desc']); ?></p>
                                         </div>
-                                    <?php endforeach; ?>
-                                </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
-                        </section>
+                        </div>
+
                     </div>
 
+                    <!-- Right Section (1 col): GIS Location & Details -->
                     <div class="space-y-6">
-                        <section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_45px_-30px_rgba(15,23,42,0.18)]">
-                            <div class="border-b border-slate-200 bg-[#E6F4EA] px-5 py-4">
-                                <h3 class="text-lg font-black text-slate-900">Location Summary</h3>
-                            </div>
-                            <div id="reportMap" class="h-[260px] w-full bg-slate-100"></div>
-                            <div class="space-y-4 p-5">
-                                <div class="flex items-start gap-3 rounded-2xl bg-slate-50 p-3">
-                                    <div class="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-[#E6F4EA] text-[#0D9488]">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400">Location</p>
-                                        <p class="mt-1 text-sm font-semibold text-slate-700" id="locationName"><?php echo htmlspecialchars($report['location_name'] ?? 'Unknown location'); ?></p>
-                                    </div>
-                                </div>
 
-                                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400">Coordinates</p>
-                                        <button type="button" onclick="copyCoords()" id="copyBtn" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-100">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                                            Copy
-                                        </button>
-                                    </div>
-                                    <p id="coordsText" class="mt-3 font-mono text-sm font-semibold text-slate-700"><?php echo htmlspecialchars($report['latitude'] . ', ' . $report['longitude']); ?></p>
-                                </div>
+                        <!-- GIS Location Map Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                                <h3 class="text-sm font-extrabold text-slate-900">Incident Location</h3>
+                                <button type="button" onclick="copyCoordinates()" class="text-xs font-bold text-emerald-700 hover:text-emerald-900 cursor-pointer">
+                                    Copy GPS
+                                </button>
                             </div>
-                        </section>
+                            <div id="viewReportMap" class="h-64 w-full border-b border-slate-100"></div>
+                            <div class="p-4 bg-slate-50 text-xs space-y-1">
+                                <p class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Pinned Coordinates</p>
+                                <p id="gpsCoords" class="font-mono font-bold text-slate-800"><?php echo htmlspecialchars($report['latitude'] . ', ' . $report['longitude']); ?></p>
+                            </div>
+                        </div>
 
-                        <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.18)]">
-                            <h3 class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-400">Report Summary</h3>
-                            <dl class="mt-4 space-y-4 text-sm">
-                                <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
-                                    <dt class="text-slate-500">Category</dt>
-                                    <dd class="font-semibold text-slate-800"><?php echo htmlspecialchars($report['waste_category'] ?? 'N/A'); ?></dd>
-                                </div>
-                                <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
-                                    <dt class="text-slate-500">Estimated Quantity</dt>
-                                    <dd class="font-semibold text-slate-800"><?php echo htmlspecialchars($report['estimated_quantity'] ?? 'N/A'); ?></dd>
-                                </div>
-                                <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
-                                    <dt class="text-slate-500">Waste Condition</dt>
-                                    <dd class="font-semibold text-slate-800"><?php echo htmlspecialchars($report['waste_condition'] ?? 'N/A'); ?></dd>
-                                </div>
-                                <div class="flex items-center justify-between gap-4">
-                                    <dt class="text-slate-500">Submission Date</dt>
-                                    <dd class="font-semibold text-slate-800"><?php echo date('M j, Y', strtotime($report['submission_date'])); ?></dd>
-                                </div>
-                            </dl>
-                        </section>
+                        <!-- Report Summary Key-Values -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-3.5 text-xs">
+                            <h3 class="text-sm font-extrabold text-slate-900 pb-2 border-b border-slate-100">Report Details</h3>
+
+                            <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                                <span class="text-slate-500">Waste Category</span>
+                                <span class="font-bold text-slate-900"><?php echo htmlspecialchars($report['waste_category'] ?? 'General Waste'); ?></span>
+                            </div>
+
+                            <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                                <span class="text-slate-500">Estimated Volume</span>
+                                <span class="font-bold text-slate-900"><?php echo htmlspecialchars($report['estimated_quantity'] ?? 'N/A'); ?></span>
+                            </div>
+
+                            <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                                <span class="text-slate-500">Waste Condition</span>
+                                <span class="font-bold text-slate-900"><?php echo htmlspecialchars($report['waste_condition'] ?? 'N/A'); ?></span>
+                            </div>
+
+                            <div class="flex justify-between items-center py-1">
+                                <span class="text-slate-500">Jurisdiction</span>
+                                <span class="font-bold text-slate-900">Barangay Dulong Bayan</span>
+                            </div>
+                        </div>
+
                     </div>
+
                 </div>
-            </main>
-        </div>
+
+            </div>
+        </main>
     </div>
 </div>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        if (typeof L === 'undefined') return;
+document.addEventListener('DOMContentLoaded', function() {
+    const lat = <?php echo (float)$report['latitude']; ?>;
+    const lng = <?php echo (float)$report['longitude']; ?>;
 
-        const lat = <?php echo htmlspecialchars($report['latitude']); ?>;
-        const lng = <?php echo htmlspecialchars($report['longitude']); ?>;
-        const map = L.map('reportMap', {
-            center: [lat, lng],
-            zoom: 16,
-            zoomControl: false,
-            dragging: true,
-            scrollWheelZoom: true,
-            attributionControl: true,
-        });
+    const map = L.map('viewReportMap', { zoomControl: true }).setView([lat, lng], 16);
 
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }).addTo(map);
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }).addTo(map);
+    const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri', maxZoom: 19
+    });
+    const labelsMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19
+    });
+    satelliteMap.addTo(map);
+    labelsMap.addTo(map);
 
-        // Barangay boundary
-        var boundary = [
-            [15.5699279,120.8013517],[15.569572,120.8008898],[15.5686578,120.8008276],
-            [15.5685788,120.8006126],[15.5678398,120.8005542],[15.5672858,120.8001844],
-            [15.5668847,120.8000725],[15.566531,120.8001665],[15.5663685,120.7995785],
-            [15.5657033,120.7989717],[15.5658025,120.7987031],[15.5654243,120.7984537],
-            [15.5652,120.7980956],[15.5652043,120.7977553],[15.5652862,120.7975135],
-            [15.5652259,120.7971285],[15.5648604,120.7964691],[15.5643821,120.7961709],
-            [15.5643993,120.795562],[15.5637567,120.7951681],[15.5632478,120.7953561],
-            [15.562581,120.7952523],[15.5617529,120.7950598],[15.5611835,120.7950416],
-            [15.5608471,120.7945939],[15.5603295,120.7946431],[15.5596467,120.7943504],
-            [15.5597848,120.7937415],[15.55916,120.7930393],[15.5570187,120.7928646],
-            [15.555107,120.7921781],[15.554853,120.7912123],[15.5543176,120.7913399],
-            [15.5533236,120.7915605],[15.5534046,120.7918092],[15.5478115,120.8001316],
-            [15.5481325,120.8011058],[15.5484701,120.8021398],[15.5485113,120.8027807],
-            [15.5489723,120.8032508],[15.5500426,120.8030798],[15.5501365,120.8038043],
-            [15.5502517,120.8044282],[15.550614,120.8049495],[15.5508445,120.8058211],
-            [15.551569,120.8062911],[15.5520964,120.8071584],[15.5520903,120.8076635],
-            [15.5524005,120.8081181],[15.5523519,120.8083454],[15.5525708,120.8085979],
-            [15.5528807,120.8088668],[15.5512389,120.8118007],[15.550257,120.8126332],
-            [15.5523838,120.8153176],[15.549628,120.817434],[15.5518119,120.8219183],
-            [15.5522367,120.8232918],[15.5516159,120.8253946],[15.5512188,120.8260956],
-            [15.5526533,120.8281375],[15.5518644,120.8298546],[15.5519514,120.8310955],
-            [15.5541358,120.8335885],[15.5557229,120.8325752],[15.5574083,120.8326161],
-            [15.5602447,120.8332704],[15.5650646,120.8283841],[15.5703491,120.8236492],
-            [15.5689622,120.82189],[15.5676998,120.8219651],[15.5645562,120.8203353],
-            [15.5594636,120.8205697],[15.5617437,120.8185042],[15.5609879,120.8149287],
-            [15.5623097,120.8126889],[15.5595308,120.8092582],[15.5673914,120.8032464],
-            [15.5699463,120.8014669],[15.5699279,120.8013517]
-        ];
-        L.polygon(boundary, {
-            color: '#10b981', weight: 1.5, fillColor: '#d1fae5', fillOpacity: 0.1, dashArray: '6 5'
-        }).addTo(map);
-
-        const pinColor = '<?php echo $color['dot']; ?>' === 'amber-500' ? '#f59e0b' : '<?php echo $color['dot']; ?>' === 'sky-500' ? '#3b82f6' : '<?php echo $color['dot']; ?>' === 'red-500' ? '#ef4444' : '#10b981';
-        const customIcon = L.divIcon({
-            html: '<div style="background-color:' + pinColor + '; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow:0 4px 12px rgba(0,0,0,0.25);"></div>',
-            className: '',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8],
-        });
-
-        L.marker([lat, lng], { icon: customIcon }).addTo(map);
-        map.panTo([lat, lng]);
+    const customIcon = L.divIcon({
+        html: '<div style="background-color:#10b981;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>',
+        className: '',
+        iconSize: [18, 18],
+        iconAnchor: [9, 9]
     });
 
-    function copyCoords() {
-        const coords = document.getElementById('coordsText').innerText;
-        navigator.clipboard.writeText(coords).then(() => {
-            const btn = document.getElementById('copyBtn');
-            const original = btn.innerHTML;
-            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied';
-            btn.classList.add('bg-[#E6F4EA]', 'text-[#0D9488]', 'border-[#A7F3D0]');
-            setTimeout(() => {
-                btn.innerHTML = original;
-                btn.classList.remove('bg-[#E6F4EA]', 'text-[#0D9488]', 'border-[#A7F3D0]');
-            }, 1500);
-        });
-    }
+    L.marker([lat, lng], { icon: customIcon }).addTo(map);
+    setTimeout(() => map.invalidateSize(), 200);
+});
+
+function copyCoordinates() {
+    const coords = document.getElementById('gpsCoords').innerText;
+    navigator.clipboard.writeText(coords).then(() => {
+        alert('Coordinates copied to clipboard: ' + coords);
+    });
+}
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

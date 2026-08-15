@@ -218,4 +218,44 @@ class Notification {
 
         return true;
     }
+
+    /**
+     * Delete a single notification for user
+     */
+    public function deleteNotification($notificationId, $userId) {
+        $this->db->query("
+            DELETE FROM notifications 
+            WHERE id = :id AND (user_id = :user_id OR send_to_all = TRUE)
+        ");
+        $this->db->bind(':id', $notificationId);
+        $this->db->bind(':user_id', $userId);
+        return $this->db->execute();
+    }
+
+    /**
+     * Clear all read notifications for user
+     */
+    public function clearReadNotifications($userId) {
+        $this->db->query("
+            DELETE FROM notifications 
+            WHERE is_read = TRUE AND (user_id = :user_id OR send_to_all = TRUE)
+        ");
+        $this->db->bind(':user_id', $userId);
+        return $this->db->execute();
+    }
+
+    /**
+     * Broadcast a system announcement / alert
+     */
+    public function broadcastSystemAlert($title, $content, $type = 'system') {
+        return $this->create([
+            'user_id' => null,
+            'report_id' => null,
+            'announcement_id' => null,
+            'type' => $type,
+            'title' => $title,
+            'content' => $content,
+            'send_to_all' => true
+        ]);
+    }
 }

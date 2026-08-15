@@ -1,6 +1,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -50,7 +50,7 @@ tailwind.config = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Miranda Sans"', 'system-ui', '-apple-system', 'sans-serif'],
       },
       borderRadius: {
         lg: '0.5rem',
@@ -61,3 +61,9 @@ tailwind.config = {
   },
 };
 </script>
+<style>
+  body, input, button, select, textarea, p, h1, h2, h3, h4, h5, h6, span, a, label, table, td, th {
+    font-family: 'Miranda Sans', sans-serif !important;
+    font-optical-sizing: auto;
+  }
+</style>

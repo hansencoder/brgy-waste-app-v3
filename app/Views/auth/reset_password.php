@@ -4,11 +4,11 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
-    body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
-    .material-icons { font-size: 20px; vertical-align: middle; }
+    body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
+    .material-icons { font-family: 'Material Icons' !important; font-size: 20px; vertical-align: middle; }
 </style>
 
 <div class="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12">

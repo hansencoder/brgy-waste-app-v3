@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../init.php';
 require_once __DIR__ . '/../../Models/Notification.php';
 
-// Fetch branding details for mobile topbar header
+// Fetch branding details for resident topbar header
 try {
     $topDb = new Database();
     $topDb->query("SELECT system_short_name, system_motto, system_logo FROM barangays LIMIT 1");
@@ -12,7 +12,7 @@ try {
     $topBranding = null;
 }
 $topSysShortName = !empty($topBranding['system_short_name']) ? $topBranding['system_short_name'] : 'WasteWatch';
-$topSysMotto = !empty($topBranding['system_motto']) ? $topBranding['system_motto'] : 'Waste Management';
+$topSysMotto = !empty($topBranding['system_motto']) ? $topBranding['system_motto'] : 'Resident Portal';
 $topSysLogo = !empty($topBranding['system_logo']) ? $topBranding['system_logo'] : null;
 if ($topSysLogo && strpos($topSysLogo, '/brgy-waste-app-v3') === false && strpos($topSysLogo, '/public') === 0) {
     $topSysLogo = '/brgy-waste-app-v3' . $topSysLogo;
@@ -29,7 +29,7 @@ if (isset($_SESSION['user_id'])) {
 }
 ?>
 
-<header class="h-16 flex items-center justify-between px-4 sm:px-6 bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+<header class="h-16 flex items-center justify-between px-4 sm:px-6 bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
     <!-- Left Section: Desktop Collapse Toggle & Mobile Menu Trigger -->
     <div class="flex items-center gap-3">
         <!-- Desktop Sidebar Collapse Toggle -->
@@ -62,10 +62,10 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <!-- Right Section: Notification & Admin Profile (Matching Reference Top App Bar) -->
+    <!-- Right Section: Notification & Resident Profile -->
     <div class="flex items-center gap-3 ml-auto">
         <!-- Notification Bell Icon with Dynamic Red Indicator -->
-        <button onclick="openNotificationPanel()" class="relative inline-flex items-center justify-center p-2 rounded-xl text-slate-600 hover:bg-slate-200/60 transition cursor-pointer" title="Notifications">
+        <button onclick="openNotificationPanel()" class="relative inline-flex items-center justify-center p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition cursor-pointer" title="Notifications">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
@@ -78,12 +78,15 @@ if (isset($_SESSION['user_id'])) {
         <!-- Vertical Separator Divider -->
         <div class="h-6 w-px bg-slate-200 mx-1"></div>
 
-        <!-- Admin Avatar & Name Pill (Navigates to Profile) -->
-        <a href="/brgy-waste-app-v3/public/admin/profile" class="flex items-center gap-2.5 p-1 pr-3 rounded-full hover:bg-slate-200/60 transition">
+        <!-- Resident Avatar & Name Pill (Navigates to Profile) -->
+        <a href="/brgy-waste-app-v3/public/resident/profile" class="flex items-center gap-2.5 p-1 pr-3 rounded-full hover:bg-slate-100 transition">
             <div class="h-8 w-8 rounded-full bg-[#194D33] text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)); ?>
+                <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'R', 0, 1)); ?>
             </div>
-            <span class="text-xs font-bold text-slate-800 tracking-tight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
+            <div class="hidden sm:block text-left">
+                <span class="text-xs font-bold text-slate-800 tracking-tight block leading-tight"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Resident'); ?></span>
+                <span class="text-[10px] font-semibold text-slate-400 block leading-none"><?php echo htmlspecialchars($_SESSION['user_purok'] ?? 'Resident'); ?></span>
+            </div>
         </a>
     </div>
 </header>

@@ -5,25 +5,36 @@
  */
 class Geocoding {
     
+    private static $cache = [];
+
     /**
      * Reverse geocode coordinates to get location name
-     * Uses OpenStreetMap Nominatim API (free, no API key required)
+     * Uses OpenStreetMap Nominatim API with memory caching and short timeout
      * 
      * @param float $latitude
      * @param float $longitude
      * @return string Location name or "Unknown location" if API fails
      */
     public static function getLocationName($latitude, $longitude) {
+        if (empty($latitude) || empty($longitude)) {
+            return "Barangay Dulong Bayan";
+        }
+
+        // Cache key by rounded coordinates
+        $cacheKey = round((float)$latitude, 4) . ',' . round((float)$longitude, 4);
+        if (isset(self::$cache[$cacheKey])) {
+            return self::$cache[$cacheKey];
+        }
+
         try {
-            // Format: latitude, longitude (space-separated)
             $url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" . urlencode($latitude) . "&lon=" . urlencode($longitude);
             
-            // Initialize cURL
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'CivicLens/1.0');
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 1); // 1s max timeout
+            curl_setopt($ch, CURLOPT_USERAGENT, 'WasteWatch/2.0');
             
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -34,8 +45,6 @@ class Geocoding {
                 
                 if ($data && isset($data['address'])) {
                     $address = $data['address'];
-                    
-                    // Build location string with priority: street > neighborhood > suburb > city
                     $parts = [];
                     
                     if (!empty($address['road'])) {
@@ -59,14 +68,18 @@ class Geocoding {
                     }
                     
                     if (!empty($parts)) {
-                        return implode(', ', $parts);
+                        $location = implode(', ', $parts);
+                        self::$cache[$cacheKey] = $location;
+                        return $location;
                     }
                 }
             }
         } catch (Exception $e) {
-            // Silent fail - return default text
+            // Silent fallback
         }
         
-        return "Unknown location";
+        $fallback = "Dulong Bayan";
+        self::$cache[$cacheKey] = $fallback;
+        return $fallback;
     }
 }

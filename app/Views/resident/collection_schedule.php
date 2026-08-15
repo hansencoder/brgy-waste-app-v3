@@ -1,208 +1,235 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
-  /* Apply Nunito Sans to everything EXCEPT material-icons */
-  *:not(.material-icons) {
-    font-family: 'Lato', sans-serif !important;
-    }
-  /* Ensure Material Icons render correctly */
-    .material-icons {
-    font-family: 'Material Icons' !important;
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;  /* Preferred icon size */
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-    vertical-align: middle;
-    }
-</style>
-
 
 <?php
 $fullName = $_SESSION['user_name'] ?? 'Juan Dela Cruz';
-$firstName = isset($_SESSION['user_name']) ? explode(' ', trim($_SESSION['user_name']))[0] : 'Juan';
-
-// Data passed from ResidentController@schedule
 $schedules      = $data['schedules'] ?? [];
 $special_notice = $data['special_notice'] ?? null;
 $last_updated   = $data['last_updated'] ?? date('F j, Y');
 
-// View mode and calendar data
 $view = $data['view'] ?? 'cards';
 $month = $data['month'] ?? date('n');
 $year = $data['year'] ?? date('Y');
 $calendar_days = $data['calendar_days'] ?? [];
 
-// Map waste types to colors and icons (now using Material Icons names)
 $wasteTypeMap = [
-    'Biodegradable'      => ['bg' => 'emerald-50', 'text' => 'emerald-700', 'border' => 'border-emerald-500', 'icon' => 'eco'],
-    'Non-Biodegradable'  => ['bg' => 'sky-50', 'text' => 'sky-700', 'border' => 'border-sky-500', 'icon' => 'recycling'],
-    'Residual Waste'     => ['bg' => 'amber-50', 'text' => 'amber-700', 'border' => 'border-amber-500', 'icon' => 'delete_sweep'],
-    'Special / Hazardous' => ['bg' => 'violet-50', 'text' => 'violet-700', 'border' => 'border-violet-500', 'icon' => 'warning'],
+    'Biodegradable'       => ['bg' => 'bg-emerald-50 text-emerald-900 border-emerald-300', 'badge' => 'bg-emerald-600 text-white'],
+    'Non-Biodegradable'   => ['bg' => 'bg-blue-50 text-blue-900 border-blue-300', 'badge' => 'bg-blue-600 text-white'],
+    'Residual Waste'      => ['bg' => 'bg-amber-50 text-amber-900 border-amber-300', 'badge' => 'bg-amber-600 text-white'],
+    'Special / Hazardous' => ['bg' => 'bg-purple-50 text-purple-900 border-purple-300', 'badge' => 'bg-purple-600 text-white'],
 ];
-$defaultWasteType = ['bg' => 'slate-50', 'text' => 'slate-700', 'border' => 'border-slate-300', 'icon' => 'help_outline'];
+$defaultWasteType = ['bg' => 'bg-slate-50 text-slate-700 border-slate-300', 'badge' => 'bg-slate-700 text-white'];
 ?>
 
-<div class="min-h-screen bg-[#F8FAFC] text-slate-800">
-    <div class="lg:flex">
-        <?php include __DIR__ . '/../layouts/resident_sidebar.php'; ?>
+<style>
+    body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
+</style>
 
-        <div class="flex-1">
-            <header class="border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur sm:px-6 lg:px-8 lg:py-6">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+<div class="flex h-screen bg-slate-50 overflow-hidden w-full">
+    <!-- Resident Sidebar -->
+    <?php include __DIR__ . '/../layouts/resident_sidebar.php'; ?>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <!-- Resident Topbar -->
+        <?php include __DIR__ . '/../layouts/resident_topbar.php'; ?>
+
+        <!-- Scrollable Main Content -->
+        <main class="flex-1 overflow-y-auto bg-slate-50 focus:outline-none">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+                <!-- Header Banner & View Mode Switcher -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
                     <div>
-                        <p class="text-[11px] font-bold uppercase tracking-[0.35em] text-[#0D9488]">Resident Portal</p>
-                        <h1 class="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">Collection Schedule</h1>
-                        <p class="mt-1 text-sm text-slate-500">Official waste collection schedule for Barangay Dulong Bayan.</p>
+                        <div class="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">
+                            <span>Resident Portal</span>
+                            <span>•</span>
+                            <span>Barangay Route Timetable</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Collection Schedule</h1>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Official waste truck collection timetable and coverage routes for Barangay Dulong Bayan.</p>
+                    </div>
+
+                    <!-- View Switcher -->
+                    <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-xs self-start">
+                        <a href="?view=cards<?php echo isset($_GET['month']) ? '&month='.$_GET['month'].'&year='.$_GET['year'] : ''; ?>"
+                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition <?php echo $view === 'cards' ? 'bg-[#0B2E22] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-50'; ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                            <span>Card Grid</span>
+                        </a>
+                        <a href="?view=calendar<?php echo isset($_GET['month']) ? '&month='.$_GET['month'].'&year='.$_GET['year'] : ''; ?>"
+                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition <?php echo $view === 'calendar' ? 'bg-[#0B2E22] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-50'; ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                            <span>Calendar</span>
+                        </a>
                     </div>
                 </div>
-            </header>
 
-            <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-
-                <!-- View Switcher -->
-                <div class="flex items-center justify-between mb-8">
-                    <div class="inline-flex rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
-                        <a href="?view=cards<?php echo isset($_GET['month']) ? '&month='.$_GET['month'].'&year='.$_GET['year'] : ''; ?>" 
-                           class="rounded-md px-5 py-2 text-sm font-semibold transition flex items-center gap-2 <?php echo $view === 'cards' ? 'bg-[#0D9488] text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'; ?>">
-                            <span class="material-icons text-[1.1rem]">grid_view</span>
-                            Cards
-                        </a>
-                        <a href="?view=calendar<?php echo isset($_GET['month']) ? '&month='.$_GET['month'].'&year='.$_GET['year'] : ''; ?>" 
-                           class="rounded-md px-5 py-2 text-sm font-semibold transition flex items-center gap-2 <?php echo $view === 'calendar' ? 'bg-[#0D9488] text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'; ?>">
-                            <span class="material-icons text-[1.1rem]">calendar_today</span>
-                            Calendar
-                        </a>
+                <!-- Special Advisory Banner -->
+                <?php if ($special_notice): ?>
+                    <div class="rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-xs flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-xs">
+                            ⚠️
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-200 text-amber-900 mb-1">
+                                Special Collection Advisory
+                            </span>
+                            <h3 class="text-base font-extrabold text-amber-950"><?php echo htmlspecialchars($special_notice['title']); ?></h3>
+                            <p class="text-xs text-amber-900/80 mt-1 leading-relaxed font-medium"><?php echo nl2br(htmlspecialchars($special_notice['content'])); ?></p>
+                        </div>
                     </div>
-                </div>
-
-                <?php if ($view !== 'calendar'): ?>
-                    <!-- Schedules Cards -->
-                    <section class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-                        <?php if (!empty($schedules)): ?>
-                            <?php foreach ($schedules as $schedule): ?>
-                                <?php
-                                    $wasteType = $schedule['waste_type'] ?? 'General';
-                                    $style = $wasteTypeMap[$wasteType] ?? $defaultWasteType;
-                                    $purokList = $schedule['puroks'] ?? 'All Puroks';
-                                    $start = date('g:i A', strtotime($schedule['start_time']));
-                                    $end = date('g:i A', strtotime($schedule['end_time']));
-                                ?>
-                                <article class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl relative overflow-hidden">
-                                    <!-- Left accent border -->
-                                    <div class="absolute left-0 top-0 bottom-0 w-1 <?php echo $style['border']; ?> rounded-l-2xl"></div>
-                                    
-                                    <div class="flex items-start justify-between gap-3">
-                                        <div class="flex h-11 w-11 items-center justify-center rounded-xl <?php echo 'bg-'.$style['bg']; ?> text-<?php echo str_replace('text-', '', $style['text']); ?>">
-                                            <span class="material-icons text-2xl"><?php echo $style['icon']; ?></span>
-                                        </div>
-                                        <span class="rounded-full <?php echo 'bg-'.$style['bg']; ?> px-3 py-1 text-[11px] font-bold <?php echo $style['text']; ?>">
-                                            <?php echo htmlspecialchars($wasteType); ?>
-                                        </span>
-                                    </div>
-                                    <h2 class="mt-5 text-2xl font-black text-slate-900"><?php echo htmlspecialchars($schedule['collection_day']); ?></h2>
-                                    <p class="mt-2 text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-                                        <span class="material-icons text-sm">schedule</span>
-                                        <?php echo $start; ?> – <?php echo $end; ?>
-                                    </p>
-                                    <div class="mt-3 flex items-center gap-2 text-sm text-slate-500">
-                                        <span class="material-icons text-sm">location_on</span>
-                                        <?php echo htmlspecialchars($purokList); ?>
-                                    </div>
-                                </article>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="col-span-full text-center py-12 text-slate-500 bg-white rounded-2xl border border-slate-200">No collection schedules available at this time.</div>
-                        <?php endif; ?>
-                    </section>
-
-                    <!-- Special Notice -->
-                    <?php if ($special_notice): ?>
-                        <section class="mt-8 rounded-2xl border border-amber-200 bg-amber-50/80 p-5 sm:p-6">
-                            <div class="flex items-start gap-4">
-                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
-                                    <span class="material-icons text-3xl">announcement</span>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-black text-amber-800"><?php echo htmlspecialchars($special_notice['title']); ?></h3>
-                                    <p class="mt-1 text-sm leading-7 text-amber-700"><?php echo nl2br(htmlspecialchars($special_notice['content'])); ?></p>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
                 <?php endif; ?>
 
-                <!-- ============================================================ -->
-                <!-- CALENDAR VIEW -->
-                <!-- ============================================================ -->
-                <?php if ($view === 'calendar'): ?>
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mt-8">
+                <!-- CARD VIEW -->
+                <?php if ($view !== 'calendar'): ?>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+                        <?php if (!empty($schedules)): ?>
+                            <?php foreach ($schedules as $s):
+                                $wasteType = $s['waste_type'] ?? 'General';
+                                $style = $wasteTypeMap[$wasteType] ?? $defaultWasteType;
+                                $purokList = $s['puroks'] ?? 'All Puroks';
+                                $start = date('h:i A', strtotime($s['start_time']));
+                                $end = date('h:i A', strtotime($s['end_time']));
+                                $isToday = (strtolower(date('l')) === strtolower($s['collection_day']));
+                            ?>
+                            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 hover:shadow-md transition relative flex flex-col justify-between space-y-4">
+                                <div>
+                                    <div class="flex items-center justify-between gap-2 mb-3">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border <?php echo $style['bg']; ?>">
+                                            <?php echo htmlspecialchars($wasteType); ?>
+                                        </span>
+                                        <?php if ($isToday): ?>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-600 text-white animate-pulse">
+                                                Today's Route
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <h3 class="text-xl font-extrabold text-slate-900"><?php echo htmlspecialchars($s['collection_day']); ?></h3>
+                                    
+                                    <div class="mt-2 space-y-1.5 text-xs text-slate-600">
+                                        <div class="flex items-center gap-1.5 font-semibold text-emerald-800">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                            <span><?php echo $start; ?> – <?php echo $end; ?></span>
+                                        </div>
+                                        <div class="flex items-start gap-1.5 text-slate-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <span class="leading-tight"><?php echo htmlspecialchars($purokList); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                                    <span>Status: Active</span>
+                                    <span class="font-semibold text-slate-600">Truck Route</span>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400 text-sm">
+                                No active collection schedules available at this time.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Detailed Schedule Table -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100">
+                            <h3 class="text-base font-extrabold text-slate-900">Complete Weekly Schedule Table</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Summary of collection times, waste categories, and assigned purok zones</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-50/80 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                        <th class="py-3 px-6">Day</th>
+                                        <th class="py-3 px-6">Time Window</th>
+                                        <th class="py-3 px-6">Waste Type</th>
+                                        <th class="py-3 px-6">Covered Purok(s)</th>
+                                        <th class="py-3 px-6">Special Instructions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <?php if (!empty($schedules)): ?>
+                                        <?php foreach ($schedules as $s):
+                                            $wasteType = $s['waste_type'] ?? 'General';
+                                            $style = $wasteTypeMap[$wasteType] ?? $defaultWasteType;
+                                            $start = date('h:i A', strtotime($s['start_time']));
+                                            $end = date('h:i A', strtotime($s['end_time']));
+                                        ?>
+                                        <tr class="hover:bg-slate-50/60 transition">
+                                            <td class="py-3.5 px-6 font-bold text-slate-900"><?php echo htmlspecialchars($s['collection_day']); ?></td>
+                                            <td class="py-3.5 px-6 font-mono font-semibold text-slate-700"><?php echo $start; ?> – <?php echo $end; ?></td>
+                                            <td class="py-3.5 px-6">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border <?php echo $style['bg']; ?>">
+                                                    <?php echo htmlspecialchars($wasteType); ?>
+                                                </span>
+                                            </td>
+                                            <td class="py-3.5 px-6 font-semibold text-slate-800"><?php echo htmlspecialchars($s['puroks'] ?? 'All Puroks'); ?></td>
+                                            <td class="py-3.5 px-6 text-slate-500"><?php echo htmlspecialchars($s['special_notes'] ?? 'Place bins outside before 6:00 AM'); ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                <?php else: ?>
+                    <!-- CALENDAR VIEW -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-6">
                         
-                        <!-- Calendar Header -->
-                        <div class="flex flex-wrap items-center justify-between pb-5 border-b border-slate-100 gap-4">
-                            <div class="flex items-center gap-2">
-                                <a href="?view=calendar&month=<?php echo $month == 1 ? 12 : $month - 1; ?>&year=<?php echo $month == 1 ? $year - 1 : $year; ?>" 
-                                   class="p-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition">
-                                    <span class="material-icons">chevron_left</span>
+                        <!-- Month Navigation Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <a href="?view=calendar&month=<?php echo $month == 1 ? 12 : $month - 1; ?>&year=<?php echo $month == 1 ? $year - 1 : $year; ?>"
+                                   class="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
                                 </a>
-                                <h2 class="text-xl font-bold text-slate-900 min-w-[140px] text-center"><?php echo date('F Y', mktime(0, 0, 0, $month, 1, $year)); ?></h2>
-                                <a href="?view=calendar&month=<?php echo $month == 12 ? 1 : $month + 1; ?>&year=<?php echo $month == 12 ? $year + 1 : $year; ?>" 
-                                   class="p-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition">
-                                    <span class="material-icons">chevron_right</span>
+                                <h2 class="text-xl font-extrabold text-slate-900 min-w-[160px] text-center font-mono">
+                                    <?php echo date('F Y', mktime(0, 0, 0, $month, 1, $year)); ?>
+                                </h2>
+                                <a href="?view=calendar&month=<?php echo $month == 12 ? 1 : $month + 1; ?>&year=<?php echo $month == 12 ? $year + 1 : $year; ?>"
+                                   class="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
                                 </a>
                             </div>
-                            <div class="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-600">
-                                <?php
-                                $legendColors = [
-                                    'Biodegradable' => '#10B981',
-                                    'Non-Biodegradable' => '#0284C7',
-                                    'Residual Waste' => '#EA580C',
-                                    'Special / Hazardous' => '#8B5CF6'
-                                ];
-                                ?>
-                                <?php foreach ($legendColors as $label => $color): ?>
-                                    <span class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded-full" style="background: <?php echo $color; ?>"></span>
-                                        <?php echo $label; ?>
-                                    </span>
-                                <?php endforeach; ?>
+
+                            <!-- Legend -->
+                            <div class="flex items-center gap-3 flex-wrap text-xs font-semibold text-slate-600">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>Biodegradable</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>Non-Bio</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span>Residual</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span>Special/Hazardous</span>
                             </div>
                         </div>
 
-                        <!-- Calendar Grid -->
-                        <div class="mt-4">
-                            <div class="grid grid-cols-7 text-center py-3 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                        <!-- Calendar Days Grid -->
+                        <div>
+                            <div class="grid grid-cols-7 text-center py-2.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 bg-slate-50 rounded-t-xl">
                                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                             </div>
-                            <div class="grid grid-cols-7 gap-px bg-slate-100 rounded-b-xl overflow-hidden">
+                            <div class="grid grid-cols-7 gap-px bg-slate-200 rounded-b-xl overflow-hidden border border-slate-200">
                                 <?php foreach ($calendar_days as $dayData): ?>
                                     <?php if ($dayData === null): ?>
-                                        <div class="bg-white min-h-[90px] p-2 border-t border-slate-100"></div>
+                                        <div class="bg-slate-50 min-h-[90px] sm:min-h-[105px] p-2"></div>
                                     <?php else: ?>
-                                        <div class="bg-white min-h-[90px] p-2 flex flex-col justify-between border-t border-slate-100 hover:bg-slate-50 transition">
-                                            <span class="text-sm font-bold <?php echo $dayData['is_today'] ? 'text-white bg-[#0D9488] w-7 h-7 rounded-full flex items-center justify-center' : 'text-slate-700'; ?>">
-                                                <?php echo $dayData['day']; ?>
-                                            </span>
-                                            <div class="flex flex-col gap-1 mt-1">
+                                        <div class="bg-white min-h-[90px] sm:min-h-[105px] p-2 flex flex-col justify-between hover:bg-slate-50/80 transition">
+                                            <div class="flex justify-between items-start">
+                                                <span class="text-xs font-bold <?php echo $dayData['is_today'] ? 'w-6 h-6 rounded-full bg-[#0B2E22] text-white flex items-center justify-center' : 'text-slate-800'; ?>">
+                                                    <?php echo $dayData['day']; ?>
+                                                </span>
+                                            </div>
+                                            <div class="space-y-1 mt-1">
                                                 <?php if (!empty($dayData['schedules'])): ?>
-                                                    <?php foreach ($dayData['schedules'] as $schedule): ?>
-                                                        <div class="text-[9px] font-bold text-white rounded-full px-2 py-0.5 truncate" 
-                                                             style="background: <?php echo $legendColors[$schedule['waste_type']] ?? '#6B7280'; ?>;"
-                                                             title="<?php echo htmlspecialchars($schedule['waste_type']); ?>">
-                                                            <?php 
-                                                                $shortLabel = $schedule['waste_type'];
-                                                                if (strpos($shortLabel, 'Biodegradable') !== false) $shortLabel = 'Bio';
-                                                                elseif (strpos($shortLabel, 'Non-Biodegradable') !== false) $shortLabel = 'Non-Bio';
-                                                                elseif (strpos($shortLabel, 'Residual') !== false) $shortLabel = 'Residual';
-                                                                elseif (strpos($shortLabel, 'Special') !== false) $shortLabel = 'Special';
-                                                                echo $shortLabel;
-                                                            ?>
+                                                    <?php foreach ($dayData['schedules'] as $sch):
+                                                        $w = $sch['waste_type'] ?? 'General';
+                                                        $badgeBg = strpos($w, 'Bio') !== false && strpos($w, 'Non') === false ? 'bg-emerald-600' :
+                                                                  (strpos($w, 'Non') !== false ? 'bg-blue-600' :
+                                                                  (strpos($w, 'Residual') !== false ? 'bg-amber-600' : 'bg-purple-600'));
+                                                    ?>
+                                                        <div class="text-[9px] font-bold text-white <?php echo $badgeBg; ?> px-1.5 py-0.5 rounded-md truncate" title="<?php echo htmlspecialchars($w . ' - ' . ($sch['puroks'] ?? 'All')); ?>">
+                                                            <?php echo htmlspecialchars($w); ?>
                                                         </div>
                                                     <?php endforeach; ?>
                                                 <?php endif; ?>
@@ -212,81 +239,17 @@ $defaultWasteType = ['bg' => 'slate-50', 'text' => 'slate-700', 'border' => 'bor
                                 <?php endforeach; ?>
                             </div>
                         </div>
+
                     </div>
                 <?php endif; ?>
 
-                <?php if ($view !== 'calendar'): ?>
-                    <!-- Detailed Schedule Table -->
-                    <section class="mt-8 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-black text-slate-900">Detailed Schedule</h3>
-                        </div>
-
-                        <div class="overflow-hidden rounded-xl border border-slate-200">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-slate-200 text-sm">
-                                    <thead class="bg-slate-800 text-white">
-                                        <tr>
-                                            <th class="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.25em]">Collection Day</th>
-                                            <th class="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.25em]">Collection Time</th>
-                                            <th class="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.25em]">Covered Purok(s)</th>
-                                            <th class="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.25em]">Waste Type</th>
-                                            <th class="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.25em]">Special Notes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-100 bg-white">
-                                        <?php if (!empty($schedules)): ?>
-                                            <?php foreach ($schedules as $index => $schedule): ?>
-                                                <tr class="<?php echo $index % 2 === 0 ? 'bg-white' : 'bg-slate-50'; ?> hover:bg-slate-100 transition">
-                                                    <td class="px-5 py-3.5 font-semibold text-slate-800"><?php echo htmlspecialchars($schedule['collection_day']); ?></td>
-                                                    <td class="px-5 py-3.5 text-slate-600">
-                                                        <?php echo date('g:i A', strtotime($schedule['start_time'])); ?> – <?php echo date('g:i A', strtotime($schedule['end_time'])); ?>
-                                                    </td>
-                                                    <td class="px-5 py-3.5 text-slate-600"><?php echo htmlspecialchars($schedule['puroks'] ?? 'All Puroks'); ?></td>
-                                                    <td class="px-5 py-3.5 text-slate-600"><?php echo htmlspecialchars($schedule['waste_type'] ?? 'General'); ?></td>
-                                                    <td class="px-5 py-3.5 text-slate-500"><?php echo htmlspecialchars($schedule['special_notes'] ?? '—'); ?></td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <tr><td colspan="5" class="px-5 py-6 text-center text-slate-500">No schedule records found.</td></tr>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </section>
-                <?php endif; ?>
-
-                <p class="mt-8 text-center text-sm text-slate-500">
-                    Schedule last updated: <?php echo htmlspecialchars($last_updated); ?> · For concerns: (02) 8-123-4567
+                <p class="text-center text-xs text-slate-400 pt-2 font-medium">
+                    Schedule Last Updated: <?php echo htmlspecialchars($last_updated); ?> • For waste collection inquiries, contact Barangay Dulong Bayan Office.
                 </p>
-            </main>
-        </div>
-    </div>
 
-    <!-- Mobile Bottom Navigation (icons replaced) -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 px-2 py-3 backdrop-blur md:hidden">
-        <div class="mx-auto flex max-w-md items-center justify-between gap-1">
-            <a href="/brgy-waste-app-v3/public/resident/dashboard" class="flex-1 rounded-2xl bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
-                <span class="material-icons text-xl block mx-auto mb-1">home</span>
-                Home
-            </a>
-            <a href="/brgy-waste-app-v3/public/resident/my_report" class="flex-1 rounded-2xl bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
-                <span class="material-icons text-xl block mx-auto mb-1">description</span>
-                Reports
-            </a>
-            <a href="/brgy-waste-app-v3/public/resident/submit" class="flex-1 rounded-full bg-[#10B981] px-3 py-2.5 text-center text-[10px] font-black text-white shadow-lg shadow-emerald-500/20">
-                <span class="material-icons text-xl block mx-auto mb-1">add_circle</span>
-                Report
-            </a>
-            <a href="/brgy-waste-app-v3/public/resident/collection_schedule" class="flex-1 rounded-2xl bg-[#E6F4EA] px-2 py-2 text-center text-[10px] font-semibold text-slate-900">
-                <span class="material-icons text-xl block mx-auto mb-1 text-[#10B981]">calendar_month</span>
-                Schedule
-            </a>
-            <a href="/brgy-waste-app-v3/public/resident/profile" class="flex-1 rounded-2xl bg-white px-2 py-2 text-center text-[10px] font-semibold text-slate-600">
-                <span class="material-icons text-xl block mx-auto mb-1">person</span>
-                Profile
-            </a>
-        </div>
-    </nav>
+            </div>
+        </main>
+    </div>
 </div>
+
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

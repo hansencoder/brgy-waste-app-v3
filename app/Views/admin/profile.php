@@ -1,14 +1,4 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
-
-<!-- Load Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-    body, * { font-family: 'Space Grotesk', sans-serif !important; }
-    .toggle-checkbox:checked { right: 0; border-color: #10B981; }
-    .toggle-checkbox:checked + .toggle-label { background-color: #10B981; }
-</style>
-
 <?php
 /** @var array $data */
 $data = $data ?? [];
@@ -24,6 +14,7 @@ $purok = $user['purok_name'] ?? 'Barangay Hall';
 $status = $user['status'] ?? 'active';
 $createdAt = $user['created_at'] ?? 'now';
 $formattedDate = date('M d, Y', strtotime($createdAt));
+$memberSince = date('F Y', strtotime($createdAt));
 $rawPic = $user['profile_pic'] ?? '';
 $profilePic = '';
 if (!empty($rawPic)) {
@@ -34,402 +25,722 @@ if (!empty($rawPic)) {
     }
 }
 
-// Admin notification preferences
 $notifPrefs = [
-    'emergency_alerts' => true,
+    'emergency_alerts'    => true,
     'audit_notifications' => true,
-    'daily_digests' => false
+    'daily_digests'       => false,
+    'report_updates'      => true,
+    'announcement_drafts' => false,
 ];
 
 function getAdminStatusStyle($status) {
     $map = [
-        'active'    => ['dot' => '#10B981', 'bg' => 'bg-emerald-500/20', 'text' => 'text-emerald-300', 'border' => 'border-emerald-500/20'],
-        'pending'   => ['dot' => '#F59E0B', 'bg' => 'bg-amber-500/20', 'text' => 'text-amber-300', 'border' => 'border-amber-500/20'],
-        'suspended' => ['dot' => '#EF4444', 'bg' => 'bg-red-500/20', 'text' => 'text-red-300', 'border' => 'border-red-500/20'],
+        'active'    => ['dot' => '#10B981', 'bg' => 'bg-emerald-500/20', 'text' => 'text-emerald-300', 'border' => 'border-emerald-500/20', 'badge' => 'bg-emerald-100 text-emerald-900 border-emerald-300'],
+        'pending'   => ['dot' => '#F59E0B', 'bg' => 'bg-amber-500/20',   'text' => 'text-amber-300',   'border' => 'border-amber-500/20',   'badge' => 'bg-amber-100 text-amber-900 border-amber-300'],
+        'suspended' => ['dot' => '#EF4444', 'bg' => 'bg-red-500/20',     'text' => 'text-red-300',     'border' => 'border-red-500/20',     'badge' => 'bg-red-100 text-red-900 border-red-300'],
     ];
     return $map[strtolower($status)] ?? $map['active'];
 }
 $statusStyle = getAdminStatusStyle($status);
+$initial = strtoupper(substr($firstName, 0, 1));
+
+// Role icon
+$roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>';
 ?>
 
-<div class="min-h-screen bg-[#F8FAFC] w-full font-sans antialiased text-slate-800 flex">
-    
-    <!-- ============================================================ -->
-    <!-- SIDEBAR                                                        -->
-    <!-- ============================================================ -->
+<style>
+    body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
+    .mobile-sidebar-open #mobileSidebar { transform: translateX(0) !important; }
+    #mobileSidebarOverlay { transition: opacity 0.25s ease, visibility 0.25s ease; opacity: 0; visibility: hidden; }
+    .mobile-sidebar-open #mobileSidebarOverlay { opacity: 1; visibility: visible; }
+
+    .tab-btn { transition: all 0.2s ease; }
+    .tab-btn.active {
+        color: #0B2E22;
+        border-bottom: 2.5px solid #10B981;
+        font-weight: 900;
+        background: transparent;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .form-input {
+        width: 100%;
+        padding: 0.625rem 1rem;
+        border-radius: 0.625rem;
+        border: 1.5px solid #e2e8f0;
+        background: #f8fafc;
+        font-size: 0.875rem;
+        color: #1e293b;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .form-input:focus {
+        border-color: #10B981;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(16,185,129,0.08);
+    }
+    .form-input:disabled, .form-input.readonly {
+        background: #f1f5f9;
+        color: #94a3b8;
+        cursor: not-allowed;
+    }
+    .form-label {
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #64748b;
+        margin-bottom: 0.375rem;
+    }
+    .strength-bar {
+        height: 4px;
+        border-radius: 9999px;
+        transition: width 0.4s, background-color 0.4s;
+    }
+    .profile-cover {
+        background: linear-gradient(135deg, #0B2E22 0%, #083528 40%, #0a3d2e 70%, #0f4a38 100%);
+    }
+</style>
+
+<div class="flex h-screen bg-slate-50 overflow-hidden w-full">
     <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
-    <!-- ============================================================ -->
-    <!-- MAIN CONTENT AREA                                             -->
-    <!-- ============================================================ -->
-    <div class="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
-        
-        <!-- Top Nav -->
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
         <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
 
-        <!-- Scrollable Body -->
-        <div class="flex-1 overflow-y-auto">
+        <main class="flex-1 overflow-y-auto bg-slate-50 focus:outline-none">
 
             <!-- ============================================================ -->
-            <!-- HERO BANNER – Dark Green Theme                               -->
+            <!-- PROFILE COVER BANNER                                          -->
             <!-- ============================================================ -->
-            <div class="bg-[#0B2E22] pt-8 pb-16 px-6 md:px-10 lg:px-14">
-                <div class="max-w-6xl mx-auto">
-                    <!-- Profile Header Content -->
-                    <div class="flex flex-col md:flex-row md:items-center gap-6 md:gap-8 mt-2">
-                        
+            <div class="profile-cover relative w-full h-36 sm:h-44 overflow-hidden">
+                <!-- Decorative Pattern -->
+                <div class="absolute inset-0 opacity-10">
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>
+                </div>
+                <!-- Glowing orbs -->
+                <div class="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-emerald-500/10 blur-3xl"></div>
+                <div class="absolute top-0 right-24 w-72 h-72 rounded-full bg-teal-400/5 blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-40 h-40 rounded-full bg-emerald-800/30 blur-2xl"></div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PROFILE HEADER CARD (overlapping banner)                      -->
+            <!-- ============================================================ -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-14 sm:-mt-16 relative z-10">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-lg px-6 sm:px-8 pt-5 pb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-end gap-5">
+
                         <!-- Avatar -->
-                        <div class="relative flex-shrink-0 self-start md:self-center">
-                            <div id="avatarContainer" class="w-24 h-24 md:w-28 md:h-28 rounded-full bg-emerald-500/20 ring-2 ring-white/20 flex items-center justify-center text-white text-5xl font-bold overflow-hidden">
+                        <div class="relative flex-shrink-0">
+                            <div id="avatarContainer"
+                                 class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#0B2E22] ring-4 ring-white shadow-xl flex items-center justify-center text-white text-4xl font-extrabold overflow-hidden border-2 border-emerald-800">
                                 <?php if (!empty($profilePic)): ?>
                                     <img src="<?php echo htmlspecialchars($profilePic, ENT_QUOTES, 'UTF-8'); ?>" alt="Profile" class="w-full h-full object-cover">
                                 <?php else: ?>
-                                    <?php echo strtoupper(substr($firstName, 0, 1)); ?>
+                                    <?php echo $initial; ?>
                                 <?php endif; ?>
                             </div>
-                            <!-- Upload button -->
+                            <!-- Upload trigger -->
                             <label for="profilePicInput"
-                                   class="absolute -bottom-1 -right-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-[#0B2E22] bg-[#10B981] text-white shadow-lg hover:bg-emerald-500 transition-transform hover:scale-105"
+                                   class="absolute -bottom-2 -right-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl bg-[#10B981] text-white shadow-lg hover:bg-emerald-500 transition-transform hover:scale-110 border-2 border-white"
                                    title="Upload profile picture">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <path d="M17 8 12 3 7 8"/>
-                                    <path d="M12 3v12"/>
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8 12 3 7 8"/><path d="M12 3v12"/></svg>
                             </label>
+                            <input id="profilePicInput" type="file" name="profile_pic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
                         </div>
 
-                        <!-- User Info -->
-                        <div class="flex-1 min-w-0">
-                            <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight"><?php echo htmlspecialchars($fullName); ?></h1>
-                            <p class="text-emerald-200/80 text-sm font-medium mt-1">
-                                <?php echo htmlspecialchars($position); ?> · <?php echo htmlspecialchars($role); ?>
-                            </p>
-                            <div class="flex flex-wrap items-center gap-3 mt-3">
-                                <!-- Status Badge -->
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border <?php echo $statusStyle['bg']; ?> <?php echo $statusStyle['text']; ?> <?php echo $statusStyle['border']; ?>">
-                                    <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: <?php echo $statusStyle['dot']; ?>;"></span>
-                                    <?php echo ucfirst($status); ?>
-                                </span>
-                                <!-- Registered Date Badge -->
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/10 text-emerald-100/70 border border-white/5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
-                                    <span class="ml-1">System Access Since: <?php echo $formattedDate; ?></span>
-                                </span>
+                        <!-- Identity Info -->
+                        <div class="flex-1 min-w-0 pb-1">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <div>
+                                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
+                                        <?php echo htmlspecialchars($fullName); ?>
+                                    </h1>
+                                    <p class="text-sm font-semibold text-slate-500 mt-0.5">
+                                        <?php echo htmlspecialchars($position); ?> &middot; <?php echo htmlspecialchars($purok); ?>
+                                    </p>
+                                    <p id="photoPendingNotice" class="hidden mt-1 text-xs font-bold text-amber-600">📷 New photo selected — click "Save Changes" to apply.</p>
+                                </div>
+
+                                <!-- Right badges -->
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold border <?php echo $statusStyle['badge']; ?>">
+                                        <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:<?php echo $statusStyle['dot']; ?>"></span>
+                                        <?php echo ucfirst($status); ?>
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-700 border border-slate-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                        <?php echo htmlspecialchars($role); ?>
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-700 border border-slate-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                                        Since <?php echo $memberSince; ?>
+                                    </span>
+                                </div>
                             </div>
-                            <p id="photoPendingNotice" class="hidden mt-2 text-xs font-semibold text-amber-300 leading-tight">New photo selected — click "Save Changes" to apply it.</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats Row -->
+                    <div class="mt-5 pt-5 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <p class="text-lg sm:text-2xl font-black text-slate-900"><?php echo htmlspecialchars($email ? substr($email, 0, 20) . (strlen($email) > 20 ? '…' : '') : '—'); ?></p>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">Email Address</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg sm:text-2xl font-black text-slate-900"><?php echo htmlspecialchars($phone ?: '—'); ?></p>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">Contact Number</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg sm:text-2xl font-black text-emerald-900"><?php echo htmlspecialchars($position); ?></p>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">Official Position</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg sm:text-2xl font-black text-purple-900"><?php echo $formattedDate; ?></p>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">Account Created</p>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ============================================================ -->
-            <!-- MAIN FORM CONTENT – Cards Stack                              -->
-            <!-- ============================================================ -->
-            <div class="max-w-6xl mx-auto px-4 md:px-8 lg:px-10 -mt-8 relative z-20 pb-32">
-
+                <!-- ============================================================ -->
+                <!-- FLASH MESSAGES                                                -->
+                <!-- ============================================================ -->
                 <?php if (!empty($data['error'])): ?>
-                    <div id="errorMsg" class="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-sm font-semibold text-red-700 flex items-center gap-2 shadow-sm">
+                    <div class="mt-4 rounded-xl bg-red-50 border border-red-200 p-4 text-sm font-semibold text-red-700 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        <span><?php echo htmlspecialchars($data['error']); ?></span>
+                        <?php echo htmlspecialchars($data['error']); ?>
                     </div>
                 <?php endif; ?>
-
                 <?php if (!empty($data['success'])): ?>
-                    <div id="successMsg" class="mb-6 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm font-semibold text-emerald-800 flex items-center gap-2 shadow-sm">
+                    <div class="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm font-semibold text-emerald-800 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                        <span><?php echo htmlspecialchars($data['success']); ?></span>
+                        <?php echo htmlspecialchars($data['success']); ?>
                     </div>
                 <?php endif; ?>
 
                 <!-- ============================================================ -->
-                <!-- CARD 1: PERSONAL INFORMATION                                 -->
+                <!-- TWO-COLUMN LAYOUT: Profile Sidebar Card + Tabbed Content     -->
                 <!-- ============================================================ -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 md:p-8 mb-6">
-                    <div class="flex items-start justify-between mb-6">
-                        <div>
-                            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v8"/><path d="M22 12h-6"/></svg>
-                                Personal Information
-                            </h2>
-                            <p class="text-sm text-slate-500 font-medium mt-0.5">Update your administrative account details here.</p>
+                <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 pb-32 lg:pb-8">
+
+                    <!-- LEFT: Profile Summary Sidebar Card -->
+                    <div class="lg:col-span-1 space-y-5">
+
+                        <!-- Identity Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                            <div class="bg-gradient-to-r from-[#0B2E22] to-[#083528] px-5 py-4">
+                                <p class="text-xs font-extrabold uppercase tracking-wider text-emerald-300">Official Identity</p>
+                                <p class="text-base font-extrabold text-white mt-0.5"><?php echo htmlspecialchars($fullName); ?></p>
+                            </div>
+                            <div class="p-5 space-y-4">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">System Role</p>
+                                        <p class="text-sm font-extrabold text-slate-900"><?php echo htmlspecialchars($role); ?></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/></svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Email Address</p>
+                                        <p class="text-sm font-extrabold text-slate-900 truncate"><?php echo htmlspecialchars($email); ?></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 7.02a2 2 0 0 1 1.99-2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L11.09 12a16 16 0 0 0 5.93 5.93l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Contact Number</p>
+                                        <p class="text-sm font-extrabold text-slate-900"><?php echo htmlspecialchars($phone ?: 'Not set'); ?></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0 border border-amber-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Address / Zone</p>
+                                        <p class="text-sm font-extrabold text-slate-900"><?php echo htmlspecialchars($address ?: 'Not set'); ?></p>
+                                    </div>
+                                </div>
+
+                                <!-- Account Status -->
+                                <div class="pt-4 border-t border-slate-100">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Account Status</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black border <?php echo $statusStyle['badge']; ?>">
+                                            <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:<?php echo $statusStyle['dot']; ?>"></span>
+                                            <?php echo ucfirst($status); ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Quick Actions Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-2.5">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">Quick Actions</h3>
+                            <a href="/brgy-waste-app-v3/public/admin/auditLogs" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
+                                <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center border border-purple-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-extrabold text-slate-800 group-hover:text-slate-900">View Audit Logs</p>
+                                    <p class="text-[10px] text-slate-400">System forensic trail</p>
+                                </div>
+                            </a>
+                            <a href="/brgy-waste-app-v3/public/admin/reports" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-extrabold text-slate-800 group-hover:text-slate-900">Manage Reports</p>
+                                    <p class="text-[10px] text-slate-400">Review &amp; verify reports</p>
+                                </div>
+                            </a>
+                            <a href="/brgy-waste-app-v3/public/admin/schedule" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
+                                <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-extrabold text-slate-800 group-hover:text-slate-900">Collection Schedule</p>
+                                    <p class="text-[10px] text-slate-400">Manage waste routes</p>
+                                </div>
+                            </a>
+                            <div class="pt-2 border-t border-slate-100">
+                                <a href="/brgy-waste-app-v3/public/auth/logout"
+                                   class="flex items-center gap-3 p-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-100 hover:border-red-200 transition group">
+                                    <div class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center border border-red-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-extrabold text-red-700 group-hover:text-red-900">Sign Out</p>
+                                        <p class="text-[10px] text-red-400">End current session</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Session Info Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-4">Session & Access</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-500">Current Session</span>
+                                    <span class="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Active</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-500">Access Level</span>
+                                    <span class="text-xs font-extrabold text-slate-800"><?php echo htmlspecialchars($role); ?></span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-500">Member Since</span>
+                                    <span class="text-xs font-extrabold text-slate-800"><?php echo $memberSince; ?></span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-500">IP Address</span>
+                                    <span class="text-xs font-mono font-bold text-slate-600"><?php echo htmlspecialchars($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'); ?></span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-500">Current Time</span>
+                                    <span class="text-xs font-mono font-bold text-slate-600" id="currentTimeDisplay"><?php echo date('h:i A'); ?></span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <form id="profileForm" action="/brgy-waste-app-v3/public/admin/profile" method="POST" enctype="multipart/form-data" class="space-y-5">
-                        <input id="profilePicInput" type="file" name="profile_pic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Full Name -->
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Full Name</label>
-                                <input type="text" name="name" id="profileName" value="<?php echo htmlspecialchars($fullName); ?>" required
-                                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-[#10B981] focus:bg-white focus:ring-4 focus:ring-emerald-500/10">
-                                <p id="nameError" class="mt-1 hidden text-xs font-bold text-red-500">Full name is required.</p>
+                    <!-- RIGHT: Tabbed Settings Panels -->
+                    <div class="lg:col-span-2 space-y-5">
+
+                        <!-- Tab Navigation -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+                            <div class="flex border-b border-slate-100 overflow-x-auto">
+                                <button onclick="switchTab('personal')" id="tab-personal"
+                                        class="tab-btn active flex items-center gap-2 px-5 py-3.5 text-xs font-bold text-slate-500 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Personal Info
+                                </button>
+                                <button onclick="switchTab('security')" id="tab-security"
+                                        class="tab-btn flex items-center gap-2 px-5 py-3.5 text-xs font-bold text-slate-500 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    Security
+                                </button>
+                                <button onclick="switchTab('preferences')" id="tab-preferences"
+                                        class="tab-btn flex items-center gap-2 px-5 py-3.5 text-xs font-bold text-slate-500 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                                    Notifications
+                                </button>
+                                <button onclick="switchTab('activity')" id="tab-activity"
+                                        class="tab-btn flex items-center gap-2 px-5 py-3.5 text-xs font-bold text-slate-500 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                    Activity
+                                </button>
                             </div>
 
-                            <!-- Role / Position -->
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">System Role</label>
-                                <div class="w-full rounded-lg border border-slate-200 bg-slate-100/70 px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2 cursor-not-allowed">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
-                                    <?php echo htmlspecialchars($role); ?>
+                            <!-- =========================================== -->
+                            <!-- TAB 1: PERSONAL INFORMATION                 -->
+                            <!-- =========================================== -->
+                            <div id="panel-personal" class="tab-panel active p-6 sm:p-7">
+                                <div class="mb-5">
+                                    <h2 class="text-base font-extrabold text-slate-900">Personal Information</h2>
+                                    <p class="text-xs text-slate-500 font-semibold mt-0.5">Update your administrative account contact details.</p>
                                 </div>
+
+                                <form id="profileForm" action="/brgy-waste-app-v3/public/admin/profile" method="POST" enctype="multipart/form-data" class="space-y-5">
+                                    <input id="profilePicInput2" type="file" name="profile_pic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <!-- Full Name -->
+                                        <div>
+                                            <label class="form-label">Full Name</label>
+                                            <input type="text" name="name" id="profileName"
+                                                   value="<?php echo htmlspecialchars($fullName); ?>" required
+                                                   class="form-input"
+                                                   placeholder="Enter your full name">
+                                            <p id="nameError" class="mt-1 hidden text-xs font-bold text-red-500">Full name is required.</p>
+                                        </div>
+
+                                        <!-- System Role (readonly) -->
+                                        <div>
+                                            <label class="form-label">System Access Role</label>
+                                            <div class="form-input flex items-center gap-2 readonly">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                                                <span><?php echo htmlspecialchars($role); ?></span>
+                                                <span class="ml-auto text-[10px] text-slate-400 font-bold">READ ONLY</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div>
+                                        <label class="form-label">Home / Office Address</label>
+                                        <input type="text" name="address" id="profileAddress"
+                                               value="<?php echo htmlspecialchars($address); ?>"
+                                               class="form-input"
+                                               placeholder="Enter your address or zone/purok">
+                                        <p id="addressError" class="mt-1 hidden text-xs font-bold text-red-500">Address is required.</p>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <!-- Email (disabled) -->
+                                        <div>
+                                            <label class="form-label">Email Address</label>
+                                            <input type="email" id="profileEmail"
+                                                   value="<?php echo htmlspecialchars($email); ?>" disabled
+                                                   class="form-input readonly">
+                                            <p class="text-[11px] text-slate-400 mt-1 font-semibold">🔒 Cannot be changed for security.</p>
+                                        </div>
+
+                                        <!-- Contact Number -->
+                                        <div>
+                                            <label class="form-label">Contact Number</label>
+                                            <div class="relative">
+                                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">🇵🇭</span>
+                                                <input type="tel" name="phone_number" id="profilePhone"
+                                                       value="<?php echo htmlspecialchars($phone); ?>"
+                                                       class="form-input pl-9"
+                                                       placeholder="09XXXXXXXXX" maxlength="11">
+                                            </div>
+                                            <p id="phoneError" class="mt-1 hidden text-xs font-bold text-red-500">Valid 11-digit Philippine number required.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- OTP Notice -->
+                                    <div class="flex items-start gap-2 p-3.5 bg-amber-50 rounded-xl border border-amber-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                        <p class="text-xs text-amber-700 font-semibold leading-relaxed">
+                                            Changes to your <strong>full name</strong> or <strong>contact number</strong> require OTP email verification for security compliance.
+                                        </p>
+                                    </div>
+
+                                    <!-- Metadata Strip -->
+                                    <div class="pt-5 border-t border-slate-100 grid grid-cols-3 gap-4">
+                                        <div>
+                                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Account Status</p>
+                                            <p class="text-sm font-extrabold text-slate-800 mt-1 flex items-center gap-1.5">
+                                                <span class="w-1.5 h-1.5 rounded-full" style="background:<?php echo $statusStyle['dot']; ?>"></span>
+                                                <?php echo ucfirst($status); ?>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Access Since</p>
+                                            <p class="text-sm font-extrabold text-slate-800 mt-1 font-mono"><?php echo $formattedDate; ?></p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Position</p>
+                                            <p class="text-sm font-extrabold text-slate-800 mt-1"><?php echo htmlspecialchars($position); ?></p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Save -->
+                                    <div class="flex justify-end pt-2">
+                                        <button type="button" onclick="saveAllChanges()"
+                                                class="inline-flex items-center gap-2 px-7 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm shadow transition active:scale-[0.98] cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </div>
 
-                        <!-- Address -->
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Address</label>
-                            <input type="text" name="address" id="profileAddress" value="<?php echo htmlspecialchars($address); ?>" required
-                                class="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-[#10B981] focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
-                                placeholder="Barangay Hall / Address">
-                            <p id="addressError" class="mt-1 hidden text-xs font-bold text-red-500">Address is required.</p>
-                        </div>
-
-                        <!-- Contact Information (Email & Contact Number) -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Email Address</label>
-                                <div class="relative">
-                                    <input type="email" id="profileEmail" value="<?php echo htmlspecialchars($email); ?>" disabled
-                                        class="w-full rounded-lg border border-slate-200 bg-slate-100/70 px-4 py-2.5 text-sm text-slate-600 cursor-not-allowed">
+                            <!-- =========================================== -->
+                            <!-- TAB 2: SECURITY / PASSWORD                  -->
+                            <!-- =========================================== -->
+                            <div id="panel-security" class="tab-panel p-6 sm:p-7">
+                                <div class="mb-5">
+                                    <h2 class="text-base font-extrabold text-slate-900">Security Settings</h2>
+                                    <p class="text-xs text-slate-500 font-semibold mt-0.5">Manage your password and account security preferences.</p>
                                 </div>
-                                <p class="text-[11px] text-slate-400 mt-1">Email cannot be changed for security reasons.</p>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Contact Number</label>
-                                <div class="relative">
-                                    <input type="tel" name="phone_number" id="profilePhone" value="<?php echo htmlspecialchars($phone); ?>" required
-                                        class="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-[#10B981] focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
-                                        placeholder="09XXXXXXXXX" maxlength="11">
+
+                                <!-- Password Requirements Banner -->
+                                <div class="mb-5 p-4 bg-[#F0FDF4] rounded-xl border border-emerald-200">
+                                    <p class="text-xs font-extrabold text-emerald-900 mb-2">Password Requirements</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                            Minimum 8 characters
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                            One uppercase letter
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                            Number &amp; special character
+                                        </div>
+                                    </div>
                                 </div>
-                                <p id="phoneError" class="mt-1 hidden text-xs font-bold text-red-500">Valid Philippine phone number required (11 digits starting with 09).</p>
-                            </div>
-                        </div>
-                        <p class="text-[11px] text-amber-600 font-medium flex items-start gap-1.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                            Changing sensitive administrative details (name / phone number) requires OTP verification.
-                        </p>
 
-                        <!-- Row 3: Metadata Columns -->
-                        <div class="col-span-full grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-                            <div>
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Account Status</p>
-                                <p class="text-sm font-bold text-slate-800 mt-1 capitalize flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full" style="background: <?php echo $statusStyle['dot']; ?>;"></span>
-                                    <?php echo htmlspecialchars($status); ?>
-                                </p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">System Access Date</p>
-                                <p class="text-sm font-bold text-slate-800 mt-1 font-mono"><?php echo $formattedDate; ?></p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Access Level</p>
-                                <p class="text-sm font-bold text-slate-800 mt-1"><?php echo htmlspecialchars($role); ?></p>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                                <form id="passwordForm" action="/brgy-waste-app-v3/public/admin/change_password" method="POST" class="space-y-4">
+                                    <!-- Current Password -->
+                                    <div>
+                                        <label class="form-label">Current Password</label>
+                                        <div class="relative">
+                                            <input type="password" name="current_password" id="currentPassword" required
+                                                   class="form-input pr-11" placeholder="••••••••">
+                                            <button type="button" onclick="togglePassword('currentPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                                                <span class="eye-open block"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="w-4 h-4"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></span>
+                                                <span class="eye-closed hidden"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="w-4 h-4"><path d="M13.875 18.825A10.05 10.05 0 0 1 12 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 0 1 1.563-3.029m5.858.908a3 3 0 1 1 4.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0 1 12 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 0 1-4.132 5.411m0 0L21 21"/></svg></span>
+                                            </button>
+                                        </div>
+                                    </div>
 
-                <!-- ============================================================ -->
-                <!-- CARD 2: CHANGE PASSWORD                                     -->
-                <!-- ============================================================ -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 md:p-8 mb-6">
-                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        Change Password
-                    </h2>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <!-- New Password -->
+                                        <div>
+                                            <label class="form-label">New Password</label>
+                                            <div class="relative">
+                                                <input type="password" name="new_password" id="newPassword" required minlength="8"
+                                                       class="form-input pr-11" placeholder="••••••••"
+                                                       oninput="checkPasswordStrength(this.value)">
+                                                <button type="button" onclick="togglePassword('newPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                                                    <span class="eye-open block"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="w-4 h-4"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></span>
+                                                    <span class="eye-closed hidden"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="w-4 h-4"><path d="M13.875 18.825A10.05 10.05 0 0 1 12 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 0 1 1.563-3.029m5.858.908a3 3 0 1 1 4.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0 1 12 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 0 1-4.132 5.411m0 0L21 21"/></svg></span>
+                                                </button>
+                                            </div>
 
-                    <form id="passwordForm" action="/brgy-waste-app-v3/public/admin/change_password" method="POST" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Current Password -->
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Current Password</label>
-                                <div class="relative">
-                                    <input type="password" name="current_password" id="currentPassword" required
-                                        class="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 pr-10 text-sm text-slate-700 outline-none transition focus:border-[#10B981] focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
-                                        placeholder="••••••••">
-                                    <button type="button" onclick="togglePassword('currentPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
-                                        <span class="eye-open block">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                        </span>
-                                        <span class="eye-closed hidden">
-                                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M13.875 18.825A10.05 10.05 0 0 1 12 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 0 1 1.563-3.029m5.858.908a3 3 0 1 1 4.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0 1 12 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 0 1-4.132 5.411m0 0L21 21"/></svg>
-                                        </span>
+                                            <!-- Strength Bar -->
+                                            <div id="strengthBarWrap" class="mt-2 hidden space-y-1.5">
+                                                <div class="flex gap-1">
+                                                    <div id="bar1" class="strength-bar flex-1 bg-slate-200"></div>
+                                                    <div id="bar2" class="strength-bar flex-1 bg-slate-200"></div>
+                                                    <div id="bar3" class="strength-bar flex-1 bg-slate-200"></div>
+                                                    <div id="bar4" class="strength-bar flex-1 bg-slate-200"></div>
+                                                </div>
+                                                <p id="strengthLabel" class="text-[11px] font-bold text-slate-400">Password strength</p>
+                                                <ul class="space-y-0.5 text-[11px]" id="passwordStrength">
+                                                    <li id="rule-length" class="flex items-center gap-1.5 text-slate-400"><svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> At least 8 characters</li>
+                                                    <li id="rule-upper" class="flex items-center gap-1.5 text-slate-400"><svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> One uppercase letter</li>
+                                                    <li id="rule-number" class="flex items-center gap-1.5 text-slate-400"><svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> Number &amp; special character</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <!-- Confirm Password -->
+                                        <div>
+                                            <label class="form-label">Confirm New Password</label>
+                                            <div class="relative">
+                                                <input type="password" name="confirm_password" id="confirmPassword" required
+                                                       class="form-input pr-11" placeholder="••••••••"
+                                                       oninput="validateMatch()">
+                                                <button type="button" onclick="togglePassword('confirmPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                                                    <span class="eye-open block"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="w-4 h-4"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></span>
+                                                    <span class="eye-closed hidden"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="w-4 h-4"><path d="M13.875 18.825A10.05 10.05 0 0 1 12 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 0 1 1.563-3.029m5.858.908a3 3 0 1 1 4.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0 1 12 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 0 1-4.132 5.411m0 0L21 21"/></svg></span>
+                                                </button>
+                                            </div>
+                                            <p id="matchError" class="text-red-500 text-xs font-bold mt-1.5 hidden">Passwords do not match.</p>
+                                            <p id="matchOk" class="text-emerald-600 text-xs font-bold mt-1.5 hidden">✓ Passwords match!</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start gap-2 p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        <p class="text-xs text-slate-500 font-semibold">An audit log entry will be created upon updating your password for security compliance.</p>
+                                    </div>
+
+                                    <div class="flex justify-end pt-2">
+                                        <button type="button" onclick="submitPasswordChange()"
+                                                class="inline-flex items-center gap-2 px-7 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm shadow transition active:scale-[0.98] cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                            Update Password
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- =========================================== -->
+                            <!-- TAB 3: NOTIFICATION PREFERENCES             -->
+                            <!-- =========================================== -->
+                            <div id="panel-preferences" class="tab-panel p-6 sm:p-7">
+                                <div class="mb-5">
+                                    <h2 class="text-base font-extrabold text-slate-900">Notification Preferences</h2>
+                                    <p class="text-xs text-slate-500 font-semibold mt-0.5">Configure which alerts and notifications you receive.</p>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <?php
+                                    $toggles = [
+                                        ['key' => 'emergency_alerts',    'title' => 'Emergency Waste Alerts',       'desc' => 'Instant notifications for high-priority or hazardous waste incidents.',   'icon' => '🚨'],
+                                        ['key' => 'report_updates',      'title' => 'Citizen Report Updates',       'desc' => 'Alerts when new reports are submitted, verified, or resolved.',           'icon' => '📋'],
+                                        ['key' => 'audit_notifications', 'title' => 'System Audit Log Alerts',     'desc' => 'Alerts on critical administrative security events and logins.',            'icon' => '🛡️'],
+                                        ['key' => 'announcement_drafts', 'title' => 'Announcement Draft Reminders','desc' => 'Notify when pending announcements are awaiting publishing approval.',       'icon' => '📢'],
+                                        ['key' => 'daily_digests',       'title' => 'Daily Report Digest',         'desc' => 'Receive daily summary digest of submitted and resolved waste reports.',    'icon' => '📊'],
+                                    ];
+                                    foreach ($toggles as $t): ?>
+                                    <div class="flex items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 hover:bg-white transition">
+                                        <div class="flex items-start gap-3">
+                                            <span class="text-xl mt-0.5"><?php echo $t['icon']; ?></span>
+                                            <div>
+                                                <p class="text-sm font-extrabold text-slate-800"><?php echo $t['title']; ?></p>
+                                                <p class="text-xs text-slate-500 mt-0.5 font-medium"><?php echo $t['desc']; ?></p>
+                                            </div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                                            <input type="checkbox" class="sr-only peer" <?php echo $notifPrefs[$t['key']] ? 'checked' : ''; ?>>
+                                            <div class="w-10 h-5 bg-slate-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                        </label>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <div class="mt-5 flex justify-end">
+                                    <button onclick="alert('Notification preferences saved!')" class="inline-flex items-center gap-2 px-7 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm shadow transition cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Save Preferences
                                     </button>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- New Password -->
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">New Password</label>
-                            <div class="relative">
-                                <input type="password" name="new_password" id="newPassword" required minlength="8"
-                                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 pr-10 text-sm text-slate-700 outline-none transition focus:border-[#10B981] focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
-                                    placeholder="••••••••"
-                                    oninput="checkPasswordStrength(this.value)">
-                                <button type="button" onclick="togglePassword('newPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
-                                    <span class="eye-open block">
-                                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                    </span>
-                                    <span class="eye-closed hidden">
-                                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M13.875 18.825A10.05 10.05 0 0 1 12 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 0 1 1.563-3.029m5.858.908a3 3 0 1 1 4.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0 1 12 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 0 1-4.132 5.411m0 0L21 21"/></svg>
-                                    </span>
-                                </button>
+                            <!-- =========================================== -->
+                            <!-- TAB 4: ACTIVITY SUMMARY                     -->
+                            <!-- =========================================== -->
+                            <div id="panel-activity" class="tab-panel p-6 sm:p-7">
+                                <div class="mb-5">
+                                    <h2 class="text-base font-extrabold text-slate-900">Account Activity Summary</h2>
+                                    <p class="text-xs text-slate-500 font-semibold mt-0.5">Overview of your administrative actions and system interactions.</p>
+                                </div>
+
+                                <!-- Activity Stats Grid -->
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                                    <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-center">
+                                        <p class="text-2xl font-black text-emerald-900">—</p>
+                                        <p class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 mt-1">Reports Reviewed</p>
+                                    </div>
+                                    <div class="p-4 bg-blue-50 rounded-xl border border-blue-200 text-center">
+                                        <p class="text-2xl font-black text-blue-900">—</p>
+                                        <p class="text-[10px] font-extrabold uppercase tracking-wider text-blue-700 mt-1">Announcements</p>
+                                    </div>
+                                    <div class="p-4 bg-purple-50 rounded-xl border border-purple-200 text-center">
+                                        <p class="text-2xl font-black text-purple-900">—</p>
+                                        <p class="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 mt-1">Audit Events</p>
+                                    </div>
+                                    <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-center">
+                                        <p class="text-2xl font-black text-amber-900"><?php echo date('D'); ?></p>
+                                        <p class="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 mt-1">Active Today</p>
+                                    </div>
+                                </div>
+
+                                <!-- Timeline Placeholder -->
+                                <div class="space-y-2">
+                                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">Recent Admin Actions</h3>
+                                    <?php
+                                    $sampleActions = [
+                                        ['icon' => '🔑', 'action' => 'Accessed Admin Profile', 'time' => 'Just now',    'type' => 'emerald'],
+                                        ['icon' => '📋', 'action' => 'Viewed System Audit Trail', 'time' => 'Earlier today', 'type' => 'blue'],
+                                        ['icon' => '✅', 'action' => 'System Access Verified',  'time' => $memberSince,   'type' => 'purple'],
+                                    ];
+                                    foreach ($sampleActions as $act): ?>
+                                    <div class="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                                        <span class="text-base"><?php echo $act['icon']; ?></span>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-extrabold text-slate-800"><?php echo $act['action']; ?></p>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap"><?php echo $act['time']; ?></span>
+                                    </div>
+                                    <?php endforeach; ?>
+
+                                    <div class="text-center pt-3">
+                                        <a href="/brgy-waste-app-v3/public/admin/auditLogs" class="text-xs font-extrabold text-emerald-700 hover:text-emerald-900 underline underline-offset-2">
+                                            View full audit trail →
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <!-- Password Strength Indicator -->
-                            <div id="passwordStrength" class="mt-2 hidden">
-                                <ul class="space-y-0.5 text-xs font-medium">
-                                    <li id="rule-length" class="flex items-center gap-1.5 text-slate-400"><svg class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg> At least 8 characters</li>
-                                    <li id="rule-upper" class="flex items-center gap-1.5 text-slate-400"><svg class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg> One uppercase letter</li>
-                                    <li id="rule-number" class="flex items-center gap-1.5 text-slate-400"><svg class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg> One number &amp; one special character</li>
-                                </ul>
-                            </div>
-                        </div>
 
-                        <!-- Confirm Password -->
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Confirm Password</label>
-                            <div class="relative">
-                                <input type="password" name="confirm_password" id="confirmPassword" required
-                                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 pr-10 text-sm text-slate-700 outline-none transition focus:border-[#10B981] focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
-                                    placeholder="••••••••"
-                                    oninput="validateMatch()">
-                                <button type="button" onclick="togglePassword('confirmPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
-                                    <span class="eye-open block">
-                                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                    </span>
-                                    <span class="eye-closed hidden">
-                                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M13.875 18.825A10.05 10.05 0 0 1 12 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 0 1 1.563-3.029m5.858.908a3 3 0 1 1 4.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0 1 12 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 0 1-4.132 5.411m0 0L21 21"/></svg>
-                                    </span>
-                                </button>
-                            </div>
-                            <p id="matchError" class="text-red-500 text-xs font-bold mt-1.5 hidden">Passwords do not match.</p>
-                        </div>
-
-                        <p class="text-xs text-slate-500 font-medium flex items-start gap-2 pt-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            An audit log entry will be created upon updating your password.
-                        </p>
-                    </form>
-                </div>
-
-                <!-- ============================================================ -->
-                <!-- CARD 3: ADMIN NOTIFICATION & PREFERENCES                     -->
-                <!-- ============================================================ -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 md:p-8 mb-6">
-                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                        Admin Alerts &amp; Notification Preferences
-                    </h2>
-
-                    <div class="space-y-4">
-                        <!-- Toggle 1 -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg bg-slate-50/80 border border-slate-100">
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm">Emergency waste alerts</p>
-                                <p class="text-sm text-slate-500">Receive instant notifications for high-priority / hazardous waste reports</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
-                                <input type="checkbox" class="sr-only peer" <?php echo $notifPrefs['emergency_alerts'] ? 'checked' : ''; ?>>
-                                <div class="w-10 h-5 bg-slate-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[0.5px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
-                            </label>
-                        </div>
-
-                        <!-- Toggle 2 -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg bg-slate-50/80 border border-slate-100">
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm">System audit log notifications</p>
-                                <p class="text-sm text-slate-500">Get alerts on critical administrative security events</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
-                                <input type="checkbox" class="sr-only peer" <?php echo $notifPrefs['audit_notifications'] ? 'checked' : ''; ?>>
-                                <div class="w-10 h-5 bg-slate-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[0.5px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
-                            </label>
-                        </div>
-
-                        <!-- Toggle 3 -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg bg-slate-50/80 border border-slate-100">
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm">Daily report summary digests</p>
-                                <p class="text-sm text-slate-500">Receive daily summary emails of submitted and resolved reports</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
-                                <input type="checkbox" class="sr-only peer" <?php echo $notifPrefs['daily_digests'] ? 'checked' : ''; ?>>
-                                <div class="w-10 h-5 bg-slate-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[0.5px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
-                            </label>
                         </div>
                     </div>
                 </div>
-
-                <!-- ============================================================ -->
-                <!-- BOTTOM ACTION BAR                                             -->
-                <!-- ============================================================ -->
-                <div class="fixed bottom-0 left-0 right-0 lg:static lg:mt-6 bg-white border-t lg:border lg:rounded-xl lg:border-slate-200 lg:shadow-sm p-4 z-30">
-                    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-                        
-                        <!-- Left: Status Indicator -->
-                        <div class="hidden lg:flex text-sm text-slate-400 font-medium items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 22v-4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M22 12h-4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-                            Ready to save administrative changes
-                        </div>
-
-                        <!-- Right: Action Buttons -->
-                        <div class="flex items-center gap-3 w-full sm:w-auto">
-                            <!-- Logout Button -->
-                            <a href="/brgy-waste-app-v3/public/auth/logout" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-bold text-sm hover:bg-slate-50 transition shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                                Logout
-                            </a>
-
-                            <!-- Save Changes Button -->
-                            <button onclick="saveAllChanges()" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-2.5 rounded-lg bg-[#0B2E22] hover:bg-[#093024] text-white font-bold text-sm shadow-md transition active:scale-[0.98]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                Save Changes
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
             </div>
-        </div>
+        </main>
     </div>
 </div>
 
 <!-- ============================================================ -->
 <!-- OTP VERIFICATION MODAL                                        -->
 <!-- ============================================================ -->
-<div id="otpModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 relative">
-        <button onclick="closeOTPModal()" class="absolute top-4 right-4 p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-        <div class="text-center mb-4">
-            <div class="mx-auto w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/></svg>
+<div id="otpModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200">
+        <div class="bg-gradient-to-r from-[#0B2E22] to-[#083528] px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-white flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-extrabold text-white">Identity Verification</h3>
+                    <p class="text-[11px] font-semibold text-emerald-300">OTP sent to your email</p>
+                </div>
             </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-1">Verify Your Identity</h3>
-            <p class="text-sm text-slate-500">We sent a 6-digit verification code to your email.</p>
-            <p id="otpEmailDisplay" class="text-xs font-semibold text-slate-700 mt-1"></p>
-        </div>
-        <div class="mb-4">
-            <input type="text" id="otpInput" maxlength="6" placeholder="Enter OTP" class="font-mono w-full px-4 py-3 text-center tracking-widest text-2xl border border-slate-200 rounded-lg focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/20 outline-none transition">
-        </div>
-        <div id="otpError" class="text-red-500 text-sm font-semibold text-center hidden mb-3"></div>
-        <div id="otpSuccess" class="text-emerald-500 text-sm font-semibold text-center hidden mb-3"></div>
-        <div class="flex gap-3">
-            <button onclick="closeOTPModal()" class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg font-semibold text-sm hover:bg-slate-50 transition">Cancel</button>
-            <button onclick="verifyOTP()" id="verifyOTPBtn" class="flex-1 px-4 py-2.5 bg-[#10B981] text-white rounded-lg font-semibold text-sm hover:bg-emerald-600 transition flex items-center justify-center gap-2">
-                <span id="verifyOTPText">Verify</span>
-                <svg id="verifyOTPSpinner" class="animate-spin h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <button onclick="closeOTPModal()" class="text-emerald-300 hover:text-white transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
-        <div class="mt-3 text-center">
-            <button onclick="resendOTP()" id="resendOTPBtn" class="text-sm text-[#10B981] hover:text-emerald-700 font-semibold">Resend OTP</button>
+        <div class="p-6 space-y-4">
+            <p class="text-xs text-slate-500 font-semibold text-center">Enter the 6-digit verification code sent to:</p>
+            <p id="otpEmailDisplay" class="text-sm font-extrabold text-slate-900 text-center bg-slate-50 rounded-lg py-2 border border-slate-200"></p>
+            <input type="text" id="otpInput" maxlength="6" placeholder="• • • • • •"
+                   class="font-mono w-full px-4 py-3.5 text-center tracking-[0.5em] text-2xl font-extrabold border-2 border-slate-200 rounded-xl focus:border-[#10B981] focus:ring-4 focus:ring-emerald-500/10 outline-none transition">
+            <div id="otpError" class="text-red-500 text-xs font-bold text-center hidden"></div>
+            <div id="otpSuccess" class="text-emerald-600 text-xs font-bold text-center hidden"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="closeOTPModal()" class="px-4 py-2.5 border border-slate-200 text-slate-700 rounded-xl font-extrabold text-xs hover:bg-slate-50 transition cursor-pointer">Cancel</button>
+                <button onclick="verifyOTP()" id="verifyOTPBtn" class="px-4 py-2.5 bg-[#10B981] text-white rounded-xl font-extrabold text-xs hover:bg-emerald-600 transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span id="verifyOTPText">Verify Identity</span>
+                    <svg id="verifyOTPSpinner" class="animate-spin h-3.5 w-3.5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </button>
+            </div>
+            <div class="text-center">
+                <button onclick="resendOTP()" id="resendOTPBtn" class="text-xs text-[#10B981] hover:text-emerald-700 font-extrabold underline underline-offset-2 cursor-pointer">Resend OTP Code</button>
+            </div>
         </div>
     </div>
 </div>
@@ -438,12 +749,19 @@ $statusStyle = getAdminStatusStyle($status);
 <!-- JAVASCRIPT                                                   -->
 <!-- ============================================================ -->
 <script>
-    // --- Password Visibility Toggle ---
+    // ---- Tab Switching ----
+    function switchTab(name) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        document.getElementById('panel-' + name).classList.add('active');
+    }
+
+    // ---- Password Visibility Toggle ----
     function togglePassword(inputId, btn) {
         const input = document.getElementById(inputId);
         const eyeOpen = btn.querySelector('.eye-open');
         const eyeClosed = btn.querySelector('.eye-closed');
-
         if (input.type === 'password') {
             input.type = 'text';
             eyeOpen.classList.add('hidden');
@@ -455,11 +773,10 @@ $statusStyle = getAdminStatusStyle($status);
         }
     }
 
-    // --- Profile Picture Live Preview ---
+    // ---- Profile Picture Preview ----
     function previewProfilePic(event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function(e) {
             const container = document.getElementById('avatarContainer');
@@ -469,13 +786,13 @@ $statusStyle = getAdminStatusStyle($status);
         reader.readAsDataURL(file);
     }
 
-    // --- Password Strength Check ---
+    // ---- Password Strength ----
     function checkPasswordStrength(val) {
-        const container = document.getElementById('passwordStrength');
+        const wrap = document.getElementById('strengthBarWrap');
         if (val.length > 0) {
-            container.classList.remove('hidden');
+            wrap.classList.remove('hidden');
         } else {
-            container.classList.add('hidden');
+            wrap.classList.add('hidden');
             return;
         }
 
@@ -484,133 +801,118 @@ $statusStyle = getAdminStatusStyle($status);
         const hasSpecial = /[!@#$%^&*]/.test(val);
         const hasLength = val.length >= 8;
 
-        const rules = {
-            'rule-length': hasLength,
-            'rule-upper': hasUpper,
-            'rule-number': hasNumber && hasSpecial
-        };
+        let score = [hasLength, hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
 
+        const bars = ['bar1','bar2','bar3','bar4'];
+        const colors = ['bg-red-400','bg-amber-400','bg-yellow-400','bg-emerald-500'];
+        const labels = ['Very Weak','Weak','Moderate','Strong'];
+        const textColors = ['text-red-500','text-amber-500','text-yellow-600','text-emerald-600'];
+
+        bars.forEach((id, i) => {
+            const el = document.getElementById(id);
+            el.className = 'strength-bar flex-1 ' + (i < score ? colors[score - 1] : 'bg-slate-200');
+        });
+
+        const label = document.getElementById('strengthLabel');
+        label.textContent = score > 0 ? labels[score - 1] : 'Password strength';
+        label.className = 'text-[11px] font-bold ' + (score > 0 ? textColors[score - 1] : 'text-slate-400');
+
+        // Rule checkers
+        const rules = { 'rule-length': hasLength, 'rule-upper': hasUpper, 'rule-number': hasNumber && hasSpecial };
         Object.keys(rules).forEach(id => {
             const el = document.getElementById(id);
             const svg = el.querySelector('svg');
-            
             if (rules[id]) {
-                el.className = 'flex items-center gap-1.5 text-emerald-600 font-semibold text-xs';
+                el.className = 'flex items-center gap-1.5 text-emerald-600 font-bold text-[11px]';
                 svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
-                svg.classList.add('stroke-emerald-600');
-                svg.classList.remove('stroke-slate-400');
             } else {
-                el.className = 'flex items-center gap-1.5 text-slate-400 text-xs';
+                el.className = 'flex items-center gap-1.5 text-slate-400 text-[11px]';
                 svg.innerHTML = '<circle cx="12" cy="12" r="10"/>';
-                svg.classList.remove('stroke-emerald-600');
-                svg.classList.add('stroke-slate-400');
             }
         });
 
         validateMatch();
     }
 
-    // --- Password Match Validation ---
+    // ---- Password Match ----
     function validateMatch() {
         const pass = document.getElementById('newPassword').value;
         const confirm = document.getElementById('confirmPassword').value;
         const error = document.getElementById('matchError');
-        const confirmInput = document.getElementById('confirmPassword');
+        const ok = document.getElementById('matchOk');
 
         if (confirm.length > 0 && pass !== confirm) {
             error.classList.remove('hidden');
-            confirmInput.classList.add('border-red-400', 'ring-red-100');
+            ok.classList.add('hidden');
             return false;
+        } else if (confirm.length > 0 && pass === confirm) {
+            error.classList.add('hidden');
+            ok.classList.remove('hidden');
+            return true;
         } else {
             error.classList.add('hidden');
-            confirmInput.classList.remove('border-red-400', 'ring-red-100');
-            return pass === confirm && confirm.length > 0;
+            ok.classList.add('hidden');
         }
     }
 
-    // --- Save All Changes ---
+    // ---- Submit Password Change ----
+    function submitPasswordChange() {
+        const currentPass = document.getElementById('currentPassword').value;
+        const newPass = document.getElementById('newPassword').value;
+        const confirmPass = document.getElementById('confirmPassword').value;
+        if (!currentPass) { alert('Please enter your current password.'); return; }
+        if (newPass.length < 8 || !/[A-Z]/.test(newPass) || !/[0-9]/.test(newPass) || !/[!@#$%^&*]/.test(newPass)) {
+            alert('New password does not meet the security requirements.'); return;
+        }
+        if (newPass !== confirmPass) { alert('Passwords do not match.'); return; }
+        document.getElementById('passwordForm').submit();
+    }
+
+    // ---- Save All Changes (Personal Info) ----
     function saveAllChanges() {
-        const profileForm = document.getElementById('profileForm');
-        const passwordForm = document.getElementById('passwordForm');
         const name = document.getElementById('profileName');
         const address = document.getElementById('profileAddress');
         const phone = document.getElementById('profilePhone');
         const photoInput = document.getElementById('profilePicInput');
-
-        // Validate required fields
         let valid = true;
-        
+
         if (!name.value.trim()) {
-            document.getElementById('nameError')?.classList.remove('hidden');
+            document.getElementById('nameError').classList.remove('hidden');
             name.classList.add('border-red-400');
             valid = false;
         } else {
-            document.getElementById('nameError')?.classList.add('hidden');
+            document.getElementById('nameError').classList.add('hidden');
             name.classList.remove('border-red-400');
         }
-        if (!address.value.trim()) {
-            document.getElementById('addressError')?.classList.remove('hidden');
-            address.classList.add('border-red-400');
-            valid = false;
-        } else {
-            document.getElementById('addressError')?.classList.add('hidden');
-            address.classList.remove('border-red-400');
-        }
+
         if (phone) {
             const phoneVal = phone.value.trim();
-            if (!phoneVal || !/^09\d{9}$/.test(phoneVal)) {
-                document.getElementById('phoneError')?.classList.remove('hidden');
+            if (phoneVal && !/^09\d{9}$/.test(phoneVal)) {
+                document.getElementById('phoneError').classList.remove('hidden');
                 phone.classList.add('border-red-400');
                 valid = false;
             } else {
-                document.getElementById('phoneError')?.classList.add('hidden');
+                document.getElementById('phoneError').classList.add('hidden');
                 phone.classList.remove('border-red-400');
             }
         }
-        
+
         if (!valid) return;
 
-        // Validate password if any password field has content
-        const currentPass = document.getElementById('currentPassword').value;
-        const newPass = document.getElementById('newPassword').value;
-        const confirmPass = document.getElementById('confirmPassword').value;
-
-        if (currentPass || newPass || confirmPass) {
-            if (!currentPass) {
-                alert('Please enter your current password.');
-                document.getElementById('currentPassword').focus();
-                return;
-            }
-            if (newPass.length < 8 || !/[A-Z]/.test(newPass) || !/[0-9]/.test(newPass) || !/[!@#$%^&*]/.test(newPass)) {
-                alert('New password does not meet the requirements.');
-                document.getElementById('newPassword').focus();
-                return;
-            }
-            if (newPass !== confirmPass) {
-                alert('Passwords do not match.');
-                document.getElementById('confirmPassword').focus();
-                return;
-            }
-            passwordForm.submit();
-            return;
-        }
-
-        // Sensitive field changes (Name / Phone) go through OTP verification
-        const originalName = '<?php echo htmlspecialchars($fullName); ?>';
-        const originalPhone = '<?php echo htmlspecialchars($phone); ?>';
-        const phoneChanged = phone && phone.value.trim() !== originalPhone;
+        const originalName = '<?php echo htmlspecialchars($fullName, ENT_QUOTES); ?>';
+        const originalPhone = '<?php echo htmlspecialchars($phone, ENT_QUOTES); ?>';
         const nameChanged = name.value.trim() !== originalName;
-        const photoSelected = photoInput && photoInput.files.length > 0;
+        const phoneChanged = phone && phone.value.trim() !== originalPhone;
 
         if (nameChanged || phoneChanged) {
             requestOTP();
             return;
         }
 
-        profileForm.submit();
+        document.getElementById('profileForm').submit();
     }
 
-    // --- OTP Verification Logic ---
+    // ---- OTP ----
     function requestOTP() {
         fetch('/brgy-waste-app-v3/public/admin/requestProfileOTP', {
             method: 'POST',
@@ -626,7 +928,7 @@ $statusStyle = getAdminStatusStyle($status);
                 alert(data.message || 'Failed to send OTP.');
             }
         })
-        .catch(err => alert('An error occurred. Please try again.'));
+        .catch(() => alert('An error occurred. Please try again.'));
     }
 
     function closeOTPModal() {
@@ -638,17 +940,19 @@ $statusStyle = getAdminStatusStyle($status);
 
     function verifyOTP() {
         const otp = document.getElementById('otpInput').value.trim();
-        if (otp.length !== 6) {
-            showOTPError('Please enter a 6-digit OTP code.');
-            return;
-        }
-
         const btn = document.getElementById('verifyOTPBtn');
         const text = document.getElementById('verifyOTPText');
         const spinner = document.getElementById('verifyOTPSpinner');
-        btn.disabled = true;
+
+        if (otp.length !== 6) {
+            document.getElementById('otpError').textContent = 'Please enter the 6-digit code.';
+            document.getElementById('otpError').classList.remove('hidden');
+            return;
+        }
+
         text.textContent = 'Verifying...';
         spinner.classList.remove('hidden');
+        btn.disabled = true;
 
         fetch('/brgy-waste-app-v3/public/admin/verifyProfileOTP', {
             method: 'POST',
@@ -658,45 +962,59 @@ $statusStyle = getAdminStatusStyle($status);
         .then(res => res.json())
         .then(data => {
             btn.disabled = false;
-            text.textContent = 'Verify';
             spinner.classList.add('hidden');
-
+            text.textContent = 'Verify Identity';
             if (data.success) {
-                document.getElementById('otpSuccess').textContent = data.message;
+                document.getElementById('otpSuccess').textContent = '✓ Verified! Saving changes...';
                 document.getElementById('otpSuccess').classList.remove('hidden');
                 document.getElementById('otpError').classList.add('hidden');
                 setTimeout(() => {
                     closeOTPModal();
                     document.getElementById('profileForm').submit();
-                }, 1000);
+                }, 1200);
             } else {
-                showOTPError(data.message || 'Invalid OTP.');
+                document.getElementById('otpError').textContent = data.message || 'Invalid or expired code.';
+                document.getElementById('otpError').classList.remove('hidden');
             }
         })
-        .catch(err => {
+        .catch(() => {
             btn.disabled = false;
-            text.textContent = 'Verify';
             spinner.classList.add('hidden');
-            showOTPError('An error occurred. Please try again.');
+            text.textContent = 'Verify Identity';
+            alert('An error occurred. Please try again.');
         });
     }
 
     function resendOTP() {
+        document.getElementById('resendOTPBtn').disabled = true;
+        document.getElementById('resendOTPBtn').textContent = 'Sending...';
         requestOTP();
+        setTimeout(() => {
+            document.getElementById('resendOTPBtn').disabled = false;
+            document.getElementById('resendOTPBtn').textContent = 'Resend OTP Code';
+        }, 30000);
     }
 
-    function showOTPError(msg) {
-        const errorEl = document.getElementById('otpError');
-        errorEl.textContent = msg;
-        errorEl.classList.remove('hidden');
-        document.getElementById('otpSuccess').classList.add('hidden');
+    // ---- Live Clock ----
+    function updateClock() {
+        const now = new Date();
+        const h = now.getHours() % 12 || 12;
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+        const el = document.getElementById('currentTimeDisplay');
+        if (el) el.textContent = `${h}:${m}:${s} ${ampm}`;
     }
+    setInterval(updateClock, 1000);
+    updateClock();
 
+    // Auto-dismiss flash messages
     setTimeout(() => {
-        const successMsg = document.getElementById('successMsg');
-        const errorMsg = document.getElementById('errorMsg');
-        if (successMsg) successMsg.style.display = 'none';
-        if (errorMsg) errorMsg.style.display = 'none';
+        document.querySelectorAll('[id="errorMsg"], [id="successMsg"]').forEach(el => {
+            el.style.transition = 'opacity 0.5s';
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 500);
+        });
     }, 5000);
 </script>
 

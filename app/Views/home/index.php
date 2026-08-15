@@ -11,17 +11,12 @@ $barangayName = $barangay['barangay_name'] ?? 'Dulong Bayan';
 $barangayAddress = $barangay['official_address'] ?? 'Barangay Hall, Dulong Bayan';
 $barangayContact = $barangay['contact_number'] ?? '(02) 8-123-4567';
 $barangayEmail = $barangay['official_email'] ?? 'brgy.dulongbayan@email.com';
-
-// Waste-type mapping — color now encodes what's being collected (the thing
-// residents actually need to sort by), not which day it happens to fall on.
-$wasteTypeColors = [
-    'Biodegradable' => ['bg' => 'emerald-50', 'text' => 'emerald-700', 'accent' => 'emerald-400'],
-    'Non-Biodegradable' => ['bg' => 'sky-50', 'text' => 'sky-700', 'accent' => 'sky-400'],
-    'Recyclable' => ['bg' => 'teal-50', 'text' => 'teal-700', 'accent' => 'teal-400'],
-    'Residual Waste' => ['bg' => 'slate-100', 'text' => 'slate-600', 'accent' => 'slate-400'],
-    'Hazardous' => ['bg' => 'red-50', 'text' => 'red-700', 'accent' => 'red-400'],
-    'General' => ['bg' => 'slate-100', 'text' => 'slate-600', 'accent' => 'slate-400'],
-];
+$sysLogo = $barangay['system_logo'] ?? null;
+if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysLogo, '/public') === 0) {
+    $sysLogo = '/brgy-waste-app-v3' . $sysLogo;
+}
+$sysShortName = $barangay['system_short_name'] ?? 'WasteWatch';
+$sysMotto = $barangay['system_motto'] ?? 'SMART WASTE SOLUTIONS';
 ?>
 
 <!DOCTYPE html>
@@ -29,11 +24,13 @@ $wasteTypeColors = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WasteWatch | <?php echo $barangayName; ?></title>
+    <title><?php echo htmlspecialchars($sysShortName); ?> | <?php echo htmlspecialchars($barangayName); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <style>
-        * { font-family: 'Inter', sans-serif; }
+        * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
         .pulse-dot { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .hero-wave { position: absolute; bottom: -2px; left: 0; right: 0; }
@@ -73,13 +70,17 @@ $wasteTypeColors = [
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="/brgy-waste-app-v3/public/" class="flex items-center gap-2.5 flex-shrink-0">
-                <div class="w-9 h-9 rounded-xl bg-[#07281E] flex items-center justify-center text-white shadow-md shadow-[#07281E]/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <a href="/brgy-waste-app-v3/public/" class="flex items-center gap-3 flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-md shadow-[#07281E]/20 overflow-hidden border-2 border-emerald-500/30">
+                    <?php if (!empty($sysLogo)): ?>
+                        <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover">
+                    <?php else: ?>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <?php endif; ?>
                 </div>
                 <div>
-                    <span class="font-extrabold text-slate-900 text-lg tracking-tight">WasteWatch</span>
-                    <span class="hidden sm:block text-[11px] font-semibold text-slate-400 tracking-wide">SMART WASTE SOLUTIONS</span>
+                    <span class="font-extrabold text-slate-900 text-lg tracking-tight"><?php echo htmlspecialchars($sysShortName); ?></span>
+                    <span class="hidden sm:block text-[11px] font-semibold text-slate-400 tracking-wide uppercase"><?php echo htmlspecialchars($sysMotto); ?></span>
                 </div>
             </a>
 

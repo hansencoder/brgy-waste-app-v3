@@ -412,6 +412,12 @@ class AdminController extends Controller {
         ");
         $data['purok_polygons'] = $db->resultSet();
 
+        // Get official barangay boundary and map center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
+
         // Log access
         $this->auditModel->logAction($_SESSION['user_id'], 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', 'success');
 
@@ -864,6 +870,12 @@ class AdminController extends Controller {
             WHERE pb.polygon_geometry IS NOT NULL
         ");
         $data['purok_boundaries'] = $db->resultSet();
+
+        // Get official barangay boundary and map center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
 
         $data['report'] = $report;
         $this->view('admin/view_report', $data);

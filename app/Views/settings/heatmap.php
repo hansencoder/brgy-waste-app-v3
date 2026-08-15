@@ -336,9 +336,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const gradientRamp = document.getElementById('gradientRampBar');
 
     // 1. Initialize Simulation Map
+    const defaultCenter = [
+        <?php echo (float)($data['map_center']['lat'] ?? 15.558); ?>, 
+        <?php echo (float)($data['map_center']['lng'] ?? 120.803); ?>
+    ];
+    const defaultZoom = <?php echo (int)($data['map_center']['zoom'] ?? 15); ?>;
+
     const map = L.map('simMap', {
-        center: [15.558, 120.803],
-        zoom: 15,
+        center: defaultCenter,
+        zoom: defaultZoom,
         zoomControl: false,
         attributionControl: false
     });
@@ -350,6 +356,25 @@ document.addEventListener('DOMContentLoaded', function() {
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 19
     }).addTo(map);
+
+    // Master Barangay Boundary
+    const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+    if (rawBrgyBoundary) {
+        try {
+            const brgyGeo = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            L.geoJSON(brgyGeo, {
+                style: {
+                    color: '#059669',
+                    weight: 2.5,
+                    fillColor: '#D1FAE5',
+                    fillOpacity: 0.05,
+                    dashArray: '6, 6'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering master boundary in heatmap:', e);
+        }
+    }
 
     // Sample Incident Clusters
     const samplePoints = [

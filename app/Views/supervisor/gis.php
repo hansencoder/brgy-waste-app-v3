@@ -222,13 +222,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentView = '<?php echo $current_view; ?>';
 
     // Center map on barangay
-    const centerLat = 15.558;
-    const centerLng = 120.803;
+    const centerLat = <?php echo (float)($data['map_center']['lat'] ?? 15.558); ?>;
+    const centerLng = <?php echo (float)($data['map_center']['lng'] ?? 120.803); ?>;
+    const defaultZoom = <?php echo (int)($data['map_center']['zoom'] ?? 15); ?>;
 
     // Initialize map
     const map = L.map('gisMap', {
         center: [centerLat, centerLng],
-        zoom: 15,
+        zoom: defaultZoom,
         zoomControl: true
     });
 
@@ -251,6 +252,25 @@ document.addEventListener('DOMContentLoaded', function() {
         "Satellite (Homes & Buildings)": L.layerGroup([satelliteMap, labelsMap]),
         "Street Map": streetMap
     }, null, { position: 'topright' }).addTo(map);
+
+    // Dynamic Barangay Boundary Layer
+    const rawBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+    if (rawBoundary) {
+        try {
+            const boundaryGeo = (typeof rawBoundary === 'string') ? JSON.parse(rawBoundary) : rawBoundary;
+            L.geoJSON(boundaryGeo, {
+                style: {
+                    color: '#10B981',
+                    weight: 2.5,
+                    fillColor: '#D1FAE5',
+                    fillOpacity: 0.12,
+                    dashArray: '6, 6'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering dynamic barangay boundary in Supervisor GIS:', e);
+        }
+    }
 
     // Status colors for markers
     const statusColors = {

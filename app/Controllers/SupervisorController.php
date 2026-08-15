@@ -679,6 +679,12 @@ public function getHotspots() {
         ");
         $data['purok_boundaries'] = $db->resultSet();
 
+        // Get official barangay boundary and map center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
+
         // Log access
         $this->auditModel->logAction($_SESSION['user_id'], 'View Report', "Report ID $id", 'Supervisor viewed report details', 'success');
 
@@ -734,22 +740,30 @@ public function gis() {
         HAVING COUNT(*) >= 3
         ORDER BY report_count DESC
     ");
-    $hotspots = $db->resultSet();
-    $active_hotspots_count = $db->rowCount();
+    $reportModel = $this->model('Report');
+    $db = new Database();
 
-    // ---- Get highest concern purok (most reports overall) ----
+    // ---- Fetch all reports with coordinates ----
+    $reports = $reportModel->getAllMappedReports();
+    $totalMapped = count($reports);
+
+    // ---- Fetch hotspot clusters ----
+    $hotspots = $reportModel->getHotspots();
+    $active_hotspots_count = count($hotspots);
+
+    // ---- Fetch highest reporting purok ----
     $db->query("
-        SELECT p.purok_name, COUNT(*) as cnt
+        SELECT p.purok_name, COUNT(r.id) as count 
         FROM reports r
         JOIN puroks p ON r.purok_id = p.purok_id
         GROUP BY r.purok_id
-        ORDER BY cnt DESC
+        ORDER BY count DESC
         LIMIT 1
     ");
     $topPurok = $db->single();
     $highest_purok = $topPurok ? $topPurok['purok_name'] : 'N/A';
 
-    // ---- Get filter options ----
+    // ---- Fetch statuses and categories for filters ----
     $db->query("SELECT * FROM report_statuses ORDER BY status_id");
     $statuses = $db->resultSet();
 
@@ -773,10 +787,6 @@ public function gis() {
     $dateFrom = isset($_GET['date_from']) ? $_GET['date_from'] : '';
     $dateTo = isset($_GET['date_to']) ? $_GET['date_to'] : '';
 
-    // ---- Apply filters if any ----
-    // (The view will re-query with filters if needed, but we already have all reports)
-    // For performance, we could filter here, but we'll let the view handle it.
-
     // ---- Prepare data for view ----
     $data['reports'] = $reports;
     $data['total_mapped'] = $totalMapped;
@@ -793,6 +803,13 @@ public function gis() {
     $data['purokFilter'] = $purokFilter;
     $data['dateFrom'] = $dateFrom;
     $data['dateTo'] = $dateTo;
+
+    // Get official barangay boundary and map center
+    $barangayModel = $this->model('Barangay');
+    $mapConfig = $barangayModel->getMapConfig();
+    $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+    $data['map_center'] = $mapConfig['center'];
+    $data['purok_polygons'] = $mapConfig['puroks'];
 
     // ---- Log access ----
     $this->auditModel->logAction(

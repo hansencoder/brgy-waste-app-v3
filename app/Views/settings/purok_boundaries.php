@@ -204,17 +204,41 @@ let currentGeoJson = null;
 
 // All puroks data from PHP backend
 const purokData = <?php echo json_encode($data['puroks'] ?? []); ?>;
+const masterBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+const defaultCenter = [
+    <?php echo (float)($data['map_center']['lat'] ?? 15.558); ?>, 
+    <?php echo (float)($data['map_center']['lng'] ?? 120.803); ?>
+];
+const defaultZoom = <?php echo (int)($data['map_center']['zoom'] ?? 15); ?>;
 
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof L === 'undefined') return;
 
-    // Initialize map (default fallback to Talavera coordinates)
-    map = L.map('purokMap').setView([15.565, 120.810], 15);
+    // Initialize map
+    map = L.map('purokMap').setView(defaultCenter, defaultZoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
+
+    // Render Master Barangay Outer Boundary as reference
+    if (masterBrgyBoundary) {
+        try {
+            const brgyGeo = (typeof masterBrgyBoundary === 'string') ? JSON.parse(masterBrgyBoundary) : masterBrgyBoundary;
+            L.geoJSON(brgyGeo, {
+                style: {
+                    color: '#059669',
+                    weight: 2.5,
+                    fillColor: '#D1FAE5',
+                    fillOpacity: 0.05,
+                    dashArray: '6, 6'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering master boundary in purok editor:', e);
+        }
+    }
 
     // FeatureGroup to hold all static background purok boundaries
     staticBoundariesGroup = L.featureGroup().addTo(map);

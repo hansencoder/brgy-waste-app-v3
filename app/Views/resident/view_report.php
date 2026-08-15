@@ -265,6 +265,25 @@ document.addEventListener('DOMContentLoaded', function() {
     satelliteMap.addTo(map);
     labelsMap.addTo(map);
 
+    // Render Official Barangay Boundary
+    const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+    if (rawBrgyBoundary) {
+        try {
+            const brgyGeoObj = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            L.geoJSON(brgyGeoObj, {
+                style: {
+                    color: '#3B82F6',
+                    weight: 2,
+                    fillColor: '#3B82F6',
+                    fillOpacity: 0.05,
+                    dashArray: '5,5'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering dynamic barangay boundary:', e);
+        }
+    }
+
     const customIcon = L.divIcon({
         html: '<div style="background-color:#10b981;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>',
         className: '',

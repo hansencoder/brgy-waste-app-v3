@@ -308,8 +308,12 @@ $resume_description = $resume_data['description'] ?? '';
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const defaultCenter = [15.558, 120.803];
-    const map = L.map('mapContainer', { zoomControl: true }).setView(defaultCenter, 15);
+    const defaultCenter = [
+        <?php echo (float)($data['map_center']['lat'] ?? 15.558); ?>, 
+        <?php echo (float)($data['map_center']['lng'] ?? 120.803); ?>
+    ];
+    const defaultZoom = <?php echo (int)($data['map_center']['zoom'] ?? 15); ?>;
+    const map = L.map('mapContainer', { zoomControl: true }).setView(defaultCenter, defaultZoom);
 
     const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri', maxZoom: 19
@@ -328,6 +332,25 @@ document.addEventListener('DOMContentLoaded', function() {
         "Satellite": L.layerGroup([satelliteMap, labelsMap]),
         "Street Map": streetMap
     }, null, { position: 'topright' }).addTo(map);
+
+    // Render Official Barangay Boundary
+    const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+    if (rawBrgyBoundary) {
+        try {
+            const brgyGeoObj = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            L.geoJSON(brgyGeoObj, {
+                style: {
+                    color: '#10b981',
+                    weight: 2,
+                    fillColor: '#d1fae5',
+                    fillOpacity: 0.08,
+                    dashArray: '5, 5'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering dynamic barangay boundary:', e);
+        }
+    }
 
     let marker = null;
 

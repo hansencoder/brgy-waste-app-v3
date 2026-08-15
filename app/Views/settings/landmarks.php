@@ -224,10 +224,16 @@ function switchLandmarkBasemap(type) {
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof L === 'undefined') return;
 
+    const defaultCenter = [
+        <?php echo (float)($data['map_center']['lat'] ?? 15.558); ?>, 
+        <?php echo (float)($data['map_center']['lng'] ?? 120.803); ?>
+    ];
+    const defaultZoom = <?php echo (int)($data['map_center']['zoom'] ?? 15); ?>;
+
     const map = L.map('landmarkMap', {
         zoomControl: true,
         attributionControl: false
-    }).setView([14.7770, 121.1444], 16);
+    }).setView(defaultCenter, defaultZoom);
     landmarkMapInstance = map;
 
     // Basemaps
@@ -242,6 +248,25 @@ document.addEventListener('DOMContentLoaded', function() {
         maxZoom: 19
     });
     satelliteLayerGroup = L.layerGroup([satTiles, satLabels]);
+
+    // Master Barangay Boundary
+    const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+    if (rawBrgyBoundary) {
+        try {
+            const brgyGeo = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            L.geoJSON(brgyGeo, {
+                style: {
+                    color: '#059669',
+                    weight: 2.5,
+                    fillColor: '#D1FAE5',
+                    fillOpacity: 0.05,
+                    dashArray: '6, 6'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering master boundary in landmarks:', e);
+        }
+    }
 
     let tempMarker = null;
     const boundsGroup = L.featureGroup().addTo(map);

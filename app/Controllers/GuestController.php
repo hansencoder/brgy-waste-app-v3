@@ -335,6 +335,12 @@ class GuestController extends Controller {
             'hourly_count' => $hourlyCount,
         ]);
 
+        // Dynamic Barangay Boundary & Center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
+
         $this->view('guest/report_form', $data);
     }
 
@@ -437,6 +443,12 @@ class GuestController extends Controller {
             'hourly_count'  => $hourlyCount,
             'error'         => '',
         ];
+
+        // Dynamic Barangay Boundary & Center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
 
         $this->view('guest/review', $data);
     }
@@ -602,7 +614,17 @@ class GuestController extends Controller {
             return;
         }
 
-        $data = ['report' => $report, 'error' => '', 'success' => '', 'barangay' => $barangay];
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+
+        $data = [
+            'report' => $report, 
+            'error' => '', 
+            'success' => '', 
+            'barangay' => $barangay,
+            'barangay_boundary' => $mapConfig['boundary_geojson'],
+            'map_center' => $mapConfig['center']
+        ];
         $this->view('guest/track_status', $data);
     }
 }

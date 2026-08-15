@@ -197,8 +197,13 @@
 </div>
 
 <script>
-    // Initialize map centered on Dulong Bayan area with Satellite Imagery (visible homes/buildings)
-    const map = L.map('mapContainer').setView([15.5600, 120.8048], 16);
+    // Initialize map centered on dynamic barangay center with Satellite Imagery
+    const defaultCenter = [
+        <?php echo (float)($data['map_center']['lat'] ?? 15.5600); ?>, 
+        <?php echo (float)($data['map_center']['lng'] ?? 120.8048); ?>
+    ];
+    const defaultZoom = <?php echo (int)($data['map_center']['zoom'] ?? 16); ?>;
+    const map = L.map('mapContainer').setView(defaultCenter, defaultZoom);
     
     const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
@@ -218,7 +223,26 @@
     L.control.layers({
         "Satellite (Homes & Buildings)": L.layerGroup([satelliteLayer, labelsLayer]),
         "Street Map": streetLayer
-    }).addTo(map);
+    }, null, { position: 'topright' }).addTo(map);
+
+    // Render Official Barangay Boundary
+    const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+    if (rawBrgyBoundary) {
+        try {
+            const brgyGeoObj = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            L.geoJSON(brgyGeoObj, {
+                style: {
+                    color: '#10b981',
+                    weight: 2,
+                    fillColor: '#d1fae5',
+                    fillOpacity: 0.08,
+                    dashArray: '5, 5'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering dynamic barangay boundary:', e);
+        }
+    }
 
     let marker = null;
 

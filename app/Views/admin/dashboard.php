@@ -65,12 +65,12 @@ function getStatusBadgeProps($status) {
                     <!-- ============================================================ -->
                     <!-- 1. DASHBOARD HEADER & SYSTEM STATUS BANNER                   -->
                     <!-- ============================================================ -->
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-250 shadow-xs">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0a3124] p-6 rounded-2xl border border-slate-250 shadow-xs">
                         <div>
-                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                                 Welcome back, <?php echo htmlspecialchars($firstName ?? $admin_name); ?> 👋
                             </h1>
-                            <p class="text-sm text-slate-500 font-medium mt-0.5">
+                            <p class="text-sm text-white font-medium mt-0.5">
                                 Here is the real-time summary of waste management operations for today, <?php echo $today_date; ?>.
                             </p>
                         </div>

@@ -230,6 +230,25 @@ if ($currentIdx === false) $currentIdx = -1;
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }).addTo(map);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }).addTo(map);
     
+    // Render Official Barangay Boundary
+    const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+    if (rawBrgyBoundary) {
+        try {
+            const brgyGeoObj = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            L.geoJSON(brgyGeoObj, {
+                style: {
+                    color: '#10b981',
+                    weight: 2,
+                    fillColor: '#d1fae5',
+                    fillOpacity: 0.08,
+                    dashArray: '5, 5'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering dynamic barangay boundary:', e);
+        }
+    }
+
     const icon = L.divIcon({
         className: '',
         html: `<div style="background:#059669; width:26px; height:26px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:3px solid #ffffff; box-shadow:0 4px 12px rgba(0,0,0,0.35);"></div>`,

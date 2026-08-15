@@ -138,6 +138,12 @@ class ResidentController extends Controller {
         $supportedCount = $db->single();
         $data['supported_count'] = (int)($supportedCount['count'] ?? 0);
         
+        // Dynamic Barangay Boundary & Center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
+
         $this->view('resident/dashboard', $data);
     }
 
@@ -148,6 +154,11 @@ class ResidentController extends Controller {
     public function submit() {
         $data = ['error' => '', 'success' => ''];
         
+        // Dynamic Barangay Boundary & Center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
 
         if (isset($_GET['resume']) && isset($_SESSION['pending_report'])) {
             $pending = $_SESSION['pending_report'];
@@ -370,6 +381,12 @@ class ResidentController extends Controller {
             $data['flag_date'] = $flag ? $flag['flagged_at'] : null;
         }
 
+        // Dynamic Barangay Boundary & Center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
+
         $this->view('resident/view_report', $data);
     }
 
@@ -383,6 +400,13 @@ class ResidentController extends Controller {
             exit;
         }
         $data = $_SESSION['pending_report'];
+
+        // Dynamic Barangay Boundary & Center
+        $barangayModel = $this->model('Barangay');
+        $mapConfig = $barangayModel->getMapConfig();
+        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
+        $data['map_center'] = $mapConfig['center'];
+
         $this->view('resident/duplicate_check', ['data' => $data]);
     }
 

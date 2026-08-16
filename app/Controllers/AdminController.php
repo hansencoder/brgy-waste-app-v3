@@ -536,15 +536,23 @@ class AdminController extends Controller {
                 LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
                 WHERE u.status = 'suspended'
             ";
-        } else {
-            $roleFilter = ($tab === 'staff') ? [1, 2] : [3];
+        } elseif ($tab === 'staff') {
             $query = "
                 SELECT u.*, r.role_name, p.position_name, pk.purok_name
                 FROM users u
                 LEFT JOIN roles r ON u.role_id = r.role_id
                 LEFT JOIN positions p ON u.position_id = p.position_id
                 LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
-                WHERE u.role_id IN (" . implode(',', $roleFilter) . ")
+                WHERE (u.role_id != 3 OR r.role_name IS NULL OR LOWER(r.role_name) != 'resident') AND u.status != 'suspended'
+            ";
+        } else {
+            $query = "
+                SELECT u.*, r.role_name, p.position_name, pk.purok_name
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.role_id
+                LEFT JOIN positions p ON u.position_id = p.position_id
+                LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
+                WHERE (u.role_id = 3 OR LOWER(r.role_name) = 'resident') AND u.status != 'suspended'
             ";
         }
 
@@ -578,9 +586,9 @@ class AdminController extends Controller {
         $data['search'] = $search;
 
         // Also get counts for the tabs
-        $db->query("SELECT COUNT(*) as count FROM users WHERE role_id = 3");
+        $db->query("SELECT COUNT(*) as count FROM users u LEFT JOIN roles r ON u.role_id = r.role_id WHERE (u.role_id = 3 OR LOWER(r.role_name) = 'resident') AND u.status != 'suspended'");
         $residentCount = $db->single()['count'] ?? 0;
-        $db->query("SELECT COUNT(*) as count FROM users WHERE role_id IN (1,2)");
+        $db->query("SELECT COUNT(*) as count FROM users u LEFT JOIN roles r ON u.role_id = r.role_id WHERE (u.role_id != 3 AND (r.role_name IS NULL OR LOWER(r.role_name) != 'resident')) AND u.status != 'suspended'");
         $staffCount = $db->single()['count'] ?? 0;
         $db->query("SELECT COUNT(*) as count FROM users WHERE status = 'suspended'");
         $suspendedCount = $db->single()['count'] ?? 0;
@@ -1045,7 +1053,7 @@ class AdminController extends Controller {
         // Load dropdown data
         $db->query("SELECT * FROM positions WHERE is_active = 1 ORDER BY position_name");
         $data['positions'] = $db->resultSet();
-        $db->query("SELECT * FROM roles WHERE role_name IN ('Administrator', 'Supervisor')");
+        $db->query("SELECT * FROM roles WHERE LOWER(role_name) != 'resident' ORDER BY (CASE WHEN LOWER(role_name) = 'administrator' THEN 1 WHEN LOWER(role_name) = 'supervisor' THEN 2 ELSE 3 END), role_name ASC");
         $data['roles'] = $db->resultSet();
         $db->query("SELECT * FROM puroks WHERE is_active = 1 ORDER BY purok_name");
         $data['puroks'] = $db->resultSet();

@@ -121,7 +121,7 @@ foreach ($publicReports as $pr) {
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
             <a href="/brgy-waste-app-v3/public/" class="flex items-center gap-3 flex-shrink-0 group">
-                <div class="w-10 h-10 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-sm overflow-hidden border border-emerald-500/20 group-hover:border-emerald-400/50 transition-colors">
+                <div class="w-10 h-10 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-sm overflow-hidden group-hover:border-emerald-400/50 transition-colors">
                     <?php if (!empty($sysLogo)): ?>
                         <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover">
                     <?php else: ?>

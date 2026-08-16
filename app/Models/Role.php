@@ -23,4 +23,9 @@ class Role {
         $this->db->bind(':name', $name);
         return $this->db->single();
     }
+
+    public function getStaffRoles() {
+        $this->db->query("SELECT * FROM roles WHERE LOWER(role_name) != 'resident' ORDER BY (CASE WHEN LOWER(role_name) = 'administrator' THEN 1 WHEN LOWER(role_name) = 'supervisor' THEN 2 ELSE 3 END), role_name ASC");
+        return $this->db->resultSet();
+    }
 }

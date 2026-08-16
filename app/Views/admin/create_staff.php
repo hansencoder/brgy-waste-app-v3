@@ -214,19 +214,28 @@ if (!isset($data) || !is_array($data)) {
 
                                 <!-- System Role -->
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-800 tracking-tight mb-2">System Access Role <span class="text-red-500">*</span></label>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="block text-xs font-bold text-slate-800 tracking-tight">System Access Role <span class="text-red-500">*</span></label>
+                                        <a href="/brgy-waste-app-v3/public/settings/role_management" target="_blank" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1">
+                                            <span>Manage Roles</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                        </a>
+                                    </div>
                                     <div class="relative">
                                         <select name="role_id" required 
                                                 class="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-[#10B981] focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all appearance-none cursor-pointer pr-10">
                                             <option value="">Select Role</option>
                                             <?php foreach ($data['roles'] as $role): ?>
-                                                <option value="<?php echo $role['role_id']; ?>" <?php echo (isset($_POST['role_id']) && $_POST['role_id'] == $role['role_id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($role['role_name']); ?></option>
+                                                <option value="<?php echo $role['role_id']; ?>" <?php echo (isset($_POST['role_id']) && $_POST['role_id'] == $role['role_id']) ? 'selected' : ''; ?>>
+                                                    <?php echo htmlspecialchars($role['role_name']); ?><?php echo (!empty($role['is_custom'])) ? ' (Custom Role)' : ''; ?>
+                                                </option>
                                             <?php endforeach; ?>
                                         </select>
                                         <div class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
                                         </div>
                                     </div>
+                                    <p class="text-[10px] text-slate-400 font-medium mt-1">Defines dashboard access and permissions for this staff member</p>
                                 </div>
 
                             </div>

@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Waste · WasteWatch Guest</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0B2E22',
+                        'primary-dark': '#062018',
+                        'emerald-brand': '#10B981',
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
@@ -142,6 +157,36 @@
             </div>
         </div>
 
+        <!-- Photo Upload -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-900">Evidence Photos <span class="text-red-500">*</span></h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Upload clear photos of the waste issue (At least 1 photo required, max 3).</p>
+                </div>
+                <span id="photoCountBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300">
+                    Required · 0 / 3
+                </span>
+            </div>
+
+            <!-- Drop & Click Area -->
+            <div id="photoDropArea" onclick="document.getElementById('photos').click()" 
+                 class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50/70 hover:bg-emerald-50/30 rounded-2xl cursor-pointer transition text-center group">
+                <div class="w-11 h-11 rounded-2xl bg-white shadow-xs border border-slate-200 group-hover:border-emerald-300 text-slate-400 group-hover:text-emerald-600 flex items-center justify-center transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                </div>
+                <span class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-emerald-950 mt-2">Click or drag photos here to upload</span>
+                <span class="text-[11px] text-slate-400 mt-0.5">JPG, PNG, WEBP · Max 5MB per file</span>
+            </div>
+
+            <input type="file" id="photos" name="photos[]" accept="image/jpeg,image/png,image/webp" multiple class="hidden" onchange="handlePhotoSelect(this)">
+
+            <!-- Dynamic Photo Preview Grid -->
+            <div id="photo-preview-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 hidden"></div>
+
+            <p id="photo-error" class="text-red-500 text-xs font-medium hidden">Please upload at least 1 evidence photo of the waste issue.</p>
+        </div>
+
         <!-- Location -->
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
             <div class="flex items-center justify-between">
@@ -176,17 +221,7 @@
             <input type="hidden" id="reporter_longitude" name="reporter_longitude" value="">
         </div>
 
-        <!-- Photo Upload -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
-            <h2 class="text-sm font-bold text-slate-800">Photos <span class="text-slate-400 font-normal text-xs">(optional, max 3)</span></h2>
-            <label for="photos" class="flex flex-col items-center justify-center gap-2 h-28 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/50 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                <span class="text-xs text-slate-500">Click to upload photos</span>
-                <span class="text-xs text-slate-400">JPG, PNG, WEBP · Max 5MB each</span>
-            </label>
-            <input type="file" id="photos" name="photos[]" accept="image/jpeg,image/png,image/webp" multiple class="hidden" onchange="previewPhotos(this)">
-            <div id="photo-preview" class="flex gap-2 flex-wrap"></div>
-        </div>
+        
 
         <!-- Submit -->
         <button type="submit" class="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.99]">
@@ -304,19 +339,126 @@
         document.getElementById('desc-count').textContent = el.value.length + '/500';
     }
 
-    function previewPhotos(input) {
-        const preview = document.getElementById('photo-preview');
-        preview.innerHTML = '';
-        const files = Array.from(input.files).slice(0, 3);
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = e => {
+    // Interactive Photo Upload Handling
+    let selectedPhotoFiles = [];
+
+    function handlePhotoSelect(input) {
+        const newFiles = Array.from(input.files);
+        if (!newFiles.length) return;
+
+        for (let file of newFiles) {
+            if (selectedPhotoFiles.length < 3) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File "${file.name}" exceeds the 5MB size limit.`);
+                    continue;
+                }
+                selectedPhotoFiles.push(file);
+            }
+        }
+
+        syncPhotoInputAndPreview();
+    }
+
+    function removePhoto(index) {
+        selectedPhotoFiles.splice(index, 1);
+        syncPhotoInputAndPreview();
+    }
+
+    function syncPhotoInputAndPreview() {
+        const input = document.getElementById('photos');
+        const dt = new DataTransfer();
+        selectedPhotoFiles.forEach(f => dt.items.add(f));
+        input.files = dt.files;
+
+        const countBadge = document.getElementById('photoCountBadge');
+        if (countBadge) {
+            countBadge.textContent = selectedPhotoFiles.length > 0 ? `${selectedPhotoFiles.length} / 3 Added` : 'Required · 0 / 3';
+            countBadge.className = selectedPhotoFiles.length > 0
+                ? 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300'
+                : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300';
+        }
+
+        const dropArea = document.getElementById('photoDropArea');
+        const previewGrid = document.getElementById('photo-preview-grid');
+        const photoErr = document.getElementById('photo-error');
+
+        if (selectedPhotoFiles.length > 0) {
+            if (photoErr) photoErr.classList.add('hidden');
+            if (dropArea) dropArea.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+        }
+
+        if (selectedPhotoFiles.length >= 3) {
+            if (dropArea) dropArea.classList.add('hidden');
+        } else {
+            if (dropArea) dropArea.classList.remove('hidden');
+        }
+
+        if (selectedPhotoFiles.length === 0) {
+            if (previewGrid) {
+                previewGrid.innerHTML = '';
+                previewGrid.classList.add('hidden');
+            }
+            return;
+        }
+
+        if (previewGrid) {
+            previewGrid.innerHTML = '';
+            previewGrid.classList.remove('hidden');
+
+            selectedPhotoFiles.forEach((file, idx) => {
+                const card = document.createElement('div');
+                card.className = 'relative aspect-4/3 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-2xs group';
+                
                 const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'h-20 w-20 object-cover rounded-xl border border-slate-200';
-                preview.appendChild(img);
-            };
-            reader.readAsDataURL(file);
+                img.className = 'w-full h-full object-cover';
+                img.alt = file.name;
+                
+                const reader = new FileReader();
+                reader.onload = e => { img.src = e.target.result; };
+                reader.readAsDataURL(file);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.title = 'Remove photo';
+                removeBtn.className = 'absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center text-xs font-black shadow-xs transition cursor-pointer active:scale-90';
+                removeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    removePhoto(idx);
+                };
+
+                const tag = document.createElement('div');
+                tag.className = 'absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[10px] font-mono truncate max-w-[80%]';
+                tag.textContent = `Photo ${idx + 1}`;
+
+                card.appendChild(img);
+                card.appendChild(removeBtn);
+                card.appendChild(tag);
+                previewGrid.appendChild(card);
+            });
+        }
+    }
+
+    // Drag and Drop listeners
+    const dropArea = document.getElementById('photoDropArea');
+    if (dropArea) {
+        ['dragenter', 'dragover'].forEach(name => {
+            dropArea.addEventListener(name, (e) => {
+                e.preventDefault();
+                dropArea.classList.add('border-emerald-500', 'bg-emerald-50/50');
+            });
+        });
+        ['dragleave', 'drop'].forEach(name => {
+            dropArea.addEventListener(name, (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('border-emerald-500', 'bg-emerald-50/50');
+            });
+        });
+        dropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length) {
+                handlePhotoSelect({ files: dt.files });
+            }
         });
     }
 
@@ -338,9 +480,23 @@
             }
         });
 
+        // Photo Upload validation (At least 1 photo required)
+        if (selectedPhotoFiles.length === 0 && (!document.getElementById('photos').files || document.getElementById('photos').files.length === 0)) {
+            document.getElementById('photo-error')?.classList.remove('hidden');
+            document.getElementById('photoDropArea')?.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+            valid = false;
+        }
+
         if (!document.getElementById('latitude').value) {
             document.getElementById('location-error').classList.remove('hidden');
             valid = false;
+        }
+
+        if (!valid) {
+            const firstError = document.querySelector('.border-red-500') || document.getElementById('photo-error');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         return valid;

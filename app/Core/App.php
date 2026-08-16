@@ -21,8 +21,18 @@ class App {
 
         // Check if method exists in controller
         if (isset($url[1])) {
-            if (method_exists($this->controller, $url[1])) {
-                $this->method = $url[1];
+            $rawMethod = $url[1];
+            $camelMethod = lcfirst(str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $rawMethod))));
+            $snakeMethod = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $rawMethod));
+
+            if (method_exists($this->controller, $rawMethod)) {
+                $this->method = $rawMethod;
+                unset($url[1]);
+            } elseif (method_exists($this->controller, $camelMethod)) {
+                $this->method = $camelMethod;
+                unset($url[1]);
+            } elseif (method_exists($this->controller, $snakeMethod)) {
+                $this->method = $snakeMethod;
                 unset($url[1]);
             }
         }

@@ -115,3 +115,48 @@ MSG: Your waste report WRS-2026-55350 could not be processed. Track your report 
 [2026-08-15 05:53:27] TO:09121212121
 MSG: Good news! Your waste report WRS-2026-58782 has been verified and will be actioned. - WasteWatch
 ------------------------------------------------------------
+[2026-08-16 02:08:27] TO:09951281511
+MSG: WasteWatch: Your verification code is 261213. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 02:11:15] TO:09951281511
+MSG: WasteWatch: Your verification code is 463877. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 02:51:52] TO:09951281511
+MSG: WasteWatch: Your verification code is 825180. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 03:09:11] TO:09951281511
+MSG: WasteWatch: Your verification code is 397382. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 03:14:24] TO:09951281511
+MSG: WasteWatch: Your verification code is 756733. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 03:18:13] TO:09951281511
+MSG: WasteWatch: Your verification code is 135119. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 03:19:40] TO:09951281511
+MSG: WasteWatch: Your verification code is 966293. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 03:27:45] TO:09951281511
+MSG: WasteWatch: Your verification code is 105568. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 03:30:23] TO:09951281511
+MSG: WasteWatch: Your verification code is 336498. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 03:48:56] TO:09951281511
+MSG: WasteWatch: Your verification code is 078924. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 03:53:14] TO:09121212121
+MSG: WasteWatch: Your verification code is 479242. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 05:12:28] TO:09121212121
+MSG: WasteWatch: Your verification code is 382043. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 06:36:42] TO:09121212121
+MSG: WasteWatch: Your verification code is 240460. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 06:51:11] TO:09121212121
+MSG: WasteWatch: Your verification code is 166230. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-16 07:27:34] TO:09121212121
+MSG: WasteWatch: Your verification code is 204412. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------

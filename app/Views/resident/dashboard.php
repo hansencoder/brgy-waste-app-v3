@@ -66,7 +66,7 @@ function getResidentReportBadge($status) {
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex items-center gap-3 shrink-0 flex-wrap">
+                        <div class="flex items-center gap-3 shrink-0">
                             <a href="/brgy-waste-app-v3/public/resident/submit"
                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#10B981] hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg>

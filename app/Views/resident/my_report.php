@@ -216,6 +216,9 @@ function getReportBadge($status) {
                                     </span>
                                 </div>
                                 <p class="font-semibold text-slate-800"><?php echo htmlspecialchars($r['waste_category'] ?? 'General Waste'); ?></p>
+                                <?php if (!empty($r['description'])): ?>
+                                    <p class="text-xs text-slate-500 font-medium line-clamp-2 leading-relaxed"><?php echo htmlspecialchars($r['description']); ?></p>
+                                <?php endif; ?>
                                 <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
                                     <span><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></span>
                                     <a href="/brgy-waste-app-v3/public/resident/view_report/<?php echo $r['id']; ?>" class="font-bold text-emerald-700">

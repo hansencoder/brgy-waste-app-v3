@@ -94,6 +94,36 @@ $resume_description = $resume_data['description'] ?? '';
                     <!-- Left Column (2 cols): Details & Attachments -->
                     <div class="lg:col-span-2 space-y-6">
 
+                        <!-- SECTION 4: Photo Upload -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-7 space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div>
+                                    <h2 class="text-base font-extrabold text-slate-900">Evidence Photo</h2>
+                                    <p class="text-xs text-slate-500 mt-0.5">Upload a clear photo showing the waste issue.</p>
+                                </div>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Required</span>
+                            </div>
+
+                            <div id="drop-area" onclick="document.getElementById('photoInput').click()" class="flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/30 transition cursor-pointer text-center">
+                                <div id="upload-content" class="flex flex-col items-center gap-2">
+                                    <div class="w-12 h-12 rounded-2xl bg-white shadow-xs text-emerald-600 flex items-center justify-center border border-slate-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    </div>
+                                    <p class="text-xs font-bold text-slate-800 mt-1">Click or drag image here</p>
+                                    <p class="text-[11px] text-slate-400">Supports JPG, PNG (Max 5MB)</p>
+                                </div>
+                                <img id="imagePreview" class="hidden max-h-60 w-auto rounded-xl object-contain bg-white p-2 border border-slate-200" alt="Preview">
+                                <button type="button" id="removeImageBtn" class="hidden mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    <span>Remove Photo</span>
+                                </button>
+                            </div>
+
+                            <input id="photoInput" name="photo" type="file" class="hidden" accept="image/jpeg,image/png">
+                            <input type="hidden" name="photo_uploaded" id="photoUploaded" value="0">
+                            <div id="photoError" class="text-xs font-bold text-red-500 hidden">Please upload a valid image file.</div>
+                        </div>
+
                         <!-- SECTION 1: Location & Map Picker -->
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-7 space-y-4">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
@@ -186,35 +216,7 @@ $resume_description = $resume_data['description'] ?? '';
 
                         </div>
 
-                        <!-- SECTION 4: Photo Upload -->
-                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-7 space-y-4">
-                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                                <div>
-                                    <h2 class="text-base font-extrabold text-slate-900">Evidence Photo</h2>
-                                    <p class="text-xs text-slate-500 mt-0.5">Upload a clear photo showing the waste issue.</p>
-                                </div>
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Required</span>
-                            </div>
-
-                            <div id="drop-area" onclick="document.getElementById('photoInput').click()" class="flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/30 transition cursor-pointer text-center">
-                                <div id="upload-content" class="flex flex-col items-center gap-2">
-                                    <div class="w-12 h-12 rounded-2xl bg-white shadow-xs text-emerald-600 flex items-center justify-center border border-slate-200">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                    </div>
-                                    <p class="text-xs font-bold text-slate-800 mt-1">Click or drag image here</p>
-                                    <p class="text-[11px] text-slate-400">Supports JPG, PNG (Max 5MB)</p>
-                                </div>
-                                <img id="imagePreview" class="hidden max-h-60 w-auto rounded-xl object-contain bg-white p-2 border border-slate-200" alt="Preview">
-                                <button type="button" id="removeImageBtn" class="hidden mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                    <span>Remove Photo</span>
-                                </button>
-                            </div>
-
-                            <input id="photoInput" name="photo" type="file" class="hidden" accept="image/jpeg,image/png">
-                            <input type="hidden" name="photo_uploaded" id="photoUploaded" value="0">
-                            <div id="photoError" class="text-xs font-bold text-red-500 hidden">Please upload a valid image file.</div>
-                        </div>
+                        
 
                         <!-- SECTION 5: Description -->
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-7 space-y-3">

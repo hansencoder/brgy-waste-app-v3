@@ -93,19 +93,41 @@ class GuestController extends Controller {
     }
 
     // ============================================================
-    // STEP 1: Privacy Notice + Phone Number Entry
+    // STEP 1: Privacy Notice
     // ============================================================
     public function index() {
-        $data = ['error' => '', 'success' => ''];
+        $barangayModel = $this->model('Barangay');
+        $barangay = $barangayModel->getInfo();
+        $data = [
+            'barangay' => $barangay,
+            'error'    => '',
+            'success'  => ''
+        ];
         $this->view('guest/privacy', $data);
     }
 
     // ============================================================
-    // STEP 2: Send OTP via SMS
+    // STEP 2: Mobile Number & Name Entry
+    // ============================================================
+    public function phone() {
+        $barangayModel = $this->model('Barangay');
+        $barangay = $barangayModel->getInfo();
+        $data = [
+            'barangay'   => $barangay,
+            'error'      => '',
+            'success'    => '',
+            'guest_name' => $_SESSION['guest_name'] ?? '',
+            'phone'      => $_SESSION['guest_phone'] ?? '',
+        ];
+        $this->view('guest/phone', $data);
+    }
+
+    // ============================================================
+    // STEP 3: Send OTP via SMS
     // ============================================================
     public function sendOtp() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest');
+            header('Location: /brgy-waste-app-v3/public/index.php?url=guest/phone');
             exit;
         }
 
@@ -113,15 +135,28 @@ class GuestController extends Controller {
         $name  = trim($_POST['guest_name'] ?? '');
         $ip    = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
+        $barangayModel = $this->model('Barangay');
+        $barangay = $barangayModel->getInfo();
+
         // Validate PH mobile format
         if (!preg_match('/^09\d{9}$/', $phone)) {
-            $this->view('guest/privacy', ['error' => 'Invalid phone number. Please use the format 09XXXXXXXXX.', 'success' => '']);
+            $this->view('guest/phone', [
+                'barangay'   => $barangay,
+                'error'      => 'Invalid phone number. Please use the format 09XXXXXXXXX.',
+                'guest_name' => $name,
+                'phone'      => $phone
+            ]);
             return;
         }
 
         // Check report submission limit (3 reports per hour)
         if (!$this->reportModel->canGuestSubmit($phone)) {
-            $this->view('guest/privacy', ['error' => 'You have reached the submission limit (3 reports per hour). Please try again later.', 'success' => '']);
+            $this->view('guest/phone', [
+                'barangay'   => $barangay,
+                'error'      => 'You have reached the submission limit (3 reports per hour). Please try again later.',
+                'guest_name' => $name,
+                'phone'      => $phone
+            ]);
             return;
         }
 
@@ -130,9 +165,19 @@ class GuestController extends Controller {
         if (!$can['ok']) {
             if ($can['reason'] === 'cooldown') {
                 $wait = $can['retry_after'];
-                $this->view('guest/privacy', ['error' => "Please wait {$wait} seconds before requesting a new code.", 'success' => '']);
+                $this->view('guest/phone', [
+                    'barangay'   => $barangay,
+                    'error'      => "Please wait {$wait} seconds before requesting a new code.",
+                    'guest_name' => $name,
+                    'phone'      => $phone
+                ]);
             } else {
-                $this->view('guest/privacy', ['error' => 'Too many OTP requests. Please try again in an hour.', 'success' => '']);
+                $this->view('guest/phone', [
+                    'barangay'   => $barangay,
+                    'error'      => 'Too many OTP requests. Please try again in an hour.',
+                    'guest_name' => $name,
+                    'phone'      => $phone
+                ]);
             }
             return;
         }
@@ -169,15 +214,18 @@ class GuestController extends Controller {
     }
 
     // ============================================================
-    // STEP 3: OTP Verification Page
+    // STEP 4: OTP Verification Page
     // ============================================================
     public function verifyOtp() {
         if (!isset($_SESSION['guest_phone'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest');
+            header('Location: /brgy-waste-app-v3/public/index.php?url=guest/phone');
             exit;
         }
 
         $phone = $_SESSION['guest_phone'];
+
+        $barangayModel = $this->model('Barangay');
+        $barangay = $barangayModel->getInfo();
 
         // Query token metadata for exact countdown timers
         $this->db->query('SELECT UNIX_TIMESTAMP(created_at) as created_ts, UNIX_TIMESTAMP(expires_at) as expires_ts
@@ -197,8 +245,9 @@ class GuestController extends Controller {
         }
 
         $data = [
-            'error'                   => '',
-            'success'                 => '',
+            'barangay'                => $barangay,
+            'error'                   => !empty($_GET['resend_error']) ? htmlspecialchars($_GET['resend_error'], ENT_QUOTES, 'UTF-8') : '',
+            'success'                 => !empty($_GET['resent']) ? 'A new 6-digit verification code has been sent to your phone.' : '',
             'phone'                   => $phone,
             'expires_in_seconds'      => $expiresIn,
             'resend_cooldown_seconds' => $resendCooldown,

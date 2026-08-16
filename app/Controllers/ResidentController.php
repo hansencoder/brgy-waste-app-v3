@@ -78,40 +78,51 @@ class ResidentController extends Controller {
 }
 
     /**
-     * Generate calendar data for collection schedule
+     * Generate calendar data for collection schedule (Sunday-first grid)
      */
     private function generateCalendarData($month, $year, $schedules) {
         $firstDay = mktime(0, 0, 0, $month, 1, $year);
-        $daysInMonth = date('t', $firstDay);
-        $firstDayOfWeek = date('N', $firstDay);
+        $daysInMonth = (int)date('t', $firstDay);
+        $firstDayOfWeek = (int)date('w', $firstDay); // 0=Sunday, 1=Monday, ..., 6=Saturday
 
         $dayMap = [
-            'Monday' => 1, 'Tuesday' => 2, 'Wednesday' => 3,
-            'Thursday' => 4, 'Friday' => 5, 'Saturday' => 6, 'Sunday' => 7
+            'Sunday'    => 0,
+            'Monday'    => 1,
+            'Tuesday'   => 2,
+            'Wednesday' => 3,
+            'Thursday'  => 4,
+            'Friday'    => 5,
+            'Saturday'  => 6
         ];
 
         $scheduleMap = [];
         foreach ($schedules as $schedule) {
-            $dayNum = $dayMap[$schedule['collection_day']] ?? 0;
-            if ($dayNum > 0) {
+            $dayName = ucfirst(strtolower(trim($schedule['collection_day'] ?? '')));
+            if (isset($dayMap[$dayName])) {
+                $dayNum = $dayMap[$dayName];
                 $scheduleMap[$dayNum][] = $schedule;
             }
         }
 
         $calendarDays = [];
-        $emptyDays = $firstDayOfWeek - 1;
-        for ($i = 0; $i < $emptyDays; $i++) {
+        // Fill empty days before first day of month (Sunday-first)
+        for ($i = 0; $i < $firstDayOfWeek; $i++) {
             $calendarDays[] = null;
         }
 
         for ($day = 1; $day <= $daysInMonth; $day++) {
-            $dayOfWeek = date('N', mktime(0, 0, 0, $month, $day, $year));
+            $dayOfWeek = (int)date('w', mktime(0, 0, 0, $month, $day, $year));
             $dayData = [
                 'day' => $day,
-                'is_today' => ($day == date('j') && $month == date('n') && $year == date('Y')),
+                'is_today' => ($day == (int)date('j') && $month == (int)date('n') && $year == (int)date('Y')),
                 'schedules' => $scheduleMap[$dayOfWeek] ?? []
             ];
             $calendarDays[] = $dayData;
+        }
+
+        // Fill trailing empty cells to complete the last week
+        while (count($calendarDays) % 7 !== 0) {
+            $calendarDays[] = null;
         }
 
         return $calendarDays;

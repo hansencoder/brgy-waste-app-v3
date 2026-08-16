@@ -1,203 +1,249 @@
+<?php
+$barangay   = $data['barangay'] ?? [];
+$systemName = $barangay['system_name'] ?? 'Barangay Waste Management System';
+$shortName  = $barangay['system_short_name'] ?? 'LINARAYA';
+$brgyName   = $barangay['barangay_name'] ?? 'Dulong Bayan';
+$sysLogo    = $barangay['system_logo'] ?? '';
+$brgyLogo   = $barangay['barangay_logo'] ?? '';
+$activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '');
+$phone      = $data['phone'] ?? '';
+$resendCooldown = (int)($data['resend_cooldown_seconds'] ?? 0);
+$expiresIn      = (int)($data['expires_in_seconds'] ?? 300);
+?>
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Code · WasteWatch Guest</title>
+    <title>Verify OTP · <?php echo htmlspecialchars($shortName); ?></title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <style>
-        body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
-        .otp-input { letter-spacing: 0.5em; }
+        body, * { font-family: 'Miranda Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; }
+        .otp-box::-webkit-outer-spin-button,
+        .otp-box::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .otp-box {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
-<body class="h-full text-slate-900 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-center items-center px-4 py-8 sm:py-12 selection:bg-emerald-500 selection:text-white">
 
-<div class="min-h-screen flex flex-col justify-center items-center bg-slate-50 px-4 py-12">
-    <div class="w-full max-w-[420px]">
+    <div class="w-full max-w-[460px] space-y-5">
 
-        <!-- Logo -->
-        <div class="flex items-center justify-center gap-2 mb-8">
-            <div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <span class="text-base font-bold text-slate-900">WasteWatch</span>
-        </div>
-
-        <!-- Progress Steps -->
-        <div class="flex items-center gap-2 mb-8">
-            <?php $labels = ['Verify', 'Details', 'Review', 'Done']; ?>
-            <?php foreach ($labels as $i => $label): ?>
-                <div class="flex items-center <?php echo $i < count($labels)-1 ? 'flex-1' : ''; ?>">
-                    <div class="flex items-center gap-1.5">
-                        <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
-                            <?php echo $i === 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'; ?>">
-                            <?php if ($i === 0): ?>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                            <?php else: echo $i + 1; endif; ?>
+        <!-- Top Branding -->
+        <div class="flex flex-col items-center text-center space-y-2">
+            <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-3 group transition">
+                <div class="w-11 h-11 rounded-full bg-[#07281E] p-0.5 shadow-sm flex items-center justify-center overflow-hidden border border-slate-200 group-hover:scale-105 transition">
+                    <?php if (!empty($activeLogo)): ?>
+                        <img src="<?php echo htmlspecialchars($activeLogo); ?>" alt="Logo" class="w-full h-full rounded-full object-cover">
+                    <?php else: ?>
+                        <div class="w-full h-full rounded-full bg-[#07281E] flex items-center justify-center text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         </div>
-                        <span class="text-xs font-medium <?php echo $i === 0 ? 'text-slate-900' : 'text-slate-400'; ?> hidden sm:block"><?php echo $label; ?></span>
-                    </div>
-                    <?php if ($i < count($labels)-1): ?>
-                    <div class="flex-1 h-px bg-slate-200 mx-2"></div>
                     <?php endif; ?>
                 </div>
-            <?php endforeach; ?>
-        </div>
-
-        <!-- Phone Icon -->
-        <div class="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center mx-auto mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        </div>
-
-        <!-- Header -->
-        <div class="text-center mb-7">
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Check your phone</h1>
-            <p class="text-sm text-slate-500 mt-2">
-                We sent a 6-digit verification code to
-                <br><span class="font-semibold text-slate-800"><?php echo htmlspecialchars($data['phone'] ?? '', ENT_QUOTES, 'UTF-8'); ?></span>
-            </p>
+                <div class="text-left">
+                    <span class="text-base font-bold text-slate-900 tracking-tight block leading-tight group-hover:text-emerald-800 transition">
+                        <?php echo htmlspecialchars($shortName); ?>
+                    </span>
+                    <span class="text-xs text-slate-500 block">
+                        Barangay <?php echo htmlspecialchars($brgyName); ?>
+                    </span>
+                </div>
+            </a>
         </div>
 
         <!-- Error Alert -->
-        <?php 
-        $errorMsg = !empty($data['error']) ? $data['error'] : ($_GET['resend_error'] ?? '');
-        if (!empty($errorMsg)): 
-        ?>
-        <div class="mb-5 p-4 rounded-xl bg-red-50 border border-red-200/80 text-red-700 text-xs flex items-start gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span class="font-medium"><?php echo htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8'); ?></span>
+        <?php if (!empty($data['error'])): ?>
+        <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-start gap-2.5 shadow-2xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span><?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?></span>
         </div>
         <?php endif; ?>
 
-        <!-- Resent Success -->
-        <?php if (isset($_GET['resent'])): ?>
-        <div class="mb-5 p-4 rounded-xl bg-green-50 border border-green-200/80 text-green-700 text-xs flex items-start gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-green-500 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            <span class="font-medium">A new verification code has been sent to your phone.</span>
+        <!-- Success Alert -->
+        <?php if (!empty($data['success'])): ?>
+        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium flex items-start gap-2.5 shadow-2xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span><?php echo htmlspecialchars($data['success'], ENT_QUOTES, 'UTF-8'); ?></span>
         </div>
         <?php endif; ?>
 
-        <!-- OTP Form -->
-        <form action="/brgy-waste-app-v3/public/guest/verifyOtp" method="POST" class="space-y-5" onsubmit="return validateOtpForm()">
-
-            <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-2 text-center">Enter 6-digit code</label>
-                <input type="text" id="otp" name="otp" required maxlength="6" inputmode="numeric" pattern="[0-9]{6}"
-                    placeholder="······"
-                    class="otp-input w-full h-14 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-2xl font-bold text-center placeholder:text-slate-300 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 tracking-widest"
-                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,6); autoSubmitIfComplete(this)">
-                <p id="otp-error" class="text-red-500 text-xs font-medium mt-1.5 text-center hidden">Please enter the 6-digit code.</p>
+        <!-- Main Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-4">
+            
+            <!-- Title & Subtitle -->
+            <div class="space-y-1">
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight">Check your phone</h1>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    We sent a 6-digit verification code to <span class="font-medium text-slate-800 font-mono"><?php echo htmlspecialchars($phone); ?></span>.
+                </p>
             </div>
 
-            <!-- Timer -->
-            <div class="text-center text-xs text-slate-500">
-                <?php
-                $initialSeconds = (int)($data['expires_in_seconds'] ?? 300);
-                $initialM = floor($initialSeconds / 60);
-                $initialS = $initialSeconds % 60;
-                $initialFormatted = sprintf('%d:%02d', $initialM, $initialS);
-                ?>
-                Code expires in <span id="otpTimer" class="font-semibold text-slate-700"><?php echo $initialFormatted; ?></span>
-            </div>
+            <!-- OTP Form -->
+            <form id="otpForm" action="/brgy-waste-app-v3/public/index.php?url=guest/verifyOtp" method="POST" class="space-y-4" onsubmit="return submitOtpForm()">
+                
+                <!-- Master Hidden OTP input -->
+                <input type="hidden" id="otp" name="otp" value="">
 
-            <button type="submit" id="verifyBtn" class="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 focus:ring-2 focus:ring-emerald-600/20 active:scale-[0.99]">
-                Verify Code
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </button>
-        </form>
+                <!-- 6-Digit Individual PIN Inputs -->
+                <div class="grid grid-cols-6 gap-2 sm:gap-2.5">
+                    <?php for ($i = 1; $i <= 6; $i++): ?>
+                    <input type="tel" 
+                           id="otp_<?php echo $i; ?>" 
+                           maxlength="1" 
+                           pattern="[0-9]" 
+                           inputmode="numeric" 
+                           autocomplete="one-time-code"
+                           class="otp-box w-full aspect-square sm:h-13 rounded-xl border border-slate-200 bg-white text-slate-900 text-lg sm:text-xl font-bold text-center outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
+                           data-index="<?php echo $i; ?>">
+                    <?php endfor; ?>
+                </div>
+                <p id="otp-error" class="text-red-500 text-xs text-center hidden">Please enter all 6 digits of the code.</p>
 
-        <!-- Resend -->
-        <div class="text-center mt-5 text-xs text-slate-500">
-            Didn't receive a code?
-            <a href="/brgy-waste-app-v3/public/index.php?url=guest/resendOtp" id="resendLink" class="font-semibold text-emerald-600 hover:underline ml-1">Resend code</a>
+                <!-- Resend Pill / Timer Box -->
+                <div id="resendContainer" class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100 text-slate-600 text-xs flex items-center justify-center text-center">
+                    <?php if ($resendCooldown > 0): ?>
+                        <span id="cooldownLabel" class="text-slate-600">
+                            Resend code in <strong id="cooldownTimer" class="font-semibold text-slate-900 font-mono"><?php echo $resendCooldown; ?>s</strong>
+                        </span>
+                    <?php else: ?>
+                        <span class="text-slate-600">
+                            Didn't get the code? 
+                            <a href="/brgy-waste-app-v3/public/index.php?url=guest/resendOtp" class="font-semibold text-emerald-800 hover:text-emerald-950 hover:underline ml-1">Resend code</a>
+                        </span>
+                    <?php endif; ?>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="pt-1">
+                    <button type="submit" id="verifyBtn"
+                        class="w-full py-3 bg-[#0B2E22] hover:bg-[#07281E] text-white font-semibold rounded-xl shadow-xs hover:shadow transition-all flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-[0.99] cursor-pointer">
+                        <span>Verify Code</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m9 18 6-6-6-6"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <!-- Wrong number -->
-        <div class="text-center mt-3 text-xs text-slate-400">
-            Wrong number?
-            <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="text-slate-600 font-semibold hover:underline ml-1">Go back</a>
+        <!-- Change Mobile Number Link -->
+        <div class="text-center">
+            <a href="/brgy-waste-app-v3/public/index.php?url=guest/phone" 
+               class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition py-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
+                </svg>
+                <span>Change mobile number</span>
+            </a>
         </div>
+
     </div>
-</div>
 
-<script>
-    // Exact Token Expiration Countdown
-    let seconds = <?php echo (int)($data['expires_in_seconds'] ?? 300); ?>;
-    const timerEl = document.getElementById('otpTimer');
+    <script>
+        const otpBoxes = Array.from(document.querySelectorAll('.otp-box'));
+        const hiddenOtpInput = document.getElementById('otp');
+        const form = document.getElementById('otpForm');
 
-    function renderExpiryTime() {
-        if (seconds <= 0) {
-            timerEl.textContent = 'Expired';
-            timerEl.classList.add('text-red-500');
-            const btn = document.getElementById('verifyBtn');
-            if (btn) {
-                btn.disabled = true;
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
+        // Focus first box on load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (otpBoxes.length > 0) {
+                otpBoxes[0].focus();
             }
-            return false;
-        }
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        timerEl.textContent = `${m}:${s.toString().padStart(2,'0')}`;
-        return true;
-    }
+        });
 
-    renderExpiryTime();
-    const expiryInterval = setInterval(() => {
-        seconds--;
-        if (!renderExpiryTime()) {
-            clearInterval(expiryInterval);
-        }
-    }, 1000);
+        // Handle box input navigation
+        otpBoxes.forEach((box, idx) => {
+            box.addEventListener('input', (e) => {
+                const val = e.target.value.replace(/[^0-9]/g, '');
+                e.target.value = val ? val.slice(-1) : '';
 
-    // Resend Cooldown Countdown
-    let resendCooldown = <?php echo (int)($data['resend_cooldown_seconds'] ?? 0); ?>;
-    const resendLink = document.getElementById('resendLink');
+                if (val && idx < otpBoxes.length - 1) {
+                    otpBoxes[idx + 1].focus();
+                }
 
-    function updateResendState() {
-        if (!resendLink) return;
-        if (resendCooldown > 0) {
-            resendLink.classList.add('opacity-50', 'pointer-events-none', 'text-slate-400');
-            resendLink.classList.remove('text-emerald-600', 'hover:underline');
-            resendLink.textContent = `Resend code (wait ${resendCooldown}s)`;
-        } else {
-            resendLink.classList.remove('opacity-50', 'pointer-events-none', 'text-slate-400');
-            resendLink.classList.add('text-emerald-600', 'hover:underline');
-            resendLink.textContent = 'Resend code';
-        }
-    }
+                syncAndCheckAutoSubmit();
+            });
 
-    updateResendState();
-    if (resendCooldown > 0) {
-        const resendInterval = setInterval(() => {
-            resendCooldown--;
-            updateResendState();
-            if (resendCooldown <= 0) {
-                clearInterval(resendInterval);
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace') {
+                    if (!box.value && idx > 0) {
+                        otpBoxes[idx - 1].focus();
+                        otpBoxes[idx - 1].value = '';
+                    }
+                } else if (e.key === 'ArrowLeft' && idx > 0) {
+                    otpBoxes[idx - 1].focus();
+                } else if (e.key === 'ArrowRight' && idx < otpBoxes.length - 1) {
+                    otpBoxes[idx + 1].focus();
+                }
+            });
+
+            box.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim().replace(/[^0-9]/g, '');
+                if (pasteData) {
+                    const digits = pasteData.slice(0, 6).split('');
+                    digits.forEach((d, i) => {
+                        if (otpBoxes[i]) otpBoxes[i].value = d;
+                    });
+                    const focusIdx = Math.min(digits.length, 5);
+                    otpBoxes[focusIdx].focus();
+                    syncAndCheckAutoSubmit();
+                }
+            });
+        });
+
+        function syncAndCheckAutoSubmit() {
+            const code = otpBoxes.map(b => b.value).join('');
+            hiddenOtpInput.value = code;
+
+            if (code.length === 6) {
+                document.getElementById('otp-error').classList.add('hidden');
+                form.submit();
             }
-        }, 1000);
-    }
-
-    function autoSubmitIfComplete(el) {
-        if (el.value.length === 6) {
-            el.closest('form').submit();
         }
-    }
 
-    function validateOtpForm() {
-        const otp = document.getElementById('otp');
-        const err = document.getElementById('otp-error');
-        if (!/^\d{6}$/.test(otp.value)) {
-            otp.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
-            err.classList.remove('hidden');
-            return false;
+        function submitOtpForm() {
+            const code = otpBoxes.map(b => b.value).join('');
+            hiddenOtpInput.value = code;
+            if (code.length < 6) {
+                document.getElementById('otp-error').classList.remove('hidden');
+                return false;
+            }
+            return true;
         }
-        return true;
-    }
-</script>
 
+        // Timer for resend
+        let cooldown = <?php echo $resendCooldown; ?>;
+        if (cooldown > 0) {
+            const timerEl = document.getElementById('cooldownTimer');
+            const interval = setInterval(() => {
+                cooldown--;
+                if (cooldown <= 0) {
+                    clearInterval(interval);
+                    document.getElementById('resendContainer').innerHTML = `
+                        <span class="text-slate-600">
+                            Didn't get the code? 
+                            <a href="/brgy-waste-app-v3/public/index.php?url=guest/resendOtp" class="font-semibold text-emerald-800 hover:text-emerald-950 hover:underline ml-1">Resend code</a>
+                        </span>
+                    `;
+                } else if (timerEl) {
+                    timerEl.textContent = cooldown + 's';
+                }
+            }, 1000);
+        }
+    </script>
 </body>
 </html>

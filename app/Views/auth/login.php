@@ -1,231 +1,170 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
 
 <?php
-$barangayName    = 'Dulong Bayan';
-$barangayAddress = 'Barangay Hall, Dulong Bayan';
-$barangayContact = '(02) 8-123-4567';
-$barangayEmail   = 'brgy.dulongbayan@email.com';
+// Branding details
+try {
+    $authDb = new Database();
+    $authDb->query("SELECT system_name, system_short_name, barangay_name, system_logo FROM barangays LIMIT 1");
+    $authBranding = $authDb->single();
+} catch (Exception $e) {
+    $authBranding = null;
+}
+$barangayName    = $authBranding['barangay_name'] ?? 'Dulong Bayan';
+$sysShortName    = $authBranding['system_short_name'] ?? 'WasteWatch';
+$sysLogo         = $authBranding['system_logo'] ?? null;
+if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysLogo, '/public') === 0) {
+    $sysLogo = '/brgy-waste-app-v3' . $sysLogo;
+}
 ?>
 
-<!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In · WasteWatch</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
-    <style>
-        body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
-    </style>
-</head>
-<body class="h-full text-slate-900 antialiased selection:bg-emerald-500 selection:text-white">
+<div class="w-full min-h-[calc(100vh-2rem)] flex-1 flex flex-col justify-center items-center py-10 px-4 sm:px-6">
 
-<div class="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12">
-
-    <!-- ============================================================ -->
-    <!-- LEFT PANEL: Brand Narrative & Proof                         -->
-    <!-- ============================================================ -->
-    <div class="hidden lg:flex lg:col-span-6 xl:col-span-6 bg-[#081C15] text-white p-12 flex-col justify-between relative overflow-hidden">
-        
-        <!-- Subtle Ambient Background Gradient -->
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/30 via-transparent to-transparent pointer-events-none"></div>
-
-        <!-- Top: Logo & System Indicator -->
-        <div class="relative z-10">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 font-bold shadow-md shadow-emerald-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-                <div>
-                    <span class="text-base font-bold tracking-tight text-white block leading-none">WasteWatch</span>
-                    <span class="text-[11px] font-medium text-emerald-400/80">Municipal Operations</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Center: Core Value Proposition -->
-        <div class="relative z-10 my-auto py-12">
-            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-6">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Barangay <?php echo htmlspecialchars($barangayName, ENT_QUOTES, 'UTF-8'); ?> Portal</span>
-            </div>
-            
-            <h2 class="text-3xl xl:text-4xl font-bold tracking-tight text-white leading-tight">
-                Intelligent waste tracking for modern communities.
-            </h2>
-            <p class="text-slate-400 text-sm mt-4 leading-relaxed max-w-sm">
-                Monitor collection schedules, report sanitation incidents, and streamline municipal operations in real time.
-            </p>
-
-            <!-- Social Proof Stat strip -->
-            <div class="grid grid-cols-2 gap-6 mt-10 pt-8 border-t border-slate-800/80">
-                <div>
-                    <div class="text-2xl font-bold text-white tracking-tight">99.4%</div>
-                    <div class="text-xs text-slate-400 font-medium mt-0.5">Schedule adherence</div>
-                </div>
-                <div>
-                    <div class="text-2xl font-bold text-white tracking-tight">&lt; 15 min</div>
-                    <div class="text-xs text-slate-400 font-medium mt-0.5">Avg. incident response</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom: Barangay Contact info -->
-        <div class="relative z-10 border-t border-slate-800/80 pt-6 flex items-center justify-between text-xs text-slate-400">
-            <span><?php echo htmlspecialchars($barangayContact, ENT_QUOTES, 'UTF-8'); ?></span>
-            <span class="text-slate-600">•</span>
-            <span><?php echo htmlspecialchars($barangayEmail, ENT_QUOTES, 'UTF-8'); ?></span>
-        </div>
+    <!-- Top Back Link -->
+    <div class="w-full max-w-[440px] mb-4 flex items-center justify-between">
+        <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5" />
+                <path d="m12 5-7 7 7 7" />
+            </svg>
+            <span>Back to home</span>
+        </a>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- RIGHT PANEL: Authentication Form                             -->
-    <!-- ============================================================ -->
-    <div class="lg:col-span-6 xl:col-span-6 flex flex-col justify-center items-center p-6 sm:p-12 bg-slate-50 min-h-screen lg:min-h-0">
+    <!-- Centered Card -->
+    <div class="w-full max-w-[440px] bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs">
         
-        <div class="w-full max-w-[420px]">
-            <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 text-sm font-semibold mb-4 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 12H5" />
-                        <path d="m12 5-7 7 7 7" />
-                    </svg>
-                    Back to home page
-            </a>
-        
-
-            <!-- Navigation Switcher (Tabs) -->
-            <div class="mb-8 p-1 bg-slate-200/70 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
-                <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="py-2 text-center rounded-lg bg-white text-slate-900 shadow-sm transition-all">
-                    Sign In
-                </a>
-                <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="py-2 text-center rounded-lg text-slate-600 hover:text-slate-900 transition-all">
-                    Create Account
-                </a>
+        <!-- Brand Header -->
+        <div class="flex flex-col items-center text-center mb-6">
+            <div class="w-24 h-24 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-sm mb-3 border border-emerald-500/20 overflow-hidden">
+                <?php if (!empty($sysLogo)): ?>
+                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover" alt="Logo">
+                <?php else: ?>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <?php endif; ?>
             </div>
-
-            <!-- Header -->
-            <div class="mb-6">
-                
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Welcome back</h1>
-                <p class="text-sm text-slate-500 mt-1">Enter your credentials to access your account</p>
-            </div>
-
-            <!-- Server Error Alert -->
-            <?php if (!empty($data['error'])): ?>
-                <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200/80 text-red-700 text-xs flex items-start gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <div class="flex-1">
-                        <span class="font-medium"><?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?></span>
-                        <?php if (isset($data['lockout_seconds']) && $data['lockout_seconds'] > 0): ?>
-                            <span id="loginCountdown" class="font-bold ml-1"></span>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <!-- Form -->
-            <form action="/brgy-waste-app-v3/public/auth/login" method="POST" class="space-y-5" onsubmit="return validateLoginForm()">
-                <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
-
-                <!-- Email / Phone Input -->
-                <div>
-                    <label for="email" class="block text-xs font-semibold text-slate-700 mb-1.5">Email or Phone number</label>
-                    <input 
-                        type="text" 
-                        id="email" 
-                        name="email" 
-                        required 
-                        autocomplete="username"
-                        placeholder="Email or phone number"
-                        value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8') : ''; ?>"
-                        class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
-                    >
-                </div>
-
-                <!-- Password Input -->
-                <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label for="password" class="block text-xs font-semibold text-slate-700">Password</label>
-                        <a href="/brgy-waste-app-v3/public/index.php?url=auth/forgotPassword" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
-                            Forgot password?
-                        </a>
-                    </div>
-                    <div class="relative">
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            required 
-                            minlength="8"
-                            autocomplete="current-password"
-                            placeholder="••••••••"
-                            class="w-full h-11 px-3.5 pr-10 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
-                        >
-                        <button 
-                            type="button" 
-                            onclick="togglePasswordVisibility()" 
-                            aria-label="Toggle password visibility"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none p-1 transition-colors"
-                        >
-                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Remember Me & Terms -->
-                <div class="flex items-center justify-between pt-1">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600/20 cursor-pointer">
-                        <span class="text-xs text-slate-600 font-medium">Remember this browser</span>
-                    </label>
-                </div>
-
-                <!-- Submit Button -->
-                <button 
-                    type="submit" 
-                    class="w-full h-11 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 focus:ring-2 focus:ring-slate-900/20 active:scale-[0.99]"
-                >
-                    <span>Sign in to account</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </button>
-
-                <!-- Footer Sign-up Prompt -->
-                <p class="text-center text-xs text-slate-500 pt-4">
-                    Don't have an account yet? 
-                    <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
-                        Create an account
-                    </a>
-                </p>
-
-                <!-- Guest Reporting Option -->
-                <div class="pt-4 border-t border-slate-100 text-center space-y-2">
-                    <p class="text-xs text-slate-500 font-medium">Visiting or don't have an account?</p>
-                    <div class="flex items-center justify-center gap-2">
-                        <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-semibold transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            Report as Guest
-                        </a>
-                        <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                            Track Report
-                        </a>
-                    </div>
-                </div>
-
-            </form>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Welcome back</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Sign in to your Barangay <?php echo htmlspecialchars($barangayName); ?> account</p>
         </div>
+
+        <!-- Navigation Switcher (Tabs) -->
+        <div class="mb-6 p-1 bg-slate-100 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
+            <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="py-2 text-center rounded-lg bg-white text-slate-900 shadow-2xs transition-all">
+                Sign In
+            </a>
+            <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="py-2 text-center rounded-lg text-slate-600 hover:text-slate-900 transition-all">
+                Create Account
+            </a>
+        </div>
+
+        <!-- Server Error Alert -->
+        <?php if (!empty($data['error'])): ?>
+            <div class="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200/80 text-red-700 text-xs flex items-start gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <div class="flex-1 font-medium">
+                    <?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?>
+                    <?php if (isset($data['lockout_seconds']) && $data['lockout_seconds'] > 0): ?>
+                        <span id="loginCountdown" class="font-bold ml-1"></span>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Form -->
+        <form action="/brgy-waste-app-v3/public/auth/login" method="POST" class="space-y-4" onsubmit="return validateLoginForm()">
+            <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
+
+            <!-- Email / Phone Input -->
+            <div>
+                <label for="email" class="block text-xs font-semibold text-slate-700 mb-1">Email or Phone number</label>
+                <input 
+                    type="text" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    autocomplete="username"
+                    placeholder="Email or 09XXXXXXXXX"
+                    value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8') : ''; ?>"
+                    class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
+                >
+            </div>
+
+            <!-- Password Input -->
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label for="password" class="block text-xs font-semibold text-slate-700">Password</label>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=auth/forgotPassword" class="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                        Forgot password?
+                    </a>
+                </div>
+                <div class="relative">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required 
+                        minlength="8"
+                        autocomplete="current-password"
+                        placeholder="••••••••"
+                        class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
+                    >
+                    <button 
+                        type="button" 
+                        onclick="togglePasswordVisibility()" 
+                        aria-label="Toggle password visibility"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none p-1 transition-colors"
+                    >
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="flex items-center justify-between pt-0.5">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600/20 cursor-pointer">
+                    <span class="text-xs text-slate-600 font-normal">Remember this device</span>
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+                type="submit" 
+                class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+                <span>Sign in to account</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+
+            <!-- Footer Sign-up Prompt -->
+            <p class="text-center text-xs text-slate-500 pt-2 font-normal">
+                Don't have an account yet? 
+                <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
+                    Create an account
+                </a>
+            </p>
+
+            <!-- Guest Reporting Option -->
+            <div class="pt-4 border-t border-slate-100 text-center space-y-2">
+                <p class="text-xs text-slate-500 font-normal">Quick public reporting without an account:</p>
+                <div class="flex items-center justify-center gap-2">
+                    <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-semibold transition border border-emerald-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>Report as Guest</span>
+                    </a>
+                    <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold transition border border-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <span>Track Report</span>
+                    </a>
+                </div>
+            </div>
+
+        </form>
     </div>
 </div>
 
-<!-- ============================================================ -->
-<!-- SCRIPT                                                       -->
-<!-- ============================================================ -->
 <script>
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById('password');

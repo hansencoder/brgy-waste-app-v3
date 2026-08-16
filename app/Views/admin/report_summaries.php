@@ -119,7 +119,7 @@ function statusBadgeClass($status) {
                         </div>
 
                         <!-- Header Action Buttons -->
-                        <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-3">
                             <a href="/brgy-waste-app-v3/public/admin/exportAnalyticsPDF?<?php echo $exportQuery; ?>"
                                target="_blank"
                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-extrabold text-xs sm:text-sm border border-red-200 shadow-xs transition active:scale-[0.98]">

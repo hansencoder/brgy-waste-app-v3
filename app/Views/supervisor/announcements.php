@@ -3,63 +3,109 @@
 $announcements = $data['announcements'] ?? [];
 ?>
 
-<div class="min-h-screen bg-[#F8FAFC]">
-    <div class="lg:flex lg:min-h-screen">
-        <?php include __DIR__ . '/../layouts/supervisor_sidebar.php'; ?>
+<div class="min-h-screen bg-[#F8FAFC] flex">
+    
+    <!-- Sidebar -->
+    <?php include __DIR__ . '/../layouts/supervisor_sidebar.php'; ?>
 
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200/80 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2">
-                <div class="min-w-0">
-                    <h1 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 tracking-tight truncate">Announcements</h1>
-                    <p class="text-xs text-slate-500 font-medium truncate">Official barangay announcements</p>
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+        
+        <!-- Topbar -->
+        <?php include __DIR__ . '/../layouts/supervisor_topbar.php'; ?>
+
+        <!-- Page Body -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Barangay Bulletins &amp; Advisories</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Official community announcements, schedule changes, and cleanup advisories</p>
                 </div>
-                <div class="flex items-center gap-2 flex-shrink-0">
-                    <span class="text-xs text-slate-400 font-medium"><?php echo count($announcements); ?> announcements</span>
+
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold font-mono">
+                        <?php echo count($announcements); ?> Published
+                    </span>
                 </div>
-            </header>
+            </div>
 
-            <main class="flex-1 overflow-y-auto">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+            <!-- Bulletins Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <?php if (!empty($announcements)): ?>
+                    <?php foreach ($announcements as $item):
+                        $vis = $item['visibility_name'] ?? 'Public';
+                        $visColor = $vis === 'Public' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : ($vis === 'Registered' ? 'bg-blue-50 text-blue-800 border-blue-200' : 'bg-purple-50 text-purple-800 border-purple-200');
+                    ?>
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-4 flex flex-col justify-between hover:border-emerald-300 transition">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border <?php echo $visColor; ?>">
+                                    <?php echo htmlspecialchars($vis); ?>
+                                </span>
+                                <span class="text-[11px] text-slate-400 font-mono">
+                                    <?php echo date('M d, Y', strtotime($item['created_at'])); ?>
+                                </span>
+                            </div>
 
-                    <?php if (!empty($announcements)): ?>
-                        <div class="space-y-4">
-                            <?php foreach ($announcements as $item): ?>
-                                <?php
-                                    $visibility = $item['visibility_name'] ?? 'Public';
-                                    $badgeColor = $visibility === 'Public' ? 'bg-emerald-50 text-emerald-700' : ($visibility === 'Registered' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700');
-                                ?>
-                                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition">
-                                    <div class="flex items-start justify-between gap-4">
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center gap-3 flex-wrap mb-2">
-                                                <h3 class="text-lg font-bold text-slate-900"><?php echo htmlspecialchars($item['title']); ?></h3>
-                                                <span class="inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-semibold <?php echo $badgeColor; ?>">
-                                                    <?php echo htmlspecialchars($visibility); ?>
-                                                </span>
-                                            </div>
-                                            <p class="text-sm text-slate-600 whitespace-pre-line"><?php echo nl2br(htmlspecialchars($item['content'])); ?></p>
-                                            <div class="flex items-center gap-4 mt-3 text-xs text-slate-400">
-                                                <span>Posted by <?php echo htmlspecialchars($item['author'] ?? 'Barangay Secretary'); ?></span>
-                                                <span>•</span>
-                                                <span><?php echo date('M d, Y h:i A', strtotime($item['created_at'])); ?></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
+                            <h3 class="text-base font-bold text-slate-900 leading-snug">
+                                <?php echo htmlspecialchars($item['title']); ?>
+                            </h3>
+
+                            <p class="text-xs text-slate-600 mt-2 leading-relaxed whitespace-pre-line line-clamp-4">
+                                <?php echo htmlspecialchars($item['content']); ?>
+                            </p>
                         </div>
-                    <?php else: ?>
-                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-300 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-                            <p class="text-slate-500 font-medium">No announcements available.</p>
-                            <p class="text-sm text-slate-400 mt-1">Check back later for updates.</p>
-                        </div>
-                    <?php endif; ?>
 
-                </div>
-            </main>
-        </div>
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                            <span class="truncate">By <?php echo htmlspecialchars($item['author'] ?? 'Barangay Office'); ?></span>
+                            <button onclick="readAnnouncement(<?php echo htmlspecialchars(json_encode($item)); ?>)" class="text-emerald-700 hover:text-emerald-900 font-semibold text-xs shrink-0 cursor-pointer">
+                                Read Full →
+                            </button>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-span-full py-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200 text-xs">
+                        No active announcements logged.
+                    </div>
+                <?php endif; ?>
+            </div>
+
+        </main>
+
     </div>
 </div>
+
+<!-- Modal Reader Dialog -->
+<div id="readModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4" onclick="closeReadModal()">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4" onclick="event.stopPropagation()">
+        <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-3">
+            <div>
+                <span id="modalVis" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-50 text-emerald-800"></span>
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-900 mt-2 leading-tight"></h3>
+                <p id="modalMeta" class="text-xs text-slate-400 mt-1"></p>
+            </div>
+            <button onclick="closeReadModal()" class="text-slate-400 hover:text-slate-700 p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <div id="modalContent" class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line max-h-96 overflow-y-auto pr-2"></div>
+    </div>
+</div>
+
+<script>
+function readAnnouncement(item) {
+    document.getElementById('modalTitle').textContent = item.title;
+    document.getElementById('modalVis').textContent = item.visibility_name || 'Public';
+    document.getElementById('modalMeta').textContent = 'Posted by ' + (item.author || 'Barangay Office') + ' · ' + item.created_at;
+    document.getElementById('modalContent').textContent = item.content;
+    document.getElementById('readModal').classList.remove('hidden');
+}
+function closeReadModal() {
+    document.getElementById('readModal').classList.add('hidden');
+}
+</script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

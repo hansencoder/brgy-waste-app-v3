@@ -3,223 +3,248 @@ $reports = $data['reports'] ?? [];
 $stats = $data['stats'] ?? [];
 $dateFrom = $data['dateFrom'] ?? date('Y-m-d', strtotime('-30 days'));
 $dateTo = $data['dateTo'] ?? date('Y-m-d');
-$user_name = $data['user_name'] ?? 'Supervisor';
-$total = (int)($stats['total'] ?? 0);
+$user_name = $data['user_name'] ?? ($_SESSION['user_name'] ?? 'Supervisor');
+$total = (int)($stats['total'] ?? count($reports));
 $resolved = (int)($stats['resolved'] ?? 0);
 $pending = (int)($stats['pending'] ?? 0);
 $verified = (int)($stats['verified'] ?? 0);
 $inProgress = (int)($stats['in_progress'] ?? 0);
 $resolutionRate = $total > 0 ? round(($resolved / $total) * 100) : 0;
-?>
 
+// Branding from DB
+try {
+    $pDb = new Database();
+    $pDb->query("SELECT system_name, system_short_name, barangay_name, official_address, contact_number, system_logo, barangay_logo FROM barangays LIMIT 1");
+    $pBranding = $pDb->single();
+} catch (Exception $e) {
+    $pBranding = null;
+}
+$pBrgyName = $pBranding['barangay_name'] ?? 'Dulong Bayan';
+$pSysShortName = $pBranding['system_short_name'] ?? 'WasteWatch';
+$pSysLogo = $pBranding['system_logo'] ?? '';
+$pBrgyLogo = $pBranding['barangay_logo'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics Report</title>
+    <title>Official Waste Analytics Report · Barangay <?php echo htmlspecialchars($pBrgyName); ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <style>
-        /* Print & Screen Styles */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Miranda Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; }
         body {
-            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
             background: #fff;
-            color: #1e293b;
-            padding: 40px;
-            max-width: 1200px;
+            color: #0f172a;
+            padding: 30px;
+            max-width: 1000px;
             margin: 0 auto;
+            font-size: 12px;
+            line-height: 1.4;
         }
         @media print {
-            body { padding: 20px; }
+            body { padding: 15px; }
             .no-print { display: none !important; }
             .page-break { page-break-after: always; }
         }
-        .header {
-            border-bottom: 3px solid #10B981;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+        .header-seal-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #07281E;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .seal-img {
+            width: 55px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .header-text {
+            text-align: center;
+            flex: 1;
+            padding: 0 15px;
+        }
+        .header-text h2 {
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #07281E;
+            font-weight: 700;
+        }
+        .header-text p {
+            font-size: 11px;
+            color: #475569;
+        }
+        .report-title-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
-        }
-        .header h1 {
-            font-size: 26px;
-            color: #0f172a;
-        }
-        .header .sub {
-            color: #64748b;
-            font-size: 14px;
+            align-items: center;
         }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
         }
         .stat-box {
             background: #f8fafc;
-            padding: 15px 20px;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
-            border-left: 4px solid #10B981;
+            padding: 10px;
+            text-align: center;
         }
-        .stat-box .number {
-            font-size: 28px;
+        .stat-box .num {
+            font-size: 18px;
             font-weight: 700;
             color: #0f172a;
         }
-        .stat-box .label {
-            font-size: 12px;
-            color: #64748b;
+        .stat-box .lbl {
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            color: #64748b;
+            font-weight: 600;
         }
-        .stat-box.resolved { border-left-color: #10B981; }
-        .stat-box.pending { border-left-color: #f59e0b; }
-        .stat-box.verified { border-left-color: #3b82f6; }
-        .stat-box.inprogress { border-left-color: #8b5cf6; }
-        .stat-box.rate { border-left-color: #8b5cf6; }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
-            margin-top: 20px;
+            font-size: 11px;
+            margin-top: 15px;
         }
         th {
-            background: #0f172a;
-            color: white;
-            padding: 10px 12px;
+            background: #07281E;
+            color: #fff;
+            padding: 7px 10px;
             text-align: left;
             font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
         }
         td {
-            padding: 8px 12px;
+            padding: 7px 10px;
             border-bottom: 1px solid #e2e8f0;
         }
-        tr:nth-child(even) {
-            background: #f8fafc;
-        }
+        tr:nth-child(even) { background: #f8fafc; }
         .badge {
             display: inline-block;
-            padding: 2px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
         }
         .badge-resolved { background: #dcfce7; color: #15803d; }
         .badge-pending { background: #fef3c7; color: #92400e; }
         .badge-verified { background: #dbeafe; color: #1d4ed8; }
         .badge-inprogress { background: #ede9fe; color: #6d28d9; }
         .badge-rejected { background: #fee2e2; color: #b91c1c; }
-
-        .footer {
+        .signature-grid {
             margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            font-size: 11px;
+        }
+        .sign-line {
+            border-top: 1px solid #0f172a;
+            margin-top: 35px;
+            padding-top: 4px;
             text-align: center;
-            font-size: 12px;
-            color: #94a3b8;
         }
         .btn-print {
-            display: inline-block;
-            padding: 10px 30px;
-            background: #10B981;
-            color: white;
-            font-weight: 700;
-            border: none;
+            background: #07281E;
+            color: #fff;
+            padding: 8px 24px;
             border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 20px;
+            transition: all 0.2s;
         }
-        .btn-print:hover {
-            background: #059669;
-        }
-        .filter-info {
-            background: #f1f5f9;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #475569;
-        }
-        .filter-info strong {
-            color: #0f172a;
-        }
-        @media print {
-            .stat-box { break-inside: avoid; }
-            table { break-inside: auto; }
-            tr { break-inside: avoid; }
-        }
+        .btn-print:hover { background: #0B2E22; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <div class="header">
+    <!-- Header with Barangay & System Seals -->
+    <div class="header-seal-container">
         <div>
-            <h1>Waste Report Analytics</h1>
-            <div class="sub">Barangay Dulong Bayan · <?php echo date('F d, Y'); ?></div>
+            <?php if (!empty($pBrgyLogo)): ?>
+                <img src="<?php echo htmlspecialchars($pBrgyLogo); ?>" class="seal-img" alt="Seal">
+            <?php else: ?>
+                <div class="seal-img" style="background:#07281E;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:bold;">SEAL</div>
+            <?php endif; ?>
         </div>
-        <div class="sub">
-            Generated by: <?php echo htmlspecialchars($user_name); ?>
+
+        <div class="header-text">
+            <p style="text-transform:uppercase;font-weight:600;color:#64748b;letter-spacing:1px;font-size:9px;">Republic of the Philippines · Province of Nueva Ecija</p>
+            <h2>Barangay <?php echo htmlspecialchars($pBrgyName); ?></h2>
+            <p>Ecological Solid Waste Management Desk &amp; Field Operations</p>
+        </div>
+
+        <div>
+            <?php if (!empty($pSysLogo)): ?>
+                <img src="<?php echo htmlspecialchars($pSysLogo); ?>" class="seal-img" alt="Logo">
+            <?php else: ?>
+                <div class="seal-img" style="background:#0B2E22;display:flex;align-items:center;justify-content:center;color:#10B981;font-size:10px;font-weight:bold;">LOGO</div>
+            <?php endif; ?>
         </div>
     </div>
 
-    <!-- Filters Applied -->
-    <div class="filter-info">
-        <strong>Period:</strong> <?php echo date('M d, Y', strtotime($dateFrom)); ?> – <?php echo date('M d, Y', strtotime($dateTo)); ?>
-        <?php if (!empty($data['category']) && $data['category'] > 0): ?>
-            <span style="margin-left: 15px;"><strong>Category:</strong> 
-              <?php echo htmlspecialchars($data['category_name'] ?? ''); ?>
-            </span>
-        <?php endif; ?>
-        <?php if (!empty($data['purok']) && $data['purok'] > 0): ?>
-            <span style="margin-left: 15px;"><strong>Purok:</strong> <?php echo htmlspecialchars($data['purok_name'] ?? ''); ?></span>
-        <?php endif; ?>
-        <?php if (!empty($data['status'])): ?>
-            <span style="margin-left: 15px;"><strong>Status:</strong> <?php echo htmlspecialchars($data['status']); ?></span>
-        <?php endif; ?>
+    <!-- Title Bar -->
+    <div class="report-title-box">
+        <div>
+            <strong style="font-size:13px;color:#0f172a;">Operational Waste Analytics &amp; Field Report</strong>
+            <p style="color:#64748b;font-size:10px;margin-top:2px;">Coverage Period: <?php echo date('M d, Y', strtotime($dateFrom)); ?> to <?php echo date('M d, Y', strtotime($dateTo)); ?></p>
+        </div>
+        <div style="text-align:right;">
+            <span style="font-size:10px;color:#64748b;">Generated: <?php echo date('M d, Y h:i A'); ?></span><br>
+            <span style="font-size:10px;font-weight:600;color:#07281E;">Officer: <?php echo htmlspecialchars($user_name); ?></span>
+        </div>
     </div>
 
-    <!-- Stats -->
+    <!-- Stats KPI Grid -->
     <div class="stats-grid">
         <div class="stat-box">
-            <div class="number"><?php echo $total; ?></div>
-            <div class="label">Total Reports</div>
+            <div class="num"><?php echo $total; ?></div>
+            <div class="lbl">Total Reports</div>
         </div>
-        <div class="stat-box pending">
-            <div class="number"><?php echo $pending; ?></div>
-            <div class="label">Pending</div>
+        <div class="stat-box">
+            <div class="num" style="color:#92400e;"><?php echo $pending; ?></div>
+            <div class="lbl">Pending</div>
         </div>
-        <div class="stat-box verified">
-            <div class="number"><?php echo $verified; ?></div>
-            <div class="label">Verified</div>
+        <div class="stat-box">
+            <div class="num" style="color:#1d4ed8;"><?php echo $verified; ?></div>
+            <div class="lbl">Verified</div>
         </div>
-        <div class="stat-box inprogress">
-            <div class="number"><?php echo $inProgress; ?></div>
-            <div class="label">In Progress</div>
+        <div class="stat-box">
+            <div class="num" style="color:#15803d;"><?php echo $resolved; ?></div>
+            <div class="lbl">Resolved</div>
         </div>
-        <div class="stat-box resolved">
-            <div class="number"><?php echo $resolved; ?></div>
-            <div class="label">Resolved</div>
-        </div>
-        <div class="stat-box rate">
-            <div class="number"><?php echo $resolutionRate; ?>%</div>
-            <div class="label">Resolution Rate</div>
+        <div class="stat-box">
+            <div class="num" style="color:#07281E;"><?php echo $resolutionRate; ?>%</div>
+            <div class="lbl">Resolution Rate</div>
         </div>
     </div>
 
-    <!-- Report Table -->
-    <h3 style="margin: 20px 0 10px; font-size: 16px;">Report List</h3>
+    <!-- Data Table -->
     <table>
         <thead>
             <tr>
                 <th>Report ID</th>
-                <th>Date</th>
-                <th>Reporter</th>
-                <th>Category</th>
-                <th>Purok</th>
+                <th>Date Logged</th>
+                <th>Reporter Name</th>
+                <th>Waste Category</th>
+                <th>Purok Zone</th>
                 <th>Status</th>
                 <th>Supports</th>
             </tr>
@@ -227,40 +252,48 @@ $resolutionRate = $total > 0 ? round(($resolved / $total) * 100) : 0;
         <tbody>
             <?php if (!empty($reports)): ?>
                 <?php foreach ($reports as $r): 
-                    $statusClass = '';
-                    $statusLabel = $r['status'] ?? 'Unknown';
-                    if ($statusLabel == 'Resolved') $statusClass = 'badge-resolved';
-                    elseif ($statusLabel == 'Pending') $statusClass = 'badge-pending';
-                    elseif ($statusLabel == 'Verified') $statusClass = 'badge-verified';
-                    elseif ($statusLabel == 'In Progress') $statusClass = 'badge-inprogress';
-                    elseif ($statusLabel == 'Rejected') $statusClass = 'badge-rejected';
+                    $st = $r['status'] ?? 'Pending';
+                    $cls = $st === 'Resolved' ? 'badge-resolved' : ($st === 'Pending' ? 'badge-pending' : ($st === 'Verified' ? 'badge-verified' : ($st === 'In Progress' ? 'badge-inprogress' : 'badge-rejected')));
                 ?>
                 <tr>
-                    <td>WR-<?php echo str_pad($r['id'], 5, '0', STR_PAD_LEFT); ?></td>
+                    <td style="font-family:monospace;font-weight:bold;">WR-<?php echo str_pad($r['id'], 5, '0', STR_PAD_LEFT); ?></td>
                     <td><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></td>
-                    <td><?php echo htmlspecialchars($r['reporter']); ?></td>
-                    <td><?php echo htmlspecialchars($r['category'] ?? 'N/A'); ?></td>
-                    <td><?php echo htmlspecialchars($r['purok'] ?? 'N/A'); ?></td>
-                    <td><span class="badge <?php echo $statusClass; ?>"><?php echo $statusLabel; ?></span></td>
-                    <td><?php echo (int)($r['support_count'] ?? 0); ?></td>
+                    <td><?php echo htmlspecialchars($r['reporter'] ?? 'Guest Resident'); ?></td>
+                    <td><?php echo htmlspecialchars($r['category'] ?? 'General Waste'); ?></td>
+                    <td>📍 <?php echo htmlspecialchars($r['purok'] ?? 'Barangay Area'); ?></td>
+                    <td><span class="badge <?php echo $cls; ?>"><?php echo htmlspecialchars($st); ?></span></td>
+                    <td style="font-family:monospace;font-weight:bold;"><?php echo (int)($r['support_count'] ?? 0); ?></td>
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>
-                <tr><td colspan="7" style="text-align:center; padding:20px; color:#94a3b8;">No reports found for the selected filters.</td></tr>
+                <tr>
+                    <td colspan="7" style="text-align:center;padding:20px;color:#94a3b8;">No incident records found for this period.</td>
+                </tr>
             <?php endif; ?>
         </tbody>
     </table>
 
-    <!-- Footer -->
-    <div class="footer">
-        This report is for official use only. Generated by <?php echo htmlspecialchars($user_name); ?> on <?php echo date('M d, Y h:i A'); ?>.
+    <!-- Signature Row -->
+    <div class="signature-grid">
+        <div>
+            <p>Prepared By:</p>
+            <div class="sign-line">
+                <strong><?php echo htmlspecialchars($user_name); ?></strong><br>
+                <span>Supervisor / Environmental Desk Officer</span>
+            </div>
+        </div>
+        <div>
+            <p>Attested &amp; Noted By:</p>
+            <div class="sign-line">
+                <strong>HON. BARANGAY CAPTAIN</strong><br>
+                <span>Punong Barangay / Committee on Environment</span>
+            </div>
+        </div>
     </div>
 
-    <!-- Print Button -->
-    <div class="no-print" style="text-align: center; margin-top: 30px;">
-        <button onclick="window.print()" class="btn-print">🖨️ Print / Save as PDF</button>
-        <br>
-        <small style="color: #94a3b8;">Note: In the print dialog, select "Save as PDF" as the destination.</small>
+    <!-- Print CTA -->
+    <div class="no-print" style="text-align:center;margin-top:30px;">
+        <button onclick="window.print()" class="btn-print">🖨️ Print Official PDF</button>
     </div>
 
 </body>

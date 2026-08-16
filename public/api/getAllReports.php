@@ -9,9 +9,18 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['secretar
     exit;
 }
 
+// Maintenance mode guard — admin roles bypass, non-admins get 503
+require_once __DIR__ . '/../../app/Config/Database.php';
+require_once __DIR__ . '/../../app/Models/SystemMaintenance.php';
+$_apiMaintenance = new SystemMaintenance();
+if ($_apiMaintenance->isMaintenanceActive() && !SystemMaintenance::isAdminSession()) {
+    http_response_code(503);
+    echo json_encode(['success' => false, 'message' => 'System is under maintenance.']);
+    exit;
+}
+
 try {
     // Load database
-    require_once __DIR__ . '/../../app/Config/Database.php';
     
     $db = new Database();
     

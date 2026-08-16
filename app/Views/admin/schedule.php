@@ -593,8 +593,9 @@ function getCalendarWasteColor($type) {
             <p class="text-sm font-semibold text-slate-600 mt-2">
                 Are you sure you want to remove the schedule for <strong id="deleteDay" class="text-slate-950 font-extrabold"></strong>?
             </p>
-            <p class="text-xs text-red-600 font-bold mt-2 bg-red-50 p-2.5 rounded-xl border border-red-200">
-                ⚠️ This permanent action cannot be undone.
+            <p class="text-xs text-red-600 font-bold mt-2 bg-red-50 p-2.5 rounded-xl border border-red-200 flex items-center justify-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>This permanent action cannot be undone.</span>
             </p>
         </div>
 

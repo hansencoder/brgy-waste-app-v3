@@ -261,19 +261,19 @@ function getPriorityBadge($count) {
                                 <!-- Layer Toggles -->
                                 <div class="flex flex-wrap items-center gap-1.5 text-xs font-extrabold">
                                     <button id="toggleHeatmap" class="layer-toggle px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-950 border border-emerald-300 transition flex items-center gap-1.5 active" title="Toggle Thermal Heatmap">
-                                        <span>🔥</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"/></svg>
                                         <span>Heatmap</span>
                                     </button>
                                     <button id="toggleMarkers" class="layer-toggle px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-950 border border-emerald-300 transition flex items-center gap-1.5 active" title="Toggle Incident Pin Markers">
-                                        <span>📍</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                                         <span>Incident Pins</span>
                                     </button>
                                     <button id="toggleLandmarks" class="layer-toggle px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-950 border border-emerald-300 transition flex items-center gap-1.5 active" title="Toggle Facilities & Landmarks">
-                                        <span>🏛️</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>
                                         <span>Landmarks</span>
                                     </button>
                                     <button id="togglePuroks" class="layer-toggle px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-950 border border-emerald-300 transition flex items-center gap-1.5 active" title="Toggle Purok Boundaries">
-                                        <span>🗺️</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                                         <span>Purok Zones</span>
                                     </button>
                                 </div>
@@ -333,7 +333,7 @@ function getPriorityBadge($count) {
                                         <!-- Recommended Action Feature -->
                                         <div class="pt-2 border-t border-slate-100">
                                             <div class="flex items-center gap-1.5 mb-1">
-                                                <span class="text-xs">💡</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
                                                 <span class="text-[10px] font-black text-slate-800 uppercase tracking-wider">Recommended Action:</span>
                                             </div>
                                             <p id="hudRecommendedAction" class="text-[11px] font-semibold text-slate-700 leading-snug bg-emerald-50/80 border border-emerald-200/80 p-2.5 rounded-xl">
@@ -451,8 +451,8 @@ function getPriorityBadge($count) {
                                             <div onclick="flyToCoords(<?php echo (float)$lm['latitude']; ?>, <?php echo (float)$lm['longitude']; ?>, '<?php echo htmlspecialchars($lm['landmark_name'], ENT_QUOTES); ?>')" 
                                                  class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition cursor-pointer flex items-center justify-between group shadow-2xs">
                                                 <div class="flex items-center gap-2.5">
-                                                    <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-900 flex items-center justify-center font-bold text-sm">
-                                                        🏛️
+                                                    <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-900 flex items-center justify-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>
                                                     </div>
                                                     <div>
                                                         <p class="text-xs font-extrabold text-slate-900"><?php echo htmlspecialchars($lm['landmark_name']); ?></p>
@@ -599,19 +599,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (total >= 9) {
             densityLabel = 'High Density (Hotspot)';
             densityBadgeClass = 'bg-red-100 text-red-950 border border-red-300';
-            recommendation = `🚨 Critical Intervention: High incident concentration (${total} reports, ${dominantCat} dominant at ${percent}%). Immediate dispatch of compactor truck & sanitation sweep required within 12h. Conduct purok segregation audit.`;
+            recommendation = `Critical Intervention: High incident concentration (${total} reports, ${dominantCat} dominant at ${percent}%). Immediate dispatch of compactor truck & sanitation sweep required within 12h. Conduct purok segregation audit.`;
         } else if (total >= 4) {
             densityLabel = 'Medium Density (Verified)';
             densityBadgeClass = 'bg-amber-100 text-amber-950 border border-amber-300';
-            recommendation = `⚠️ Medium Priority: Active recurring waste accumulation (${total} reports, mostly ${dominantCat}). Schedule dedicated collection run within 24h and inspect purok collection points.`;
+            recommendation = `Medium Priority: Active recurring waste accumulation (${total} reports, mostly ${dominantCat}). Schedule dedicated collection run within 24h and inspect purok collection points.`;
         } else if (total > 0) {
             densityLabel = 'Low Density (Pending)';
             densityBadgeClass = 'bg-emerald-100 text-emerald-950 border border-emerald-300';
-            recommendation = `✅ Low Activity: ${total} reported incident(s) of ${dominantCat}. Standard routine collection schedule adequate. Verify any pending citizen reports.`;
+            recommendation = `Low Activity: ${total} reported incident(s) of ${dominantCat}. Standard routine collection schedule adequate. Verify any pending citizen reports.`;
         } else {
             densityLabel = 'Clean / Monitored';
             densityBadgeClass = 'bg-slate-100 text-slate-700 border border-slate-300';
-            recommendation = '🌿 Clean Sector: No active waste incident reports recorded in this purok.';
+            recommendation = 'Clean Sector: No active waste incident reports recorded in this purok.';
         }
 
         return {
@@ -703,14 +703,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const lng = parseFloat(lm.longitude);
         if (!isNaN(lat) && !isNaN(lng)) {
             const icon = L.divIcon({
-                html: `<div style="background:#0B2E22;color:#ffffff;width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px solid #34D399;font-size:12px;box-shadow:0 3px 8px rgba(0,0,0,0.3);">🏛️</div>`,
+                html: `<div style="background:#0B2E22;color:#ffffff;width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px solid #34D399;box-shadow:0 3px 8px rgba(0,0,0,0.3);"><svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='#ffffff' stroke-width='2.5'><path d='M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z'/></svg></div>`,
                 className: '', iconSize: [24, 24], iconAnchor: [12, 12]
             });
             const marker = L.marker([lat, lng], { icon });
             marker.bindPopup(`
                 <div style="padding:14px; min-width:200px; font-family:'Miranda Sans',sans-serif;">
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                        <span style="font-size:16px;">🏛️</span>
+                        <span style="display:flex;align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B2E22" stroke-width="2.5"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                         <h4 style="margin:0; font-size:14px; font-weight:800; color:#0B2E22;">${lm.landmark_name}</h4>
                     </div>
                     <span style="display:inline-block; font-size:10px; font-weight:800; color:#059669; background:#ecfdf5; padding:2px 8px; border-radius:99px; border:1px solid #a7f3d0; margin-bottom:6px;">

@@ -251,8 +251,8 @@ $resume_description = $resume_data['description'] ?? '';
                         <!-- Duplicate Check Box -->
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-3">
                             <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm border border-emerald-100">
-                                    🔍
+                                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                                 </div>
                                 <div>
                                     <h3 class="text-sm font-extrabold text-slate-900">Duplicate Scanner</h3>
@@ -265,7 +265,10 @@ $resume_description = $resume_data['description'] ?? '';
                             </div>
 
                             <div id="dupCheckIdle" class="p-6 text-center border-2 border-dashed border-slate-200 rounded-xl text-slate-400 text-xs space-y-1">
-                                <p class="font-bold">📍 Waiting for Location Pin</p>
+                                <p class="font-bold flex items-center justify-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    <span>Waiting for Location Pin</span>
+                                </p>
                                 <p class="text-[11px] text-slate-400">Pin a location on the map to automatically scan for nearby existing reports.</p>
                             </div>
                         </div>
@@ -417,14 +420,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     resultBox.className = 'p-3.5 rounded-xl border border-amber-300 bg-amber-50 text-xs space-y-2';
                     content.innerHTML = `
                         <p class="font-bold text-amber-800 flex items-center gap-1.5">
-                            <span>⚠️ Similar report found nearby</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span>Similar report found nearby</span>
                         </p>
                         <p class="text-slate-600 text-[11px]">There is already a waste report logged within 50 meters of your pin.</p>
                     `;
                 } else {
                     resultBox.className = 'p-3.5 rounded-xl border border-emerald-300 bg-emerald-50 text-xs space-y-1';
                     content.innerHTML = `
-                        <p class="font-bold text-emerald-800">✓ Location Clear</p>
+                        <p class="font-bold text-emerald-800 flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>Location Clear</span>
+                        </p>
                         <p class="text-emerald-700 text-[11px]">No duplicate reports detected in this immediate area.</p>
                     `;
                 }

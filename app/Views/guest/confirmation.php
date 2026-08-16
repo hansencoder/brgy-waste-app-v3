@@ -75,15 +75,15 @@
             <div class="space-y-3">
                 <?php
                 $steps = [
-                    ['icon' => '🔍', 'text' => 'Our team will review and verify your report within 24 hours.'],
-                    ['icon' => '📲', 'text' => "You'll receive SMS updates at {$data['phone']} as the status changes."],
-                    ['icon' => '🚛', 'text' => 'An assigned team will handle the waste collection or cleanup.'],
-                    ['icon' => '✅', 'text' => 'You\'ll be notified when the issue is resolved.'],
+                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', 'text' => 'Our team will review and verify your report within 24 hours.'],
+                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>', 'text' => "You'll receive SMS updates at {$data['phone']} as the status changes."],
+                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>', 'text' => 'An assigned team will handle the waste collection or cleanup.'],
+                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>', 'text' => 'You\'ll be notified when the issue is resolved.'],
                 ];
                 foreach ($steps as $step): ?>
                 <div class="flex items-start gap-3">
-                    <span class="text-lg leading-none mt-0.5"><?php echo $step['icon']; ?></span>
-                    <p class="text-xs text-slate-600 leading-relaxed"><?php echo $step['text']; ?></p>
+                    <span class="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5"><?php echo $step['svg']; ?></span>
+                    <p class="text-xs text-slate-600 leading-relaxed pt-0.5"><?php echo $step['text']; ?></p>
                 </div>
                 <?php endforeach; ?>
             </div>

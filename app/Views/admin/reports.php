@@ -220,7 +220,7 @@ $metrics = [
                                 <?php if (!empty($logoLeft)): ?>
                                     <img src="<?php echo htmlspecialchars($logoLeft); ?>" alt="Barangay Seal">
                                 <?php else: ?>
-                                    <div style="background:#f1f5f9;font-size:26px;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🏛️</div>
+                                    <div style="background:#f1f5f9;width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></div>
                                 <?php endif; ?>
                             </div>
 
@@ -235,7 +235,7 @@ $metrics = [
                                 <?php if (!empty($logoRight)): ?>
                                     <img src="<?php echo htmlspecialchars($logoRight); ?>" alt="System Logo">
                                 <?php else: ?>
-                                    <div style="background:#f1f5f9;font-size:26px;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🇵🇭</div>
+                                    <div style="background:#f1f5f9;width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
                                 <?php endif; ?>
                             </div>
                         </div>

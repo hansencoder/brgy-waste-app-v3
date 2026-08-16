@@ -130,12 +130,18 @@ $currentStep = $stepMap[$statusName] ?? 1;
 
                             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
                                 <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Purok Area</span>
-                                <span class="text-xs sm:text-sm font-bold text-slate-800 mt-0.5 block">📍 <?php echo htmlspecialchars($report['purok'] ?? 'Barangay Wide'); ?></span>
+                                <span class="text-xs sm:text-sm font-bold text-slate-800 mt-0.5 flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    <span><?php echo htmlspecialchars($report['purok'] ?? 'Barangay Wide'); ?></span>
+                                </span>
                             </div>
 
                             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
                                 <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Community Support</span>
-                                <span class="text-xs sm:text-sm font-bold text-slate-800 mt-0.5 block">👍 <?php echo (int)($report['support_count'] ?? 0); ?> citizen upvotes</span>
+                                <span class="text-xs sm:text-sm font-bold text-slate-800 mt-0.5 flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h3"/><path d="M7 10 12 2a2 2 0 0 1 3 3.88Z"/></svg>
+                                    <span><?php echo (int)($report['support_count'] ?? 0); ?> citizen upvotes</span>
+                                </span>
                             </div>
                         </div>
 
@@ -203,7 +209,10 @@ $currentStep = $stepMap[$statusName] ?? 1;
                             </div>
                             <div class="min-w-0">
                                 <p class="text-sm font-bold text-slate-900 truncate"><?php echo htmlspecialchars($report['resident_name'] ?? 'Guest Reporter'); ?></p>
-                                <p class="text-xs text-emerald-700 font-medium">📍 <?php echo htmlspecialchars($report['purok'] ?? 'Resident'); ?></p>
+                                <p class="text-xs text-emerald-700 font-medium flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    <span><?php echo htmlspecialchars($report['purok'] ?? 'Resident'); ?></span>
+                                </p>
                             </div>
                         </div>
 

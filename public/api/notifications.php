@@ -12,6 +12,15 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Maintenance mode guard — non-admin users blocked
+require_once __DIR__ . '/../../app/Models/SystemMaintenance.php';
+$_notifMaintenance = new SystemMaintenance();
+if ($_notifMaintenance->isMaintenanceActive() && !SystemMaintenance::isAdminSession()) {
+    http_response_code(503);
+    echo json_encode(['success' => false, 'message' => 'System is under maintenance.', 'notifications' => [], 'unread_count' => 0]);
+    exit;
+}
+
 $userId = $_SESSION['user_id'];
 $notificationModel = new Notification();
 

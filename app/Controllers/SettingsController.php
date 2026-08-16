@@ -1084,4 +1084,139 @@ class SettingsController extends Controller {
         $data['notes'] = $db->resultSet();
         $this->view('settings/collection_notes', $data);
     }
-}
+
+    // ============================================================
+    // SYSTEM AVAILABILITY / MAINTENANCE MODE
+    // ============================================================
+
+    public function system_availability() {
+        require_once '../app/Models/SystemMaintenance.php';
+        $maintenanceModel = new SystemMaintenance();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json');
+
+            $action  = trim($_POST['action'] ?? '');
+            $userId  = $_SESSION['user_id'];
+            $ip      = $_SERVER['REMOTE_ADDR'] ?? null;
+
+            // Common input sanitisation
+            $type    = in_array($_POST['maintenance_type'] ?? '', ['scheduled', 'emergency'])
+                       ? $_POST['maintenance_type'] : 'scheduled';
+            $message = trim($_POST['maintenance_message'] ?? '');
+            $reason  = trim($_POST['reason'] ?? '');
+            $startAt = !empty($_POST['start_at']) ? date('Y-m-d H:i:s', strtotime($_POST['start_at'])) : null;
+            $endAt   = !empty($_POST['end_at'])   ? date('Y-m-d H:i:s', strtotime($_POST['end_at']))   : null;
+
+            // Validate message is non-empty for activate actions
+            if (in_array($action, ['activate', 'emergency_lockdown', 'save_settings'])) {
+                if (empty($message)) {
+                    echo json_encode(['success' => false, 'message' => 'Maintenance message cannot be empty.']);
+                    exit;
+                }
+            }
+
+            // Validate end_at >= start_at
+            if ($startAt && $endAt && strtotime($endAt) <= strtotime($startAt)) {
+                echo json_encode(['success' => false, 'message' => 'End date/time must be after the start date/time.']);
+                exit;
+            }
+
+            $currentStatus = $maintenanceModel->getStatus();
+            $prevMode      = (int)($currentStatus['maintenance_mode'] ?? 0);
+
+            $data = [
+                'maintenance_type'    => $type,
+                'maintenance_message' => $message,
+                'reason'              => $reason,
+                'start_at'            => $startAt,
+                'end_at'              => $endAt,
+                'previous_status'     => $prevMode,
+                'new_status'          => $prevMode,
+            ];
+
+            switch ($action) {
+
+                // ── Save settings without changing active state ──────────
+                case 'save_settings':
+                    $maintenanceModel->saveSettings($data, $userId);
+                    $data['new_status'] = $prevMode;
+                    $maintenanceModel->logHistory('UPDATE_MAINTENANCE_SETTINGS', $data, $userId, $ip);
+                    $this->auditModel->logAction($userId, 'Update Maintenance Settings', 'SystemMaintenance', "Updated maintenance settings (type: $type)", 'success');
+                    echo json_encode(['success' => true, 'message' => 'Maintenance settings saved successfully.']);
+                    break;
+
+                // ── Activate maintenance mode ────────────────────────────
+                case 'activate':
+                    $data['new_status'] = 1;
+                    $maintenanceModel->activate($data, $userId);
+                    $maintenanceModel->logHistory('ENABLE_MAINTENANCE_MODE', $data, $userId, $ip);
+                    $this->auditModel->logAction($userId, 'Enable Maintenance Mode', 'SystemMaintenance', "Maintenance mode activated (type: $type). Reason: $reason", 'success');
+                    echo json_encode(['success' => true, 'message' => 'Maintenance mode has been activated. Non-admin users are now blocked.']);
+                    break;
+
+                // ── Deactivate maintenance mode ──────────────────────────
+                case 'deactivate':
+                    $data['new_status'] = 0;
+                    $maintenanceModel->deactivate($userId);
+                    $maintenanceModel->logHistory('DISABLE_MAINTENANCE_MODE', $data, $userId, $ip);
+                    $this->auditModel->logAction($userId, 'Disable Maintenance Mode', 'SystemMaintenance', 'Maintenance mode deactivated. System restored to operational.', 'success');
+                    echo json_encode(['success' => true, 'message' => 'System is now operational. All users can access the system.']);
+                    break;
+
+                // ── Emergency lockdown ───────────────────────────────────
+                case 'emergency_lockdown':
+                    // Require explicit confirmation field
+                    if (empty($_POST['confirm_emergency']) || $_POST['confirm_emergency'] !== '1') {
+                        echo json_encode(['success' => false, 'message' => 'Emergency lockdown requires explicit confirmation.']);
+                        exit;
+                    }
+                    $data['maintenance_type'] = 'emergency';
+                    $data['new_status']       = 1;
+                    $maintenanceModel->activate($data, $userId);
+                    $maintenanceModel->logHistory('ENABLE_EMERGENCY_LOCKDOWN', $data, $userId, $ip);
+                    $this->auditModel->logAction($userId, 'Enable Emergency Lockdown', 'SystemMaintenance', "EMERGENCY LOCKDOWN activated. Reason: $reason", 'success');
+                    echo json_encode(['success' => true, 'message' => 'EMERGENCY LOCKDOWN is now active. All non-admin access is immediately blocked.']);
+                    break;
+
+                // ── Deactivate emergency lockdown ────────────────────────
+                case 'deactivate_emergency':
+                    $data['new_status'] = 0;
+                    $maintenanceModel->deactivate($userId);
+                    $maintenanceModel->logHistory('DISABLE_EMERGENCY_LOCKDOWN', $data, $userId, $ip);
+                    $this->auditModel->logAction($userId, 'Disable Emergency Lockdown', 'SystemMaintenance', 'Emergency lockdown deactivated. System restored to operational.', 'success');
+                    echo json_encode(['success' => true, 'message' => 'Emergency lockdown lifted. System is now operational.']);
+                    break;
+
+                default:
+                    echo json_encode(['success' => false, 'message' => 'Unknown action.']);
+                    break;
+            }
+            exit;
+        }
+
+        // GET — render the settings view
+        $status  = $maintenanceModel->getStatus();
+        $history = $maintenanceModel->getHistory(50);
+
+        $data = [
+            'status'  => $status,
+            'history' => $history,
+        ];
+        $this->view('settings/system_availability', $data);
+    }
+
+    /**
+     * AJAX endpoint: returns maintenance history as JSON.
+     */
+    public function maintenanceHistory() {
+        require_once '../app/Models/SystemMaintenance.php';
+        $maintenanceModel = new SystemMaintenance();
+        $limit   = min((int)($_GET['limit'] ?? 50), 200);
+        $history = $maintenanceModel->getHistory($limit);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'history' => $history]);
+        exit;
+    }
+}
+

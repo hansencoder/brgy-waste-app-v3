@@ -52,8 +52,8 @@ foreach ($announcements as $item) {
                 <!-- KPI Metric Summary -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-lg shrink-0">
-                            📢
+                        <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                         </div>
                         <div>
                             <p class="text-2xl font-black text-slate-900 font-mono"><?php echo $total; ?></p>
@@ -62,8 +62,8 @@ foreach ($announcements as $item) {
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold text-lg shrink-0 border border-red-100">
-                            ⚡
+                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                         </div>
                         <div>
                             <p class="text-2xl font-black text-red-600 font-mono"><?php echo $urgent; ?></p>
@@ -72,8 +72,8 @@ foreach ($announcements as $item) {
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-lg shrink-0 border border-emerald-100">
-                            🌱
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 12 12"/></svg>
                         </div>
                         <div>
                             <p class="text-2xl font-black text-emerald-800 font-mono"><?php echo $events; ?></p>

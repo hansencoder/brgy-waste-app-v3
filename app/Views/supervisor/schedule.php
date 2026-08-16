@@ -95,8 +95,9 @@ $todayDayName = date('l');
                             </div>
 
                             <?php if (!empty($sched['special_notes'])): ?>
-                            <div class="pt-3 border-t border-slate-100 text-[11px] text-amber-800 bg-amber-50/70 p-2.5 rounded-xl">
-                                📢 <?php echo htmlspecialchars($sched['special_notes']); ?>
+                            <div class="pt-3 border-t border-slate-100 text-[11px] text-amber-800 bg-amber-50/70 p-2.5 rounded-xl flex items-start gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                                <span><?php echo htmlspecialchars($sched['special_notes']); ?></span>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -208,7 +209,12 @@ $todayDayName = date('l');
                                     <td class="py-3 px-4 font-mono font-bold text-slate-800">
                                         <?php echo date('g:i A', strtotime($sched['start_time'])); ?> – <?php echo date('g:i A', strtotime($sched['end_time'])); ?>
                                     </td>
-                                    <td class="py-3 px-4 text-slate-700">📍 <?php echo htmlspecialchars($sched['puroks'] ?? 'All Puroks'); ?></td>
+                                    <td class="py-3 px-4 text-slate-700">
+                                        <span class="inline-flex items-center gap-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <span><?php echo htmlspecialchars($sched['puroks'] ?? 'All Puroks'); ?></span>
+                                        </span>
+                                    </td>
                                     <td class="py-3 px-4 text-slate-500"><?php echo htmlspecialchars($sched['special_notes'] ?? '—'); ?></td>
                                 </tr>
                                 <?php endforeach; ?>

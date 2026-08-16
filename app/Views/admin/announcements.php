@@ -154,8 +154,8 @@ function getVisibilityBadge($visName) {
                     <div id="createAnnouncementPanel" class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 sm:p-7 space-y-6 hidden">
                         <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-extrabold text-lg">
-                                    ✍️
+                                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                                 </div>
                                 <div>
                                     <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">Post New Community Announcement</h2>
@@ -291,8 +291,8 @@ function getVisibilityBadge($visName) {
                                                 <img src="<?php echo htmlspecialchars($item['cover_image']); ?>" alt="Banner" class="w-full h-full object-cover">
                                             </div>
                                         <?php else: ?>
-                                            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-2xl shrink-0 shadow-2xs">
-                                                📢
+                                            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0 shadow-2xs">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 sm:w-8 sm:h-8 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                                             </div>
                                         <?php endif; ?>
 
@@ -358,8 +358,8 @@ function getVisibilityBadge($visName) {
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3 shadow-xs">
-                                <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto text-2xl border border-emerald-200">
-                                    📢
+                                <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto border border-emerald-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                                 </div>
                                 <h3 class="text-base font-extrabold text-slate-800">No announcements posted yet</h3>
                                 <p class="text-xs font-semibold text-slate-400 max-w-sm mx-auto">Create and broadcast announcements to inform residents about schedule updates, cleaning activities, and barangay news.</p>

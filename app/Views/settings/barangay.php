@@ -148,8 +148,8 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                                     <?php if (!empty($sysLogoUrl)): ?>
                                                         <img id="prevSysLogo" src="<?php echo htmlspecialchars($sysLogoUrl); ?>" class="h-full w-full object-cover">
                                                     <?php else: ?>
-                                                        <div id="prevSysLogoPlaceholder" class="flex h-full w-full items-center justify-center rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-lg">
-                                                            ⚙️
+                                                        <div id="prevSysLogoPlaceholder" class="flex h-full w-full items-center justify-center rounded-full bg-emerald-100 text-emerald-800">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                                                         </div>
                                                         <img id="prevSysLogo" src="" class="h-full w-full object-cover hidden">
                                                     <?php endif; ?>
@@ -179,8 +179,8 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                                     <?php if (!empty($brgyLogoUrl)): ?>
                                                         <img id="prevBrgySeal" src="<?php echo htmlspecialchars($brgyLogoUrl); ?>" class="h-full w-full object-cover">
                                                     <?php else: ?>
-                                                        <div id="prevBrgySealPlaceholder" class="flex h-full w-full items-center justify-center rounded-full bg-amber-100 text-amber-800 font-extrabold text-lg">
-                                                            🏛️
+                                                        <div id="prevBrgySealPlaceholder" class="flex h-full w-full items-center justify-center rounded-full bg-amber-100 text-amber-800">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>
                                                         </div>
                                                         <img id="prevBrgySeal" src="" class="h-full w-full object-cover hidden">
                                                     <?php endif; ?>
@@ -212,7 +212,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                                 <?php if (!empty($sysLogoUrl)): ?>
                                                     <img id="previewSysLogoImg" src="<?php echo htmlspecialchars($sysLogoUrl); ?>" class="h-full w-full object-cover">
                                                 <?php else: ?>
-                                                    <span id="previewSysLogoIcon">🏛️</span>
+                                                    <span id="previewSysLogoIcon" class="flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                                                     <img id="previewSysLogoImg" src="" class="h-full w-full object-cover hidden">
                                                 <?php endif; ?>
                                             </div>

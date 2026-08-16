@@ -170,8 +170,9 @@ $initial = strtoupper(substr($firstName, 0, 1));
                                 </div>
                             </div>
 
-                            <p id="photoPendingNotice" class="hidden mt-3 text-xs font-bold text-amber-700 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
-                                📷 New profile photo chosen. Remember to click "Save Profile" below to apply it.
+                            <p id="photoPendingNotice" class="hidden mt-3 text-xs font-bold text-amber-700 bg-amber-50 p-2.5 rounded-lg border border-amber-200 flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                <span>New profile photo chosen. Remember to click "Save Profile" below to apply it.</span>
                             </p>
 
                             <!-- Profile Details Strip -->
@@ -419,8 +420,8 @@ $initial = strtoupper(substr($firstName, 0, 1));
     <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200">
         <div class="bg-[#0B2E22] px-6 py-4 flex items-center justify-between text-white">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold">
-                    🛡️
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-white">Security Verification</h3>
@@ -614,7 +615,7 @@ $initial = strtoupper(substr($firstName, 0, 1));
             btn.disabled = false;
             btn.textContent = 'Verify & Apply';
             if (data.success) {
-                document.getElementById('otpSuccess').textContent = '✓ Verified! Saving profile...';
+                document.getElementById('otpSuccess').textContent = 'Verified! Saving profile...';
                 document.getElementById('otpSuccess').classList.remove('hidden');
                 document.getElementById('otpError').classList.add('hidden');
                 setTimeout(() => {

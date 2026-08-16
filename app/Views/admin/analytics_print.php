@@ -68,7 +68,7 @@ $logoRight = !empty($repSettings['header_logo_right']) ? $repSettings['header_lo
         <?php if (!empty($logoLeft)): ?>
             <div class="logo-box"><img src="<?php echo htmlspecialchars($logoLeft); ?>" alt="Seal"></div>
         <?php else: ?>
-            <div class="logo-box" style="background:#f1f5f9;font-size:28px;">🏛️</div>
+            <div class="logo-box" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></div>
         <?php endif; ?>
 
         <div class="head-center">
@@ -81,7 +81,7 @@ $logoRight = !empty($repSettings['header_logo_right']) ? $repSettings['header_lo
         <?php if (!empty($logoRight)): ?>
             <div class="logo-box"><img src="<?php echo htmlspecialchars($logoRight); ?>" alt="Logo"></div>
         <?php else: ?>
-            <div class="logo-box" style="background:#f1f5f9;font-size:28px;">🇵🇭</div>
+            <div class="logo-box" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
         <?php endif; ?>
     </div>
 

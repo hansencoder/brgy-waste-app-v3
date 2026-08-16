@@ -133,7 +133,8 @@ if (!isset($data) || !is_array($data)) {
                                                         <span class="font-extrabold text-slate-900 text-base"><?php echo htmlspecialchars($p['purok_name']); ?></span>
                                                         <?php if (!empty($p['polygon_geometry'])): ?>
                                                             <span class="badge-saved inline-flex items-center gap-1 text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-300">
-                                                                ✓ Saved
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                                                <span>Saved</span>
                                                             </span>
                                                         <?php else: ?>
                                                             <span class="text-xs text-slate-500 font-extrabold">No boundary</span>

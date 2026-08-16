@@ -162,7 +162,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                     <p class="text-sm font-semibold text-slate-500 mt-0.5">
                                         <?php echo htmlspecialchars($position); ?> &middot; <?php echo htmlspecialchars($purok); ?>
                                     </p>
-                                    <p id="photoPendingNotice" class="hidden mt-1 text-xs font-bold text-amber-600">📷 New photo selected — click "Save Changes" to apply.</p>
+                                    <p id="photoPendingNotice" class="hidden mt-1 text-xs font-bold text-amber-600 flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> New photo selected — click "Save Changes" to apply.</p>
                                 </div>
 
                                 <!-- Right badges -->
@@ -438,14 +438,14 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                             <input type="email" id="profileEmail"
                                                    value="<?php echo htmlspecialchars($email); ?>" disabled
                                                    class="form-input readonly">
-                                            <p class="text-[11px] text-slate-400 mt-1 font-semibold">🔒 Cannot be changed for security.</p>
+                                            <p class="text-[11px] text-slate-400 mt-1 font-semibold flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Cannot be changed for security.</p>
                                         </div>
 
                                         <!-- Contact Number -->
                                         <div>
                                             <label class="form-label">Contact Number</label>
                                             <div class="relative">
-                                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">🇵🇭</span>
+                                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 font-mono">+63</span>
                                                 <input type="tel" name="phone_number" id="profilePhone"
                                                        value="<?php echo htmlspecialchars($phone); ?>"
                                                        class="form-input pl-9"
@@ -579,7 +579,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                                 </button>
                                             </div>
                                             <p id="matchError" class="text-red-500 text-xs font-bold mt-1.5 hidden">Passwords do not match.</p>
-                                            <p id="matchOk" class="text-emerald-600 text-xs font-bold mt-1.5 hidden">✓ Passwords match!</p>
+                                            <p id="matchOk" class="text-emerald-600 text-xs font-bold mt-1.5 hidden flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Passwords match!</p>
                                         </div>
                                     </div>
 
@@ -610,16 +610,16 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                 <div class="space-y-3">
                                     <?php
                                     $toggles = [
-                                        ['key' => 'emergency_alerts',    'title' => 'Emergency Waste Alerts',       'desc' => 'Instant notifications for high-priority or hazardous waste incidents.',   'icon' => '🚨'],
-                                        ['key' => 'report_updates',      'title' => 'Citizen Report Updates',       'desc' => 'Alerts when new reports are submitted, verified, or resolved.',           'icon' => '📋'],
-                                        ['key' => 'audit_notifications', 'title' => 'System Audit Log Alerts',     'desc' => 'Alerts on critical administrative security events and logins.',            'icon' => '🛡️'],
-                                        ['key' => 'announcement_drafts', 'title' => 'Announcement Draft Reminders','desc' => 'Notify when pending announcements are awaiting publishing approval.',       'icon' => '📢'],
-                                        ['key' => 'daily_digests',       'title' => 'Daily Report Digest',         'desc' => 'Receive daily summary digest of submitted and resolved waste reports.',    'icon' => '📊'],
+                                        ['key' => 'emergency_alerts',    'title' => 'Emergency Waste Alerts',       'desc' => 'Instant notifications for high-priority or hazardous waste incidents.',   'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'],
+                                        ['key' => 'report_updates',      'title' => 'Citizen Report Updates',       'desc' => 'Alerts when new reports are submitted, verified, or resolved.',           'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'],
+                                        ['key' => 'audit_notifications', 'title' => 'System Audit Log Alerts',     'desc' => 'Alerts on critical administrative security events and logins.',            'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'],
+                                        ['key' => 'announcement_drafts', 'title' => 'Announcement Draft Reminders','desc' => 'Notify when pending announcements are awaiting publishing approval.',       'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>'],
+                                        ['key' => 'daily_digests',       'title' => 'Daily Report Digest',         'desc' => 'Receive daily summary digest of submitted and resolved waste reports.',    'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'],
                                     ];
                                     foreach ($toggles as $t): ?>
                                     <div class="flex items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 hover:bg-white transition">
                                         <div class="flex items-start gap-3">
-                                            <span class="text-xl mt-0.5"><?php echo $t['icon']; ?></span>
+                                            <span class="mt-0.5"><?php echo $t['svg']; ?></span>
                                             <div>
                                                 <p class="text-sm font-extrabold text-slate-800"><?php echo $t['title']; ?></p>
                                                 <p class="text-xs text-slate-500 mt-0.5 font-medium"><?php echo $t['desc']; ?></p>
@@ -675,13 +675,13 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">Recent Admin Actions</h3>
                                     <?php
                                     $sampleActions = [
-                                        ['icon' => '🔑', 'action' => 'Accessed Admin Profile', 'time' => 'Just now',    'type' => 'emerald'],
-                                        ['icon' => '📋', 'action' => 'Viewed System Audit Trail', 'time' => 'Earlier today', 'type' => 'blue'],
-                                        ['icon' => '✅', 'action' => 'System Access Verified',  'time' => $memberSince,   'type' => 'purple'],
+                                        ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>', 'action' => 'Accessed Admin Profile', 'time' => 'Just now'],
+                                        ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>', 'action' => 'Viewed System Audit Trail', 'time' => 'Earlier today'],
+                                        ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>', 'action' => 'System Access Verified',  'time' => $memberSince],
                                     ];
                                     foreach ($sampleActions as $act): ?>
                                     <div class="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-                                        <span class="text-base"><?php echo $act['icon']; ?></span>
+                                        <span class="p-2 rounded-xl bg-slate-100 flex items-center justify-center shrink-0"><?php echo $act['svg']; ?></span>
                                         <div class="flex-1 min-w-0">
                                             <p class="text-xs font-extrabold text-slate-800"><?php echo $act['action']; ?></p>
                                         </div>
@@ -965,7 +965,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
             spinner.classList.add('hidden');
             text.textContent = 'Verify Identity';
             if (data.success) {
-                document.getElementById('otpSuccess').textContent = '✓ Verified! Saving changes...';
+                document.getElementById('otpSuccess').textContent = 'Verified! Saving changes...';
                 document.getElementById('otpSuccess').classList.remove('hidden');
                 document.getElementById('otpError').classList.add('hidden');
                 setTimeout(() => {

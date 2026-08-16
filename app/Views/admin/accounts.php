@@ -79,7 +79,7 @@ function getAccountBadgeProps($status) {
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         
                         <!-- Card 1: Resident Accounts -->
-                        <a href="?tab=resident" class="bg-white rounded-2xl p-5 border border-slate-250 shadow-xs hover:border-slate-400 transition flex items-center justify-between <?php echo $tab === 'resident' ? 'ring-2 ring-slate-900' : ''; ?>">
+                        <a href="?tab=resident" class="bg-white rounded-2xl p-5 border shadow-xs hover:border-slate-400 transition flex items-center justify-between <?php echo $tab === 'resident' ? 'border-slate-900' : 'border-slate-200'; ?>">
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Resident Accounts</p>
                                 <p class="text-3xl font-extrabold text-slate-900 font-mono mt-1"><?php echo number_format($residentCount); ?></p>
@@ -91,7 +91,7 @@ function getAccountBadgeProps($status) {
                         </a>
 
                         <!-- Card 2: Staff & Personnel -->
-                        <a href="?tab=staff" class="bg-white rounded-2xl p-5 border border-slate-250 shadow-xs hover:border-slate-400 transition flex items-center justify-between <?php echo $tab === 'staff' ? 'ring-2 ring-slate-900' : ''; ?>">
+                        <a href="?tab=staff" class="bg-white rounded-2xl p-5 border shadow-xs hover:border-slate-400 transition flex items-center justify-between <?php echo $tab === 'staff' ? 'border-slate-900' : 'border-slate-200'; ?>">
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Staff &amp; Personnel</p>
                                 <p class="text-3xl font-extrabold text-slate-900 font-mono mt-1"><?php echo number_format($staffCount); ?></p>
@@ -103,7 +103,7 @@ function getAccountBadgeProps($status) {
                         </a>
 
                         <!-- Card 3: Suspended Accounts -->
-                        <a href="?tab=suspended" class="bg-white rounded-2xl p-5 border border-slate-250 shadow-xs hover:border-slate-400 transition flex items-center justify-between <?php echo $tab === 'suspended' ? 'ring-2 ring-slate-900' : ''; ?>">
+                        <a href="?tab=suspended" class="bg-white rounded-2xl p-5 border shadow-xs hover:border-slate-400 transition flex items-center justify-between <?php echo $tab === 'suspended' ? 'border-slate-900' : 'border-slate-200'; ?>">
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Suspended / Restricted</p>
                                 <p class="text-3xl font-extrabold text-slate-900 font-mono mt-1"><?php echo number_format($suspendedCount); ?></p>

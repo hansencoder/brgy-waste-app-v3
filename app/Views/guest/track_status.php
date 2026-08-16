@@ -13,11 +13,11 @@ $statusKey = str_replace([' ', '-'], '_', strtolower(trim($rawStatus)));
 $status    = $statusKey;
 
 $statusConfig = [
-    'pending'     => ['label' => 'Pending Review', 'color' => 'amber',   'icon' => '🕐', 'desc' => 'Your report has been received and is queued for verification by the barangay desk.'],
-    'verified'    => ['label' => 'Verified',       'color' => 'blue',    'icon' => '✅', 'desc' => 'Your report has been verified and assigned for collection routing.'],
-    'in_progress' => ['label' => 'In Progress',    'color' => 'violet',  'icon' => '🚛', 'desc' => 'Waste management personnel and collection units are actively addressing the area.'],
-    'resolved'    => ['label' => 'Resolved',       'color' => 'emerald', 'icon' => '🎉', 'desc' => 'The waste site has been successfully cleared and resolved. Thank you for your vigilance!'],
-    'rejected'    => ['label' => 'Rejected',       'color' => 'red',     'icon' => '❌', 'desc' => 'Your report could not be processed. Please contact the barangay hall for details.'],
+    'pending'     => ['label' => 'Pending Review', 'color' => 'amber',   'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', 'desc' => 'Your report has been received and is queued for verification by the barangay desk.'],
+    'verified'    => ['label' => 'Verified',       'color' => 'blue',    'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>', 'desc' => 'Your report has been verified and assigned for collection routing.'],
+    'in_progress' => ['label' => 'In Progress',    'color' => 'violet',  'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>', 'desc' => 'Waste management personnel and collection units are actively addressing the area.'],
+    'resolved'    => ['label' => 'Resolved',       'color' => 'emerald', 'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>', 'desc' => 'The waste site has been successfully cleared and resolved. Thank you for your vigilance!'],
+    'rejected'    => ['label' => 'Rejected',       'color' => 'red',     'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', 'desc' => 'Your report could not be processed. Please contact the barangay hall for details.'],
 ];
 $sc = $statusConfig[$statusKey] ?? $statusConfig['pending'];
 
@@ -78,7 +78,7 @@ if ($currentIdx === false) $currentIdx = -1;
                 <?php if (!empty($activeLogo)): ?>
                     <img src="<?php echo htmlspecialchars($activeLogo); ?>" alt="Logo" class="w-full h-full rounded-full object-cover">
                 <?php else: ?>
-                    <div class="w-full h-full rounded-full bg-[#0B2E22] flex items-center justify-center text-white text-xs">🏛️</div>
+                    <div class="w-full h-full rounded-full bg-[#0B2E22] flex items-center justify-center text-white text-xs"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></div>
                 <?php endif; ?>
             </div>
             <div class="text-right">
@@ -105,7 +105,7 @@ if ($currentIdx === false) $currentIdx = -1;
 
         <!-- Status Banner -->
         <div class="<?php echo $c['bg']; ?> border <?php echo $c['border']; ?> rounded-2xl p-5 flex items-start sm:items-center gap-4 shadow-2xs">
-            <div class="text-3xl shrink-0"><?php echo $sc['icon']; ?></div>
+            <div class="shrink-0"><?php echo $sc['svg']; ?></div>
             <div class="space-y-0.5">
                 <h3 class="text-sm font-extrabold <?php echo $c['text']; ?>">
                     Status: <?php echo $sc['label']; ?>

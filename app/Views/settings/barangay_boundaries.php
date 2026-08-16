@@ -213,7 +213,7 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                                                 Spatial Metrics
                                             </h3>
                                             <span id="statStatusBadge" class="text-xs font-mono font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300">
-                                                ✓ Valid Polygon
+                                                Valid Polygon
                                             </span>
                                         </div>
 
@@ -376,11 +376,13 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
             <div class="flex items-center justify-between">
                 <label class="font-extrabold text-slate-800">Raw GeoJSON Geometry Payload:</label>
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="copyGeoJsonToClipboard()" class="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold rounded-lg border border-emerald-300 transition">
-                        📋 Copy Payload
+                    <button type="button" onclick="copyGeoJsonToClipboard()" class="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold rounded-lg border border-emerald-300 transition inline-flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                        <span>Copy Payload</span>
                     </button>
-                    <button type="button" onclick="downloadGeoJsonFile()" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold rounded-lg border border-slate-300 transition">
-                        💾 Download .geojson
+                    <button type="button" onclick="downloadGeoJsonFile()" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold rounded-lg border border-slate-300 transition inline-flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span>Download .geojson</span>
                     </button>
                 </div>
             </div>
@@ -768,7 +770,7 @@ function calculateSpatialMetrics() {
         document.getElementById('statPerimeterM').textContent = '-- meters';
         document.getElementById('statVertices').textContent = '0 points';
         document.getElementById('statBounds').textContent = 'No active polygon';
-        document.getElementById('statStatusBadge').textContent = '⚠️ Empty';
+        document.getElementById('statStatusBadge').textContent = 'Empty';
         document.getElementById('statStatusBadge').className = 'text-xs font-mono font-extrabold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300';
         return;
     }
@@ -813,7 +815,7 @@ function calculateSpatialMetrics() {
     const bounds = layer.getBounds();
     document.getElementById('statBounds').textContent = `${bounds.getSouth().toFixed(4)}, ${bounds.getWest().toFixed(4)} to ${bounds.getNorth().toFixed(4)}, ${bounds.getEast().toFixed(4)}`;
 
-    document.getElementById('statStatusBadge').textContent = '✓ Valid Polygon';
+    document.getElementById('statStatusBadge').textContent = 'Valid Polygon';
     document.getElementById('statStatusBadge').className = 'text-xs font-mono font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300';
 }
 

@@ -21,19 +21,19 @@ $sysLogo = !empty($barangay['system_logo']) ? $barangay['system_logo'] : '/brgy-
 function getActionMeta($action) {
     $act = strtolower($action ?? '');
     if (strpos($act, 'verified') !== false || strpos($act, 'resolved') !== false) {
-        return ['badge' => 'bg-emerald-50 text-emerald-900 border-emerald-200', 'icon' => '✅'];
+        return ['badge' => 'bg-emerald-50 text-emerald-900 border-emerald-200'];
     } elseif (strpos($act, 'rejected') !== false || strpos($act, 'delete') !== false || strpos($act, 'remove') !== false || strpos($act, 'suspend') !== false) {
-        return ['badge' => 'bg-red-50 text-red-900 border-red-200', 'icon' => '🛑'];
+        return ['badge' => 'bg-red-50 text-red-900 border-red-200'];
     } elseif (strpos($act, 'post') !== false || strpos($act, 'create') !== false || strpos($act, 'add') !== false || strpos($act, 'edit') !== false) {
-        return ['badge' => 'bg-blue-50 text-blue-900 border-blue-200', 'icon' => '📝'];
+        return ['badge' => 'bg-blue-50 text-blue-900 border-blue-200'];
     } elseif (strpos($act, 'gis') !== false || strpos($act, 'boundary') !== false) {
-        return ['badge' => 'bg-purple-50 text-purple-900 border-purple-200', 'icon' => '🗺️'];
+        return ['badge' => 'bg-purple-50 text-purple-900 border-purple-200'];
     } elseif (strpos($act, 'schedule') !== false) {
-        return ['badge' => 'bg-amber-50 text-amber-900 border-amber-200', 'icon' => '📅'];
+        return ['badge' => 'bg-amber-50 text-amber-900 border-amber-200'];
     } elseif (strpos($act, 'export') !== false) {
-        return ['badge' => 'bg-teal-50 text-teal-900 border-teal-200', 'icon' => '📊'];
+        return ['badge' => 'bg-teal-50 text-teal-900 border-teal-200'];
     } else {
-        return ['badge' => 'bg-slate-100 text-slate-800 border-slate-200', 'icon' => '⚙️'];
+        return ['badge' => 'bg-slate-100 text-slate-800 border-slate-200'];
     }
 }
 ?>
@@ -133,20 +133,14 @@ function getActionMeta($action) {
                             <p class="text-2xl font-black text-slate-900"><?php echo number_format($stats['total']); ?></p>
                             <p class="text-[11px] font-semibold text-slate-500">Full audit history retention</p>
                         </div>
-                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center font-extrabold border border-slate-200">
-                            📁
-                        </div>
                     </div>
 
                     <!-- Today's Activity -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center justify-between">
                         <div class="space-y-1">
                             <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Today's Activity</p>
-                            <p class="text-2xl font-black text-emerald-800"><?php echo number_format($stats['today']); ?></p>
-                            <p class="text-[11px] font-semibold text-emerald-700">Events logged <?php echo date('M d, Y'); ?></p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 flex items-center justify-center font-extrabold border border-emerald-200">
-                            ⚡
+                            <p class="text-2xl font-black text-slate-900"><?php echo number_format($stats['today']); ?></p>
+                            <p class="text-[11px] font-semibold text-slate-700">Events logged <?php echo date('M d, Y'); ?></p>
                         </div>
                     </div>
 
@@ -154,11 +148,8 @@ function getActionMeta($action) {
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center justify-between">
                         <div class="space-y-1">
                             <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Successful Executions</p>
-                            <p class="text-2xl font-black text-blue-900"><?php echo number_format($stats['success']); ?></p>
+                            <p class="text-2xl font-black text-slate-900"><?php echo number_format($stats['success']); ?></p>
                             <p class="text-[11px] font-semibold text-slate-500">Verified &amp; confirmed actions</p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-800 flex items-center justify-center font-extrabold border border-blue-200">
-                            🛡️
                         </div>
                     </div>
 
@@ -166,11 +157,8 @@ function getActionMeta($action) {
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center justify-between">
                         <div class="space-y-1">
                             <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Active Actors</p>
-                            <p class="text-2xl font-black text-purple-900"><?php echo number_format($stats['unique_users_count']); ?></p>
-                            <p class="text-[11px] font-semibold text-purple-700">Staff &amp; admin accounts logged</p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-800 flex items-center justify-center font-extrabold border border-purple-200">
-                            👥
+                            <p class="text-2xl font-black text-slate-900"><?php echo number_format($stats['unique_users_count']); ?></p>
+                            <p class="text-[11px] font-semibold text-slate-700">Staff &amp; admin accounts logged</p>
                         </div>
                     </div>
                 </div>
@@ -299,9 +287,8 @@ function getActionMeta($action) {
 
                                             <!-- Action & Module -->
                                             <td class="px-5 py-3.5 whitespace-nowrap">
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-extrabold border <?php echo $meta['badge']; ?>">
-                                                    <span><?php echo $meta['icon']; ?></span>
-                                                    <span><?php echo htmlspecialchars($log['action']); ?></span>
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-extrabold border <?php echo $meta['badge']; ?>">
+                                                    <?php echo htmlspecialchars($log['action']); ?>
                                                 </span>
                                             </td>
 
@@ -341,7 +328,9 @@ function getActionMeta($action) {
                                 <?php else: ?>
                                     <tr id="emptyRow">
                                         <td colspan="7" class="px-6 py-12 text-center text-slate-400 space-y-2">
-                                            <div class="text-3xl">📁</div>
+                                            <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                            </div>
                                             <div class="text-sm font-extrabold text-slate-700">No system audit logs found</div>
                                             <div class="text-xs">Any future actions performed by administrators or system scripts will be logged here.</div>
                                         </td>
@@ -375,8 +364,8 @@ function getActionMeta($action) {
         <!-- Modal Header -->
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black">
-                    🔍
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </div>
                 <div>
                     <h3 class="text-base font-extrabold text-slate-900">Audit Log Forensic Record</h3>

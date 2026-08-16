@@ -65,9 +65,9 @@ $success = $data['success'] ?? '';
                         </span>
                     </div>
                     <p class="text-xs sm:text-sm text-emerald-200/90 font-medium"><?php echo htmlspecialchars($position); ?> · <?php echo htmlspecialchars($purok); ?></p>
-                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2 text-[11px] text-emerald-100/70 font-mono">
-                        <span>📧 <?php echo htmlspecialchars($email); ?></span>
-                        <span>📅 Registered <?php echo $formattedDate; ?></span>
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2 text-[11px] text-emerald-100/80 font-mono">
+                        <span class="inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <span><?php echo htmlspecialchars($email); ?></span></span>
+                        <span class="inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> <span>Registered <?php echo $formattedDate; ?></span></span>
                     </div>
                 </div>
             </div>

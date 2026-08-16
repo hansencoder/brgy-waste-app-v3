@@ -255,8 +255,8 @@ function getResidentReportBadge($status) {
                         <!-- Quick Guide / Reporting Tips Card -->
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-3.5">
                             <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm border border-emerald-100">
-                                    💡
+                                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
                                 </div>
                                 <div>
                                     <h3 class="text-sm font-extrabold text-slate-900">Waste Reporting Tips</h3>
@@ -283,7 +283,8 @@ function getResidentReportBadge($status) {
                         <!-- Eco Tip Card -->
                         <div class="bg-gradient-to-br from-[#0B2E22] to-[#083528] rounded-2xl p-5 text-white shadow-sm border border-emerald-900 space-y-3">
                             <div class="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-wider">
-                                <span>🌱 Eco Reminder</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 12 12"/></svg>
+                                <span>Eco Reminder</span>
                             </div>
                             <h4 class="text-sm font-extrabold text-white leading-snug">Segregate Waste at the Source</h4>
                             <p class="text-xs text-emerald-100/80 leading-relaxed font-medium">

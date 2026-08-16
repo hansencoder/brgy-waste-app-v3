@@ -67,8 +67,8 @@ $defaultWasteType = ['bg' => 'bg-slate-50 text-slate-700 border-slate-300', 'bad
                 <!-- Special Advisory Banner -->
                 <?php if ($special_notice): ?>
                     <div class="rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-xs flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg shrink-0 shadow-xs">
-                            ⚠️
+                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                         </div>
                         <div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-200 text-amber-900 mb-1">

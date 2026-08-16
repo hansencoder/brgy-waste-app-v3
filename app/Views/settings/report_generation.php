@@ -113,8 +113,8 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-6">
                                     <div class="border-b border-slate-100 pb-4">
                                         <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                                            <span>🏛️</span>
-                                            Dual Header Logos Customization
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>
+                                            <span>Dual Header Logos Customization</span>
                                         </h2>
                                         <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
                                             Upload official emblems shown at the top left and top right corners of all printed documents.
@@ -135,10 +135,10 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                                 <div class="w-16 h-16 rounded-full bg-white border-2 border-slate-300 overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                                                     <?php if (!empty($logoLeftUrl)): ?>
                                                         <img id="avatarLogoLeft" src="<?php echo htmlspecialchars($logoLeftUrl); ?>" class="w-full h-full object-cover">
-                                                        <span id="iconLogoLeft" class="text-2xl hidden">🏛️</span>
+                                                        <span id="iconLogoLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 hidden"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                                                     <?php else: ?>
                                                         <img id="avatarLogoLeft" src="" class="w-full h-full object-cover hidden">
-                                                        <span id="iconLogoLeft" class="text-2xl">🏛️</span>
+                                                        <span id="iconLogoLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                                                     <?php endif; ?>
                                                 </div>
 
@@ -168,10 +168,10 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                                 <div class="w-16 h-16 rounded-full bg-white border-2 border-slate-300 overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                                                     <?php if (!empty($logoRightUrl)): ?>
                                                         <img id="avatarLogoRight" src="<?php echo htmlspecialchars($logoRightUrl); ?>" class="w-full h-full object-cover">
-                                                        <span id="iconLogoRight" class="text-2xl hidden">🇵🇭</span>
+                                                        <span id="iconLogoRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 hidden"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>
                                                     <?php else: ?>
                                                         <img id="avatarLogoRight" src="" class="w-full h-full object-cover hidden">
-                                                        <span id="iconLogoRight" class="text-2xl">🇵🇭</span>
+                                                        <span id="iconLogoRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>
                                                     <?php endif; ?>
                                                 </div>
 
@@ -196,8 +196,8 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-5">
                                     <div class="border-b border-slate-100 pb-4">
                                         <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                                            <span>📜</span>
-                                            Official Letterhead Header Lines
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                            <span>Official Letterhead Header Lines</span>
                                         </h2>
                                         <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
                                             Arranged in standard Philippine Local Government Unit hierarchy.
@@ -249,8 +249,8 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-5">
                                     <div class="border-b border-slate-100 pb-4">
                                         <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                                            <span>✍️</span>
-                                            Signatories &amp; Authorization Blocks
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg>
+                                            <span>Signatories &amp; Authorization Blocks</span>
                                         </h2>
                                         <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
                                             Dual signature block for certified administrative officers and approving executive authorities.
@@ -333,8 +333,8 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <div class="bg-slate-900 rounded-2xl p-6 sm:p-7 text-white space-y-4 shadow-sm border border-slate-800">
                                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                                         <span class="text-xs font-extrabold text-purple-400 uppercase tracking-wider flex items-center gap-2">
-                                            <span>📄</span>
-                                            Live Official Document Letterhead Preview
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                            <span>Live Official Document Letterhead Preview</span>
                                         </span>
                                         <span class="text-xs font-mono text-slate-400">Print / PDF Output Simulation</span>
                                     </div>
@@ -348,7 +348,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                             <!-- Left Logo -->
                                             <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-slate-200 bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                                                 <img id="previewLogoLeft" src="<?php echo htmlspecialchars($logoLeftUrl); ?>" class="w-full h-full object-cover <?php echo empty($logoLeftUrl) ? 'hidden' : ''; ?>">
-                                                <span id="previewIconLeft" class="text-3xl <?php echo !empty($logoLeftUrl) ? 'hidden' : ''; ?>">🏛️</span>
+                                                <span id="previewIconLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 <?php echo !empty($logoLeftUrl) ? 'hidden' : ''; ?>"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                                             </div>
 
                                             <!-- Center Hierarchy Text -->
@@ -370,7 +370,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                             <!-- Right Logo -->
                                             <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-slate-200 bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                                                 <img id="previewLogoRight" src="<?php echo htmlspecialchars($logoRightUrl); ?>" class="w-full h-full object-cover <?php echo empty($logoRightUrl) ? 'hidden' : ''; ?>">
-                                                <span id="previewIconRight" class="text-3xl <?php echo !empty($logoRightUrl) ? 'hidden' : ''; ?>">🇵🇭</span>
+                                                <span id="previewIconRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 <?php echo !empty($logoRightUrl) ? 'hidden' : ''; ?>"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>
                                             </div>
 
                                         </div>

@@ -81,12 +81,14 @@
                                             <!-- Basemap Switcher Segmented Control -->
                                             <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-extrabold">
                                                 <button type="button" id="btnStreetBasemap" onclick="switchLandmarkBasemap('street')" 
-                                                        class="px-3 py-1.5 rounded-lg transition bg-white text-slate-900 shadow-xs border border-slate-200/80">
-                                                    🗺️ Clean Street
+                                                        class="px-3 py-1.5 rounded-lg transition bg-white text-slate-900 shadow-xs border border-slate-200/80 inline-flex items-center gap-1.5">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                                                    <span>Clean Street</span>
                                                 </button>
                                                 <button type="button" id="btnSatBasemap" onclick="switchLandmarkBasemap('satellite')" 
-                                                        class="px-3 py-1.5 rounded-lg transition text-slate-600 hover:text-slate-900">
-                                                    🛰️ Satellite View
+                                                        class="px-3 py-1.5 rounded-lg transition text-slate-600 hover:text-slate-900 inline-flex items-center gap-1.5">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                                                    <span>Satellite View</span>
                                                 </button>
                                             </div>
 
@@ -100,7 +102,7 @@
                                     <div class="flex items-center flex-wrap gap-4 text-xs sm:text-sm font-bold text-slate-700 pt-1">
                                         <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-xs border-2 border-emerald-600 bg-emerald-500/30"></span> Purok Boundary</span>
                                         <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-slate-900"></span> Landmark Pin</span>
-                                        <span class="flex items-center gap-2 text-slate-500">💡 Click any spot on the map to set landmark location.</span>
+                                        <span class="flex items-center gap-1.5 text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> Click any spot on the map to set landmark location.</span>
                                     </div>
                                 </div>
 
@@ -124,12 +126,12 @@
                                             <div>
                                                 <label class="block text-sm font-extrabold text-slate-900 mb-2">Category Type</label>
                                                 <select name="landmark_type" class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-250 rounded-xl text-sm font-bold text-slate-900 outline-none focus:bg-white focus:border-[#10B981]">
-                                                    <option value="Barangay Hall">🏛️ Barangay Hall</option>
-                                                    <option value="MRF">♻️ Material Recovery Facility</option>
-                                                    <option value="Collection Point">🗑️ Collection Point</option>
-                                                    <option value="Eco Center">🌿 Eco Center</option>
-                                                    <option value="Transfer Station">🚛 Transfer Station</option>
-                                                    <option value="Other">📍 Other Facility</option>
+                                                    <option value="Barangay Hall">Barangay Hall</option>
+                                                    <option value="MRF">Material Recovery Facility</option>
+                                                    <option value="Collection Point">Collection Point</option>
+                                                    <option value="Eco Center">Eco Center</option>
+                                                    <option value="Transfer Station">Transfer Station</option>
+                                                    <option value="Other">Other Facility</option>
                                                 </select>
                                             </div>
 
@@ -166,7 +168,9 @@
                                                         <form method="POST" class="shrink-0" onsubmit="return confirm('Delete this landmark?');">
                                                             <input type="hidden" name="delete_landmark" value="1">
                                                             <input type="hidden" name="landmark_id" value="<?php echo $lm['landmark_id']; ?>">
-                                                            <button type="submit" class="h-8 w-8 flex items-center justify-center bg-red-50 text-red-700 hover:bg-red-100 rounded-xl text-sm font-extrabold transition border border-red-250">✕</button>
+                                                            <button type="submit" class="h-8 w-8 flex items-center justify-center bg-red-50 text-red-700 hover:bg-red-100 rounded-xl transition border border-red-250 cursor-pointer">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                                            </button>
                                                         </form>
                                                     </div>
                                                 <?php endforeach; ?>

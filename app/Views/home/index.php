@@ -573,8 +573,8 @@ foreach ($publicReports as $pr) {
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-100">
-                            🟢 Biodegradable
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-100 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block"></span> Biodegradable
                         </span>
                         <span class="text-[11px] text-slate-400">Nabubulok</span>
                     </div>
@@ -591,8 +591,9 @@ foreach ($publicReports as $pr) {
                         </ul>
                     </div>
                 </div>
-                <div class="bg-emerald-50/70 rounded-xl p-2.5 text-[11px] text-emerald-900">
-                    💡 <em>Tip:</em> Keep in a covered bin to prevent flies; ideal for backyard composting.
+                <div class="bg-emerald-50/70 rounded-xl p-2.5 text-[11px] text-emerald-900 flex items-start gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                    <span><em>Tip:</em> Keep in a covered bin to prevent flies; ideal for backyard composting.</span>
                 </div>
             </div>
 
@@ -600,8 +601,8 @@ foreach ($publicReports as $pr) {
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-100">
-                            🔵 Recyclable
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-100 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-600 inline-block"></span> Recyclable
                         </span>
                         <span class="text-[11px] text-slate-400">Pang-Recycle</span>
                     </div>
@@ -618,8 +619,9 @@ foreach ($publicReports as $pr) {
                         </ul>
                     </div>
                 </div>
-                <div class="bg-blue-50/70 rounded-xl p-2.5 text-[11px] text-blue-900">
-                    💡 <em>Tip:</em> Rinse and dry beverage bottles before placing in recycling bins.
+                <div class="bg-blue-50/70 rounded-xl p-2.5 text-[11px] text-blue-900 flex items-start gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-blue-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                    <span><em>Tip:</em> Rinse and dry beverage bottles before placing in recycling bins.</span>
                 </div>
             </div>
 
@@ -627,8 +629,8 @@ foreach ($publicReports as $pr) {
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-100">
-                            🟡 Residual Waste
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-100 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span> Residual Waste
                         </span>
                         <span class="text-[11px] text-slate-400">Di-Nabubulok</span>
                     </div>
@@ -645,8 +647,9 @@ foreach ($publicReports as $pr) {
                         </ul>
                     </div>
                 </div>
-                <div class="bg-amber-50/70 rounded-xl p-2.5 text-[11px] text-amber-950">
-                    💡 <em>Tip:</em> Pack tightly in durable, tied trash bags to avoid spillage.
+                <div class="bg-amber-50/70 rounded-xl p-2.5 text-[11px] text-amber-950 flex items-start gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                    <span><em>Tip:</em> Pack tightly in durable, tied trash bags to avoid spillage.</span>
                 </div>
             </div>
 
@@ -654,8 +657,8 @@ foreach ($publicReports as $pr) {
             <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-purple-50 text-purple-900 border border-purple-100">
-                            🟣 Special / Toxic
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-purple-50 text-purple-900 border border-purple-100 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-600 inline-block"></span> Special / Toxic
                         </span>
                         <span class="text-[11px] text-slate-400">Mapanganib</span>
                     </div>
@@ -672,8 +675,9 @@ foreach ($publicReports as $pr) {
                         </ul>
                     </div>
                 </div>
-                <div class="bg-purple-50/70 rounded-xl p-2.5 text-[11px] text-purple-950">
-                    ⚠️ <em>Caution:</em> Never mix with regular trash; wrap broken glass and bring to MRF.
+                <div class="bg-purple-50/70 rounded-xl p-2.5 text-[11px] text-purple-950 flex items-start gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-purple-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span><em>Caution:</em> Never mix with regular trash; wrap broken glass and bring to MRF.</span>
                 </div>
             </div>
 
@@ -681,8 +685,9 @@ foreach ($publicReports as $pr) {
 
         <!-- 4 Practical Community Tips Cards -->
         <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-2xs">
-            <h3 class="text-base font-bold text-slate-900 mb-5">
-                💡 Best Practices for Barangay <?php echo htmlspecialchars($barangayName); ?> Households
+            <h3 class="text-base font-bold text-slate-900 mb-5 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                <span>Best Practices for Barangay <?php echo htmlspecialchars($barangayName); ?> Households</span>
             </h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -737,8 +742,8 @@ foreach ($publicReports as $pr) {
         <!-- Law Summary Alert -->
         <div class="bg-red-50/60 rounded-2xl border border-red-200 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-xs">
-                    ⚖️
+                <div class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-red-950">Strict Enforcement Policy</h3>
@@ -950,8 +955,8 @@ foreach ($publicReports as $pr) {
         <!-- CRITICAL NOTES ON GARBAGE COLLECTION -->
         <div class="bg-[#0B2E22] rounded-2xl p-5 sm:p-7 text-white shadow-sm space-y-5">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold text-base border border-emerald-500/30">
-                    📋
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center border border-emerald-500/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
                 </div>
                 <div>
                     <h3 class="text-base sm:text-lg font-bold text-white">Important Notes on Garbage Collection</h3>
@@ -1526,7 +1531,7 @@ foreach ($publicReports as $pr) {
                             <span style="font-size: 10px; color: #94A3B8;">${r.date}</span>
                         </div>
                         <h4 style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0 0 2px 0; line-height: 1.3;">${r.category}</h4>
-                        <p style="font-size: 11px; color: #64748B; margin: 0 0 6px 0;">📍 ${r.purok}</p>
+                        <p style="font-size: 11px; color: #64748B; margin: 0 0 6px 0; display: flex; align-items: center; gap: 4px;"><svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='#64748B' stroke-width='2.5'><path d='M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z'/><circle cx='12' cy='10' r='3'/></svg> ${r.purok}</p>
                         <p style="font-size: 11px; color: #475569; margin: 0 0 8px 0; line-height: 1.4;">${r.desc}</p>
                         <a href="/brgy-waste-app-v3/public/index.php?url=guest/track&track_id=${r.id}" style="display: inline-block; font-size: 11px; font-weight: 700; color: #10B981; text-decoration: none;">Track Incident →</a>
                     </div>

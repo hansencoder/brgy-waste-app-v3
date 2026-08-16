@@ -6,6 +6,15 @@ class GuestController extends Controller {
     private $db;
 
     public function __construct() {
+        // Block guest flows during maintenance mode
+        // (init.php covers page routes; this covers any direct instantiation)
+        require_once '../app/Models/SystemMaintenance.php';
+        $_guestMaintenance = new SystemMaintenance();
+        if ($_guestMaintenance->isMaintenanceActive()) {
+            header('Location: /brgy-waste-app-v3/public/index.php?url=maintenance');
+            exit;
+        }
+
         $this->reportModel = $this->model('Report');
         $this->db = new Database();
     }

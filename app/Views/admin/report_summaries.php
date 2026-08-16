@@ -454,7 +454,7 @@ function statusBadgeClass($status) {
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                                 <?php if (!empty($decisionSupport['highest_hotspot'])): ?>
                                     <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-start gap-2.5 shadow-2xs">
-                                        <span class="text-red-600 text-sm mt-0.5">⚠️</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                         <div>
                                             <p class="font-extrabold text-slate-900">Highest Hotspot</p>
                                             <p class="text-slate-600 font-semibold mt-0.5"><?php echo htmlspecialchars($decisionSupport['highest_hotspot']['purok_name']); ?> (<?php echo $decisionSupport['highest_hotspot']['report_count']; ?> incidents)</p>
@@ -463,7 +463,7 @@ function statusBadgeClass($status) {
                                 <?php endif; ?>
 
                                 <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-start gap-2.5 shadow-2xs">
-                                    <span class="text-emerald-700 text-sm mt-0.5">📊</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                                     <div>
                                         <p class="font-extrabold text-slate-900">Volume Trend</p>
                                         <p class="text-slate-600 font-semibold mt-0.5">

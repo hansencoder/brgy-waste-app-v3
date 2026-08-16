@@ -107,7 +107,7 @@ if ($userId) {
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 overflow-hidden animate-fadeIn">
         <div class="px-5 py-4 bg-emerald-900 text-white flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <span class="text-lg">📢</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                 <h3 class="text-sm font-extrabold">Broadcast Instant Alert</h3>
             </div>
             <button onclick="closeBroadcastModal()" class="text-emerald-200 hover:text-white transition">
@@ -118,9 +118,9 @@ if ($userId) {
             <div>
                 <label class="block text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-1.5">Alert Type</label>
                 <select id="broadcastType" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-800 bg-slate-50 focus:bg-white outline-none">
-                    <option value="system">⚠️ System Advisory / Emergency</option>
-                    <option value="announcement">📢 Public Announcement</option>
-                    <option value="report_update">🚛 Waste Collection Notice</option>
+                    <option value="system">System Advisory / Emergency</option>
+                    <option value="announcement">Public Announcement</option>
+                    <option value="report_update">Waste Collection Notice</option>
                 </select>
             </div>
             <div>
@@ -228,28 +228,28 @@ if ($userId) {
         switch (type) {
             case 'report_update':
                 return {
-                    icon: '🚨',
+                    svg: '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
                     badge: 'Report',
                     badgeClass: 'bg-emerald-100 text-emerald-900 border-emerald-300',
                     bg: 'hover:border-emerald-300'
                 };
             case 'announcement':
                 return {
-                    icon: '📢',
+                    svg: '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
                     badge: 'Advisory',
                     badgeClass: 'bg-amber-100 text-amber-900 border-amber-300',
                     bg: 'hover:border-amber-300'
                 };
             case 'account':
                 return {
-                    icon: '👤',
+                    svg: '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-sky-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
                     badge: 'Account',
                     badgeClass: 'bg-sky-100 text-sky-900 border-sky-300',
                     bg: 'hover:border-sky-300'
                 };
             default:
                 return {
-                    icon: '⚙️',
+                    svg: '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
                     badge: 'System Log',
                     badgeClass: 'bg-purple-100 text-purple-900 border-purple-300',
                     bg: 'hover:border-purple-300'
@@ -278,8 +278,8 @@ if ($userId) {
         if (filtered.length === 0) {
             container.innerHTML = `
                 <div class="py-12 px-4 text-center space-y-2">
-                    <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-xl">
-                        🔔
+                    <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                     </div>
                     <h4 class="text-xs font-extrabold text-slate-700">No notifications found</h4>
                     <p class="text-[11px] font-semibold text-slate-400">There are no alerts matching your current filter.</p>
@@ -297,8 +297,8 @@ if ($userId) {
             return `
                 <div class="relative p-3.5 rounded-2xl border transition-all ${isRead ? 'bg-white border-slate-200' : 'bg-emerald-50/40 border-emerald-200 shadow-2xs'} ${meta.bg} group">
                     <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 text-base shadow-2xs">
-                            ${meta.icon}
+                        <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 shadow-2xs">
+                            ${meta.svg}
                         </div>
                         <div class="flex-1 min-w-0 space-y-1">
                             <div class="flex items-center justify-between gap-1">

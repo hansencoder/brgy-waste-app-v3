@@ -112,7 +112,7 @@ if (!empty($timeline)) {
                         <!-- Step 1: Submitted -->
                         <div class="text-center space-y-1.5">
                             <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 1 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'; ?>">
-                                ✓
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                             </div>
                             <p class="text-xs font-bold text-slate-900">Submitted</p>
                             <p class="text-[10px] text-slate-400">Incident logged</p>
@@ -120,7 +120,9 @@ if (!empty($timeline)) {
                         <!-- Step 2: Verified -->
                         <div class="text-center space-y-1.5">
                             <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 2 ? 'bg-emerald-600 text-white' : ($currentStep === 1 ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-400'); ?>">
-                                <?php echo $currentStep >= 2 ? '✓' : '2'; ?>
+                                <?php if ($currentStep >= 2): ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <?php else: echo '2'; endif; ?>
                             </div>
                             <p class="text-xs font-bold text-slate-900">Verified</p>
                             <p class="text-[10px] text-slate-400">Admin confirmed</p>
@@ -128,7 +130,9 @@ if (!empty($timeline)) {
                         <!-- Step 3: In Progress -->
                         <div class="text-center space-y-1.5">
                             <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 3 ? 'bg-emerald-600 text-white' : ($currentStep === 2 ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-400'); ?>">
-                                <?php echo $currentStep >= 3 ? '✓' : '3'; ?>
+                                <?php if ($currentStep >= 3): ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <?php else: echo '3'; endif; ?>
                             </div>
                             <p class="text-xs font-bold text-slate-900">Dispatched</p>
                             <p class="text-[10px] text-slate-400">Truck en route</p>
@@ -136,7 +140,9 @@ if (!empty($timeline)) {
                         <!-- Step 4: Resolved -->
                         <div class="text-center space-y-1.5">
                             <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 4 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'; ?>">
-                                <?php echo $currentStep >= 4 ? '✓' : '4'; ?>
+                                <?php if ($currentStep >= 4): ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <?php else: echo '4'; endif; ?>
                             </div>
                             <p class="text-xs font-bold text-slate-900">Resolved</p>
                             <p class="text-[10px] text-slate-400">Site cleaned</p>
@@ -161,8 +167,9 @@ if (!empty($timeline)) {
                                 <?php if (!empty($imgPath)): ?>
                                     <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Report Evidence" class="max-h-96 w-auto rounded-xl object-contain shadow-md bg-white">
                                 <?php else: ?>
-                                    <div class="py-16 text-center text-slate-400 text-xs">
-                                        📷 No photo attached to this report.
+                                    <div class="py-16 text-center text-slate-400 text-xs flex items-center justify-center gap-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                        <span>No photo attached to this report.</span>
                                     </div>
                                 <?php endif; ?>
                             </div>

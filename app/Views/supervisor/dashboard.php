@@ -77,7 +77,7 @@ function getSupervisorStatusBadge($status) {
                             <span>Live Operational Monitoring</span>
                         </div>
                         <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                            Welcome back, <?php echo htmlspecialchars($firstName); ?> 👋
+                            Welcome back, <?php echo htmlspecialchars($firstName); ?>
                         </h1>
                         <p class="text-xs sm:text-sm text-emerald-100/70 max-w-xl leading-relaxed">
                             Overview of field incidents, verification queues, and resolution progress across Barangay <?php echo htmlspecialchars($sideBrgyName); ?>.
@@ -252,8 +252,9 @@ function getSupervisorStatusBadge($status) {
                                         <span class="font-mono text-xs font-semibold text-emerald-800">WR-<?php echo str_pad($report['id'], 4, '0', STR_PAD_LEFT); ?></span>
                                         <span class="text-xs font-bold text-slate-800 truncate"><?php echo htmlspecialchars($report['category'] ?? 'General Issue'); ?></span>
                                     </div>
-                                    <p class="text-[11px] text-slate-500 mt-0.5 truncate">
-                                        📍 <?php echo htmlspecialchars($report['purok'] ?? 'Barangay Wide'); ?>
+                                    <p class="text-[11px] text-slate-500 mt-0.5 truncate flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        <span><?php echo htmlspecialchars($report['purok'] ?? 'Barangay Wide'); ?></span>
                                         <?php if (!empty($report['submission_date'])): ?>
                                             · <?php echo date('M j, g:i A', strtotime($report['submission_date'])); ?>
                                         <?php endif; ?>

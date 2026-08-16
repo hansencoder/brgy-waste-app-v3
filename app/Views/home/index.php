@@ -754,144 +754,55 @@ foreach ($publicReports as $pr) {
 
         <!-- Prohibitions Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            
-            <!-- Violation 1: Littering -->
-            <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-red-600">Offense 01</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800">RA 9003 Sec. 48(1)</span>
-                    </div>
-                    <h4 class="text-sm font-bold text-slate-900">Littering &amp; Illegal Dumping</h4>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Littering, throwing, or dumping waste in streets, sidewalks, canals, vacant lots, and public parks.</p>
-                </div>
 
-                <div class="pt-3 border-t border-slate-200 space-y-1 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Fine:</span>
-                        <span class="font-semibold text-red-700">₱300 – ₱1,000</span>
+            <?php if (!empty($penaltyRules)): ?>
+                <?php foreach ($penaltyRules as $rule): ?>
+                <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-red-600">
+                                Offense <?php echo str_pad((int)$rule['offense_no'], 2, '0', STR_PAD_LEFT); ?>
+                            </span>
+                            <?php if (!empty($rule['legal_ref'])): ?>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800">
+                                    <?php echo htmlspecialchars($rule['legal_ref']); ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900"><?php echo htmlspecialchars($rule['title']); ?></h4>
+                        <?php if (!empty($rule['description'])): ?>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed"><?php echo htmlspecialchars($rule['description']); ?></p>
+                        <?php endif; ?>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Alternative:</span>
-                        <span class="text-slate-700">1 to 15 days Community Service</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Violation 2: Open Burning (Siga) -->
-            <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-red-600">Offense 02</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800">RA 9003 Sec. 48(3)</span>
+                    <?php if (!empty($rule['fine_range']) || !empty($rule['alt_penalty'])): ?>
+                    <div class="pt-3 border-t border-slate-200 space-y-1 text-xs">
+                        <?php if (!empty($rule['fine_range'])): ?>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Fine:</span>
+                            <span class="font-semibold text-red-700"><?php echo htmlspecialchars($rule['fine_range']); ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($rule['alt_penalty'])): ?>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Alternative:</span>
+                            <span class="text-slate-700"><?php echo htmlspecialchars($rule['alt_penalty']); ?></span>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <h4 class="text-sm font-bold text-slate-900">Open Burning (<em>Pagsisiga</em>)</h4>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Burning of leaves, plastics, garbage, or dried waste which causes hazardous toxic smoke and air pollution.</p>
+                    <?php endif; ?>
                 </div>
+                <?php endforeach; ?>
 
-                <div class="pt-3 border-t border-slate-200 space-y-1 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Fine:</span>
-                        <span class="font-semibold text-red-700">₱300 – ₱1,000</span>
+            <?php else: ?>
+                <div class="col-span-full text-center py-12 bg-slate-50 rounded-2xl border border-slate-200">
+                    <div class="w-12 h-12 rounded-2xl bg-red-50 border-2 border-red-100 flex items-center justify-center mx-auto mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Penalty:</span>
-                        <span class="text-slate-700">1 to 15 days Imprisonment / Service</span>
-                    </div>
+                    <p class="text-sm font-bold text-slate-600">No penalty rules published yet.</p>
+                    <p class="text-xs text-slate-400 mt-1">Administrators can add rules from Settings → Rules &amp; Penalties.</p>
                 </div>
-            </div>
-
-            <!-- Violation 3: Non-Segregation -->
-            <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-red-600">Offense 03</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800">Ordinance No. 04</span>
-                    </div>
-                    <h4 class="text-sm font-bold text-slate-900">Non-Segregation of Waste</h4>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Mixing biodegradable and non-biodegradable waste in a single bag or container prior to collection.</p>
-                </div>
-
-                <div class="pt-3 border-t border-slate-200 space-y-1 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Direct Action:</span>
-                        <span class="font-semibold text-amber-700">Refusal of Garbage Collection</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Repeat Offense:</span>
-                        <span class="font-semibold text-red-700">₱500 Fine per violation</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Violation 4: Dumping in Waterways -->
-            <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-red-600">Offense 04</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800">Clean Water Act</span>
-                    </div>
-                    <h4 class="text-sm font-bold text-slate-900">Dumping in Creeks &amp; Canals</h4>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Throwing waste in drainage canals, esteros, irrigation lines, or rivers causing clogging and flooding.</p>
-                </div>
-
-                <div class="pt-3 border-t border-slate-200 space-y-1 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Fine:</span>
-                        <span class="font-semibold text-red-700">₱1,000 – ₱5,000</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Legal Action:</span>
-                        <span class="text-slate-700">Formal Municipal Prosecution</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Violation 5: Commercial Waste Dumping -->
-            <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-red-600">Offense 05</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800">Business Permit Reg.</span>
-                    </div>
-                    <h4 class="text-sm font-bold text-slate-900">Commercial Waste Misconduct</h4>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Businesses dumping industrial or commercial refuse into standard residential roadside bins.</p>
-                </div>
-
-                <div class="pt-3 border-t border-slate-200 space-y-1 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Fine:</span>
-                        <span class="font-semibold text-red-700">₱2,500 – ₱5,000</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Sanction:</span>
-                        <span class="text-slate-700">Revocation of Business Permit</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Violation 6: Early/Late Bin Dumping -->
-            <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-red-600">Offense 06</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800">Barangay Code</span>
-                    </div>
-                    <h4 class="text-sm font-bold text-slate-900">Untimely Roadside Dumping</h4>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Leaving garbage bags on streets on non-collection days or overnight where stray animals can scatter trash.</p>
-                </div>
-
-                <div class="pt-3 border-t border-slate-200 space-y-1 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">1st Warning:</span>
-                        <span class="font-medium text-amber-700">Written Notice</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500">Subsequent:</span>
-                        <span class="font-semibold text-red-700">₱300 Citation Ticket</span>
-                    </div>
-                </div>
-            </div>
+            <?php endif; ?>
 
         </div>
 
@@ -916,37 +827,124 @@ foreach ($publicReports as $pr) {
         </div>
 
         <!-- Schedule Cards Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <?php if (!empty($schedules)): ?>
                 <?php foreach ($schedules as $schedule):
                     $day = $schedule['collection_day'];
                     $wasteType = $schedule['waste_type'] ?? 'General';
-                    $style = $wasteTypeColors[$wasteType] ?? ['bg' => 'bg-slate-100 text-slate-700', 'accent' => 'border-l-slate-400', 'badge' => 'bg-slate-100 text-slate-700'];
                     $start = date('g:i A', strtotime($schedule['start_time']));
                     $end = date('g:i A', strtotime($schedule['end_time']));
                     $puroks = $schedule['puroks'] ?? 'All Puroks';
+
+                    // Dynamic theme configuration per waste type
+                    $wtLower = strtolower(trim($wasteType));
+                    if (strpos($wtLower, 'bio') !== false && strpos($wtLower, 'non') === false) {
+                        $topGrad = 'from-emerald-500 to-teal-400';
+                        $badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200/80';
+                        $dotColor = 'bg-emerald-500';
+                    } elseif (strpos($wtLower, 'non-bio') !== false || strpos($wtLower, 'recyc') !== false) {
+                        $topGrad = 'from-blue-500 to-cyan-400';
+                        $badgeStyle = 'bg-blue-50 text-blue-800 border-blue-200/80';
+                        $dotColor = 'bg-blue-500';
+                    } elseif (strpos($wtLower, 'resid') !== false) {
+                        $topGrad = 'from-amber-500 to-orange-400';
+                        $badgeStyle = 'bg-amber-50 text-amber-900 border-amber-200/80';
+                        $dotColor = 'bg-amber-500';
+                    } elseif (strpos($wtLower, 'hazard') !== false || strpos($wtLower, 'special') !== false || strpos($wtLower, 'toxic') !== false) {
+                        $topGrad = 'from-purple-500 to-pink-400';
+                        $badgeStyle = 'bg-purple-50 text-purple-900 border-purple-200/80';
+                        $dotColor = 'bg-purple-500';
+                    } else {
+                        $topGrad = 'from-slate-600 to-slate-400';
+                        $badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+                        $dotColor = 'bg-slate-500';
+                    }
                 ?>
-                <div class="bg-white rounded-2xl border border-slate-200 border-l-4 <?php echo $style['accent']; ?> p-4 sm:p-5 shadow-2xs flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-base font-bold text-slate-900"><?php echo htmlspecialchars($day); ?></span>
-                            <span class="inline-flex rounded px-2 py-0.5 text-[10px] font-semibold <?php echo $style['badge']; ?>">
+                <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                    
+                    <!-- Top Gradient Accent Line -->
+                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r <?php echo $topGrad; ?> opacity-80 group-hover:opacity-100 transition-opacity"></div>
+
+                    <div class="space-y-4">
+                        <!-- Top Row: Day + Waste Type Tag -->
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col items-center justify-center shadow-2xs group-hover:bg-slate-100 transition-colors shrink-0">
+                                    <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 leading-none"><?php echo strtoupper(substr($day, 0, 3)); ?></span>
+                                    <svg class="w-3.5 h-3.5 text-slate-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="16" y1="2" x2="16" y2="6"/>
+                                        <line x1="8" y1="2" x2="8" y2="6"/>
+                                        <line x1="3" y1="10" x2="21" y2="10"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900 tracking-tight leading-tight"><?php echo htmlspecialchars($day); ?></h3>
+                                    <span class="text-[11px] text-slate-400 font-medium">Weekly Route</span>
+                                </div>
+                            </div>
+
+                            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] sm:text-[11px] font-semibold <?php echo $badgeStyle; ?> border shrink-0">
+                                <span class="w-1.5 h-1.5 rounded-full <?php echo $dotColor; ?>"></span>
                                 <?php echo htmlspecialchars($wasteType); ?>
                             </span>
                         </div>
-                        <p class="text-xs font-medium text-emerald-700 font-mono"><?php echo $start; ?> – <?php echo $end; ?></p>
-                        <p class="text-xs text-slate-500 mt-1 flex items-start gap-1">
-                            <span>📍</span>
-                            <span><?php echo htmlspecialchars($puroks); ?></span>
-                        </p>
+
+                        <!-- Pickup Window Pill -->
+                        <div class="bg-slate-50/80 rounded-2xl p-3 border border-slate-100 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block leading-none mb-0.5">Pickup Time</span>
+                                    <span class="text-xs font-bold font-mono text-slate-900 truncate block"><?php echo $start; ?> – <?php echo $end; ?></span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100 shrink-0">Active</span>
+                        </div>
+
+                        <!-- Designated Puroks -->
+                        <div class="space-y-1.5 pt-0.5">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-rose-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 21s-6-5.333-6-10a6 6 0 0 1 12 0c0 4.667-6 10-6 10z"/>
+                                    <circle cx="12" cy="11" r="2"/>
+                                </svg>
+                                Coverage Areas
+                            </span>
+                            <p class="text-xs font-medium text-slate-700 leading-snug">
+                                <?php echo htmlspecialchars($puroks); ?>
+                            </p>
+                        </div>
+
+                        <!-- Special Notes Banner (if any) -->
+                        <?php if (!empty($schedule['special_notes'])): ?>
+                            <div class="bg-amber-50/90 border border-amber-200/70 rounded-2xl p-2.5 flex items-start gap-2 text-xs text-amber-900 leading-relaxed">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-600 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <span class="text-[11px] font-medium"><?php echo htmlspecialchars($schedule['special_notes']); ?></span>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                    <?php if (!empty($schedule['special_notes'])): ?>
-                        <p class="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-lg font-medium"><?php echo htmlspecialchars($schedule['special_notes']); ?></p>
-                    <?php endif; ?>
+
+                    <!-- Footer Route Indicator -->
+                    <div class="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                        <span class="font-medium">Scheduled Route</span>
+                        <span class="text-emerald-800 font-semibold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Regular Service
+                        </span>
+                    </div>
+
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <div class="col-span-full text-center text-slate-400 py-8 bg-white rounded-2xl border border-slate-200 text-xs">Schedule not published yet — check back soon.</div>
+                <div class="col-span-full text-center text-slate-400 py-10 bg-white rounded-3xl border border-slate-200 text-xs shadow-xs">Schedule not published yet — check back soon.</div>
             <?php endif; ?>
         </div>
 
@@ -963,35 +961,21 @@ foreach ($publicReports as $pr) {
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-1 border-t border-emerald-900/80 text-xs leading-relaxed">
-                <div class="space-y-1 bg-white/5 p-3.5 rounded-xl border border-white/5">
-                    <p class="font-semibold text-emerald-300 text-xs sm:text-sm">1. "No Segregation, No Collection"</p>
-                    <p class="text-emerald-100/70">Garbage collectors will strictly NOT pick up mixed waste bags. Separate your biodegradable and recyclable bins accordingly.</p>
-                </div>
-
-                <div class="space-y-1 bg-white/5 p-3.5 rounded-xl border border-white/5">
-                    <p class="font-semibold text-emerald-300 text-xs sm:text-sm">2. 6:00 AM Placement Rule</p>
-                    <p class="text-emerald-100/70">Place your bins curbside between 5:30 AM and 6:00 AM on scheduled days. Do not leave bins out the evening before to prevent animal scavenging.</p>
-                </div>
-
-                <div class="space-y-1 bg-white/5 p-3.5 rounded-xl border border-white/5">
-                    <p class="font-semibold text-emerald-300 text-xs sm:text-sm">3. Container Requirements</p>
-                    <p class="text-emerald-100/70">Use tied durable garbage bags or covered plastic trash cans. Do not place loose trash directly on street corners or drainage grills.</p>
-                </div>
-
-                <div class="space-y-1 bg-white/5 p-3.5 rounded-xl border border-white/5">
-                    <p class="font-semibold text-emerald-300 text-xs sm:text-sm">4. Bulky Waste &amp; Construction Debris</p>
-                    <p class="text-emerald-100/70">Tree branches, old furniture, and construction rubble (<em>hollow blocks, cement</em>) are NOT part of regular truck routes. Contact the Barangay Hall for special haul requests.</p>
-                </div>
-
-                <div class="space-y-1 bg-white/5 p-3.5 rounded-xl border border-white/5">
-                    <p class="font-semibold text-emerald-300 text-xs sm:text-sm">5. Inclement Weather / Holiday Advisories</p>
-                    <p class="text-emerald-100/70">During typhoons or public holidays, collection may be adjusted. Check the Bulletins section on this portal for official reschedule announcements.</p>
-                </div>
-
-                <div class="space-y-1 bg-white/5 p-3.5 rounded-xl border border-white/5">
-                    <p class="font-semibold text-emerald-300 text-xs sm:text-sm">6. Missed Collection Hotline</p>
-                    <p class="text-emerald-100/70">If your street was missed on the scheduled day, log a report via this app or call the barangay waste desk at <strong class="text-white"><?php echo htmlspecialchars($barangayContact); ?></strong>.</p>
-                </div>
+                <?php if (!empty($collectionNotes)): ?>
+                    <?php foreach ($collectionNotes as $idx => $note): ?>
+                        <div class="space-y-1 bg-white/5 p-3.5 rounded-xl border border-white/5">
+                            <p class="font-semibold text-emerald-300 text-xs sm:text-sm">
+                                <?php echo ($idx + 1) . '. ' . htmlspecialchars($note['title']); ?>
+                            </p>
+                            <p class="text-emerald-100/70"><?php echo htmlspecialchars($note['content']); ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-span-full flex flex-col items-center justify-center py-8 text-center space-y-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-600/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        <p class="text-xs text-emerald-300/60 font-semibold">No collection notes published yet.<br>Add them from Settings → Collection Notes.</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 

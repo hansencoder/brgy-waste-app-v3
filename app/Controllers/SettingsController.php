@@ -734,4 +734,354 @@ class SettingsController extends Controller {
 
         $this->view('settings/purok_boundaries', $data);
     }
-}
+
+    // ============================================================
+    // 8. BARANGAY RULES & PENALTIES
+    // ============================================================
+
+    public function penalty_rules() {
+        $db   = new Database();
+        $data = ['error' => '', 'success' => ''];
+
+        // Auto-migrate: create table if not exists
+        $db->query("CREATE TABLE IF NOT EXISTS penalty_rules (
+            rule_id     INT AUTO_INCREMENT PRIMARY KEY,
+            offense_no  INT NOT NULL DEFAULT 0,
+            title       VARCHAR(255) NOT NULL,
+            description TEXT,
+            legal_ref   VARCHAR(150),
+            fine_range  VARCHAR(150),
+            alt_penalty VARCHAR(255),
+            is_active   TINYINT(1) NOT NULL DEFAULT 1,
+            sort_order  INT NOT NULL DEFAULT 0,
+            created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $db->execute();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            // ── Add Rule ────────────────────────────────────────
+            if (isset($_POST['add_rule'])) {
+                $offense_no  = (int)($_POST['offense_no']  ?? 0);
+                $title       = trim($_POST['title']       ?? '');
+                $description = trim($_POST['description'] ?? '');
+                $legal_ref   = trim($_POST['legal_ref']   ?? '');
+                $fine_range  = trim($_POST['fine_range']  ?? '');
+                $alt_penalty = trim($_POST['alt_penalty'] ?? '');
+                if (!empty($title)) {
+                    $db->query("INSERT INTO penalty_rules (offense_no, title, description, legal_ref, fine_range, alt_penalty) VALUES (:offense_no, :title, :desc, :legal_ref, :fine_range, :alt_penalty)");
+                    $db->bind(':offense_no',  $offense_no);
+                    $db->bind(':title',       $title);
+                    $db->bind(':desc',        $description);
+                    $db->bind(':legal_ref',   $legal_ref);
+                    $db->bind(':fine_range',  $fine_range);
+                    $db->bind(':alt_penalty', $alt_penalty);
+                    if ($db->execute()) {
+                        $data['success'] = "Rule '{$title}' added successfully.";
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Add Penalty Rule', 'Settings', "Added rule: $title", 'success');
+                    } else {
+                        $data['error'] = 'Failed to add rule.';
+                    }
+                } else {
+                    $data['error'] = 'Rule title is required.';
+                }
+            }
+
+            // ── Edit Rule ────────────────────────────────────────
+            if (isset($_POST['edit_rule'])) {
+                $rule_id     = (int)($_POST['rule_id']    ?? 0);
+                $offense_no  = (int)($_POST['offense_no'] ?? 0);
+                $title       = trim($_POST['title']       ?? '');
+                $description = trim($_POST['description'] ?? '');
+                $legal_ref   = trim($_POST['legal_ref']   ?? '');
+                $fine_range  = trim($_POST['fine_range']  ?? '');
+                $alt_penalty = trim($_POST['alt_penalty'] ?? '');
+                $is_active   = isset($_POST['is_active']) ? 1 : 0;
+                if ($rule_id && !empty($title)) {
+                    $db->query("UPDATE penalty_rules SET offense_no=:offense_no, title=:title, description=:desc, legal_ref=:legal_ref, fine_range=:fine_range, alt_penalty=:alt_penalty, is_active=:is_active WHERE rule_id=:rule_id");
+                    $db->bind(':offense_no',  $offense_no);
+                    $db->bind(':title',       $title);
+                    $db->bind(':desc',        $description);
+                    $db->bind(':legal_ref',   $legal_ref);
+                    $db->bind(':fine_range',  $fine_range);
+                    $db->bind(':alt_penalty', $alt_penalty);
+                    $db->bind(':is_active',   $is_active);
+                    $db->bind(':rule_id',     $rule_id);
+                    if ($db->execute()) {
+                        $data['success'] = "Rule updated.";
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Edit Penalty Rule', 'Settings', "Edited rule ID $rule_id", 'success');
+                    } else {
+                        $data['error'] = 'Failed to update rule.';
+                    }
+                }
+            }
+
+            // ── Delete Rule ──────────────────────────────────────
+            if (isset($_POST['delete_rule'])) {
+                $rule_id = (int)($_POST['rule_id'] ?? 0);
+                if ($rule_id) {
+                    $db->query("DELETE FROM penalty_rules WHERE rule_id = :rule_id");
+                    $db->bind(':rule_id', $rule_id);
+                    if ($db->execute()) {
+                        $data['success'] = 'Rule deleted.';
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Delete Penalty Rule', 'Settings', "Deleted rule ID $rule_id", 'success');
+                    } else {
+                        $data['error'] = 'Failed to delete rule.';
+                    }
+                }
+            }
+        }
+
+        $db->query("SELECT * FROM penalty_rules ORDER BY offense_no ASC, sort_order ASC, rule_id ASC");
+        $data['rules'] = $db->resultSet();
+        $this->view('settings/penalty_rules', $data);
+    }
+
+    // ============================================================
+    // 9. ROLE MANAGEMENT
+    // ============================================================
+
+    public function role_management() {
+        $db   = new Database();
+        $data = ['error' => '', 'success' => ''];
+
+        // Auto-migrate roles table columns
+        foreach (['permissions JSON DEFAULT NULL', 'is_custom TINYINT(1) DEFAULT 0', 'description VARCHAR(255) DEFAULT NULL', 'created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP'] as $colDef) {
+            $col = explode(' ', $colDef)[0];
+            try {
+                $db->query("SHOW COLUMNS FROM roles LIKE '$col'");
+                if (!$db->single()) {
+                    $db->query("ALTER TABLE roles ADD COLUMN $colDef");
+                    $db->execute();
+                }
+            } catch (Exception $e) {}
+        }
+
+        // Permission catalogue (used by view too via $data)
+        $permissionGroups = [
+            'Reports' => [
+                'view_reports'         => 'View Reports',
+                'manage_report_status' => 'Manage Report Status',
+                'delete_reports'       => 'Delete Reports',
+                'export_reports'       => 'Export Reports',
+            ],
+            'Residents & Accounts' => [
+                'view_residents'   => 'View Residents',
+                'manage_residents' => 'Manage / Edit Residents',
+                'suspend_residents'=> 'Suspend / Deactivate Accounts',
+            ],
+            'Schedules' => [
+                'view_schedules'   => 'View Schedules',
+                'manage_schedules' => 'Manage Schedules',
+                'delete_schedules' => 'Delete Schedules',
+            ],
+            'Announcements' => [
+                'view_announcements'   => 'View Announcements',
+                'manage_announcements' => 'Manage Announcements',
+                'delete_announcements' => 'Delete Announcements',
+            ],
+            'Analytics & Reports' => [
+                'view_analytics'   => 'View Analytics',
+                'export_analytics' => 'Export Analytics',
+            ],
+            'Settings' => [
+                'view_settings'   => 'View Settings',
+                'manage_settings' => 'Manage Settings',
+            ],
+            'Audit Logs' => [
+                'view_audit_logs' => 'View Audit Logs',
+            ],
+        ];
+        $data['permissionGroups'] = $permissionGroups;
+
+        // System roles that cannot be edited/deleted
+        $systemRoles = ['administrator', 'supervisor', 'resident'];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            // ── Add Role ─────────────────────────────────────────
+            if (isset($_POST['add_role'])) {
+                $role_name   = trim($_POST['role_name']   ?? '');
+                $description = trim($_POST['description'] ?? '');
+                $perms       = $_POST['permissions'] ?? [];
+                if (!empty($role_name)) {
+                    // Check duplicate
+                    $db->query("SELECT role_id FROM roles WHERE LOWER(role_name) = LOWER(:name)");
+                    $db->bind(':name', $role_name);
+                    if ($db->single()) {
+                        $data['error'] = "A role named '{$role_name}' already exists.";
+                    } else {
+                        $permsJson = json_encode(array_values($perms));
+                        $db->query("INSERT INTO roles (role_name, description, permissions, is_custom) VALUES (:name, :desc, :perms, 1)");
+                        $db->bind(':name',  $role_name);
+                        $db->bind(':desc',  $description);
+                        $db->bind(':perms', $permsJson);
+                        if ($db->execute()) {
+                            $data['success'] = "Role '{$role_name}' created.";
+                            $this->auditModel->logAction($_SESSION['user_id'], 'Add Role', 'Settings', "Created role: $role_name", 'success');
+                        } else {
+                            $data['error'] = 'Failed to create role.';
+                        }
+                    }
+                } else {
+                    $data['error'] = 'Role name is required.';
+                }
+            }
+
+            // ── Edit Role ─────────────────────────────────────────
+            if (isset($_POST['edit_role'])) {
+                $role_id     = (int)($_POST['role_id']    ?? 0);
+                $description = trim($_POST['description'] ?? '');
+                $perms       = $_POST['permissions'] ?? [];
+                if ($role_id) {
+                    // Verify it's a custom role
+                    $db->query("SELECT role_name, is_custom FROM roles WHERE role_id = :id");
+                    $db->bind(':id', $role_id);
+                    $roleRow = $db->single();
+                    if ($roleRow && (!in_array(strtolower($roleRow['role_name']), $systemRoles))) {
+                        $permsJson = json_encode(array_values($perms));
+                        $db->query("UPDATE roles SET description=:desc, permissions=:perms WHERE role_id=:id");
+                        $db->bind(':desc',  $description);
+                        $db->bind(':perms', $permsJson);
+                        $db->bind(':id',    $role_id);
+                        if ($db->execute()) {
+                            $data['success'] = 'Role updated.';
+                            $this->auditModel->logAction($_SESSION['user_id'], 'Edit Role', 'Settings', "Edited role ID $role_id", 'success');
+                        } else {
+                            $data['error'] = 'Failed to update role.';
+                        }
+                    } else {
+                        $data['error'] = 'System roles cannot be modified.';
+                    }
+                }
+            }
+
+            // ── Delete Role ───────────────────────────────────────
+            if (isset($_POST['delete_role'])) {
+                $role_id = (int)($_POST['role_id'] ?? 0);
+                if ($role_id) {
+                    $db->query("SELECT role_name FROM roles WHERE role_id = :id");
+                    $db->bind(':id', $role_id);
+                    $roleRow = $db->single();
+                    if ($roleRow && !in_array(strtolower($roleRow['role_name']), $systemRoles)) {
+                        $db->query("DELETE FROM roles WHERE role_id = :id AND LOWER(role_name) NOT IN ('administrator','supervisor','resident')");
+                        $db->bind(':id', $role_id);
+                        if ($db->execute()) {
+                            $data['success'] = 'Role deleted.';
+                            $this->auditModel->logAction($_SESSION['user_id'], 'Delete Role', 'Settings', "Deleted role ID $role_id", 'success');
+                        } else {
+                            $data['error'] = 'Failed to delete role.';
+                        }
+                    } else {
+                        $data['error'] = 'System roles cannot be deleted.';
+                    }
+                }
+            }
+        }
+
+        $db->query("SELECT * FROM roles ORDER BY role_id ASC");
+        $data['roles'] = $db->resultSet();
+        $data['systemRoles'] = $systemRoles;
+        $this->view('settings/role_management', $data);
+    }
+
+    // ============================================================
+    // 10. IMPORTANT NOTES ON GARBAGE COLLECTION
+    // ============================================================
+
+    public function collection_notes() {
+        $db   = new Database();
+        $data = ['error' => '', 'success' => ''];
+
+        // Auto-migrate
+        $db->query("CREATE TABLE IF NOT EXISTS collection_notes (
+            note_id    INT AUTO_INCREMENT PRIMARY KEY,
+            title      VARCHAR(255) NOT NULL,
+            content    TEXT NOT NULL,
+            sort_order INT NOT NULL DEFAULT 0,
+            is_active  TINYINT(1) NOT NULL DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $db->execute();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            // ── Add Note ──────────────────────────────────────────
+            if (isset($_POST['add_note'])) {
+                $title   = trim($_POST['title']   ?? '');
+                $content = trim($_POST['content'] ?? '');
+                if (!empty($title) && !empty($content)) {
+                    // Default sort_order = max + 1
+                    $db->query("SELECT COALESCE(MAX(sort_order),0)+1 AS next_order FROM collection_notes");
+                    $nextOrder = (int)($db->single()['next_order'] ?? 1);
+                    $db->query("INSERT INTO collection_notes (title, content, sort_order) VALUES (:title, :content, :sort_order)");
+                    $db->bind(':title',      $title);
+                    $db->bind(':content',    $content);
+                    $db->bind(':sort_order', $nextOrder);
+                    if ($db->execute()) {
+                        $data['success'] = "Note '{$title}' added.";
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Add Collection Note', 'Settings', "Added note: $title", 'success');
+                    } else {
+                        $data['error'] = 'Failed to add note.';
+                    }
+                } else {
+                    $data['error'] = 'Title and content are required.';
+                }
+            }
+
+            // ── Edit Note ─────────────────────────────────────────
+            if (isset($_POST['edit_note'])) {
+                $note_id   = (int)($_POST['note_id']    ?? 0);
+                $title     = trim($_POST['title']       ?? '');
+                $content   = trim($_POST['content']     ?? '');
+                $is_active = isset($_POST['is_active']) ? 1 : 0;
+                if ($note_id && !empty($title) && !empty($content)) {
+                    $db->query("UPDATE collection_notes SET title=:title, content=:content, is_active=:is_active WHERE note_id=:note_id");
+                    $db->bind(':title',     $title);
+                    $db->bind(':content',   $content);
+                    $db->bind(':is_active', $is_active);
+                    $db->bind(':note_id',   $note_id);
+                    if ($db->execute()) {
+                        $data['success'] = 'Note updated.';
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Edit Collection Note', 'Settings', "Edited note ID $note_id", 'success');
+                    } else {
+                        $data['error'] = 'Failed to update note.';
+                    }
+                }
+            }
+
+            // ── Delete Note ───────────────────────────────────────
+            if (isset($_POST['delete_note'])) {
+                $note_id = (int)($_POST['note_id'] ?? 0);
+                if ($note_id) {
+                    $db->query("DELETE FROM collection_notes WHERE note_id = :note_id");
+                    $db->bind(':note_id', $note_id);
+                    if ($db->execute()) {
+                        $data['success'] = 'Note deleted.';
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Delete Collection Note', 'Settings', "Deleted note ID $note_id", 'success');
+                    } else {
+                        $data['error'] = 'Failed to delete note.';
+                    }
+                }
+            }
+
+            // ── Update Sort Order ─────────────────────────────────
+            if (isset($_POST['update_order'])) {
+                $order = $_POST['note_order'] ?? [];
+                foreach ($order as $pos => $note_id) {
+                    $db->query("UPDATE collection_notes SET sort_order=:pos WHERE note_id=:note_id");
+                    $db->bind(':pos',     (int)$pos);
+                    $db->bind(':note_id', (int)$note_id);
+                    $db->execute();
+                }
+                $data['success'] = 'Order updated.';
+            }
+        }
+
+        $db->query("SELECT * FROM collection_notes ORDER BY sort_order ASC, note_id ASC");
+        $data['notes'] = $db->resultSet();
+        $this->view('settings/collection_notes', $data);
+    }
+}

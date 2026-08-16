@@ -28,3 +28,5 @@
     </style>
 </head>
 <body class="bg-background text-foreground min-h-screen font-sans antialiased flex flex-col">
+<?php include __DIR__ . '/loader.php'; ?>
+

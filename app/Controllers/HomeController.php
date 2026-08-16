@@ -67,6 +67,24 @@ class HomeController extends Controller {
             $unreadCount = $notificationModel->getUnreadCount($_SESSION['user_id']);
         }
 
+        // Fetch active collection notes for the public portal
+        $collectionNotes = [];
+        try {
+            $db->query("SELECT title, content FROM collection_notes WHERE is_active = 1 ORDER BY sort_order ASC, note_id ASC");
+            $collectionNotes = $db->resultSet();
+        } catch (Exception $e) {
+            // Table may not exist yet — silently fall back to empty array
+        }
+
+        // Fetch active penalty rules for the public portal
+        $penaltyRules = [];
+        try {
+            $db->query("SELECT offense_no, title, description, legal_ref, fine_range, alt_penalty FROM penalty_rules WHERE is_active = 1 ORDER BY offense_no ASC, sort_order ASC, rule_id ASC");
+            $penaltyRules = $db->resultSet();
+        } catch (Exception $e) {
+            // Table may not exist yet — silently fall back to empty array
+        }
+
         $this->view('home/index', [
             'isLoggedIn' => $isLoggedIn,
             'role' => $role,
@@ -75,7 +93,9 @@ class HomeController extends Controller {
             'barangay' => $barangay,
             'unreadCount' => $unreadCount,
             'mapConfig' => $mapConfig,
-            'publicReports' => $publicReports
+            'publicReports' => $publicReports,
+            'collectionNotes' => $collectionNotes,
+            'penaltyRules' => $penaltyRules
         ]);
     }
 }

@@ -27,6 +27,51 @@ $wasteTypeColors = [
     'Residual Waste' => ['bg' => 'bg-amber-50 text-amber-900', 'accent' => 'border-l-amber-500', 'badge' => 'bg-amber-50 text-amber-900'],
     'Special / Hazardous' => ['bg' => 'bg-purple-50 text-purple-900', 'accent' => 'border-l-purple-500', 'badge' => 'bg-purple-50 text-purple-900'],
 ];
+$mapConfig = $data['mapConfig'] ?? [];
+$publicReports = $data['publicReports'] ?? [];
+
+// Calculate map statistics & points
+$reportPoints = [];
+$mapStats = [
+    'total' => count($publicReports),
+    'pending' => 0,
+    'verified' => 0,
+    'in_progress' => 0,
+    'resolved' => 0
+];
+
+foreach ($publicReports as $pr) {
+    $st = strtolower(trim($pr['status'] ?? ''));
+    if ($st === 'resolved') {
+        $mapStats['resolved']++;
+    } elseif ($st === 'verified') {
+        $mapStats['verified']++;
+    } elseif ($st === 'in progress' || $st === 'dispatched') {
+        $mapStats['in_progress']++;
+    } else {
+        $mapStats['pending']++;
+    }
+
+    $photoUrl = null;
+    if (!empty($pr['photo_path'])) {
+        $photoUrl = (strpos($pr['photo_path'], '/brgy-waste-app-v3') === false && strpos($pr['photo_path'], '/public') === 0)
+            ? '/brgy-waste-app-v3' . $pr['photo_path']
+            : $pr['photo_path'];
+    }
+
+    $reportPoints[] = [
+        'id' => $pr['id'],
+        'lat' => (float)$pr['latitude'],
+        'lng' => (float)$pr['longitude'],
+        'status' => $pr['status'] ?? 'Pending',
+        'status_color' => $pr['status_color'] ?? '#F59E0B',
+        'category' => $pr['waste_category'] ?? 'General Waste',
+        'purok' => $pr['purok'] ?? 'Barangay Area',
+        'desc' => !empty($pr['description']) ? mb_strimwidth($pr['description'], 0, 75, '...') : 'Community waste incident reported.',
+        'date' => date('M d, Y', strtotime($pr['submission_date'])),
+        'photo' => $photoUrl
+    ];
+}
 ?>
 
 <!DOCTYPE html>
@@ -40,6 +85,7 @@ $wasteTypeColors = [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <style>
+        html { scroll-behavior: smooth !important; }
         * { font-family: 'Miranda Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-optical-sizing: auto; }
         
         .pulse-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
@@ -91,6 +137,10 @@ $wasteTypeColors = [
             <!-- Desktop Nav Links -->
             <div class="hidden lg:flex items-center gap-1 text-xs sm:text-sm font-medium text-slate-600">
                 <a href="#features" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">Features</a>
+                <a href="#community-map" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50 font-semibold text-emerald-800 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Community Map
+                </a>
                 <a href="#community-guide" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">Waste Guide &amp; Tips</a>
                 <a href="#penalties" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">Penalties &amp; Laws</a>
                 <a href="#schedule" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">Schedule &amp; Notes</a>
@@ -132,6 +182,10 @@ $wasteTypeColors = [
         </button>
         <div class="flex flex-col space-y-3 mt-8">
             <a href="#features" class="text-sm font-medium text-slate-700 hover:text-emerald-700 py-1.5">Features</a>
+            <a href="#community-map" class="text-sm font-semibold text-emerald-800 hover:text-emerald-900 py-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                Community Map
+            </a>
             <a href="#community-guide" class="text-sm font-medium text-slate-700 hover:text-emerald-700 py-1.5">Waste Guide &amp; Tips</a>
             <a href="#penalties" class="text-sm font-medium text-slate-700 hover:text-emerald-700 py-1.5">Penalties &amp; Laws</a>
             <a href="#schedule" class="text-sm font-medium text-slate-700 hover:text-emerald-700 py-1.5">Schedule &amp; Collection Notes</a>
@@ -370,6 +424,130 @@ $wasteTypeColors = [
                         Real-time Feed
                     </span>
                 </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- INTERACTIVE COMMUNITY MAP SECTION                           -->
+<!-- ============================================================ -->
+<section id="community-map" class="py-16 sm:py-20 bg-slate-50 border-t border-slate-200 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div class="space-y-2 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                    <span>Live Geospatial Transparency</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
+                    Barangay Waste &amp; Sanitation Map
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
+                    Interactive public overview of reported waste locations, ongoing municipal cleanups, and official Purok boundaries in Barangay <?php echo htmlspecialchars($barangayName); ?>.
+                </p>
+            </div>
+
+            <!-- Quick Action Links -->
+            <div class="flex items-center gap-2.5 flex-shrink-0">
+                <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs font-semibold rounded-xl shadow-xs transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    <span>Pin New Report</span>
+                </a>
+                <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-2xs transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <span>Track ID</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter & Control Bar -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+            
+            <!-- Filter Pills -->
+            <div class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
+                <span class="text-slate-400 font-semibold text-[11px] uppercase tracking-wider mr-1 hidden sm:inline">Filter:</span>
+                <button type="button" onclick="filterLandingMap('all')" id="filter-btn-all" class="landing-map-filter-btn px-3 py-1.5 rounded-xl bg-slate-900 text-white font-semibold shadow-2xs transition cursor-pointer">
+                    All Reports (<?php echo count($reportPoints); ?>)
+                </button>
+                <button type="button" onclick="filterLandingMap('active')" id="filter-btn-active" class="landing-map-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer">
+                    Active / Dispatched (<?php echo $mapStats['pending'] + $mapStats['verified'] + $mapStats['in_progress']; ?>)
+                </button>
+                <button type="button" onclick="filterLandingMap('resolved')" id="filter-btn-resolved" class="landing-map-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer">
+                    Resolved (<?php echo $mapStats['resolved']; ?>)
+                </button>
+            </div>
+
+            <!-- Layer & Polygon Controls -->
+            <div class="flex items-center gap-2">
+                <button type="button" id="togglePurokBtn" onclick="toggleLandingPuroks()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold transition cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    <span>Purok Boundaries</span>
+                </button>
+                <button type="button" id="toggleMapTypeBtn" onclick="toggleLandingTileLayer()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold transition cursor-pointer border border-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                    <span id="mapTypeLabel">Satellite View</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Map Canvas Card -->
+        <div class="relative bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
+            <div id="landingMap" class="w-full h-[500px] sm:h-[580px] z-10"></div>
+
+            <!-- Floating Map Legend -->
+            <div class="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 p-3 shadow-md hidden sm:block max-w-xs">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Live Map Legend</span>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-xs"></span>
+                        <span class="text-slate-600 font-medium">Pending / Open</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-xs"></span>
+                        <span class="text-slate-600 font-medium">Verified</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-xs"></span>
+                        <span class="text-slate-600 font-medium">Dispatched</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs"></span>
+                        <span class="text-slate-600 font-medium">Resolved</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-Time Metrics Strip beneath Map -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Total Mapped</span>
+                <div class="text-2xl font-bold text-slate-900 mt-1"><?php echo count($reportPoints); ?></div>
+                <span class="text-xs text-slate-500 font-normal">Geo-tagged submissions</span>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
+                <span class="text-[11px] font-semibold text-amber-800 uppercase tracking-wider block">Active Cleanups</span>
+                <div class="text-2xl font-bold text-amber-900 mt-1"><?php echo $mapStats['pending'] + $mapStats['verified'] + $mapStats['in_progress']; ?></div>
+                <span class="text-xs text-slate-500 font-normal">Ongoing operations</span>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
+                <span class="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider block">Resolved Sites</span>
+                <div class="text-2xl font-bold text-emerald-900 mt-1"><?php echo $mapStats['resolved']; ?></div>
+                <span class="text-xs text-slate-500 font-normal">Successfully cleared</span>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Jurisdiction</span>
+                <div class="text-2xl font-bold text-slate-900 mt-1"><?php echo count($mapConfig['puroks'] ?? []); ?> Puroks</div>
+                <span class="text-xs text-slate-500 font-normal">Full community coverage</span>
             </div>
 
         </div>
@@ -1215,7 +1393,184 @@ $wasteTypeColors = [
         mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
     }
 
-    // ====== Smooth scroll ======
+    // ====== Leaflet Community Map Initialization ======
+    (function() {
+        const mapContainer = document.getElementById('landingMap');
+        if (!mapContainer || typeof L === 'undefined') return;
+
+        const defaultCenter = [<?php echo (float)($mapConfig['center']['lat'] ?? 15.558); ?>, <?php echo (float)($mapConfig['center']['lng'] ?? 120.803); ?>];
+        const defaultZoom = <?php echo (int)($mapConfig['center']['zoom'] ?? 15); ?>;
+
+        const landingMap = L.map('landingMap', {
+            center: defaultCenter,
+            zoom: defaultZoom,
+            scrollWheelZoom: false,
+            zoomControl: true
+        });
+
+        // Click map to enable scroll wheel zoom; disable on mouse leave to keep page scrolling smooth
+        landingMap.on('click', () => { landingMap.scrollWheelZoom.enable(); });
+        mapContainer.addEventListener('mouseleave', () => { landingMap.scrollWheelZoom.disable(); });
+
+        // Tile Layers
+        const streetTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 19
+        });
+
+        const satelliteTiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri',
+            maxZoom: 19
+        });
+
+        const labelsTiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '',
+            maxZoom: 19
+        });
+
+        const satelliteGroup = L.layerGroup([satelliteTiles, labelsTiles]);
+
+        // Default to Street tiles
+        streetTiles.addTo(landingMap);
+        let activeTileMode = 'street';
+
+        window.toggleLandingTileLayer = function() {
+            const labelEl = document.getElementById('mapTypeLabel');
+            if (activeTileMode === 'street') {
+                landingMap.removeLayer(streetTiles);
+                satelliteGroup.addTo(landingMap);
+                activeTileMode = 'satellite';
+                if (labelEl) labelEl.textContent = 'Street View';
+            } else {
+                landingMap.removeLayer(satelliteGroup);
+                streetTiles.addTo(landingMap);
+                activeTileMode = 'street';
+                if (labelEl) labelEl.textContent = 'Satellite View';
+            }
+        };
+
+        // Barangay Boundary
+        const brgyBoundaryData = <?php echo json_encode($mapConfig['boundary_geojson'] ?? null); ?>;
+        if (brgyBoundaryData) {
+            try {
+                const brgyGeo = typeof brgyBoundaryData === 'string' ? JSON.parse(brgyBoundaryData) : brgyBoundaryData;
+                L.geoJSON(brgyGeo, {
+                    style: {
+                        color: '#0B2E22',
+                        weight: 2.5,
+                        fillColor: '#10B981',
+                        fillOpacity: 0.04,
+                        dashArray: '6,6'
+                    }
+                }).addTo(landingMap);
+            } catch(e) {}
+        }
+
+        // Purok Boundaries Layer Group
+        const puroksLayerGroup = L.layerGroup();
+        const puroksData = <?php echo json_encode($mapConfig['puroks'] ?? []); ?>;
+        let puroksVisible = true;
+
+        puroksData.forEach(p => {
+            if (p.polygon_geometry) {
+                try {
+                    const geo = typeof p.polygon_geometry === 'string' ? JSON.parse(p.polygon_geometry) : p.polygon_geometry;
+                    if (geo) {
+                        L.geoJSON(geo, {
+                            style: {
+                                color: '#10B981',
+                                weight: 1.5,
+                                fillColor: '#10B981',
+                                fillOpacity: 0.08
+                            }
+                        }).bindPopup(`<strong style="font-family: 'Miranda Sans', sans-serif; font-size: 12px;">${p.purok_name}</strong>`).addTo(puroksLayerGroup);
+                    }
+                } catch(e) {}
+            }
+        });
+        puroksLayerGroup.addTo(landingMap);
+
+        window.toggleLandingPuroks = function() {
+            const btn = document.getElementById('togglePurokBtn');
+            if (puroksVisible) {
+                landingMap.removeLayer(puroksLayerGroup);
+                puroksVisible = false;
+                if (btn) {
+                    btn.classList.remove('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+                    btn.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-200');
+                }
+            } else {
+                puroksLayerGroup.addTo(landingMap);
+                puroksVisible = true;
+                if (btn) {
+                    btn.classList.remove('bg-slate-100', 'text-slate-600', 'border-slate-200');
+                    btn.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+                }
+            }
+        };
+
+        // Report Markers
+        const allReports = <?php echo json_encode($reportPoints); ?>;
+        const markersLayerGroup = L.featureGroup();
+
+        function renderMarkers(filterType) {
+            markersLayerGroup.clearLayers();
+
+            allReports.forEach(r => {
+                const st = (r.status || '').toLowerCase();
+                const isResolved = st === 'resolved';
+                const isActive = !isResolved;
+
+                if (filterType === 'resolved' && !isResolved) return;
+                if (filterType === 'active' && !isActive) return;
+
+                const markerColor = isResolved ? '#10B981' : (st === 'verified' ? '#3B82F6' : (st === 'in progress' || st === 'dispatched' ? '#8B5CF6' : '#F59E0B'));
+
+                const customIcon = L.divIcon({
+                    html: `<div style="background-color: ${markerColor}; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.35);"></div>`,
+                    className: '',
+                    iconSize: [14, 14],
+                    iconAnchor: [7, 7]
+                });
+
+                const photoHtml = r.photo ? `<div style="margin-bottom: 8px; border-radius: 8px; overflow: hidden; max-height: 100px;"><img src="${r.photo}" style="width: 100%; height: 80px; object-fit: cover;"></div>` : '';
+
+                const popupContent = `
+                    <div style="font-family: 'Miranda Sans', sans-serif; min-width: 180px; max-width: 220px;">
+                        ${photoHtml}
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 10px; font-weight: 700; color: ${markerColor}; text-transform: uppercase; letter-spacing: 0.5px;">${r.status}</span>
+                            <span style="font-size: 10px; color: #94A3B8;">${r.date}</span>
+                        </div>
+                        <h4 style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0 0 2px 0; line-height: 1.3;">${r.category}</h4>
+                        <p style="font-size: 11px; color: #64748B; margin: 0 0 6px 0;">📍 ${r.purok}</p>
+                        <p style="font-size: 11px; color: #475569; margin: 0 0 8px 0; line-height: 1.4;">${r.desc}</p>
+                        <a href="/brgy-waste-app-v3/public/index.php?url=guest/track&track_id=${r.id}" style="display: inline-block; font-size: 11px; font-weight: 700; color: #10B981; text-decoration: none;">Track Incident →</a>
+                    </div>
+                `;
+
+                const marker = L.marker([r.lat, r.lng], { icon: customIcon }).bindPopup(popupContent);
+                markersLayerGroup.addLayer(marker);
+            });
+
+            markersLayerGroup.addTo(landingMap);
+        }
+
+        renderMarkers('all');
+
+        window.filterLandingMap = function(type) {
+            document.querySelectorAll('.landing-map-filter-btn').forEach(btn => {
+                btn.className = "landing-map-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer";
+            });
+            const activeBtn = document.getElementById(`filter-btn-${type}`);
+            if (activeBtn) {
+                activeBtn.className = "landing-map-filter-btn px-3 py-1.5 rounded-xl bg-slate-900 text-white font-semibold shadow-2xs transition cursor-pointer";
+            }
+            renderMarkers(type);
+        };
+    })();
+
+    // ====== Smooth scroll for all anchor navigation links ======
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
@@ -1223,9 +1578,16 @@ $wasteTypeColors = [
             const target = document.querySelector(href);
             if (target) {
                 e.preventDefault();
-                const offset = 70;
-                const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-                window.scrollTo({ top, behavior: 'smooth' });
+                const offset = 75;
+                const bodyRect = document.body.getBoundingClientRect().top;
+                const elementRect = target.getBoundingClientRect().top;
+                const elementPosition = elementRect - bodyRect;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
             }
         });
     });

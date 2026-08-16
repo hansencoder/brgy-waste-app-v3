@@ -36,6 +36,29 @@ class HomeController extends Controller {
         $db->query("SELECT * FROM barangays LIMIT 1");
         $barangay = $db->single();
 
+        // Get official barangay boundary and map settings
+        require_once __DIR__ . '/../Models/Barangay.php';
+        $barangayModel = new Barangay();
+        $mapConfig = $barangayModel->getMapConfig();
+
+        // Fetch geo-tagged reports for community map
+        $db->query("
+            SELECT r.id, r.latitude, r.longitude, r.description,
+                   rs.status_name as status, rs.color_code as status_color,
+                   wc.category_name as waste_category,
+                   p.purok_name as purok,
+                   r.submission_date,
+                   (SELECT photo_path FROM report_photos WHERE report_id = r.id AND is_primary = 1 LIMIT 1) as photo_path
+            FROM reports r
+            JOIN report_statuses rs ON r.status_id = rs.status_id
+            LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+            LEFT JOIN puroks p ON r.purok_id = p.purok_id
+            WHERE r.latitude IS NOT NULL AND r.longitude IS NOT NULL AND r.latitude != 0 AND r.longitude != 0
+            ORDER BY r.submission_date DESC
+            LIMIT 120
+        ");
+        $publicReports = $db->resultSet();
+
         // Get unread notification count (if logged in)
         $unreadCount = 0;
         if ($isLoggedIn) {
@@ -50,7 +73,9 @@ class HomeController extends Controller {
             'announcements' => $announcements,
             'schedules' => $schedules,
             'barangay' => $barangay,
-            'unreadCount' => $unreadCount
+            'unreadCount' => $unreadCount,
+            'mapConfig' => $mapConfig,
+            'publicReports' => $publicReports
         ]);
     }
 }

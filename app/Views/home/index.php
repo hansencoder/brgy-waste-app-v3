@@ -800,7 +800,6 @@ foreach ($publicReports as $pr) {
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                     <p class="text-sm font-bold text-slate-600">No penalty rules published yet.</p>
-                    <p class="text-xs text-slate-400 mt-1">Administrators can add rules from Settings → Rules &amp; Penalties.</p>
                 </div>
             <?php endif; ?>
 
@@ -973,7 +972,7 @@ foreach ($publicReports as $pr) {
                 <?php else: ?>
                     <div class="col-span-full flex flex-col items-center justify-center py-8 text-center space-y-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-600/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        <p class="text-xs text-emerald-300/60 font-semibold">No collection notes published yet.<br>Add them from Settings → Collection Notes.</p>
+                        <p class="text-xs text-emerald-300/60 font-semibold">No collection notes published yet.</p>
                     </div>
                 <?php endif; ?>
             </div>

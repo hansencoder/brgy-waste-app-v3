@@ -146,7 +146,7 @@
             <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Photos (<?php echo count($report['photos']); ?>)</h2>
             <div class="flex gap-2 flex-wrap">
                 <?php foreach ($report['photos'] as $photo): ?>
-                <img src="/brgy-waste-app-v3/public/uploads/<?php echo htmlspecialchars($photo); ?>" class="h-24 w-24 object-cover rounded-xl border border-slate-200 shadow-sm" alt="Waste photo">
+                <img src="<?php echo htmlspecialchars(format_asset_url($photo)); ?>" class="h-24 w-24 object-cover rounded-xl border border-slate-200 shadow-sm" alt="Waste photo">
                 <?php endforeach; ?>
             </div>
         </div>

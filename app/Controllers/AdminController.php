@@ -1397,7 +1397,7 @@ class AdminController extends Controller {
                         if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                         $fileName = 'announce_' . time() . '_' . basename($file['name']);
                         if (move_uploaded_file($file['tmp_name'], $uploadDir . $fileName)) {
-                            $cover_image = '/public/uploads/announcements/' . $fileName;
+                            $cover_image = '/uploads/announcements/' . $fileName;
                         }
                     }
                 }
@@ -1503,7 +1503,7 @@ class AdminController extends Controller {
                     if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                     $fileName = 'announce_' . time() . '_' . basename($file['name']);
                     if (move_uploaded_file($file['tmp_name'], $uploadDir . $fileName)) {
-                        $cover_image = '/public/uploads/announcements/' . $fileName;
+                        $cover_image = '/uploads/announcements/' . $fileName;
                     }
                 }
             }
@@ -2197,7 +2197,7 @@ private function generateCalendarData($month, $year, $schedules) {
                 $targetPath = $uploadDir . $fileName;
 
                 if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-                    $profilePic = '/public/uploads/profiles/' . $fileName;
+                    $profilePic = '/uploads/profiles/' . $fileName;
                 } else {
                     $data['error'] = 'Failed to upload profile picture.';
                     return $this->view('admin/profile', $data);

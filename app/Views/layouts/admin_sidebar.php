@@ -46,10 +46,7 @@ $brgyName = !empty($brgyBranding['barangay_name']) ? $brgyBranding['barangay_nam
 $brgyMuni = !empty($brgyBranding['municipality']) ? $brgyBranding['municipality'] : 'Talavera';
 $brgyProv = !empty($brgyBranding['province']) ? $brgyBranding['province'] : 'Nueva Ecija';
 $sysMotto = "Brgy. {$brgyName}, {$brgyMuni}";
-$sysLogo = !empty($brgyBranding['system_logo']) ? $brgyBranding['system_logo'] : null;
-if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysLogo, '/public') === 0) {
-    $sysLogo = '/brgy-waste-app-v3' . $sysLogo;
-}
+$sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 ?>
 
 <style>

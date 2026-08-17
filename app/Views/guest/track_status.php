@@ -198,7 +198,7 @@ if ($currentIdx === false) $currentIdx = -1;
         <div class="space-y-2 pt-2 border-t border-slate-100">
             <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Submitted Photo Evidence:</span>
             <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 max-h-60 flex items-center justify-center">
-                <img src="/brgy-waste-app-v3/public/uploads/<?php echo htmlspecialchars($report['photo_path']); ?>"
+                <img src="<?php echo htmlspecialchars(format_asset_url($report['photo_path'])); ?>"
                      class="w-full h-full object-cover" alt="Waste Evidence Photo">
             </div>
         </div>

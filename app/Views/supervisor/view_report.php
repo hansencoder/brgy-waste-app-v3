@@ -19,7 +19,7 @@ function getSupervisorDetailBadge($status) {
 
 $badge = getSupervisorDetailBadge($report['status'] ?? 'Pending');
 $reportId = 'WR-' . str_pad($report['id'], 5, '0', STR_PAD_LEFT);
-$imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' . $report['photo_path'] : null;
+$imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path']) : null;
 
 // Progress Stepper calculations
 $statusName = $report['status'] ?? 'Pending';
@@ -237,9 +237,9 @@ $currentStep = $stepMap[$statusName] ?? 1;
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-3">
                         <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Uploaded Photo Evidence</span>
                         
-                        <?php if ($imgPath && file_exists($_SERVER['DOCUMENT_ROOT'] . '/brgy-waste-app-v3/public/uploads/' . basename($report['photo_path']))): ?>
-                            <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 group relative cursor-pointer" onclick="openPhotoModal('<?php echo $imgPath; ?>')">
-                                <img src="<?php echo $imgPath; ?>" alt="Waste Evidence Photo" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
+                        <?php if (!empty($imgPath)): ?>
+                            <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 group relative cursor-pointer" onclick="openPhotoModal('<?php echo htmlspecialchars($imgPath); ?>')">
+                                <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Waste Evidence Photo" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
                                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-semibold gap-1.5">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
                                     <span>Expand Photo</span>

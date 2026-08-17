@@ -34,7 +34,7 @@ $cfg = $statusConfig[$rawStatus] ?? $statusConfig['pending'];
 $currentStep = $cfg['step'];
 
 $reportId = 'WR-' . str_pad($report['id'], 6, '0', STR_PAD_LEFT);
-$imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' . $report['photo_path'] : '';
+$imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path']) : '';
 
 // Build timeline events
 $events = [];

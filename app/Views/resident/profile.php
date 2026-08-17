@@ -16,14 +16,7 @@ $formattedDate = date('M d, Y', strtotime($createdAt));
 $memberSince   = date('F Y', strtotime($createdAt));
 
 $rawPic = $user['profile_pic'] ?? '';
-$profilePic = '';
-if (!empty($rawPic)) {
-    if (strpos($rawPic, 'http') === 0 || strpos($rawPic, 'data:') === 0 || strpos($rawPic, '/brgy-waste-app-v3') === 0) {
-        $profilePic = $rawPic;
-    } else {
-        $profilePic = '/brgy-waste-app-v3' . (strpos($rawPic, '/') === 0 ? '' : '/') . $rawPic;
-    }
-}
+$profilePic = !empty($rawPic) ? format_asset_url($rawPic) : '';
 
 function getResidentBadgeStyle($status) {
     switch (strtolower($status)) {

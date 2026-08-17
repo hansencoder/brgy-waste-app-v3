@@ -1,15 +1,7 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
 
-<?php
-$formatLogoUrl = function($url) {
-    if (empty($url)) return '';
-    if (strpos($url, '/brgy-waste-app-v3') === false && strpos($url, '/public') === 0) {
-        return '/brgy-waste-app-v3' . $url;
-    }
-    return $url;
-};
-$sysLogoUrl = $formatLogoUrl($data['barangay']['system_logo'] ?? '');
-$brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
+$sysLogoUrl = format_asset_url($data['barangay']['system_logo'] ?? '');
+$brgyLogoUrl = format_asset_url($data['barangay']['barangay_logo'] ?? '');
 ?>
 
 <style>

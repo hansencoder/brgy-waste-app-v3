@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 16, 2026 at 10:44 AM
+-- Generation Time: Aug 17, 2026 at 06:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -1863,7 +1863,174 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `affected_record`, `details
 (2691, 1, 'Reports Monitoring', 'Reports', 'Supervisor viewed reports monitoring', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL),
 (2692, 1, 'Collection Schedule View', 'Schedule', 'Supervisor viewed collection schedule', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL),
 (2693, 1, 'Announcements View', 'Announcements', 'Supervisor viewed announcements', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL),
-(2694, 1, 'Notifications View', 'Notifications', 'Supervisor viewed notifications', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL);
+(2694, 1, 'Notifications View', 'Notifications', 'Supervisor viewed notifications', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL),
+(2695, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-16 17:35:24', NULL, NULL, NULL, NULL),
+(2696, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:24', NULL, NULL, NULL, NULL),
+(2697, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:37', NULL, NULL, NULL, NULL),
+(2698, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:37', NULL, NULL, NULL, NULL),
+(2699, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:44', NULL, NULL, NULL, NULL),
+(2700, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:55', NULL, NULL, NULL, NULL),
+(2701, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:37:13', NULL, NULL, NULL, NULL),
+(2702, 2, 'Update Schedule', 'Schedule ID 8', 'Updated schedule for Saturday', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:37:44', NULL, NULL, NULL, NULL),
+(2703, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:37:44', NULL, NULL, NULL, NULL),
+(2704, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:01', NULL, NULL, NULL, NULL),
+(2705, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:24', NULL, NULL, NULL, NULL),
+(2706, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:26', NULL, NULL, NULL, NULL),
+(2707, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:30', NULL, NULL, NULL, NULL),
+(2708, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:38', NULL, NULL, NULL, NULL),
+(2709, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:43:54', NULL, NULL, NULL, NULL),
+(2710, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:49:48', NULL, NULL, NULL, NULL),
+(2711, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:49:53', NULL, NULL, NULL, NULL),
+(2712, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:49:56', NULL, NULL, NULL, NULL),
+(2713, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:50:00', NULL, NULL, NULL, NULL),
+(2714, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:50:03', NULL, NULL, NULL, NULL),
+(2715, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:50:06', NULL, NULL, NULL, NULL),
+(2716, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:50:11', NULL, NULL, NULL, NULL),
+(2717, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:20:32', NULL, NULL, NULL, NULL),
+(2718, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:20:52', NULL, NULL, NULL, NULL),
+(2719, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:22:55', NULL, NULL, NULL, NULL),
+(2720, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:36:25', NULL, NULL, NULL, NULL),
+(2721, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:37:03', NULL, NULL, NULL, NULL),
+(2722, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:37:48', NULL, NULL, NULL, NULL),
+(2723, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:38:03', NULL, NULL, NULL, NULL),
+(2724, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:38:13', NULL, NULL, NULL, NULL),
+(2725, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:50:07', NULL, NULL, NULL, NULL),
+(2726, 2, 'Add Role', 'Settings', 'Created role: brgy tanod', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:57:08', NULL, NULL, NULL, NULL),
+(2727, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:10:06', NULL, NULL, NULL, NULL),
+(2728, 2, 'Delete Role', 'Settings', 'Deleted role ID 14', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:16:55', NULL, NULL, NULL, NULL),
+(2729, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:17:12', NULL, NULL, NULL, NULL),
+(2730, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:17:42', NULL, NULL, NULL, NULL),
+(2731, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:19:41', NULL, NULL, NULL, NULL),
+(2732, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:23:13', NULL, NULL, NULL, NULL),
+(2733, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:24:03', NULL, NULL, NULL, NULL),
+(2734, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:24:37', NULL, NULL, NULL, NULL),
+(2735, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-16 21:57:37', NULL, NULL, NULL, NULL),
+(2736, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 21:58:31', NULL, NULL, NULL, NULL),
+(2737, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 21:58:47', NULL, NULL, NULL, NULL),
+(2738, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 21:58:47', NULL, NULL, NULL, NULL),
+(2739, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 21:58:53', NULL, NULL, NULL, NULL),
+(2740, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-16 22:00:38', NULL, NULL, NULL, NULL),
+(2741, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-16 22:01:21', NULL, NULL, NULL, NULL),
+(2742, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:01:33', NULL, NULL, NULL, NULL),
+(2743, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:05:53', NULL, NULL, NULL, NULL),
+(2744, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:06:26', NULL, NULL, NULL, NULL),
+(2745, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:08:49', NULL, NULL, NULL, NULL),
+(2746, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:09:18', NULL, NULL, NULL, NULL);
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `affected_record`, `details`, `ip_address`, `user_agent`, `result`, `created_at`, `module`, `record_id`, `old_value`, `new_value`) VALUES
+(2747, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:09:29', NULL, NULL, NULL, NULL),
+(2748, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:24:19', NULL, NULL, NULL, NULL),
+(2749, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 1', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:35:50', NULL, NULL, NULL, NULL),
+(2750, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 2', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:36:26', NULL, NULL, NULL, NULL),
+(2751, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 3', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:37:02', NULL, NULL, NULL, NULL),
+(2752, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 4', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:38:05', NULL, NULL, NULL, NULL),
+(2753, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:39:53', NULL, NULL, NULL, NULL),
+(2754, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:40:33', NULL, NULL, NULL, NULL),
+(2755, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:40:39', NULL, NULL, NULL, NULL),
+(2756, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:41:01', NULL, NULL, NULL, NULL),
+(2757, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:41:01', NULL, NULL, NULL, NULL),
+(2758, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:53:29', NULL, NULL, NULL, NULL),
+(2759, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:53:43', NULL, NULL, NULL, NULL),
+(2760, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:54:10', NULL, NULL, NULL, NULL),
+(2761, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 00:13:29', NULL, NULL, NULL, NULL),
+(2762, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:13:46', NULL, NULL, NULL, NULL),
+(2763, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:14:08', NULL, NULL, NULL, NULL),
+(2764, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:14:08', NULL, NULL, NULL, NULL),
+(2765, 2, 'Disable Maintenance Mode', 'SystemMaintenance', 'Maintenance mode deactivated. System restored to operational.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:15:57', NULL, NULL, NULL, NULL),
+(2766, 2, 'Update Maintenance Settings', 'SystemMaintenance', 'Updated maintenance settings (type: scheduled)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:17:40', NULL, NULL, NULL, NULL),
+(2767, 2, 'Disable Maintenance Mode', 'SystemMaintenance', 'Maintenance mode deactivated. System restored to operational.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:18:07', NULL, NULL, NULL, NULL),
+(2768, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:34:36', NULL, NULL, NULL, NULL),
+(2769, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:34:42', NULL, NULL, NULL, NULL),
+(2770, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:47:49', NULL, NULL, NULL, NULL),
+(2771, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:48:17', NULL, NULL, NULL, NULL),
+(2772, 2, 'View Report', 'Report ID 35', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:49:42', NULL, NULL, NULL, NULL),
+(2773, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:54:19', NULL, NULL, NULL, NULL),
+(2774, 2, 'View Report', 'Report ID 49', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:54:33', NULL, NULL, NULL, NULL),
+(2775, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:11:05', NULL, NULL, NULL, NULL),
+(2776, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:13:34', NULL, NULL, NULL, NULL),
+(2777, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:15:29', NULL, NULL, NULL, NULL),
+(2778, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:18:46', NULL, NULL, NULL, NULL),
+(2779, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:22:56', NULL, NULL, NULL, NULL),
+(2780, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:00', NULL, NULL, NULL, NULL),
+(2781, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:15', NULL, NULL, NULL, NULL),
+(2782, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:17', NULL, NULL, NULL, NULL),
+(2783, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:28', NULL, NULL, NULL, NULL),
+(2784, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:36', NULL, NULL, NULL, NULL),
+(2785, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:53', NULL, NULL, NULL, NULL),
+(2786, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:24:29', NULL, NULL, NULL, NULL),
+(2787, 2, 'View Report', 'Report ID 46', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:25:07', NULL, NULL, NULL, NULL),
+(2788, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:27:09', NULL, NULL, NULL, NULL),
+(2789, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:27:26', NULL, NULL, NULL, NULL),
+(2790, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 10:02:24', NULL, NULL, NULL, NULL),
+(2791, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:06:06', NULL, NULL, NULL, NULL),
+(2792, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:06:21', NULL, NULL, NULL, NULL),
+(2793, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:06:22', NULL, NULL, NULL, NULL),
+(2794, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:06:40', NULL, NULL, NULL, NULL),
+(2795, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:07:52', NULL, NULL, NULL, NULL),
+(2796, 2, 'Post Announcement', 'Announcements', 'Posted \'Sobrang Dumi\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:11:11', NULL, NULL, NULL, NULL),
+(2797, 2, 'Delete Announcement', 'Announcement ID 10', 'Deleted announcement', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:11:29', NULL, NULL, NULL, NULL),
+(2798, 2, 'Update Report Generation Settings', 'Settings', 'Updated dual logo and report letterhead settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:16:18', NULL, NULL, NULL, NULL),
+(2799, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:16:26', NULL, NULL, NULL, NULL),
+(2800, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:16:29', NULL, NULL, NULL, NULL),
+(2801, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:17:40', NULL, NULL, NULL, NULL),
+(2802, 2, 'Update Maintenance Settings', 'SystemMaintenance', 'Updated maintenance settings (type: emergency)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:20:12', NULL, NULL, NULL, NULL),
+(2803, 2, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:20:18', NULL, NULL, NULL, NULL),
+(2804, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:21:42', NULL, NULL, NULL, NULL),
+(2805, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 10:21:43', NULL, NULL, NULL, NULL),
+(2806, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:21:58', NULL, NULL, NULL, NULL),
+(2807, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:21:58', NULL, NULL, NULL, NULL),
+(2808, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:22:00', NULL, NULL, NULL, NULL),
+(2809, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:23:26', NULL, NULL, NULL, NULL),
+(2810, 2, 'Enable Emergency Lockdown', 'SystemMaintenance', 'EMERGENCY LOCKDOWN activated. Reason: Under Maintenance', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:24:22', NULL, NULL, NULL, NULL),
+(2811, 2, 'Disable Emergency Lockdown', 'SystemMaintenance', 'Emergency lockdown deactivated. System restored to operational.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:27:10', NULL, NULL, NULL, NULL),
+(2812, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 11:18:55', NULL, NULL, NULL, NULL),
+(2813, 3, 'OTP send failed', 'User', 'SMTP Error: Could not connect to SMTP host. Failed to connect to server', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-17 11:19:18', NULL, NULL, NULL, NULL),
+(2814, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 11:20:58', NULL, NULL, NULL, NULL),
+(2815, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 11:22:41', NULL, NULL, NULL, NULL),
+(2816, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 13:00:07', NULL, NULL, NULL, NULL),
+(2817, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 13:32:16', NULL, NULL, NULL, NULL),
+(2818, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 13:32:42', NULL, NULL, NULL, NULL),
+(2819, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 13:32:42', NULL, NULL, NULL, NULL),
+(2820, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 16:28:14', NULL, NULL, NULL, NULL),
+(2821, 2, 'OTP send failed', 'User', 'SMTP Error: Could not authenticate.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-17 16:28:38', NULL, NULL, NULL, NULL),
+(2822, 2, 'OTP send failed', 'User', 'SMTP Error: Could not authenticate.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-17 16:34:08', NULL, NULL, NULL, NULL),
+(2823, 2, 'OTP send failed', 'User', 'SMTP Error: Could not authenticate.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-17 16:36:03', NULL, NULL, NULL, NULL),
+(2824, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:45:32', NULL, NULL, NULL, NULL),
+(2825, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:46:21', NULL, NULL, NULL, NULL),
+(2826, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:46:27', NULL, NULL, NULL, NULL),
+(2827, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:50:13', NULL, NULL, NULL, NULL),
+(2828, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:56:39', NULL, NULL, NULL, NULL),
+(2829, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:57:09', NULL, NULL, NULL, NULL),
+(2830, NULL, 'Registration OTP sent', 'User', 'Email OTP sent to limuelle.neust@gmail.com', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:59:58', NULL, NULL, NULL, NULL),
+(2831, 23, 'Registration verified', 'User', 'Account activated via OTP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:00:14', NULL, NULL, NULL, NULL),
+(2832, 23, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:00:26', NULL, NULL, NULL, NULL),
+(2833, 23, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:00:35', NULL, NULL, NULL, NULL),
+(2834, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:03:44', NULL, NULL, NULL, NULL),
+(2835, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:03:53', NULL, NULL, NULL, NULL),
+(2836, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:04:12', NULL, NULL, NULL, NULL),
+(2837, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:04:15', NULL, NULL, NULL, NULL),
+(2838, 3, 'Login partial success', 'User', 'OTP sent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:04:24', NULL, NULL, NULL, NULL),
+(2839, 3, '2FA Resend', 'User', 'Code resent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:07:32', NULL, NULL, NULL, NULL),
+(2840, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:07:47', NULL, NULL, NULL, NULL),
+(2841, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:09:54', NULL, NULL, NULL, NULL),
+(2842, 23, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:10:55', NULL, NULL, NULL, NULL),
+(2843, 23, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:11:04', NULL, NULL, NULL, NULL),
+(2844, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:12:50', NULL, NULL, NULL, NULL),
+(2845, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:18:12', NULL, NULL, NULL, NULL),
+(2846, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:18:32', NULL, NULL, NULL, NULL),
+(2847, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:19:42', NULL, NULL, NULL, NULL),
+(2848, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:20:00', NULL, NULL, NULL, NULL),
+(2849, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:20:00', NULL, NULL, NULL, NULL),
+(2850, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 17:50:46', NULL, NULL, NULL, NULL),
+(2851, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 18:11:26', NULL, NULL, NULL, NULL),
+(2852, 3, 'Login partial success', 'User', 'OTP sent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 18:17:07', NULL, NULL, NULL, NULL),
+(2853, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 18:17:32', NULL, NULL, NULL, NULL),
+(2854, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 20:09:42', NULL, NULL, NULL, NULL),
+(2917, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:24:35', NULL, NULL, NULL, NULL),
+(2918, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:24:59', NULL, NULL, NULL, NULL),
+(2919, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:28:29', NULL, NULL, NULL, NULL),
+(2920, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:29:14', NULL, NULL, NULL, NULL),
+(2921, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:29:29', NULL, NULL, NULL, NULL),
+(2922, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:29:29', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2353,7 +2520,7 @@ CREATE TABLE `barangays` (
 --
 
 INSERT INTO `barangays` (`barangay_id`, `barangay_name`, `municipality`, `province`, `region`, `official_address`, `contact_number`, `official_email`, `barangay_logo`, `created_at`, `updated_at`, `system_name`, `system_short_name`, `system_motto`, `system_logo`) VALUES
-(1, 'Dulong Bayan', 'Quezon', 'Nueva Ecija', 'Central Luzon', 'brgy dulong bayan, quezon, nueva ecija', '09951281511', 'floreshans.neust@gmail.com', '/brgy-waste-app-v3/public/uploads/logos/brgy_seal_1786751779.jpg', '2026-07-25 14:27:25', '2026-08-15 07:56:19', 'Barangay Waste Management System', 'LINARAYA', 'Barangay Dulong Bayan, Quezon, Nueva Ecija', '/brgy-waste-app-v3/public/uploads/logos/sys_logo_1786709597.jpg');
+(1, 'Dulong Bayan', 'Quezon', 'Nueva Ecija', 'Central Luzon', 'brgy dulong bayan, quezon, nueva ecija', '09951281511', 'floreshans.neust@gmail.com', 'uploads/logos/brgy_seal_1786751779.jpg', '2026-07-25 14:27:25', '2026-08-18 00:06:33', 'Barangay Waste Management System', 'LINARAYA', '', 'uploads/logos/sys_logo_1786879181.jpg');
 
 -- --------------------------------------------------------
 
@@ -2384,6 +2551,22 @@ INSERT INTO `barangay_boundaries` (`boundary_id`, `barangay_id`, `polygon_geomet
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `collection_notes`
+--
+
+CREATE TABLE `collection_notes` (
+  `note_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `collection_schedules`
 --
 
@@ -2405,7 +2588,7 @@ CREATE TABLE `collection_schedules` (
 --
 
 INSERT INTO `collection_schedules` (`schedule_id`, `collection_day`, `start_time`, `end_time`, `waste_type`, `status`, `created_by`, `created_at`, `updated_at`, `special_notes`) VALUES
-(8, 'Saturday', '06:00:00', '08:00:00', 'General', 'active', 2, '2026-08-15 02:30:46', '2026-08-15 02:32:00', 'bring all your waste to your designated collection area'),
+(8, 'Saturday', '06:00:00', '08:00:00', 'General', 'active', 2, '2026-08-15 02:30:46', '2026-08-16 17:37:44', 'na eedit ako'),
 (9, 'Sunday', '10:40:00', '19:43:00', 'Non-Biodegradable', 'active', 2, '2026-08-16 07:40:51', '2026-08-16 07:40:51', '');
 
 -- --------------------------------------------------------
@@ -2425,11 +2608,11 @@ CREATE TABLE `collection_schedule_puroks` (
 --
 
 INSERT INTO `collection_schedule_puroks` (`schedule_purok_id`, `schedule_id`, `purok_id`) VALUES
-(37, 8, 1),
-(38, 8, 2),
-(39, 8, 3),
-(40, 8, 4),
-(41, 8, 5),
+(45, 8, 1),
+(46, 8, 2),
+(47, 8, 3),
+(48, 8, 4),
+(49, 8, 5),
 (42, 9, 2),
 (43, 9, 3),
 (44, 9, 4);
@@ -2555,7 +2738,23 @@ INSERT INTO `email_otp_rate_limits` (`id`, `email`, `ip`, `window_start`, `send_
 (136, 'floreshans.neust@gmail.com', '::1', '2026-08-15 13:00:00', 1),
 (137, 'floreshans.neust@gmail.com', '::1', '2026-08-16 00:00:00', 1),
 (138, 'floressktt11@gmail.com', '::1', '2026-08-16 01:00:00', 1),
-(139, 'floreshans.neust@gmail.com', '::1', '2026-08-16 01:00:00', 1);
+(139, 'floreshans.neust@gmail.com', '::1', '2026-08-16 01:00:00', 1),
+(140, 'floreshans.neust@gmail.com', '::1', '2026-08-16 11:00:00', 1),
+(141, 'floreshans.neust@gmail.com', '::1', '2026-08-16 15:00:00', 1),
+(142, 'floreshans.neust@gmail.com', '::1', '2026-08-16 18:00:00', 1),
+(143, 'floressktt11@gmail.com', '::1', '2026-08-16 19:00:00', 1),
+(144, 'floreshans.neust@gmail.com', '::1', '2026-08-17 04:00:00', 2),
+(146, 'floressktt11@gmail.com', '::1', '2026-08-17 04:00:00', 1),
+(147, 'floressktt11@gmail.com', '::1', '2026-08-17 05:00:00', 2),
+(149, 'floreshans.neust@gmail.com', '::1', '2026-08-17 07:00:00', 1),
+(150, 'floressktt11@gmail.com', '::1', '2026-08-17 10:00:00', 3),
+(153, 'limuelle.neust@gmail.com', '::1', '2026-08-17 11:00:00', 2),
+(154, 'floressktt11@gmail.com', '::1', '2026-08-17 11:00:00', 5),
+(155, '09951281511', '::1', '2026-08-17 11:00:00', 2),
+(162, 'floreshans.neust@gmail.com', '::1', '2026-08-17 11:00:00', 1),
+(163, '09951281511', '::1', '2026-08-17 12:00:00', 1),
+(164, 'floressktt11@gmail.com', '::1', '2026-08-17 18:00:00', 1),
+(165, 'floreshans.neust@gmail.com', '::1', '2026-08-17 18:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -2640,7 +2839,11 @@ INSERT INTO `guest_otp_tokens` (`id`, `phone`, `token`, `expires_at`, `is_used`,
 (33, '09121212121', '240460', '2026-08-16 12:41:42', 1, 0, '::1', '2026-08-16 04:36:42'),
 (34, '09121212121', '166230', '2026-08-16 12:56:11', 1, 0, '::1', '2026-08-16 04:51:11'),
 (35, '09121212121', '204412', '2026-08-16 13:32:34', 1, 0, '::1', '2026-08-16 05:27:34'),
-(36, '09121212121', '963061', '2026-08-16 16:16:58', 0, 0, '::1', '2026-08-16 08:11:58');
+(36, '09121212121', '963061', '2026-08-16 16:16:58', 0, 0, '::1', '2026-08-16 08:11:58'),
+(37, '09951281511', '802020', '2026-08-17 16:42:02', 1, 0, '::1', '2026-08-17 08:37:02'),
+(38, '09951281511', '325038', '2026-08-17 16:43:49', 1, 0, '::1', '2026-08-17 08:38:49'),
+(39, '09951281511', '624216', '2026-08-17 17:55:56', 1, 0, '::1', '2026-08-17 09:50:56'),
+(40, '09951281511', '964366', '2026-08-17 18:18:39', 1, 0, '::1', '2026-08-17 10:13:39');
 
 -- --------------------------------------------------------
 
@@ -2673,7 +2876,10 @@ INSERT INTO `guest_sms_rate_limits` (`id`, `phone`, `ip`, `window_start`, `send_
 (32, '09121212121', '::1', '2026-08-16 05:00:00', 1),
 (33, '09121212121', '::1', '2026-08-16 06:00:00', 2),
 (35, '09121212121', '::1', '2026-08-16 07:00:00', 1),
-(36, '09121212121', '::1', '2026-08-16 10:00:00', 1);
+(36, '09121212121', '::1', '2026-08-16 10:00:00', 1),
+(37, '09951281511', '::1', '2026-08-17 10:00:00', 2),
+(39, '09951281511', '::1', '2026-08-17 11:00:00', 1),
+(40, '09951281511', '::1', '2026-08-17 12:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -2702,6 +2908,39 @@ INSERT INTO `heatmap_settings` (`setting_id`, `radius_meters`, `minimum_reports`
 (3, 50, 3, '#FDE68A', '#F97316', '#EF4444', NULL, '2026-07-25 14:30:39'),
 (4, 50, 3, '#FDE68A', '#F97316', '#EF4444', NULL, '2026-07-25 14:31:01'),
 (5, 50, 3, '#FDE68A', '#F97316', '#EF4444', NULL, '2026-07-25 14:35:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `maintenance_history`
+--
+
+CREATE TABLE `maintenance_history` (
+  `id` int(11) NOT NULL,
+  `action` varchar(100) NOT NULL,
+  `maintenance_type` varchar(50) DEFAULT NULL,
+  `maintenance_message` text DEFAULT NULL,
+  `reason` text DEFAULT NULL,
+  `previous_status` tinyint(1) DEFAULT NULL,
+  `new_status` tinyint(1) DEFAULT NULL,
+  `start_at` datetime DEFAULT NULL,
+  `end_at` datetime DEFAULT NULL,
+  `performed_by` int(11) DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `maintenance_history`
+--
+
+INSERT INTO `maintenance_history` (`id`, `action`, `maintenance_type`, `maintenance_message`, `reason`, `previous_status`, `new_status`, `start_at`, `end_at`, `performed_by`, `ip_address`, `created_at`) VALUES
+(1, 'DISABLE_MAINTENANCE_MODE', 'scheduled', 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.', '', 0, 0, NULL, NULL, 2, '::1', '2026-08-16 16:15:57'),
+(2, 'UPDATE_MAINTENANCE_SETTINGS', 'scheduled', 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.', '', 0, 0, NULL, NULL, 2, '::1', '2026-08-16 16:17:40'),
+(3, 'DISABLE_MAINTENANCE_MODE', 'emergency', 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.', '', 0, 0, NULL, NULL, 2, '::1', '2026-08-16 16:18:07'),
+(4, 'UPDATE_MAINTENANCE_SETTINGS', 'emergency', 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.', 'Database migration', 0, 0, '2026-08-17 10:19:00', '2026-08-17 10:22:00', 2, '::1', '2026-08-17 02:20:12'),
+(5, 'ENABLE_EMERGENCY_LOCKDOWN', 'emergency', 'The system is temporarily unavailable due to an emergency situation. Please check back later or contact the barangay hall for urgent concerns.', 'Under Maintenance', 0, 1, NULL, NULL, 2, '::1', '2026-08-17 02:24:22'),
+(6, 'DISABLE_EMERGENCY_LOCKDOWN', 'emergency', 'The system is temporarily unavailable due to an emergency situation. Please check back later or contact the barangay hall for urgent concerns.', 'Under Maintenance', 1, 0, NULL, NULL, 2, '::1', '2026-08-17 02:27:10');
 
 -- --------------------------------------------------------
 
@@ -2761,53 +3000,7 @@ INSERT INTO `notifications` (`id`, `user_id`, `report_id`, `announcement_id`, `t
 (48, NULL, NULL, NULL, 'New Announcement', 'Barangay Clean-Up Drive this Saturday', 'Join us for a community clean-up drive this Saturday at 7:00 AM. Meet at the barangay hall.', 1, 1, '2026-07-24 08:53:32'),
 (49, NULL, NULL, NULL, 'Collection Schedule Update', 'Holiday schedule changes', 'Collection schedule will be adjusted for the upcoming holidays. Please check the collection schedule page for details.', 1, 1, '2026-07-23 08:53:32'),
 (50, 1, NULL, NULL, 'New Announcement', 'Monthly meeting reminder', 'Monthly barangay meeting scheduled for August 1, 2026 at 2:00 PM.', 0, 0, '2026-07-26 04:53:32'),
-(51, 2, NULL, NULL, 'Report Status Update', 'New reports pending review', 'There are 5 new waste reports pending your review.', 1, 0, '2026-07-26 03:53:32'),
-(56, 1, 34, NULL, 'report_rejected', 'Report Rejected', 'Your waste report has been rejected. Reason: No reason provided', 0, 0, '2026-08-02 08:45:42'),
-(57, 1, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 0, 0, '2026-08-02 19:28:52'),
-(58, 2, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 1, 0, '2026-08-02 19:28:52'),
-(59, 17, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 0, 0, '2026-08-02 19:28:52'),
-(60, 18, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 0, 0, '2026-08-02 19:28:52'),
-(61, 3, 43, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-02 19:35:21'),
-(62, 1, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
-(63, 2, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 1, 0, '2026-08-02 20:07:25'),
-(64, 17, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
-(65, 18, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
-(66, 3, 44, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-02 20:09:52'),
-(67, 1, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 0, 0, '2026-08-02 20:12:38'),
-(68, 2, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 1, 0, '2026-08-02 20:12:38'),
-(69, 17, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 0, 0, '2026-08-02 20:12:38'),
-(70, 18, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 0, 0, '2026-08-02 20:12:38'),
-(71, 1, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 0, 0, '2026-08-02 20:21:42'),
-(72, 2, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 1, 0, '2026-08-02 20:21:42'),
-(73, 17, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 0, 0, '2026-08-02 20:21:42'),
-(74, 18, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 0, 0, '2026-08-02 20:21:42'),
-(75, 19, 46, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-07 08:57:26'),
-(76, 19, 46, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-07 08:57:47'),
-(77, 3, 45, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-07 09:03:34'),
-(78, 1, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
-(80, 17, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
-(81, 18, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
-(82, 3, 47, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-07 22:53:15'),
-(83, 3, 47, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 1, 0, '2026-08-07 23:37:47'),
-(84, 3, 47, NULL, 'report_rejected', 'Report Rejected', 'Your waste report has been rejected. Reason: No reason provided', 1, 0, '2026-08-08 09:40:27'),
-(85, 3, 45, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 1, 0, '2026-08-08 09:41:23'),
-(86, 3, 45, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 1, 0, '2026-08-08 09:41:32'),
-(87, 1, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
-(88, 2, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 1, 0, '2026-08-08 09:59:25'),
-(89, 17, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
-(90, 18, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
-(91, 3, 48, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-09 09:34:05'),
-(92, NULL, 50, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 11:31:30'),
-(93, NULL, 50, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 11:32:49'),
-(94, NULL, 50, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-10 11:33:38'),
-(95, NULL, 52, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 11:34:26'),
-(96, NULL, 52, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 11:34:33'),
-(97, NULL, 53, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 12:43:54'),
-(98, NULL, 53, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 12:44:07'),
-(99, NULL, 53, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-10 12:44:18'),
-(100, NULL, 51, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-15 00:00:10'),
-(101, NULL, 51, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-15 00:00:13'),
-(102, NULL, 54, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-15 11:53:27');
+(51, 2, NULL, NULL, 'Report Status Update', 'New reports pending review', 'There are 5 new waste reports pending your review.', 1, 0, '2026-07-26 03:53:32');
 
 -- --------------------------------------------------------
 
@@ -2857,6 +3050,26 @@ INSERT INTO `notification_types` (`notification_type_id`, `notification_type_nam
 (5, 'Report Verified', 'When a report is verified', '2026-07-25 13:56:31'),
 (6, 'Report Resolved', 'When a report is resolved', '2026-07-25 13:56:31'),
 (7, 'Account Approved', 'When a resident account is approved', '2026-07-25 13:56:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penalty_rules`
+--
+
+CREATE TABLE `penalty_rules` (
+  `rule_id` int(11) NOT NULL,
+  `offense_no` int(11) NOT NULL DEFAULT 0,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `legal_ref` varchar(150) DEFAULT NULL,
+  `fine_range` varchar(150) DEFAULT NULL,
+  `alt_penalty` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -2932,10 +3145,10 @@ CREATE TABLE `purok_boundaries` (
 --
 
 INSERT INTO `purok_boundaries` (`boundary_id`, `purok_id`, `polygon_geometry`, `updated_by`, `updated_at`) VALUES
-(1, 1, 0x000000000103000000010000000d000000f1811dff05335e4001fc53aa44212f4044be4ba94b335e40d670917bba222f40992ec4ea8f335e4041800c1d3b202f4062484e266e335e402a1c412ac51e2f4032022a1c41335e40ac8f87bebb1d2f40fd4ffeee1d335e406e313f37341d2f40a777f17edc325e40fdbe7ff3e21c2f4097715303cd325e406765fb90b71c2f40978bf84ecc325e4061c1fd80071e2f40cd57c9c7ee325e403579ca6aba1e2f40cd57c9c7ee325e40bbd1c77c40202f40ca6dfb1ef5325e408f899466f3202f40f1811dff05335e4001fc53aa44212f40, 2, '2026-08-08 17:18:01'),
-(2, 2, 0x0000000001030000000100000006000000742502d53f345e400745f30016212f4091f2936a9f345e40a79201a08a232f40d39ffd4811355e401024ef1cca202f40f65ca626c1345e405439ed29391f2f40ef01ba2f67345e403bc269c18b1e2f40742502d53f345e400745f30016212f40, 2, '2026-08-10 12:32:02'),
-(3, 3, 0x00000000010300000001000000060000008bfcfa2136345e4030b95164ad192f4097ab1f9be4335e40e753c72aa5172f408ee89e758d335e4045f5d6c056192f40a226fa7c94335e40e3c4573b8a1b2f4033a9a10dc0335e408f6fef1af41d2f408bfcfa2136345e4030b95164ad192f40, 2, '2026-08-08 09:48:40'),
-(4, 4, 0x000000000103000000010000000c0000008066101fd8335e408f6fef1af41d2f409d67ec4b36345e4046b6f3fdd4202f4016dc0f7860345e401a6cea3c2a1e2f40075dc2a1b7345e4008aef204c21e2f40bebf417bf5345e40b4006dab591f2f40fd4cbd6e11355e40996379573d202f4063b7cf2a33355e40a12de7525c1d2f4084d89942e7345e4019575c1c951b2f40a7c98cb795345e40df89592f861a2f4069a7e67283345e40e2afc91af5182f402e55698b6b345e402a00c63368182f408066101fd8335e408f6fef1af41d2f40, 2, '2026-08-08 09:48:56'),
+(1, 1, 0x0000000001030000000100000020000000319a95ed43335e407731cd74af232f4044a4a65d4c335e40a1664815c5232f406abddf68c7335e403048fab48a1e2f40594fadbeba335e401f9dbaf2591e2f40fa60191bba325e4040deab56261c2f40bd8c62b9a5325e40cf6bec12d51b2f4023ba675da3325e4012d90759161c2f4046459c4eb2325e4073a087da361c2f404f232d95b7325e4080ef366f9c1c2f405d8aabcabe325e40e0d8b3e7321d2f406ea7ad11c1325e4080f0a1444b1e2f40850662d9cc325e407711a628971e2f409eb30584d6325e40417fa1478c1e2f40a79196cadb325e40c075c58cf01e2f40a8ab3b16db325e40795a7ee02a1f2f40ba8102efe4325e40b2135e82531f2f40c5ad8218e8325e40522b4cdf6b202f402c0fd253e4325e40a99f3715a9202f403a90f5d4ea325e40ea5910cafb202f4058ace122f7325e403106d671fc202f4037a968acfd325e40257497c459212f4053910a630b335e405e2d776682212f406781768714335e4034f8fbc56c212f407aa52c431c335e406fd8b628b3212f408c135fed28335e40f486fbc8ad212f40950b957f2d335e409c8bbfed09222f40a9fb00a436335e40902e36ad14222f40aa6395d233335e403733fad170222f40c899266c3f335e40df37bef6cc222f40c899266c3f335e40d658c2da18232f40d0436d1b46335e40dba6785c54232f40319a95ed43335e407731cd74af232f40, 2, '2026-08-16 22:35:50'),
+(2, 2, 0x00000000010300000001000000110000007ec7f0d8cf335e40d21bee23b71e2f40060e68e90a345e40d656ec2fbb1f2f406b44300e2e345e40a4552de9281f2f40e19a3bfa5f345e4065e42cec691f2f402cf3565d87345e407b336abe4a1e2f402ea9da6e82345e40edbab72231212f407d1f0e12a2345e40c22ff5f3a6222f4069ad68739c345e4096e7c1dd59232f40a27dace0b7345e409eb30584d6232f4065fcfb8c0b355e4070eb6e9eea202f402c465d6bef345e40361e6cb1db1f2f40de1d19abcd345e40c5abac6d8a1f2f40b709f7cabc345e40a7e67283a11e2f40429946938b345e4062bce6559d1d2f40cbdaa6785c345e40e97de36bcf1c2f4007280d350a345e409df2e846581c2f407ec7f0d8cf335e40d21bee23b71e2f40, 2, '2026-08-16 22:36:26'),
+(3, 3, 0x000000000103000000010000001100000057cd7344be335e407ec9c6832d1e2f4081971936ca335e40de9046054e1e2f40cfd90242eb335e40d2890453cd1c2f4043e21e4b1f345e40cee33098bf1a2f40f437a11001345e40f4ddad2cd1192f40e02d90a0f8335e4082583673481a2f4081971936ca335e403f56f0db101b2f40567f8461c0335e40fb96395d161b2f4044c362d4b5335e40eaebf99ae51a2f401c615111a7335e407ec7f0d8cf1a2f400abfd4cf9b335e40378aac35941a2f40f6b4c35f93335e404cc631923d1a2f40e27668588c335e406d1cb1169f1a2f40e25cc30c8d335e401421753bfb1a2f40e25cc30c8d335e40462234828d1b2f40f54c2f3196335e406af6402b301c2f4057cd7344be335e407ec9c6832d1e2f40, 2, '2026-08-16 22:37:02'),
+(4, 4, 0x00000000010300000001000000170000008ae942acfe335e40ce70033e3f1c2f409f5be84a04345e403cbce7c0721c2f40b39943520b345e40f67ea31d371c2f406cec12d55b345e4033ddeba4be1c2f4057cd7344be345e40b056ed9a901e2f4072193735d0345e40895c70067f1f2f40c075c58cf0345e40de1d19abcd1f2f40116e32aa0c355e40923cd7f7e1202f40ac5626fc52355e40cf85915ed41e2f40840eba8443355e40c59107228b1c2f40b682a62556355e40eeb25f77ba1b2f40541c075e2d355e403dbb7cebc31a2f401762f54718355e40ea77616bb61a2f40d47fd6fcf8345e40861f9c4f1d1b2f408509a359d9345e406da818e76f1a2f40268dd13aaa345e402331410ddf1a2f408044132862345e4071395e81e8192f405930f14751345e40b0aa5e7ea7192f40f4c5de8b2f345e4025581ccefc1a2f40eacda8f92a345e40b98ac56f0a1b2f40e109bdfe24345e40d0ed258dd11a2f40a6b73f170d345e4035f0a31af61b2f408ae942acfe335e40ce70033e3f1c2f40, 2, '2026-08-16 22:38:05'),
 (5, 5, 0x000000000103000000010000000a000000d8d825aab7325e40a6d1e4620c1c2f40ec1681b1be325e4022365838491b2f408e3ba583f5325e409cdd5a26c3192f4059dc7f643a335e402c7e5358a9182f40fa980f0874335e408466d7bd15192f4038876bb587335e409a5fcd0182192f40361fd7868a335e40791edc9db51b2f40c4d155babb335e401a6cea3c2a1e2f401cee23b726335e404a4563edef1c2f40d8d825aab7325e40a6d1e4620c1c2f40, 2, '2026-08-08 17:16:04');
 
 -- --------------------------------------------------------
@@ -2978,20 +3191,36 @@ CREATE TABLE `reports` (
 --
 
 INSERT INTO `reports` (`id`, `resident_id`, `reporter_type`, `tracking_number`, `guest_name`, `guest_phone`, `reporter_latitude`, `reporter_longitude`, `location_plausibility`, `is_duplicate`, `description`, `latitude`, `longitude`, `location_verified`, `submission_date`, `reviewed_by`, `created_at`, `updated_at`, `category_id`, `quantity_id`, `condition_id`, `status_id`, `purok_id`, `location`, `rejected_reason`, `support_count`) VALUES
-(34, 1, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'Hazardous waste dumped near the creek', 15.55480000, 120.80450000, 0, '2026-07-23 13:27:29', 2, '2026-07-26 05:27:29', '2026-08-02 08:45:42', 6, 2, 1, 5, 2, NULL, NULL, 0),
-(35, 1, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'Construction waste blocking roadway', 15.56120000, 120.80680000, 0, '2026-07-25 13:27:29', NULL, '2026-07-26 05:27:29', '2026-07-26 13:27:29', 4, 3, 6, 3, NULL, NULL, NULL, 0),
-(43, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testingg phaseeeeee', 15.56003000, 120.80475900, 1, '2026-08-02 19:28:52', 2, '2026-08-02 11:28:52', '2026-08-02 19:35:21', 1, 3, 2, 2, 1, '', NULL, 0),
-(44, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'description testttingg', 15.56139800, 120.80701400, 1, '2026-08-02 20:07:25', 2, '2026-08-02 12:07:25', '2026-08-02 20:09:52', 8, 1, 2, 2, 1, '', NULL, 0),
-(45, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testingggggggg', 15.56152000, 120.80696900, 1, '2026-08-02 20:12:38', 2, '2026-08-02 12:12:38', '2026-08-08 09:41:32', 7, 3, 2, 4, 1, '', NULL, 1),
-(46, 19, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testinggggg', 15.56185100, 120.80662400, 1, '2026-08-02 20:21:42', 2, '2026-08-02 12:21:42', '2026-08-07 08:57:47', 2, 3, 4, 4, 1, '', NULL, 0),
-(47, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'tessstinnggg', 15.56035300, 120.82494400, 1, '2026-08-07 22:52:35', 2, '2026-08-07 14:52:35', '2026-08-08 09:40:27', 1, 2, 6, 5, 4, '', NULL, 0),
-(48, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'test test test', 15.55713300, 120.81367700, 1, '2026-08-08 09:59:25', 2, '2026-08-08 01:59:25', '2026-08-09 09:34:05', 6, 3, 3, 2, 4, '', NULL, 0),
-(49, NULL, 'guest', 'WRS-2026-43826', 'juan testing guestt', '09951281511', 15.39840200, 120.94193300, 'high_risk', 0, 'testinggggg guesttt', 15.55419462, 120.81403351, 0, '2026-08-10 02:05:34', NULL, '2026-08-09 18:05:34', '2026-08-10 02:05:34', 8, 3, 1, 1, 4, '15.55419, 120.81403', NULL, 0),
-(50, NULL, 'guest', 'WRS-2026-79695', 'juan testing guestt', '09951281511', 15.39842047, 120.94193300, 'high_risk', 0, 'kahit ano naa', 15.48574296, 120.92609613, 0, '2026-08-10 07:57:25', 2, '2026-08-09 23:57:25', '2026-08-10 11:33:38', 8, 4, 1, 4, NULL, '15.48574, 120.92610', NULL, 0),
-(51, NULL, 'guest', 'WRS-2026-55350', 'hasss', '09951281511', NULL, NULL, 'plausible', 0, 'asdasdasdd', 15.54624821, 120.83049093, 0, '2026-08-10 08:09:48', 2, '2026-08-10 00:09:48', '2026-08-15 00:00:17', 8, 2, 3, 5, 3, '15.54625, 120.83049', NULL, 0),
-(52, NULL, 'guest', 'WRS-2026-88354', 'hasss', '09951281511', NULL, NULL, 'plausible', 0, 'asdadadad', 15.56099968, 120.81040672, 0, '2026-08-10 08:10:29', 2, '2026-08-10 00:10:29', '2026-08-10 11:40:28', 6, 2, 6, 5, 5, '15.56100, 120.81041', NULL, 0),
-(53, NULL, 'guest', 'WRS-2026-87082', 'cedrick', '09121212121', 15.39842047, 120.94193300, 'high_risk', 0, 'testinggggg', 15.55872170, 120.80451672, 0, '2026-08-10 12:42:37', 2, '2026-08-10 04:42:37', '2026-08-10 12:44:18', 1, 2, 3, 4, 1, '15.55872, 120.80452', NULL, 0),
-(54, NULL, 'guest', 'WRS-2026-58782', 'cedrick', '09121212121', 15.39229800, 120.94094600, 'high_risk', 0, 'testinggg', 15.55923022, 120.80733736, 0, '2026-08-10 12:55:21', 2, '2026-08-10 04:55:21', '2026-08-15 11:53:27', 8, 2, 5, 2, 2, '15.55923, 120.80734', NULL, 0);
+(1, 3, 'resident', 'WRS-2026-32459', NULL, NULL, NULL, NULL, 'plausible', 0, 'Overflowing public concrete waste bin near the chapel. Trash spilling onto the sidewalk and causing unpleasant odor in the morning.', 15.56045000, 120.80490000, 0, '2026-08-14 08:30:00', NULL, '2026-08-14 00:30:00', '2026-08-14 08:30:00', 2, 2, 3, 2, 1, 'Near Purok 1 Community Chapel, Corner Mabini St.', NULL, 12),
+(2, 3, 'resident', 'WRS-2026-31419', NULL, NULL, NULL, NULL, 'plausible', 0, 'May nagtapon ng mga sirang sako at halo-halong plastic waste sa tabi ng kanal. May mga lumulutang na plastic bottles.', 15.55980000, 120.80410000, 0, '2026-08-16 09:15:00', NULL, '2026-08-16 01:15:00', '2026-08-16 09:15:00', 1, 3, 1, 1, 1, 'Purok 1 Irrigation Canal Path, Rizal Street', NULL, 10),
+(3, 3, 'resident', 'WRS-2026-96649', NULL, NULL, NULL, NULL, 'plausible', 0, 'Discarded paint buckets, chemical thinner cans, and fluorescent tubes left beside the health center fence.', 15.56110000, 120.80690000, 0, '2026-08-15 14:20:00', NULL, '2026-08-15 06:20:00', '2026-08-15 14:20:00', 6, 1, 4, 2, 1, 'Purok 1 Health Center perimeter alleyway', NULL, 10),
+(4, 3, 'resident', 'WRS-2026-33101', NULL, NULL, NULL, NULL, 'plausible', 0, 'Regular household trash bins left uncollected since Tuesday. Bags are beginning to pile up and need immediate collection.', 15.56140000, 120.80710000, 0, '2026-08-12 11:00:00', NULL, '2026-08-12 03:00:00', '2026-08-12 11:00:00', 3, 2, 2, 4, 1, 'Bonifacio St. alley near Purok 1 Day Care Center', NULL, 4),
+(5, 3, 'resident', 'WRS-2026-80100', NULL, NULL, NULL, NULL, 'plausible', 0, 'Semento, graba, at sirang hollow blocks na iniwan matapos ang fencing repair. Nakaharang sa daanan ng mga tricycle.', 15.56010000, 120.80440000, 0, '2026-08-15 16:45:00', NULL, '2026-08-15 08:45:00', '2026-08-15 16:45:00', 4, 3, 6, 3, 1, 'Corner Mabini St. & Purok 1 Barangay Road', NULL, 3),
+(6, 3, 'resident', 'WRS-2026-15520', NULL, NULL, NULL, NULL, 'plausible', 0, 'Piles of dry bamboo cuttings, coconut fronds, and pruned mango branches after weekend neighborhood clearing.', 15.55910000, 120.80350000, 0, '2026-08-10 10:30:00', NULL, '2026-08-10 02:30:00', '2026-08-10 10:30:00', 5, 3, 2, 4, 1, 'Purok 1 West Boundary, Riverside Pathway', NULL, 5),
+(7, 3, 'resident', 'WRS-2026-81474', NULL, NULL, NULL, NULL, 'plausible', 0, 'Tambak ng plastic wrappers, sako ng ipa, at sirang karton sa tabi ng feeder road. Kailangan mahakot ng utility truck.', 15.56300000, 120.82400000, 0, '2026-08-17 07:45:00', NULL, '2026-08-16 23:45:00', '2026-08-17 07:45:00', 1, 3, 1, 1, 2, 'Purok 2 North Access Road, near Rice Mill', NULL, 7),
+(8, 3, 'resident', 'WRS-2026-32379', NULL, NULL, NULL, NULL, 'plausible', 0, 'Overflowing steel garbage drums after barangay sports event. Single-use plastic cups and snack packs scattered.', 15.56200000, 120.82200000, 0, '2026-08-16 13:10:00', NULL, '2026-08-16 05:10:00', '2026-08-16 13:10:00', 2, 2, 3, 2, 2, 'Purok 2 Secondary Alley, near Purok Basketball Half-court', NULL, 1),
+(9, 3, 'resident', 'WRS-2026-53660', NULL, NULL, NULL, NULL, 'plausible', 0, 'Baradong culvert dahil sa mga naipit na sanga at plastic sacks ng domestic trash. Bahagyang tumataas ang tubig.', 15.56050000, 120.81600000, 0, '2026-08-15 15:30:00', NULL, '2026-08-15 07:30:00', '2026-08-15 15:30:00', 7, 3, 5, 3, 2, 'Purok 2 East Sub-feeder Canal Road', NULL, 2),
+(10, 3, 'resident', 'WRS-2026-31044', NULL, NULL, NULL, NULL, 'plausible', 0, 'Leftover concrete masonry fragments and broken hollow blocks after wall reconstruction. Need clearing.', 15.55850000, 120.81800000, 0, '2026-08-11 09:00:00', NULL, '2026-08-11 01:00:00', '2026-08-11 09:00:00', 4, 2, 4, 4, 2, 'Purok 2 South Sector, Boundary Pathway', NULL, 2),
+(11, 3, 'resident', 'WRS-2026-86577', NULL, NULL, NULL, NULL, 'plausible', 0, 'Tree pruning debris and dry weeds from farm boundary trimming. Cleaned and processed for communal compost.', 15.56500000, 120.82500000, 0, '2026-08-09 14:00:00', NULL, '2026-08-09 06:00:00', '2026-08-09 14:00:00', 5, 4, 2, 4, 2, 'Purok 2 Farm-to-Market Road, Kilometro 2', NULL, 6),
+(12, 3, 'resident', 'WRS-2026-35263', NULL, NULL, NULL, NULL, 'plausible', 0, 'Missed household waste collection along northern corner. Scheduled for priority dispatch this afternoon.', 15.56600000, 120.82300000, 0, '2026-08-16 11:20:00', NULL, '2026-08-16 03:20:00', '2026-08-16 11:20:00', 3, 2, 2, 2, 2, 'Purok 2 North Gate Entry Point', NULL, 3),
+(13, 3, 'resident', 'WRS-2026-85731', NULL, NULL, NULL, NULL, 'plausible', 0, 'Commercial waste sacks and fast-food packaging discarded overnight beside the waiting shed bench.', 15.55600000, 120.80950000, 0, '2026-08-17 06:30:00', NULL, '2026-08-16 22:30:00', '2026-08-17 06:30:00', 1, 2, 1, 1, 3, 'Purok 3 Central Avenue, near Purok Waiting Shed', NULL, 5),
+(14, 3, 'resident', 'WRS-2026-95842', NULL, NULL, NULL, NULL, 'plausible', 0, 'Baradong drainage inlet dahil sa mga naipong mineral water bottles at single-use plastic cups. Kailangan ng declogging.', 15.55450000, 120.80750000, 0, '2026-08-16 16:15:00', NULL, '2026-08-16 08:15:00', '2026-08-16 16:15:00', 7, 2, 5, 2, 3, 'Purok 3 Drainage Culvert Junction', NULL, 7),
+(15, 3, 'resident', 'WRS-2026-23288', NULL, NULL, NULL, NULL, 'plausible', 0, 'Concrete debris, plaster residue, and discarded wall tiles left on the roadside. Road team dispatched for hauling.', 15.55350000, 120.80650000, 0, '2026-08-15 10:00:00', NULL, '2026-08-15 02:00:00', '2026-08-15 10:00:00', 4, 3, 6, 3, 3, 'Purok 3 South Road, near Purok Outpost', NULL, 11),
+(16, 3, 'resident', 'WRS-2026-69669', NULL, NULL, NULL, NULL, 'plausible', 0, 'Biodegradable vegetable refuse and rotten fruit crates from weekend market vendors. Fully cleared and sanitized.', 15.55700000, 120.80880000, 0, '2026-08-13 15:40:00', NULL, '2026-08-13 07:40:00', '2026-08-13 15:40:00', 5, 3, 4, 4, 3, 'Purok 3 Market Feeder Road', NULL, 11),
+(17, 3, 'resident', 'WRS-2026-58237', NULL, NULL, NULL, NULL, 'plausible', 0, 'Two household trash bins overflowing due to delayed pickup schedule. Resident requests immediate sweep.', 15.55500000, 120.81100000, 0, '2026-08-17 08:50:00', NULL, '2026-08-17 00:50:00', '2026-08-17 08:50:00', 2, 1, 3, 1, 3, 'Purok 3 East Alleyway, Residential Block 4', NULL, 6),
+(18, 3, 'resident', 'WRS-2026-16026', NULL, NULL, NULL, NULL, 'plausible', 0, 'Old automotive batteries and motor oil containers left near mechanic shop. Hazardous chemicals disposed safely.', 15.55800000, 120.80800000, 0, '2026-08-12 13:25:00', NULL, '2026-08-12 05:25:00', '2026-08-12 13:25:00', 6, 2, 4, 4, 3, 'Purok 3 Main Crossing, Rizal Extension', NULL, 6),
+(19, 3, 'resident', 'WRS-2026-23531', NULL, NULL, NULL, NULL, 'plausible', 0, 'Plastic snack packaging, styrofoam meal boxes, and plastic bottles scattered outside the campus fence.', 15.55800000, 120.82800000, 0, '2026-08-16 15:00:00', NULL, '2026-08-16 07:00:00', '2026-08-16 15:00:00', 1, 2, 4, 2, 4, 'Purok 4 Barangay Road, near High School Extension', NULL, 10),
+(20, 3, 'resident', 'WRS-2026-42400', NULL, NULL, NULL, NULL, 'plausible', 0, 'Truck unloaded construction soil, broken pavement chunks, and asphalt debris blocking half of the bypass road.', 15.55600000, 120.82500000, 0, '2026-08-15 11:30:00', NULL, '2026-08-15 03:30:00', '2026-08-15 11:30:00', 4, 4, 6, 3, 4, 'Purok 4 Agri-Industrial Bypass, Corner Sitio Riverside', NULL, 1),
+(21, 3, 'resident', 'WRS-2026-62850', NULL, NULL, NULL, NULL, 'plausible', 0, 'Silt and domestic waste accumulation restricting water flow to agricultural plots. Declogging operation planned.', 15.55400000, 120.82800000, 0, '2026-08-17 09:20:00', NULL, '2026-08-17 01:20:00', '2026-08-17 09:20:00', 7, 3, 5, 1, 4, 'Purok 4 Irrigation Gate 2 Canal', NULL, 13),
+(22, 3, 'resident', 'WRS-2026-42876', NULL, NULL, NULL, NULL, 'plausible', 0, 'Piles of pruned acacia branches and garden weeds. Hauled by the barangay dump truck for organic processing.', 15.56000000, 120.82700000, 0, '2026-08-14 16:10:00', NULL, '2026-08-14 08:10:00', '2026-08-14 16:10:00', 5, 3, 2, 4, 4, 'Purok 4 Communal Nursery Perimeter', NULL, 1),
+(23, 3, 'resident', 'WRS-2026-42885', NULL, NULL, NULL, NULL, 'plausible', 0, 'Community waste receptacle completely filled. Commuters dropping waste around the perimeter base.', 15.55700000, 120.82200000, 0, '2026-08-16 10:45:00', NULL, '2026-08-16 02:45:00', '2026-08-16 10:45:00', 2, 2, 3, 2, 4, 'Purok 4 Public Tricycle Terminal', NULL, 13),
+(24, 3, 'resident', 'WRS-2026-22985', NULL, NULL, NULL, NULL, 'plausible', 0, 'Household garbage bags uncollected for 4 days. Waste properly collected and disposed by sanitation team.', 15.55300000, 120.82000000, 0, '2026-08-13 14:15:00', NULL, '2026-08-13 06:15:00', '2026-08-13 14:15:00', 3, 2, 2, 4, 4, 'Purok 4 South Access Way, Sitio Ilang-Ilang', NULL, 12),
+(25, 3, 'resident', 'WRS-2026-83871', NULL, NULL, NULL, NULL, 'plausible', 0, 'Multiple sacks of commercial poultry feeds and torn plastic sheeting dumped on the road shoulder.', 15.55300000, 120.80000000, 0, '2026-08-17 08:00:00', NULL, '2026-08-17 00:00:00', '2026-08-17 08:00:00', 1, 3, 1, 1, 5, 'Purok 5 Main Road, near Barangay Boundary Marker', NULL, 2),
+(26, 3, 'resident', 'WRS-2026-71513', NULL, NULL, NULL, NULL, 'plausible', 0, 'Baradong daluyan ng patubig dahil sa naipong plastic containers at sirang lambat. Apektado ang daloy ng tubig.', 15.55150000, 120.79800000, 0, '2026-08-16 14:50:00', NULL, '2026-08-16 06:50:00', '2026-08-16 14:50:00', 7, 2, 5, 2, 5, 'Purok 5 West Feeder Canal, near Rice Field Entry', NULL, 8),
+(27, 3, 'resident', 'WRS-2026-18646', NULL, NULL, NULL, NULL, 'plausible', 0, 'Leftover concrete masonry fragments and broken culvert pieces after ditch repair. Cleared by utility crew.', 15.55400000, 120.80300000, 0, '2026-08-11 11:15:00', NULL, '2026-08-11 03:15:00', '2026-08-11 11:15:00', 4, 3, 6, 4, 5, 'Purok 5 East Perimeter Road, near Barangay Multi-purpose Hall', NULL, 3),
+(28, 3, 'resident', 'WRS-2026-83764', NULL, NULL, NULL, NULL, 'plausible', 0, 'Piles of dry bamboo cuttings, pruned ipil-ipil branches, and dried foliage ready for municipal collection.', 15.55200000, 120.80200000, 0, '2026-08-15 13:00:00', NULL, '2026-08-15 05:00:00', '2026-08-15 13:00:00', 5, 2, 2, 3, 5, 'Purok 5 Central Crossing, Sitio Pag-asa', NULL, 6),
+(29, 3, 'resident', 'WRS-2026-42164', NULL, NULL, NULL, NULL, 'plausible', 0, 'Overflowing communal garbage drum near the residential alleyway. Stray dogs tearing through discarded sacks.', 15.55500000, 120.80500000, 0, '2026-08-17 10:10:00', NULL, '2026-08-17 02:10:00', '2026-08-17 10:10:00', 2, 2, 3, 1, 5, 'Purok 5 North Crossing, near Purok 1 & 5 Boundary', NULL, 6),
+(30, 3, 'resident', 'WRS-2026-69008', NULL, NULL, NULL, NULL, 'plausible', 0, 'Missed regular collection for household garbage bags. Swept and hauled by special barangay truck deployment.', 15.55350000, 120.79500000, 0, '2026-08-12 16:30:00', NULL, '2026-08-12 08:30:00', '2026-08-12 16:30:00', 3, 2, 2, 4, 5, 'Purok 5 Far West Access, Sitio Maligaya', NULL, 3);
 
 -- --------------------------------------------------------
 
@@ -3008,16 +3237,6 @@ CREATE TABLE `report_flags` (
   `reviewed_by` int(11) DEFAULT NULL,
   `reviewed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `report_flags`
---
-
-INSERT INTO `report_flags` (`id`, `report_id`, `flag_reason`, `flagged_by`, `flagged_at`, `reviewed_by`, `reviewed_at`) VALUES
-(8, 34, 'Rejected by admin', 2, '2026-08-02 08:45:42', NULL, NULL),
-(9, 47, 'Rejected by admin', 2, '2026-08-08 09:40:27', NULL, NULL),
-(10, 52, 'Rejected by admin', 2, '2026-08-10 11:40:28', NULL, NULL),
-(11, 51, 'Rejected by admin', 2, '2026-08-15 00:00:17', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3048,7 +3267,7 @@ CREATE TABLE `report_generation_settings` (
 --
 
 INSERT INTO `report_generation_settings` (`setting_id`, `report_header`, `report_footer`, `signatory_name`, `signatory_position`, `disclaimer`, `updated_by`, `updated_at`, `header_logo_left`, `header_logo_right`, `sub_header`, `republic_header`, `office_name`, `signatory_approved_name`, `signatory_approved_position`) VALUES
-(1, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', 'Rosa Medina', 'Barangay Secretary', '', 2, '2026-08-15 07:31:45', '/brgy-waste-app-v3/public/uploads/logos/rep_logo_left_1786729226.jpg', '/brgy-waste-app-v3/public/uploads/logos/rep_logo_right_1786729619.jpg', 'Province of Nueva Ecija · Municipality of Quezon', 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', '', 'Punong Barangay'),
+(1, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', 'Rosa Medina', 'Barangay Secretary', '', 2, '2026-08-17 10:16:18', '/brgy-waste-app-v3/public/uploads/logos/rep_logo_left_1786932978.jpg', '/brgy-waste-app-v3/public/uploads/logos/rep_logo_right_1786932978.jpg', 'Province of Nueva Ecija · Municipality of Quezon', 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', '', 'Punong Barangay'),
 (2, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:27:25', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
 (3, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:30:39', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
 (4, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:31:01', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
@@ -3073,15 +3292,36 @@ CREATE TABLE `report_photos` (
 --
 
 INSERT INTO `report_photos` (`photo_id`, `report_id`, `photo_path`, `is_primary`, `uploaded_at`) VALUES
-(2, 43, '6a6f29f41892f_Screenshot 2025-06-22 181737.png', 1, '2026-08-02 19:28:52'),
-(3, 44, '6a6f32fddca0e_Screenshot 2025-06-18 225708.png', 1, '2026-08-02 20:07:25'),
-(4, 45, '6a6f343691b11_Screenshot 2025-06-22 181737.png', 1, '2026-08-02 20:12:38'),
-(5, 46, '6a6f36567812f_Screenshot 2025-08-18 220556.png', 1, '2026-08-02 20:21:42'),
-(6, 47, '6a75f133acbf0_Screenshot 2025-06-11 000452.png', 1, '2026-08-07 22:52:35'),
-(7, 48, '6a768d7d2ed66_Screenshot 2025-06-24 114030.png', 1, '2026-08-08 09:59:25'),
-(8, 49, 'guest_6a78c15a5d8ae.png', 1, '2026-08-10 02:05:34'),
-(9, 50, 'guest_6a7913d81f718.jpg', 1, '2026-08-10 07:57:25'),
-(10, 51, 'guest_6a7916bc365af.png', 1, '2026-08-10 08:09:48');
+(1, 1, '6a6f29f41892f_Screenshot 2025-06-22 181737.png', 1, '2026-08-14 08:30:00'),
+(2, 2, '69e3f0fe0e532_images.jpg', 1, '2026-08-16 09:15:00'),
+(3, 3, '6a6f32fddca0e_Screenshot 2025-06-18 225708.png', 1, '2026-08-15 14:20:00'),
+(4, 4, '6a6f343691b11_Screenshot 2025-06-22 181737.png', 1, '2026-08-12 11:00:00'),
+(5, 5, '6a75f133acbf0_Screenshot 2025-06-11 000452.png', 1, '2026-08-15 16:45:00'),
+(6, 6, '6a6e76cf63dd9_Screenshot 2025-06-22 190140.png', 1, '2026-08-10 10:30:00'),
+(7, 7, '69e4791c58512_images.jpg', 1, '2026-08-17 07:45:00'),
+(8, 8, '69e47e9105490_images.jpg', 1, '2026-08-16 13:10:00'),
+(9, 9, '6a6f36567812f_Screenshot 2025-08-18 220556.png', 1, '2026-08-15 15:30:00'),
+(10, 10, '69e480a039c44_images.jpg', 1, '2026-08-11 09:00:00'),
+(11, 11, '6a768d7d2ed66_Screenshot 2025-06-24 114030.png', 1, '2026-08-09 14:00:00'),
+(12, 12, '69e482f21dfa7_images.jpg', 1, '2026-08-16 11:20:00'),
+(13, 13, '69e485c125cd7_images.jpg', 1, '2026-08-17 06:30:00'),
+(14, 14, '69e492223969c_images.jpg', 1, '2026-08-16 16:15:00'),
+(15, 15, '69e4ab6846abd_images (1).jpg', 1, '2026-08-15 10:00:00'),
+(16, 16, '6a6e672cc530e_Screenshot 2025-06-22 181737.png', 1, '2026-08-13 15:40:00'),
+(17, 17, '6a6e76e0124a4_Screenshot 2025-06-22 190140.png', 1, '2026-08-17 08:50:00'),
+(18, 18, '6a6e76f797d1d_Screenshot 2025-06-07 201142.png', 1, '2026-08-12 13:25:00'),
+(19, 19, '6a6e770f6a72d_Screenshot 2025-06-18 131648.png', 1, '2026-08-16 15:00:00'),
+(20, 20, '6a6f35d3ab354_Screenshot 2025-06-07 201121.png', 1, '2026-08-15 11:30:00'),
+(21, 21, '69e18b79be572_peakpx.jpg', 1, '2026-08-17 09:20:00'),
+(22, 22, '69e18b83b4a7c_peakpx.jpg', 1, '2026-08-14 16:10:00'),
+(23, 23, 'guest_6a7913d81f718.jpg', 1, '2026-08-16 10:45:00'),
+(24, 24, 'guest_6a810e2053ec1.png', 1, '2026-08-13 14:15:00'),
+(25, 25, '69e3f0fe0e532_images.jpg', 1, '2026-08-17 08:00:00'),
+(26, 26, '6a6f29f41892f_Screenshot 2025-06-22 181737.png', 1, '2026-08-16 14:50:00'),
+(27, 27, '6a6f32fddca0e_Screenshot 2025-06-18 225708.png', 1, '2026-08-11 11:15:00'),
+(28, 28, '6a6f343691b11_Screenshot 2025-06-22 181737.png', 1, '2026-08-15 13:00:00'),
+(29, 29, '6a75f133acbf0_Screenshot 2025-06-11 000452.png', 1, '2026-08-17 10:10:00'),
+(30, 30, '6a6e76cf63dd9_Screenshot 2025-06-22 190140.png', 1, '2026-08-12 16:30:00');
 
 -- --------------------------------------------------------
 
@@ -3161,10 +3401,36 @@ CREATE TABLE `report_status_history` (
 --
 
 INSERT INTO `report_status_history` (`id`, `report_id`, `previous_status`, `new_status`, `remark`, `changed_by`, `changed_at`) VALUES
-(4, 34, 'Resolved', 'rejected', 'Rejected by admin', 2, '2026-08-02 08:45:42'),
-(5, 47, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-08 09:40:27'),
-(6, 52, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-10 11:40:28'),
-(7, 51, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-15 00:00:17');
+(1, 1, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-14 08:30:00'),
+(2, 2, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-16 09:15:00'),
+(3, 3, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-15 14:20:00'),
+(4, 4, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-12 11:00:00'),
+(5, 5, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 16:45:00'),
+(6, 6, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-10 10:30:00'),
+(7, 7, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 07:45:00'),
+(8, 8, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 13:10:00'),
+(9, 9, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 15:30:00'),
+(10, 10, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-11 09:00:00'),
+(11, 11, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-09 14:00:00'),
+(12, 12, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 11:20:00'),
+(13, 13, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 06:30:00'),
+(14, 14, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 16:15:00'),
+(15, 15, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 10:00:00'),
+(16, 16, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-13 15:40:00'),
+(17, 17, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 08:50:00'),
+(18, 18, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-12 13:25:00'),
+(19, 19, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 15:00:00'),
+(20, 20, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 11:30:00'),
+(21, 21, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 09:20:00'),
+(22, 22, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-14 16:10:00'),
+(23, 23, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 10:45:00'),
+(24, 24, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-13 14:15:00'),
+(25, 25, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 08:00:00'),
+(26, 26, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 14:50:00'),
+(27, 27, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-11 11:15:00'),
+(28, 28, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 13:00:00'),
+(29, 29, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 10:10:00'),
+(30, 30, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-12 16:30:00');
 
 -- --------------------------------------------------------
 
@@ -3202,7 +3468,9 @@ INSERT INTO `report_summaries` (`id`, `generated_by`, `filename`, `file_path`, `
 (12, 2, 'analytics_2026-08-14_19-42-12', '', 'pdf', '{\"date_from\":\"2026-07-15\",\"date_to\":\"2026-08-14\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 01:42:12'),
 (13, 2, 'analytics_2026-08-14_19-47-23', '', 'pdf', '{\"date_from\":\"2026-07-15\",\"date_to\":\"2026-08-14\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 01:47:23'),
 (14, 2, 'analytics_2026-08-15_01-40-28', '', 'pdf', '{\"date_from\":\"2026-07-16\",\"date_to\":\"2026-08-15\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 07:40:28'),
-(15, 2, 'analytics_2026-08-15_03-15-23', '', 'pdf', '{\"date_from\":\"2026-07-16\",\"date_to\":\"2026-08-15\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 09:15:23');
+(15, 2, 'analytics_2026-08-15_03-15-23', '', 'pdf', '{\"date_from\":\"2026-07-16\",\"date_to\":\"2026-08-15\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 09:15:23'),
+(16, 2, 'analytics_2026-08-16_12-38-03', '', 'pdf', '{\"date_from\":\"2026-07-17\",\"date_to\":\"2026-08-16\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-16 18:38:03'),
+(17, 2, 'analytics_2026-08-16_19-23-36', '', 'pdf', '{\"date_from\":\"2026-07-17\",\"date_to\":\"2026-08-16\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-17 01:23:36');
 
 -- --------------------------------------------------------
 
@@ -3231,13 +3499,6 @@ CREATE TABLE `report_supports` (
   `supported_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `report_supports`
---
-
-INSERT INTO `report_supports` (`support_id`, `report_id`, `user_id`, `supported_at`) VALUES
-(1, 45, 19, '2026-08-02 20:18:34');
-
 -- --------------------------------------------------------
 
 --
@@ -3249,17 +3510,19 @@ CREATE TABLE `roles` (
   `role_name` varchar(50) NOT NULL,
   `description` text DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `permissions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`permissions`)),
+  `is_custom` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `roles`
 --
 
-INSERT INTO `roles` (`role_id`, `role_name`, `description`, `created_at`, `updated_at`) VALUES
-(1, 'Administrator', 'Full system access and configuration', '2026-07-25 13:56:31', '2026-07-25 13:56:31'),
-(2, 'Supervisor', 'Monitoring and analytics access', '2026-07-25 13:56:31', '2026-07-25 13:56:31'),
-(3, 'Resident', 'Report submission and tracking access', '2026-07-25 13:56:31', '2026-07-25 13:56:31');
+INSERT INTO `roles` (`role_id`, `role_name`, `description`, `created_at`, `updated_at`, `permissions`, `is_custom`) VALUES
+(1, 'Administrator', 'Full system access and configuration', '2026-07-25 13:56:31', '2026-07-25 13:56:31', NULL, 0),
+(2, 'Supervisor', 'Monitoring and analytics access', '2026-07-25 13:56:31', '2026-07-25 13:56:31', NULL, 0),
+(3, 'Resident', 'Report submission and tracking access', '2026-07-25 13:56:31', '2026-07-25 13:56:31', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -3296,6 +3559,32 @@ CREATE TABLE `sms_rate_limits` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `system_maintenance`
+--
+
+CREATE TABLE `system_maintenance` (
+  `id` int(11) NOT NULL DEFAULT 1,
+  `maintenance_mode` tinyint(1) NOT NULL DEFAULT 0,
+  `maintenance_type` enum('scheduled','emergency') NOT NULL DEFAULT 'scheduled',
+  `maintenance_message` text DEFAULT NULL,
+  `reason` text DEFAULT NULL,
+  `start_at` datetime DEFAULT NULL,
+  `end_at` datetime DEFAULT NULL,
+  `allow_admin_access` tinyint(1) NOT NULL DEFAULT 1,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `system_maintenance`
+--
+
+INSERT INTO `system_maintenance` (`id`, `maintenance_mode`, `maintenance_type`, `maintenance_message`, `reason`, `start_at`, `end_at`, `allow_admin_access`, `updated_by`, `updated_at`) VALUES
+(1, 0, 'emergency', 'The system is temporarily unavailable due to an emergency situation. Please check back later or contact the barangay hall for urgent concerns.', 'Under Maintenance', NULL, NULL, 1, 2, '2026-08-17 10:27:10');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `two_factor_tokens`
 --
 
@@ -3320,8 +3609,9 @@ INSERT INTO `two_factor_tokens` (`id`, `user_id`, `email`, `token`, `purpose`, `
 (323, 19, 'umalicedrick29@gmail.com', '441724', 'login_2fa', '2026-08-02 20:26:39', 1, 0, '2026-08-02 12:16:39'),
 (334, 16, 'testingotp@gmail.com', '064512', 'login_2fa', '2026-08-05 12:48:25', 0, 0, '2026-08-05 04:38:25'),
 (388, 20, '09951281511', '220447', 'login_2fa', '2026-08-10 12:22:56', 1, 0, '2026-08-10 04:12:56'),
-(410, 3, 'floressktt11@gmail.com', '302441', 'login_2fa', '2026-08-16 07:24:39', 1, 0, '2026-08-15 23:14:39'),
-(411, 2, 'floreshans.neust@gmail.com', '472709', 'login_2fa', '2026-08-16 07:46:20', 1, 0, '2026-08-15 23:36:20');
+(436, 23, 'limuelle.neust@gmail.com', '817689', 'login_2fa', '2026-08-17 17:21:03', 0, 0, '2026-08-17 09:11:03'),
+(441, 3, 'floressktt11@gmail.com', '725865', 'login_2fa', '2026-08-18 00:34:34', 1, 0, '2026-08-17 16:24:34'),
+(442, 2, 'floreshans.neust@gmail.com', '406182', 'login_2fa', '2026-08-18 00:39:13', 1, 0, '2026-08-17 16:29:13');
 
 -- --------------------------------------------------------
 
@@ -3366,10 +3656,10 @@ INSERT INTO `users` (`id`, `name`, `middle_name`, `suffix`, `username`, `account
 (3, 'Hans Flores', NULL, NULL, NULL, 'resident', 'brgy.testing.testing', '09951281511', 'floressktt11@gmail.com', '$2y$10$y03L/tBgrsBFqgLuFMFRYOos6Y.svcXlfru15rNSc8dcg2cYLVew2', NULL, NULL, 3, 6, 1, 'active', NULL, '2026-04-01 01:05:23', '2026-08-15 02:34:16', NULL, '/public/uploads/profiles/profile_3_1786340113.jpg', 0, NULL, NULL),
 (15, 'asdasdadad', NULL, NULL, NULL, 'resident', '232323232323', '09951281511', 'floererererer@gmail.com', '$2y$10$fL/0SLQG2zLnUEniuGsTU.ulSh4yLbmpwPMkWFLIbqc2OU1xF1Niq', '/uploads/ids/front_6a6252ecf1d05.jpg', '/uploads/ids/back_6a6252ed00579.jpg', 3, 6, 1, 'active', NULL, '2026-07-24 01:44:13', '2026-08-09 05:54:43', NULL, NULL, 0, NULL, NULL),
 (16, 'test email otp', NULL, NULL, NULL, 'resident', 'awwsdasdad', '09951281511', 'testingotp@gmail.com', '$2y$10$NlxWm4KHBTA2PPazo0MN7ehPrv3RmAtUukEAO8QavMGJAmG.0znou', '/uploads/ids/front_6a6258475b015.jpg', '/uploads/ids/back_6a6258475be3f.jpg', 3, 6, 1, 'active', NULL, '2026-07-24 02:07:03', '2026-08-08 01:10:08', NULL, NULL, 0, NULL, NULL),
-(17, 'Supervisor User', NULL, NULL, NULL, 'resident', '', '', 'supervisor@dulongbayan.ph', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', NULL, NULL, 2, 3, NULL, 'active', NULL, '2026-07-25 23:52:14', '2026-08-08 01:09:10', NULL, NULL, 0, NULL, NULL),
 (18, 'Hans Limuelle Flores', NULL, NULL, 'hansflores', 'resident', 'Barangay Dulong Bayan', '09171234567', 'floreshanslimuelle.neust@gmail.com', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', NULL, NULL, 2, 3, 1, 'active', NULL, '2026-07-26 13:35:01', '2026-07-26 13:47:54', NULL, NULL, 0, NULL, NULL),
 (19, 'Cedrick Umali', NULL, NULL, 'umalicedrick', 'resident', '', '09664185246', 'umalicedrick29@gmail.com', '$2y$10$/6ZSX1XKD5fMpEwneahyIOU8IfbZxxWwoFfKt48t8Z0Z4PmY3Pg3O', NULL, NULL, 3, 6, 1, 'active', NULL, '2026-08-02 20:15:51', '2026-08-08 11:03:30', NULL, NULL, 0, NULL, NULL),
-(20, 'hans testinggphonesms', NULL, NULL, 'fhanstestingphonesms', 'resident', '', '09951281511', '', '$2y$10$UHXCgTQabJpLgMcE6cfbVOlXnSpLt21c55mkuX55ooqZjjf8Ard/e', NULL, NULL, 3, 6, 2, 'active', NULL, '2026-08-09 22:40:36', '2026-08-14 12:51:31', NULL, NULL, 0, NULL, NULL);
+(20, 'hans testinggphonesms', NULL, NULL, 'fhanstestingphonesms', 'resident', '', '09951281511', '', '$2y$10$UHXCgTQabJpLgMcE6cfbVOlXnSpLt21c55mkuX55ooqZjjf8Ard/e', NULL, NULL, 3, 6, 2, 'active', NULL, '2026-08-09 22:40:36', '2026-08-14 12:51:31', NULL, NULL, 0, NULL, NULL),
+(23, 'limuel', NULL, NULL, 'limmms', 'resident', '', '', 'limuelle.neust@gmail.com', '$2y$10$8sxdbEPc7kja6m2qINCf4.PLTF1CPWtqtGGpWrY/NbSWJVKbDJ/R6', NULL, NULL, 3, 6, 3, 'active', NULL, '2026-08-17 16:59:53', '2026-08-17 17:00:14', NULL, NULL, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3522,6 +3812,12 @@ ALTER TABLE `barangay_boundaries`
   ADD SPATIAL KEY `polygon_geometry` (`polygon_geometry`);
 
 --
+-- Indexes for table `collection_notes`
+--
+ALTER TABLE `collection_notes`
+  ADD PRIMARY KEY (`note_id`);
+
+--
 -- Indexes for table `collection_schedules`
 --
 ALTER TABLE `collection_schedules`
@@ -3578,6 +3874,12 @@ ALTER TABLE `heatmap_settings`
   ADD KEY `updated_by` (`updated_by`);
 
 --
+-- Indexes for table `maintenance_history`
+--
+ALTER TABLE `maintenance_history`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `map_landmarks`
 --
 ALTER TABLE `map_landmarks`
@@ -3601,6 +3903,12 @@ ALTER TABLE `notifications`
 ALTER TABLE `notification_types`
   ADD PRIMARY KEY (`notification_type_id`),
   ADD UNIQUE KEY `notification_type_name` (`notification_type_name`);
+
+--
+-- Indexes for table `penalty_rules`
+--
+ALTER TABLE `penalty_rules`
+  ADD PRIMARY KEY (`rule_id`);
 
 --
 -- Indexes for table `positions`
@@ -3731,6 +4039,12 @@ ALTER TABLE `sms_rate_limits`
   ADD KEY `ip` (`ip`);
 
 --
+-- Indexes for table `system_maintenance`
+--
+ALTER TABLE `system_maintenance`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `two_factor_tokens`
 --
 ALTER TABLE `two_factor_tokens`
@@ -3779,7 +4093,7 @@ ALTER TABLE `account_deactivations`
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `announcement_visibilities`
@@ -3791,7 +4105,7 @@ ALTER TABLE `announcement_visibilities`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2695;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2923;
 
 --
 -- AUTO_INCREMENT for table `barangays`
@@ -3806,6 +4120,12 @@ ALTER TABLE `barangay_boundaries`
   MODIFY `boundary_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `collection_notes`
+--
+ALTER TABLE `collection_notes`
+  MODIFY `note_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `collection_schedules`
 --
 ALTER TABLE `collection_schedules`
@@ -3815,13 +4135,13 @@ ALTER TABLE `collection_schedules`
 -- AUTO_INCREMENT for table `collection_schedule_puroks`
 --
 ALTER TABLE `collection_schedule_puroks`
-  MODIFY `schedule_purok_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `schedule_purok_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `email_otp_rate_limits`
 --
 ALTER TABLE `email_otp_rate_limits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=166;
 
 --
 -- AUTO_INCREMENT for table `estimated_quantities`
@@ -3833,19 +4153,25 @@ ALTER TABLE `estimated_quantities`
 -- AUTO_INCREMENT for table `guest_otp_tokens`
 --
 ALTER TABLE `guest_otp_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `guest_sms_rate_limits`
 --
 ALTER TABLE `guest_sms_rate_limits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `heatmap_settings`
 --
 ALTER TABLE `heatmap_settings`
   MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `maintenance_history`
+--
+ALTER TABLE `maintenance_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `map_landmarks`
@@ -3857,13 +4183,19 @@ ALTER TABLE `map_landmarks`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `notification_types`
 --
 ALTER TABLE `notification_types`
   MODIFY `notification_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `penalty_rules`
+--
+ALTER TABLE `penalty_rules`
+  MODIFY `rule_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `positions`
@@ -3887,7 +4219,7 @@ ALTER TABLE `purok_boundaries`
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `report_flags`
@@ -3905,7 +4237,7 @@ ALTER TABLE `report_generation_settings`
 -- AUTO_INCREMENT for table `report_photos`
 --
 ALTER TABLE `report_photos`
-  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `report_settings`
@@ -3923,13 +4255,13 @@ ALTER TABLE `report_statuses`
 -- AUTO_INCREMENT for table `report_status_history`
 --
 ALTER TABLE `report_status_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `report_summaries`
 --
 ALTER TABLE `report_summaries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `report_supports`
@@ -3941,7 +4273,7 @@ ALTER TABLE `report_supports`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `sms_otps`
@@ -3959,13 +4291,13 @@ ALTER TABLE `sms_rate_limits`
 -- AUTO_INCREMENT for table `two_factor_tokens`
 --
 ALTER TABLE `two_factor_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=412;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=443;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `waste_categories`

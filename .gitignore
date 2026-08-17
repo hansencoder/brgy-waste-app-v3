@@ -1,5 +1,7 @@
 .env
+.env.*
 .env.local
+.env.hostinger
 /vendor/
 /scratch/
 /storage/sms_log.txt

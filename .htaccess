@@ -2,7 +2,7 @@ RewriteEngine On
 
 Options -Indexes
 
-<FilesMatch "\.(json|log|ini|sql|config|bak|md|txt|htaccess|htpasswd|env)$">
+<FilesMatch "\.(json|log|ini|sql|config|bak|md|env)$">
     Require all denied
 </FilesMatch>       
 
@@ -12,17 +12,17 @@ Options -Indexes
 
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
-    
     Header set X-XSS-Protection "1; mode=block"
-    
-    Header set X-Frame-Options "DENY"
-    
+    Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/public/ [NC]
-RewriteRule ^ - [F]
+# Handle static uploads & assets directly
+RewriteRule ^uploads/(.*)$ public/uploads/$1 [L]
+RewriteRule ^images/(.*)$ public/images/$1 [L]
+RewriteRule ^css/(.*)$ public/css/$1 [L]
+RewriteRule ^js/(.*)$ public/js/$1 [L]
 
-# Redirect root to public
+# Redirect root requests to public/
 RewriteCond %{REQUEST_URI} !^/public/
 RewriteRule ^(.*)$ public/$1 [L]

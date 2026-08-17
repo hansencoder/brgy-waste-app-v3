@@ -8,15 +8,15 @@ class App {
         $url = $this->parseUrl();
 
         // Check if controller file exists
-        if (isset($url[0]) && file_exists('../app/Controllers/' . ucfirst($url[0]) . 'Controller.php')) {
-            $this->controller = ucfirst($url[0]) . 'Controller';
+        $controllerName = isset($url[0]) ? ucfirst($url[0]) . 'Controller' : 'HomeController';
+        $controllerFile = dirname(__DIR__) . '/Controllers/' . $controllerName . '.php';
+
+        if (file_exists($controllerFile)) {
+            $this->controller = $controllerName;
             unset($url[0]);
-        } else if (isset($url[0])) {
-            // Handle 404 - controller not found
-            // For now, let it fall back or we can specifically set a 404 controller
         }
 
-        require_once '../app/Controllers/' . $this->controller . '.php';
+        require_once dirname(__DIR__) . '/Controllers/' . $this->controller . '.php';
         $this->controller = new $this->controller;
 
         // Check if method exists in controller

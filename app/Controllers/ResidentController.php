@@ -640,7 +640,7 @@ class ResidentController extends Controller {
 
                     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
                         // Store path for web access
-                        $profilePic = '/public/uploads/profiles/' . $fileName;
+                        $profilePic = '/uploads/profiles/' . $fileName;
                         $uploadSuccess = true;
                         error_log("Profile picture uploaded: " . $targetPath);
                     } else {

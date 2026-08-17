@@ -31,10 +31,7 @@ $sysShortName = !empty($brgyBranding['system_short_name']) ? $brgyBranding['syst
 $brgyName = !empty($brgyBranding['barangay_name']) ? $brgyBranding['barangay_name'] : 'Dulong Bayan';
 $brgyMuni = !empty($brgyBranding['municipality']) ? $brgyBranding['municipality'] : 'Talavera';
 $sysMotto = "Brgy. {$brgyName}, {$brgyMuni}";
-$sysLogo = !empty($brgyBranding['system_logo']) ? $brgyBranding['system_logo'] : null;
-if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysLogo, '/public') === 0) {
-    $sysLogo = '/brgy-waste-app-v3' . $sysLogo;
-}
+$sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 ?>
 
 <style>
@@ -114,7 +111,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
     <!-- Brand Header -->
     <div class="flex h-16 shrink-0 items-center gap-3 px-4 border-b border-emerald-900/40">
         <a href="/brgy-waste-app-v3/public/resident" class="flex items-center gap-3 min-w-0 flex-1 group">
-            <div class="h-9 w-9 rounded-xl bg-[#083528] flex items-center justify-center overflow-hidden border border-emerald-500/40 shrink-0 shadow-sm group-hover:scale-105 transition">
+            <div class="h-9 w-9 rounded-full bg-[#083528] flex items-center justify-center overflow-hidden border border-emerald-500/40 shrink-0 shadow-sm group-hover:scale-105 transition">
                 <?php if (!empty($sysLogo)): ?>
                     <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="h-full w-full object-cover">
                 <?php else: ?>

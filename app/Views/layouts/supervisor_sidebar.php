@@ -18,10 +18,7 @@ try {
 }
 $sideSysShortName = !empty($sideBranding['system_short_name']) ? $sideBranding['system_short_name'] : 'WasteWatch';
 $sideBrgyName = !empty($sideBranding['barangay_name']) ? $sideBranding['barangay_name'] : 'Dulong Bayan';
-$sideSysLogo = !empty($sideBranding['system_logo']) ? $sideBranding['system_logo'] : null;
-if ($sideSysLogo && strpos($sideSysLogo, '/brgy-waste-app-v3') === false && strpos($sideSysLogo, '/public') === 0) {
-    $sideSysLogo = '/brgy-waste-app-v3' . $sideSysLogo;
-}
+$sideSysLogo = format_asset_url($sideBranding['system_logo'] ?? '');
 
 $sideUnreadCount = 0;
 if (isset($_SESSION['user_id'])) {

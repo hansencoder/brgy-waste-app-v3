@@ -13,10 +13,7 @@ try {
 }
 $topSysShortName = !empty($topBranding['system_short_name']) ? $topBranding['system_short_name'] : 'WasteWatch';
 $topSysMotto = !empty($topBranding['system_motto']) ? $topBranding['system_motto'] : 'Waste Management';
-$topSysLogo = !empty($topBranding['system_logo']) ? $topBranding['system_logo'] : null;
-if ($topSysLogo && strpos($topSysLogo, '/brgy-waste-app-v3') === false && strpos($topSysLogo, '/public') === 0) {
-    $topSysLogo = '/brgy-waste-app-v3' . $topSysLogo;
-}
+$topSysLogo = format_asset_url($topBranding['system_logo'] ?? '');
 
 $topUnreadCount = 0;
 if (isset($_SESSION['user_id'])) {

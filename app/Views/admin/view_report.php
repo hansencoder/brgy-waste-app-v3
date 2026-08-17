@@ -19,7 +19,7 @@ function getStatusBadge($status) {
 
 $badge = getStatusBadge($report['status']);
 $reportId = 'WR-' . str_pad($report['id'], 7, '0', STR_PAD_LEFT);
-$imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' . $report['photo_path'] : null;
+$imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path']) : null;
 ?>
 
 <div class="min-h-screen bg-[#F1F1F1]">
@@ -171,9 +171,9 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                             <!-- Card 2: Uploaded Evidence -->
                             <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                                 <h2 class="text-sm font-bold text-slate-900 mb-4">Uploaded Evidence</h2>
-                                <?php if ($imgPath && file_exists($_SERVER['DOCUMENT_ROOT'] . '/brgy-waste-app-v3/public/uploads/' . basename($report['photo_path']))): ?>
+                                <?php if (!empty($imgPath)): ?>
                                     <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
-                                        <img src="<?php echo $imgPath; ?>" alt="Report Photo" class="w-full h-auto object-cover">
+                                        <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Report Photo" class="w-full h-auto object-cover">
                                     </div>
                                     <p class="text-xs text-slate-500 mt-2">Photo attached · <?php echo date('M d, Y', strtotime($report['submission_date'])); ?></p>
                                 <?php else: ?>

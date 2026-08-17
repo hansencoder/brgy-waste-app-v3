@@ -3,17 +3,8 @@
 $settings = $data['settings'] ?? [];
 $barangay = $data['barangay'] ?? [];
 
-// Helper for logo paths
-$formatLogo = function($path, $fallback = '') {
-    if (empty($path)) return $fallback;
-    if (strpos($path, '/brgy-waste-app-v3') === false && strpos($path, '/public') === 0) {
-        return '/brgy-waste-app-v3' . $path;
-    }
-    return $path;
-};
-
-$logoLeftUrl = $formatLogo($settings['header_logo_left'] ?? '', $formatLogo($barangay['barangay_logo'] ?? ''));
-$logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($barangay['system_logo'] ?? ''));
+$logoLeftUrl = format_asset_url(!empty($settings['header_logo_left']) ? $settings['header_logo_left'] : ($barangay['barangay_logo'] ?? ''));
+$logoRightUrl = format_asset_url(!empty($settings['header_logo_right']) ? $settings['header_logo_right'] : ($barangay['system_logo'] ?? ''));
 ?>
 
 <style>

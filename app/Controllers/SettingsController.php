@@ -81,7 +81,7 @@ class SettingsController extends Controller {
                 if (in_array($ext, $allowed) && $file['size'] <= 5 * 1024 * 1024) {
                     $newFile = 'sys_logo_' . time() . '.' . $ext;
                     if (move_uploaded_file($file['tmp_name'], $uploadDir . $newFile)) {
-                        $system_logo_path = '/brgy-waste-app-v3/public/uploads/logos/' . $newFile;
+                        $system_logo_path = '/uploads/logos/' . $newFile;
                     }
                 }
             }
@@ -94,7 +94,7 @@ class SettingsController extends Controller {
                 if (in_array($ext, $allowed) && $file['size'] <= 5 * 1024 * 1024) {
                     $newFile = 'brgy_seal_' . time() . '.' . $ext;
                     if (move_uploaded_file($file['tmp_name'], $uploadDir . $newFile)) {
-                        $barangay_logo_path = '/brgy-waste-app-v3/public/uploads/logos/' . $newFile;
+                        $barangay_logo_path = '/uploads/logos/' . $newFile;
                     }
                 }
             }
@@ -424,7 +424,7 @@ class SettingsController extends Controller {
                 if (in_array($ext, $allowed) && $file['size'] <= 5 * 1024 * 1024) {
                     $newFile = 'rep_logo_left_' . time() . '.' . $ext;
                     if (move_uploaded_file($file['tmp_name'], $uploadDir . $newFile)) {
-                        $logo_left_path = '/brgy-waste-app-v3/public/uploads/logos/' . $newFile;
+                        $logo_left_path = '/uploads/logos/' . $newFile;
                     }
                 }
             }
@@ -437,7 +437,7 @@ class SettingsController extends Controller {
                 if (in_array($ext, $allowed) && $file['size'] <= 5 * 1024 * 1024) {
                     $newFile = 'rep_logo_right_' . time() . '.' . $ext;
                     if (move_uploaded_file($file['tmp_name'], $uploadDir . $newFile)) {
-                        $logo_right_path = '/brgy-waste-app-v3/public/uploads/logos/' . $newFile;
+                        $logo_right_path = '/uploads/logos/' . $newFile;
                     }
                 }
             }

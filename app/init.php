@@ -1,7 +1,43 @@
 <?php
-require_once 'Config/Database.php';
-require_once 'Core/App.php';
-require_once 'Core/Controller.php';
+require_once __DIR__ . '/Config/Database.php';
+require_once __DIR__ . '/Core/App.php';
+require_once __DIR__ . '/Core/Controller.php';
+
+// ============================================================
+// DYNAMIC BASE URL & ASSET RESOLVERS (Local & Production)
+// ============================================================
+if (!function_exists('get_base_url')) {
+    function get_base_url() {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $script = $_SERVER['SCRIPT_NAME'] ?? '';
+        if (strpos($uri, '/brgy-waste-app-v3') !== false || strpos($script, '/brgy-waste-app-v3') !== false) {
+            return '/brgy-waste-app-v3/public';
+        }
+        return '';
+    }
+}
+
+if (!function_exists('format_asset_url')) {
+    function format_asset_url($path, $fallback = '') {
+        if (empty($path)) return $fallback;
+        if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0 || strpos($path, 'data:') === 0) {
+            return $path;
+        }
+
+        // Clean any leading hardcoded prefixes
+        $cleaned = preg_replace('#^/brgy-waste-app-v3/public/#', '', $path);
+        $cleaned = preg_replace('#^/public/#', '', $cleaned);
+        $cleaned = preg_replace('#^/brgy-waste-app-v3/#', '', $cleaned);
+        $cleaned = ltrim($cleaned, '/');
+
+        // Ensure root-relative asset directory
+        if (!preg_match('#^(uploads/|images/|css/|js/|assets/)#', $cleaned)) {
+            $cleaned = 'uploads/' . $cleaned;
+        }
+
+        return '/' . $cleaned;
+    }
+}
 
 // Session Timeout Handler 
 if (isset($_SESSION['user_id'])) {

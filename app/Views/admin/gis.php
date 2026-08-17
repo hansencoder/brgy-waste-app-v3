@@ -752,7 +752,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const dateStr = r.submission_date ? new Date(r.submission_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
         const imgHtml = r.photo_path 
             ? `<div style="width:100%; height:110px; overflow:hidden; background:#0f172a; margin-bottom:10px; border-radius:10px;">
-                 <img src="/brgy-waste-app-v3/public/uploads/${r.photo_path}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">
+                 <img src="/uploads/${r.photo_path.replace(/^\/?(brgy-waste-app-v3\/public\/|public\/|uploads\/)?/, '')}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">
                </div>`
             : '';
 

@@ -184,59 +184,12 @@ class AuthController extends Controller {
     }
 
     // ============================================================
-    // 1-CLICK DEMO LOGIN (Temporary Presentation Access)
-    // ============================================================
-    public function demo() {
-        $role = strtolower($_GET['role'] ?? 'resident');
-        $demoEmails = [
-            'admin' => 'admin@dulongbayan.ph',
-            'supervisor' => 'supervisor@dulongbayan.ph',
-            'resident' => 'resident@dulongbayan.ph'
-        ];
-
-        $targetEmail = $demoEmails[$role] ?? $demoEmails['resident'];
-
-        $db = new Database();
-        $db->query("
-            SELECT u.*, 
-                r.role_name, 
-                p.position_name, 
-                pk.purok_name
-            FROM users u
-            LEFT JOIN roles r ON u.role_id = r.role_id
-            LEFT JOIN positions p ON u.position_id = p.position_id
-            LEFT JOIN puroks pk ON u.purok_id = pk.purok_id
-            WHERE u.email = :email AND u.status = 'active'
-            LIMIT 1
-        ");
-        $db->bind(':email', $targetEmail);
-        $user = $db->single();
-
-        if ($user) {
-            session_regenerate_id(true);
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_role'] = strtolower($user['role_name'] ?? $role);
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_purok'] = $user['purok_name'] ?? 'Purok 1';
-            $_SESSION['user_position'] = $user['position_name'] ?? ucfirst($role);
-            $_SESSION['last_activity'] = time();
-
-            $targetRoute = $_SESSION['user_role'] === 'resident' ? 'resident' : ($_SESSION['user_role'] === 'supervisor' ? 'supervisor' : 'admin');
-            header('Location: /brgy-waste-app-v3/public/' . $targetRoute);
-            exit;
-        }
-
-        header('Location: /brgy-waste-app-v3/public/auth');
-        exit;
-    }
-
-    // ============================================================
     // PROCESS LOGIN
     // ============================================================
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $input = filter_var(trim($_POST['email']), FILTER_SANITIZE_STRING);
-            $password = $_POST['password'];
+            $input = htmlspecialchars(trim($_POST['email'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $password = $_POST['password'] ?? '';
 
             if (empty($input) || empty($password)) {
                 return $this->view('auth/login', ['error' => 'Please fill in all fields.']);

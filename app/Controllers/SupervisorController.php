@@ -740,15 +740,7 @@ public function gis() {
         HAVING COUNT(*) >= 3
         ORDER BY report_count DESC
     ");
-    $reportModel = $this->model('Report');
-    $db = new Database();
-
-    // ---- Fetch all reports with coordinates ----
-    $reports = $reportModel->getAllMappedReports();
-    $totalMapped = count($reports);
-
-    // ---- Fetch hotspot clusters ----
-    $hotspots = $reportModel->getHotspots();
+    $hotspots = $db->resultSet();
     $active_hotspots_count = count($hotspots);
 
     // ---- Fetch highest reporting purok ----

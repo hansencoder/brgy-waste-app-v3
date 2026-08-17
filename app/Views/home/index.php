@@ -145,12 +145,18 @@ foreach ($publicReports as $pr) {
                 <a href="#penalties" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">Penalties &amp; Laws</a>
                 <a href="#schedule" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">Schedule &amp; Notes</a>
                 <a href="#announcements" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">Bulletins</a>
-                <a href="#faq" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">FAQs</a>
-                <a href="#contact" class="px-3 py-2 hover:text-emerald-800 transition-colors rounded-lg hover:bg-emerald-50">Contact</a>
+                <a href="#demo-accounts" class="px-3 py-2 text-amber-700 hover:text-amber-900 transition-colors rounded-lg hover:bg-amber-50 font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    Demo Accounts
+                </a>
             </div>
 
             <!-- Right Actions -->
             <div class="flex items-center gap-3">
+                <a href="#demo-accounts" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-800 text-xs font-semibold rounded-xl transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    ⚡ Demo Login
+                </a>
                 <?php if ($isLoggedIn): ?>
                     <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>" class="inline-flex items-center gap-2 px-4 py-2 bg-[#0B2E22] hover:bg-[#083528] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
@@ -258,6 +264,204 @@ foreach ($publicReports as $pr) {
         </div>
     </div>
 </section>
+
+<!-- ============================================================ -->
+<!-- TEMPORARY DEMO ACCOUNTS SHOWCASE                             -->
+<!-- ============================================================ -->
+<section id="demo-accounts" class="py-12 bg-gradient-to-b from-emerald-950/20 via-slate-50 to-white border-y border-emerald-100/80 relative z-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section Header -->
+        <div class="text-center max-w-3xl mx-auto mb-8 space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300/80 text-amber-900 text-xs font-bold uppercase tracking-wider shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                <span>Evaluation &amp; Demo Access</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                Explore Demo Portals
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto">
+                Test the system immediately with our ready-to-use demo accounts. Click any role below for <strong>1-Click Instant Login</strong>.
+            </p>
+        </div>
+
+        <!-- 3-Card Demo Roles Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto">
+            
+            <!-- Card 1: Administrator -->
+            <div class="relative bg-white rounded-2xl border-2 border-emerald-600/30 p-6 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+                <div class="absolute -top-3 right-4 px-2.5 py-0.5 bg-emerald-700 text-white font-bold text-[10px] rounded-full uppercase tracking-wider shadow-xs">
+                    Full Control
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-900 text-emerald-300 flex items-center justify-center font-bold text-xl shadow-xs group-hover:scale-105 transition-transform">
+                            🛡️
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Administrator</h3>
+                            <span class="text-xs text-emerald-700 font-semibold">Barangay Captain / Admin</span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Access executive dashboard, GIS dispatch, full analytics, schedules, announcements, and penalty rules.
+                    </p>
+
+                    <!-- Credentials Box -->
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5 font-mono">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500">Email:</span>
+                            <span class="font-bold text-slate-800 select-all">admin@dulongbayan.ph</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500">Password:</span>
+                            <span class="font-bold text-slate-800 select-all">Password123!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-slate-100 flex flex-col gap-2">
+                    <a href="/brgy-waste-app-v3/public/auth/demo?role=admin" class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-[#0B2E22] hover:bg-[#083528] text-white font-semibold text-xs rounded-xl shadow-xs transition active:scale-[0.98]">
+                        <span>1-Click Admin Login</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <button onclick="copyCredentials('admin@dulongbayan.ph', 'Password123!')" class="w-full py-1.5 text-slate-600 hover:text-slate-900 text-[11px] font-semibold transition">
+                        📋 Copy Credentials
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 2: Field Supervisor -->
+            <div class="relative bg-white rounded-2xl border-2 border-blue-500/30 p-6 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+                <div class="absolute -top-3 right-4 px-2.5 py-0.5 bg-blue-700 text-white font-bold text-[10px] rounded-full uppercase tracking-wider shadow-xs">
+                    Field Ops
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-blue-900 text-blue-300 flex items-center justify-center font-bold text-xl shadow-xs group-hover:scale-105 transition-transform">
+                            👷
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Supervisor</h3>
+                            <span class="text-xs text-blue-700 font-semibold">Operations Supervisor</span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Verify incoming waste reports, dispatch collection trucks, upload resolution photos, and resolve tickets.
+                    </p>
+
+                    <!-- Credentials Box -->
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5 font-mono">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500">Email:</span>
+                            <span class="font-bold text-slate-800 select-all">supervisor@dulongbayan.ph</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500">Password:</span>
+                            <span class="font-bold text-slate-800 select-all">Password123!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-slate-100 flex flex-col gap-2">
+                    <a href="/brgy-waste-app-v3/public/auth/demo?role=supervisor" class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-700 hover:bg-blue-800 text-white font-semibold text-xs rounded-xl shadow-xs transition active:scale-[0.98]">
+                        <span>1-Click Supervisor Login</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <button onclick="copyCredentials('supervisor@dulongbayan.ph', 'Password123!')" class="w-full py-1.5 text-slate-600 hover:text-slate-900 text-[11px] font-semibold transition">
+                        📋 Copy Credentials
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 3: Resident -->
+            <div class="relative bg-white rounded-2xl border-2 border-teal-500/30 p-6 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+                <div class="absolute -top-3 right-4 px-2.5 py-0.5 bg-teal-700 text-white font-bold text-[10px] rounded-full uppercase tracking-wider shadow-xs">
+                    Citizen
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-teal-900 text-teal-300 flex items-center justify-center font-bold text-xl shadow-xs group-hover:scale-105 transition-transform">
+                            🏡
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Resident</h3>
+                            <span class="text-xs text-teal-700 font-semibold">Registered Household</span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Submit waste incident reports with GPS pinpointing, check duplicate alerts, view pickup schedules, and track reports.
+                    </p>
+
+                    <!-- Credentials Box -->
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5 font-mono">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500">Email:</span>
+                            <span class="font-bold text-slate-800 select-all">resident@dulongbayan.ph</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500">Password:</span>
+                            <span class="font-bold text-slate-800 select-all">Password123!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-slate-100 flex flex-col gap-2">
+                    <a href="/brgy-waste-app-v3/public/auth/demo?role=resident" class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-teal-700 hover:bg-teal-800 text-white font-semibold text-xs rounded-xl shadow-xs transition active:scale-[0.98]">
+                        <span>1-Click Resident Login</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <button onclick="copyCredentials('resident@dulongbayan.ph', 'Password123!')" class="w-full py-1.5 text-slate-600 hover:text-slate-900 text-[11px] font-semibold transition">
+                        📋 Copy Credentials
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Toast Notification -->
+<div id="demoToast" class="fixed bottom-5 right-5 z-[100] bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transition-all duration-300 opacity-0 translate-y-3 pointer-events-none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="demoToastText">Credentials copied to clipboard!</span>
+</div>
+
+<script>
+function copyCredentials(email, pass) {
+    var text = "Email: " + email + "\nPassword: " + pass;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(showToast).catch(function(){ fallbackCopy(text); });
+    } else {
+        fallbackCopy(text);
+    }
+}
+function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast();
+}
+function showToast() {
+    var t = document.getElementById('demoToast');
+    if (!t) return;
+    t.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+    t.classList.add('opacity-100', 'translate-y-0');
+    setTimeout(function(){
+        t.classList.remove('opacity-100', 'translate-y-0');
+        t.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+    }, 2500);
+}
+</script>
 
 <!-- ============================================================ -->
 <!-- SMART REPORTING / FEATURES SECTION                          -->

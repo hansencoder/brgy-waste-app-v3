@@ -47,13 +47,35 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
         </div>
 
         <!-- Navigation Switcher (Tabs) -->
-        <div class="mb-6 p-1 bg-slate-100 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
+        <div class="mb-4 p-1 bg-slate-100 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
             <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="py-2 text-center rounded-lg bg-white text-slate-900 shadow-2xs transition-all">
                 Sign In
             </a>
             <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="py-2 text-center rounded-lg text-slate-600 hover:text-slate-900 transition-all">
                 Create Account
             </a>
+        </div>
+
+        <!-- Quick Demo Login Switcher -->
+        <div class="mb-5 p-3 rounded-2xl bg-amber-50/80 border border-amber-200/90 text-xs">
+            <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-amber-900 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    Demo Accounts:
+                </span>
+                <span class="text-[10px] text-amber-700 font-medium">1-Click Instant Login</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5">
+                <a href="/brgy-waste-app-v3/public/auth/demo?role=admin" class="py-1.5 px-2 bg-[#0B2E22] hover:bg-[#07281E] text-white rounded-lg text-center font-semibold text-[11px] shadow-2xs transition">
+                    🛡️ Admin
+                </a>
+                <a href="/brgy-waste-app-v3/public/auth/demo?role=supervisor" class="py-1.5 px-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-center font-semibold text-[11px] shadow-2xs transition">
+                    👷 Supervisor
+                </a>
+                <a href="/brgy-waste-app-v3/public/auth/demo?role=resident" class="py-1.5 px-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-center font-semibold text-[11px] shadow-2xs transition">
+                    🏡 Resident
+                </a>
+            </div>
         </div>
 
         <!-- Server Error Alert -->

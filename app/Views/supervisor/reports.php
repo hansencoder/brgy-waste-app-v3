@@ -165,6 +165,22 @@ $conditionFilter = $_GET['condition'] ?? '';
                 </form>
             </div>
 
+            <!-- Filter bar footer with Per Page -->
+            <div class="flex items-center justify-between gap-3 text-xs font-semibold text-slate-600">
+                <span class="text-slate-500">Total Filtered: <strong class="text-slate-800" id="supTotalBadge"><?php echo count($reports); ?></strong> reports</span>
+                <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl px-3 py-1.5 shadow-2xs">
+                    <span class="text-[11px] text-slate-500 font-medium">Show:</span>
+                    <select id="supPerPageSelect" onchange="changeSupPerPage(this.value)" class="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="all">All</option>
+                    </select>
+                    <span class="text-[11px] text-slate-500 font-medium">/ page</span>
+                </div>
+            </div>
+
             <!-- Reports Data Table -->
             <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
                 <div class="overflow-x-auto">
@@ -182,13 +198,13 @@ $conditionFilter = $_GET['condition'] ?? '';
                                 <th class="py-3 px-4 text-right">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100">
+                        <tbody class="divide-y divide-slate-100" id="supReportsTbody">
                             <?php if (!empty($reports)): ?>
                                 <?php foreach ($reports as $report):
                                     $badge = getSupervisorReportBadge($report['status'] ?? 'Pending');
                                     $reportId = 'WR-' . str_pad($report['id'], 5, '0', STR_PAD_LEFT);
                                 ?>
-                                <tr class="hover:bg-slate-50/80 transition">
+                                <tr class="sup-report-row hover:bg-slate-50/80 transition">
                                     <td class="py-3.5 px-4 font-mono font-bold text-slate-900 text-xs">
                                         <a href="/brgy-waste-app-v3/public/supervisor/view_report/<?php echo $report['id']; ?>" class="text-emerald-700 hover:underline">
                                             <?php echo htmlspecialchars($reportId); ?>
@@ -235,7 +251,7 @@ $conditionFilter = $_GET['condition'] ?? '';
                                 </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <tr>
+                                <tr id="supNoRecords">
                                     <td colspan="9" class="py-12 text-center text-slate-400 text-xs">
                                         No incident reports match your current filter criteria.
                                     </td>
@@ -244,11 +260,126 @@ $conditionFilter = $_GET['condition'] ?? '';
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Pagination Footer Bar -->
+                <div id="supPaginationBar" class="p-4 bg-slate-50/90 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <div class="text-slate-600 font-semibold" id="supPaginationInfo">
+                        Showing <span id="supPageStart" class="font-bold text-slate-900">0</span> to <span id="supPageEnd" class="font-bold text-slate-900">0</span> of <span id="supPageTotal" class="font-bold text-slate-900">0</span> entries
+                    </div>
+                    
+                    <div class="flex items-center gap-1" id="supPaginationControls">
+                        <!-- Dynamic pagination buttons -->
+                    </div>
+                </div>
             </div>
 
         </main>
 
     </div>
 </div>
+
+<script>
+    let supCurrentPage = 1;
+    let supPerPage = 10;
+
+    function changeSupPerPage(val) {
+        supPerPage = (val === 'all') ? 999999 : parseInt(val, 10);
+        supCurrentPage = 1;
+        applySupPagination();
+    }
+
+    function goToSupPage(p) {
+        supCurrentPage = p;
+        applySupPagination();
+    }
+
+    function applySupPagination() {
+        const rows = Array.from(document.querySelectorAll('.sup-report-row'));
+        const total = rows.length;
+        const totalPages = Math.max(1, Math.ceil(total / supPerPage));
+
+        if (supCurrentPage > totalPages) supCurrentPage = totalPages;
+        if (supCurrentPage < 1) supCurrentPage = 1;
+
+        const startIdx = (supCurrentPage - 1) * supPerPage;
+        const endIdx = Math.min(startIdx + supPerPage, total);
+
+        rows.forEach((r, idx) => {
+            r.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+
+        const pStart = document.getElementById('supPageStart');
+        const pEnd = document.getElementById('supPageEnd');
+        const pTotal = document.getElementById('supPageTotal');
+
+        if (pStart) pStart.textContent = total > 0 ? (startIdx + 1) : 0;
+        if (pEnd) pEnd.textContent = endIdx;
+        if (pTotal) pTotal.textContent = total;
+
+        renderSupPaginationControls(totalPages);
+    }
+
+    function renderSupPaginationControls(totalPages) {
+        const container = document.getElementById('supPaginationControls');
+        if (!container) return;
+
+        if (totalPages <= 1 && supPerPage >= 999999) {
+            container.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+
+        const prevDisabled = (supCurrentPage <= 1);
+        html += `
+            <button onclick="goToSupPage(${supCurrentPage - 1})" ${prevDisabled ? 'disabled' : ''} 
+                    class="px-2.5 py-1.5 rounded-lg border text-xs font-bold transition flex items-center gap-1 ${prevDisabled ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50' : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-100 cursor-pointer active:scale-95'}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Prev</span>
+            </button>
+        `;
+
+        let startPage = Math.max(1, supCurrentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        if (startPage > 1) {
+            html += `<button onclick="goToSupPage(1)" class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer">1</button>`;
+            if (startPage > 2) html += `<span class="px-1 text-slate-400 font-bold">...</span>`;
+        }
+
+        for (let p = startPage; p <= endPage; p++) {
+            const isActive = (p === supCurrentPage);
+            html += `
+                <button onclick="goToSupPage(${p})" 
+                        class="w-8 h-8 rounded-lg text-xs font-bold transition cursor-pointer ${isActive ? 'bg-[#0B2E22] text-white shadow-xs' : 'border border-slate-200 bg-white hover:bg-slate-100 text-slate-700'}">
+                    ${p}
+                </button>
+            `;
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) html += `<span class="px-1 text-slate-400 font-bold">...</span>`;
+            html += `<button onclick="goToSupPage(${totalPages})" class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer">${totalPages}</button>`;
+        }
+
+        const nextDisabled = (supCurrentPage >= totalPages);
+        html += `
+            <button onclick="goToSupPage(${supCurrentPage + 1})" ${nextDisabled ? 'disabled' : ''} 
+                    class="px-2.5 py-1.5 rounded-lg border text-xs font-bold transition flex items-center gap-1 ${nextDisabled ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50' : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-100 cursor-pointer active:scale-95'}">
+                <span>Next</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        applySupPagination();
+    });
+</script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

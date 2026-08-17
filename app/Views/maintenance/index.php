@@ -83,18 +83,10 @@ $iconColor     = $isEmergency ? 'text-red-600'        : 'text-amber-600';
                      style="background: linear-gradient(135deg, <?php echo $accentLight; ?>, white); border: 1px solid <?php echo $accentBorder; ?>;">
                     <?php if ($isEmergency): ?>
                     <!-- Emergency icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" viewBox="0 0 24 24" fill="none"
-                         stroke="<?php echo $accentColor; ?>" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                        <line x1="12" y1="9" x2="12" y2="13"/>
-                        <line x1="12" y1="17" x2="12.01" y2="17"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="<?php echo $accentColor; ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     <?php else: ?>
                     <!-- Maintenance/wrench icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" viewBox="0 0 24 24" fill="none"
-                         stroke="<?php echo $accentColor; ?>" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="<?php echo $accentColor; ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                     <?php endif; ?>
                 </div>
             </div>
@@ -125,7 +117,7 @@ $iconColor     = $isEmergency ? 'text-red-600'        : 'text-amber-600';
                 <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-left">
                     <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-700 mb-1">Expected Return</p>
                     <div class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         <span class="text-sm font-bold text-slate-800"><?php echo date('F j, Y · g:i A', strtotime($endAt)); ?></span>
                     </div>
                 </div>
@@ -142,7 +134,7 @@ $iconColor     = $isEmergency ? 'text-red-600'        : 'text-amber-600';
                     For urgent concerns, please contact the barangay hall directly.
                 </p>
                 <div class="flex items-center justify-center gap-2 text-slate-400 text-[11px] font-medium">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <span><?php echo $systemName; ?> — Secured &amp; Maintained by the Barangay Administration</span>
                 </div>
             </div>

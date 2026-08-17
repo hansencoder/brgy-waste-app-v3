@@ -1,0 +1,5 @@
+.env
+.env.local
+/vendor/
+/scratch/
+/storage/sms_log.txt

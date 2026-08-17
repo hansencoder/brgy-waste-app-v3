@@ -88,7 +88,7 @@ $announcements = $data['announcements'] ?? [];
                 <p id="modalMeta" class="text-xs text-slate-400 mt-1"></p>
             </div>
             <button onclick="closeReadModal()" class="text-slate-400 hover:text-slate-700 p-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
         </div>
         <div id="modalContent" class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line max-h-96 overflow-y-auto pr-2"></div>

@@ -163,3 +163,18 @@ MSG: WasteWatch: Your verification code is 204412. Valid for 5 minutes. Do not s
 [2026-08-16 10:11:58] TO:09121212121
 MSG: WasteWatch: Your verification code is 963061. Valid for 5 minutes. Do not share this code with anyone.
 ------------------------------------------------------------
+[2026-08-17 11:04:24] TO:09951281511
+MSG: [GATEWAY FAILED] WasteWatch: Your verification code is 064041. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-17 11:07:32] TO:09951281511
+MSG: [GATEWAY FAILED] WasteWatch: Your verification code is 533692. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-17 11:50:58] TO:09951281511
+MSG: [GATEWAY FAILED] WasteWatch: Your verification code is 624216. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-17 12:07:16] TO:09951281511
+MSG: WasteWatch: Your verification code is 892145. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------
+[2026-08-17 12:07:25] TO:09951281511
+MSG: [GATEWAY FAILED] WasteWatch: Your verification code is 892145. Valid for 5 minutes. Do not share this code with anyone.
+------------------------------------------------------------

@@ -219,14 +219,34 @@ class AuthController extends Controller {
                     return $this->view('auth/login', ['error' => 'Account is deactivated.']);
                 }
 
-                // Handle OTP verification for both Email and Phone-only users
+                // Handle OTP verification: Match login input type (Phone vs Email)
                 require_once '../app/Models/Helpers/OtpMailer.php';
                 require_once '../app/Models/Helpers/SmsHelper.php';
 
-                $email = $user['email'];
-                $phone = $user['phone_number'];
-                $contactTarget = !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : $phone;
-                $isPhoneOnly = empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL);
+                $email = $user['email'] ?? '';
+                $phone = $user['phone_number'] ?? '';
+
+                $isInputEmail = filter_var($input, FILTER_VALIDATE_EMAIL);
+                $isInputPhone = preg_match('/^[0-9+\s()-]{7,20}$/', $input);
+
+                if ($isInputPhone && !empty($phone)) {
+                    $sendViaSms = true;
+                    $contactTarget = $phone;
+                } elseif ($isInputEmail && !empty($email)) {
+                    $sendViaSms = false;
+                    $contactTarget = $email;
+                } else {
+                    // Fallback for username login: prefer phone if available, else email
+                    if (!empty($phone)) {
+                        $sendViaSms = true;
+                        $contactTarget = $phone;
+                    } elseif (!empty($email)) {
+                        $sendViaSms = false;
+                        $contactTarget = $email;
+                    } else {
+                        $contactTarget = '';
+                    }
+                }
 
                 if (empty($contactTarget)) {
                     return $this->view('auth/login', ['error' => 'No valid email or phone number on file for authentication.']);
@@ -250,11 +270,11 @@ class AuthController extends Controller {
                 }
 
                 try {
-                    if ($isPhoneOnly) {
-                        SmsHelper::sendOtp($phone, $token, $user['name']);
+                    if ($sendViaSms) {
+                        SmsHelper::sendOtp($contactTarget, $token, $user['name']);
                         $_SESSION['mfa_type'] = 'phone';
                     } else {
-                        OtpMailer::sendOtpEmail($email, $token, $user['name']);
+                        OtpMailer::sendOtpEmail($contactTarget, $token, $user['name']);
                         $_SESSION['mfa_type'] = 'email';
                     }
 
@@ -263,7 +283,7 @@ class AuthController extends Controller {
                     $_SESSION['mfa_user_id'] = $user['id'];
                     $_SESSION['mfa_email'] = $contactTarget;
 
-                    $this->auditModel->logAction($user['id'], 'Login partial success', 'User', 'OTP sent to ' . ($isPhoneOnly ? 'phone' : 'email'), 'success');
+                    $this->auditModel->logAction($user['id'], 'Login partial success', 'User', 'OTP sent to ' . ($sendViaSms ? 'phone' : 'email'), 'success');
 
                     header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/mfa'));
                     exit;

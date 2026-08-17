@@ -41,13 +41,12 @@
                  background:radial-gradient(circle,rgba(34,197,94,.20) 0%,transparent 70%);"></div>
 
             <!-- Track ring -->
-            <svg viewBox="0 0 88 88" width="88" height="88" style="position:absolute;inset:0;">
+            <svg viewBox="0 0 88 88" width="88" height="88" style="position:absolute;inset:0;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="44" cy="44" r="38" fill="none" stroke="#DCFCE7" stroke-width="5"/>
             </svg>
 
             <!-- Spinning arc -->
-            <svg id="wms-arc" viewBox="0 0 88 88" width="88" height="88"
-                 style="position:absolute;inset:0;transform-origin:center;">
+            <svg id="wms-arc" viewBox="0 0 88 88" width="88" height="88" style="position:absolute;inset:0;transform-origin:center;" fill="currentColor">
                 <defs>
                     <linearGradient id="wms-grad" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%"   stop-color="#166534"/>
@@ -66,9 +65,7 @@
                      display:flex;align-items:center;justify-content:center;
                      box-shadow:0 4px 18px -4px rgba(22,101,52,.45);">
                     <!-- Recycling-style arrow icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
-                         fill="none" stroke="white" stroke-width="2" stroke-linecap="round"
-                         stroke-linejoin="round" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                         <path d="M3 3v5h5"/>
                         <path d="M12 7v5l4 2"/>

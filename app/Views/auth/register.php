@@ -39,7 +39,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
                 <?php if (!empty($sysLogo)): ?>
                     <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover" alt="Logo">
                 <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <?php endif; ?>
             </div>
             <h1 class="text-xl font-bold text-slate-900 tracking-tight">Join <?php echo htmlspecialchars($sysShortName); ?></h1>
@@ -59,7 +59,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
         <!-- Server Error / Success Alerts -->
         <?php if (!empty($data['error'])): ?>
             <div class="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200/80 text-red-700 text-xs flex items-start gap-2.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <div class="flex-1 font-medium">
                     <?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?>
                 </div>
@@ -67,7 +67,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
         <?php endif; ?>
         <?php if (!empty($data['success'])): ?>
             <div class="mb-5 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs flex items-start gap-2.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 <div class="flex-1 font-medium">
                     <?php echo htmlspecialchars($data['success'], ENT_QUOTES, 'UTF-8'); ?>
                 </div>
@@ -161,10 +161,10 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
                             oninput="checkPasswordStrength(this.value); validateInput(this)">
                         <button type="button" onclick="togglePassword('password', this)" aria-label="Show password" title="Show password" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1 focus:outline-none">
                             <span class="eye-open w-4 h-4">
-                                <svg class="w-4 h-4 text-slate-500 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="w-4 h-4 text-slate-500 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                             </span>
                             <span class="eye-closed hidden w-4 h-4">
-                                <svg class="w-4 h-4 text-slate-500 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                                <svg class="w-4 h-4 text-slate-500 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
                             </span>
                         </button>
                     </div>
@@ -178,10 +178,10 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
                             oninput="validatePasswordsMatch(); validateInput(this)">
                         <button type="button" onclick="togglePassword('confirm_password', this)" aria-label="Show password" title="Show password" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1 focus:outline-none">
                             <span class="eye-open w-4 h-4">
-                                <svg class="w-4 h-4 text-slate-500 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="w-4 h-4 text-slate-500 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                             </span>
                             <span class="eye-closed hidden w-4 h-4">
-                                <svg class="w-4 h-4 text-slate-500 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                                <svg class="w-4 h-4 text-slate-500 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
                             </span>
                         </button>
                     </div>
@@ -192,19 +192,19 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
             <div id="password-rules-container" class="hidden p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
                 <ul class="text-[11px] font-medium space-y-0.5">
                     <li id="rule-upper" class="password-rule flex items-center gap-1.5 text-slate-400">
-                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
                         One uppercase letter
                     </li>
                     <li id="rule-lower" class="password-rule flex items-center gap-1.5 text-slate-400">
-                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
                         One lowercase letter
                     </li>
                     <li id="rule-number" class="password-rule flex items-center gap-1.5 text-slate-400">
-                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
                         One number &amp; special character
                     </li>
                     <li id="rule-length" class="password-rule flex items-center gap-1.5 text-slate-400">
-                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
                         At least 8 characters
                     </li>
                 </ul>
@@ -222,7 +222,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
             <!-- Submit Button -->
             <button type="submit" id="submitBtn" class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
                 <span>Create account</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
 
             <!-- Footer -->

@@ -115,11 +115,11 @@ function maintenanceActionBadge($action) {
                                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
                                                 <?php echo $isEmergency ? 'bg-red-100' : ($isActive ? 'bg-amber-100' : 'bg-emerald-100'); ?>">
                                                 <?php if ($isEmergency): ?>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                                 <?php elseif ($isActive): ?>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                                                 <?php else: ?>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                                                 <?php endif; ?>
                                             </div>
                                             <div>
@@ -144,13 +144,13 @@ function maintenanceActionBadge($action) {
                                         <?php if ($isEmergency): ?>
                                         <button onclick="confirmAction('deactivate_emergency')"
                                                 class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm transition shadow-xs">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg>
                                             Lift Emergency Lockdown
                                         </button>
                                         <?php elseif ($isActive): ?>
                                         <button onclick="confirmAction('deactivate')"
                                                 class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-sm transition shadow-xs">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                                             Restore to Operational
                                         </button>
                                         <?php endif; ?>
@@ -158,7 +158,7 @@ function maintenanceActionBadge($action) {
 
                                     <?php if ($isActive && !empty($status['end_at'])): ?>
                                     <div class="mt-4 pt-4 border-t <?php echo $isEmergency ? 'border-red-200' : 'border-amber-200'; ?> flex items-center gap-2 text-sm <?php echo $isEmergency ? 'text-red-700' : 'text-amber-700'; ?> font-semibold">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                         <span>Expected end: <strong><?php echo date('F j, Y \a\t g:i A', strtotime($status['end_at'])); ?></strong></span>
                                     </div>
                                     <?php endif; ?>
@@ -183,7 +183,7 @@ function maintenanceActionBadge($action) {
                                             <label id="typeScheduledCard" class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all <?php echo $savedType === 'scheduled' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-slate-300'; ?>">
                                                 <input type="radio" name="maintenance_type" value="scheduled" class="sr-only" <?php echo $savedType === 'scheduled' ? 'checked' : ''; ?>>
                                                 <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                                 </div>
                                                 <div>
                                                     <p class="text-sm font-extrabold text-slate-800">Scheduled Maintenance</p>
@@ -193,7 +193,7 @@ function maintenanceActionBadge($action) {
                                             <label id="typeEmergencyCard" class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all <?php echo $savedType === 'emergency' ? 'border-red-500 bg-red-50' : 'border-slate-200 hover:border-slate-300'; ?>">
                                                 <input type="radio" name="maintenance_type" value="emergency" class="sr-only" <?php echo $savedType === 'emergency' ? 'checked' : ''; ?>>
                                                 <div class="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                                 </div>
                                                 <div>
                                                     <p class="text-sm font-extrabold text-slate-800">Emergency Maintenance</p>
@@ -242,7 +242,7 @@ function maintenanceActionBadge($action) {
 
                                     <!-- Admin access notice -->
                                     <div class="flex items-start gap-3 p-4 bg-emerald-50 border-2 border-emerald-200 rounded-xl">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                                         <div>
                                             <p class="text-sm font-extrabold text-emerald-900">Administrator Access Always Permitted</p>
                                             <p class="text-xs text-emerald-700 font-medium mt-0.5">Administrators, Secretaries, and Captains retain full access regardless of maintenance status. This cannot be disabled.</p>
@@ -253,19 +253,19 @@ function maintenanceActionBadge($action) {
                                     <div class="flex flex-col sm:flex-row gap-3 pt-2">
                                         <button type="button" onclick="submitAction('save_settings')"
                                             class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-extrabold text-sm transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                             Save Settings
                                         </button>
                                         <?php if (!$isActive): ?>
                                         <button type="button" onclick="confirmAction('activate')"
                                             class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-sm transition shadow-xs">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                                             Activate Maintenance Mode
                                         </button>
                                         <?php else: ?>
                                         <button type="button" onclick="confirmAction('deactivate')"
                                             class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-sm transition shadow-xs">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                                             Deactivate Maintenance Mode
                                         </button>
                                         <?php endif; ?>
@@ -282,7 +282,7 @@ function maintenanceActionBadge($action) {
                                 <div class="p-5 sm:p-6 border-b border-red-100 bg-red-50/50">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                         </div>
                                         <div>
                                             <h2 class="text-lg font-extrabold text-red-900">Emergency Lockdown</h2>
@@ -309,7 +309,7 @@ function maintenanceActionBadge($action) {
                                     </div>
                                     <button onclick="triggerEmergencyModal()"
                                         class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-red-700 hover:bg-red-800 text-white font-extrabold text-sm transition shadow-xs">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                         Activate Emergency Lockdown
                                     </button>
                                 </div>
@@ -331,7 +331,7 @@ function maintenanceActionBadge($action) {
                                 <?php if (empty($history)): ?>
                                 <div class="py-14 text-center text-slate-400 space-y-2">
                                     <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                     </div>
                                     <p class="text-sm font-bold text-slate-400">No maintenance history yet.</p>
                                 </div>
@@ -377,7 +377,7 @@ function maintenanceActionBadge($action) {
                                                         <span class="px-1.5 py-0.5 rounded <?php echo $prev ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'; ?>">
                                                             <?php echo $prev ? 'Active' : 'Off'; ?>
                                                         </span>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                                                         <span class="px-1.5 py-0.5 rounded <?php echo $next ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'; ?>">
                                                             <?php echo $next ? 'Active' : 'Off'; ?>
                                                         </span>
@@ -405,7 +405,7 @@ function maintenanceActionBadge($action) {
 <div id="confirmModal" class="modal-backdrop fixed inset-0 z-[100] bg-slate-950/60 flex items-center justify-center p-4 opacity-0 invisible">
     <div class="modal-box bg-white rounded-2xl shadow-2xl w-full max-w-md scale-95 opacity-0 p-7 space-y-5">
         <div id="confirmModalIcon" class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center bg-amber-100">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
         <div class="text-center">
             <h3 id="confirmModalTitle" class="text-xl font-extrabold text-slate-900">Confirm Action</h3>
@@ -424,7 +424,7 @@ function maintenanceActionBadge($action) {
 <div id="emergencyModal" class="modal-backdrop fixed inset-0 z-[110] bg-red-950/70 flex items-center justify-center p-4 opacity-0 invisible">
     <div class="modal-box bg-white rounded-2xl shadow-2xl w-full max-w-md scale-95 opacity-0 p-7 space-y-5">
         <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center bg-red-100">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
         <div class="text-center space-y-1">
             <h3 class="text-xl font-extrabold text-red-900">Emergency Lockdown</h3>
@@ -474,10 +474,7 @@ function showToast(message, type = 'success') {
     };
     const toast = document.createElement('div');
     toast.className = `pointer-events-auto max-w-sm w-full px-5 py-4 rounded-xl border-2 shadow-2xl text-sm font-semibold flex items-start gap-3 ${colors[type] || colors.info}`;
-    toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${
-        type === 'success' ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
-        : '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/>'
-    }</svg><span>${message}</span>`;
+    toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg><span>${message}</span>`;
     document.getElementById('toastContainer').appendChild(toast);
     setTimeout(() => toast.remove(), 5000);
 }

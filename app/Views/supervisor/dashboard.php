@@ -87,11 +87,11 @@ function getSupervisorStatusBadge($status) {
                     <!-- Action Shortcuts -->
                     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
                         <a href="/brgy-waste-app-v3/public/supervisor/reports" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-xs transition border border-white/10">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                             <span>Manage Reports</span>
                         </a>
                         <a href="/brgy-waste-app-v3/public/supervisor/gis" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold shadow-xs transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                             <span>GIS Heatmap</span>
                         </a>
                     </div>
@@ -106,7 +106,7 @@ function getSupervisorStatusBadge($status) {
                     <div class="flex items-center justify-between gap-1 mb-2">
                         <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total</span>
                         <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                         </div>
                     </div>
                     <p class="text-xl sm:text-2xl font-bold text-slate-900 font-mono"><?php echo number_format($totalReports); ?></p>
@@ -118,7 +118,7 @@ function getSupervisorStatusBadge($status) {
                     <div class="flex items-center justify-between gap-1 mb-2">
                         <span class="text-[11px] font-semibold text-amber-600 uppercase tracking-wider">Pending</span>
                         <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </div>
                     </div>
                     <p class="text-xl sm:text-2xl font-bold text-amber-600 font-mono"><?php echo number_format($pending); ?></p>
@@ -130,7 +130,7 @@ function getSupervisorStatusBadge($status) {
                     <div class="flex items-center justify-between gap-1 mb-2">
                         <span class="text-[11px] font-semibold text-blue-600 uppercase tracking-wider">Verified</span>
                         <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                         </div>
                     </div>
                     <p class="text-xl sm:text-2xl font-bold text-blue-600 font-mono"><?php echo number_format($verified); ?></p>
@@ -142,7 +142,7 @@ function getSupervisorStatusBadge($status) {
                     <div class="flex items-center justify-between gap-1 mb-2">
                         <span class="text-[11px] font-semibold text-purple-600 uppercase tracking-wider">Dispatched</span>
                         <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="16" height="13" x="4" y="5" rx="2"/><path d="M16 2v3"/><path d="M8 2v3"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="13" x="4" y="5" rx="2"/><path d="M16 2v3"/><path d="M8 2v3"/></svg>
                         </div>
                     </div>
                     <p class="text-xl sm:text-2xl font-bold text-purple-600 font-mono"><?php echo number_format($inProgress); ?></p>
@@ -154,7 +154,7 @@ function getSupervisorStatusBadge($status) {
                     <div class="flex items-center justify-between gap-1 mb-2">
                         <span class="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider">Resolved</span>
                         <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                         </div>
                     </div>
                     <p class="text-xl sm:text-2xl font-bold text-emerald-600 font-mono"><?php echo number_format($resolved); ?></p>
@@ -166,7 +166,7 @@ function getSupervisorStatusBadge($status) {
                     <div class="flex items-center justify-between gap-1 mb-2">
                         <span class="text-[11px] font-semibold text-red-600 uppercase tracking-wider">Hotspots</span>
                         <div class="w-7 h-7 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
                         </div>
                     </div>
                     <p class="text-xl sm:text-2xl font-bold text-red-600 font-mono"><?php echo number_format($activeHotspots); ?></p>
@@ -253,7 +253,7 @@ function getSupervisorStatusBadge($status) {
                                         <span class="text-xs font-bold text-slate-800 truncate"><?php echo htmlspecialchars($report['category'] ?? 'General Issue'); ?></span>
                                     </div>
                                     <p class="text-[11px] text-slate-500 mt-0.5 truncate flex items-center gap-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                                         <span><?php echo htmlspecialchars($report['purok'] ?? 'Barangay Wide'); ?></span>
                                         <?php if (!empty($report['submission_date'])): ?>
                                             · <?php echo date('M j, g:i A', strtotime($report['submission_date'])); ?>

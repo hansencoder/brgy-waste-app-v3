@@ -11,7 +11,7 @@ if (empty($report)) {
     echo '<div class="min-h-screen flex items-center justify-center bg-slate-50 px-4">
         <div class="max-w-md w-full rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-md">
             <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 border border-red-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
             <h1 class="text-xl font-bold text-slate-900">Report Not Found</h1>
             <p class="mt-2 text-xs text-slate-500">The waste report you are looking for does not exist or has been removed.</p>
@@ -85,7 +85,7 @@ if (!empty($timeline)) {
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
                     <div class="flex items-center gap-3">
                         <a href="/brgy-waste-app-v3/public/resident/my_report" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition" title="Back to Reports">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                         </a>
                         <div>
                             <div class="flex items-center gap-2">
@@ -99,7 +99,7 @@ if (!empty($timeline)) {
                     </div>
                     
                     <a href="/brgy-waste-app-v3/public/resident/submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B2E22] hover:bg-[#083528] text-white font-bold text-xs shadow-xs self-start sm:self-auto transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                         <span>New Report</span>
                     </a>
                 </div>
@@ -112,7 +112,7 @@ if (!empty($timeline)) {
                         <!-- Step 1: Submitted -->
                         <div class="text-center space-y-1.5">
                             <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 1 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'; ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                             </div>
                             <p class="text-xs font-bold text-slate-900">Submitted</p>
                             <p class="text-[10px] text-slate-400">Incident logged</p>
@@ -121,7 +121,7 @@ if (!empty($timeline)) {
                         <div class="text-center space-y-1.5">
                             <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 2 ? 'bg-emerald-600 text-white' : ($currentStep === 1 ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-400'); ?>">
                                 <?php if ($currentStep >= 2): ?>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 <?php else: echo '2'; endif; ?>
                             </div>
                             <p class="text-xs font-bold text-slate-900">Verified</p>
@@ -131,7 +131,7 @@ if (!empty($timeline)) {
                         <div class="text-center space-y-1.5">
                             <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 3 ? 'bg-emerald-600 text-white' : ($currentStep === 2 ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-400'); ?>">
                                 <?php if ($currentStep >= 3): ?>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 <?php else: echo '3'; endif; ?>
                             </div>
                             <p class="text-xs font-bold text-slate-900">Dispatched</p>
@@ -141,7 +141,7 @@ if (!empty($timeline)) {
                         <div class="text-center space-y-1.5">
                             <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center font-bold text-xs <?php echo $currentStep >= 4 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'; ?>">
                                 <?php if ($currentStep >= 4): ?>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 <?php else: echo '4'; endif; ?>
                             </div>
                             <p class="text-xs font-bold text-slate-900">Resolved</p>
@@ -168,7 +168,7 @@ if (!empty($timeline)) {
                                     <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Report Evidence" class="max-h-96 w-auto rounded-xl object-contain shadow-md bg-white">
                                 <?php else: ?>
                                     <div class="py-16 text-center text-slate-400 text-xs flex items-center justify-center gap-1.5">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
                                         <span>No photo attached to this report.</span>
                                     </div>
                                 <?php endif; ?>

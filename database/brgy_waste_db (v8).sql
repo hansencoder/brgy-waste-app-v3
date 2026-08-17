@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 09, 2026 at 03:00 AM
+-- Generation Time: Aug 17, 2026 at 01:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -1191,7 +1191,839 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `affected_record`, `details
 (2022, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-09 06:27:50', NULL, NULL, NULL, NULL),
 (2023, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-09 08:55:42', NULL, NULL, NULL, NULL),
 (2024, 3, 'Login partial success', 'User', 'OTP Email sent', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 08:55:50', NULL, NULL, NULL, NULL),
-(2025, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 08:56:08', NULL, NULL, NULL, NULL);
+(2025, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 08:56:08', NULL, NULL, NULL, NULL),
+(2026, 3, 'Profile Updated', 'Profile', 'Updated personal information', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:19:57', NULL, NULL, NULL, NULL),
+(2027, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:29:15', NULL, NULL, NULL, NULL),
+(2028, 3, 'Login partial success', 'User', 'OTP Email sent', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:30:43', NULL, NULL, NULL, NULL),
+(2029, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:30:55', NULL, NULL, NULL, NULL),
+(2030, 2, 'Login partial success', 'User', 'OTP Email sent', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:33:26', NULL, NULL, NULL, NULL),
+(2031, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:33:39', NULL, NULL, NULL, NULL),
+(2032, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:33:39', NULL, NULL, NULL, NULL),
+(2033, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:33:58', NULL, NULL, NULL, NULL),
+(2034, 2, 'Report Verified', 'Report ID 48', 'Verified report', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:34:05', NULL, NULL, NULL, NULL),
+(2035, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:34:06', NULL, NULL, NULL, NULL),
+(2036, 2, 'View Report', 'Report ID 46', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:34:44', NULL, NULL, NULL, NULL),
+(2037, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:35:24', NULL, NULL, NULL, NULL),
+(2038, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:36:46', NULL, NULL, NULL, NULL),
+(2039, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:37:04', NULL, NULL, NULL, NULL),
+(2040, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:37:34', NULL, NULL, NULL, NULL),
+(2041, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:37:37', NULL, NULL, NULL, NULL),
+(2042, 2, 'Delete Schedule', 'Schedule ID 1', 'Deleted schedule', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:37:53', NULL, NULL, NULL, NULL),
+(2043, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:37:53', NULL, NULL, NULL, NULL),
+(2044, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:37:56', NULL, NULL, NULL, NULL),
+(2045, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:37:58', NULL, NULL, NULL, NULL),
+(2046, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:38:01', NULL, NULL, NULL, NULL),
+(2047, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'success', '2026-08-09 09:39:15', NULL, NULL, NULL, NULL),
+(2048, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-09 21:16:05', NULL, NULL, NULL, NULL),
+(2049, 20, 'User Registered', 'User', 'Registered with phone number 09951281511', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-09 22:40:36', NULL, NULL, NULL, NULL),
+(2050, 20, 'Login successful', 'User', 'Direct login (phone-only user)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-09 22:43:48', NULL, NULL, NULL, NULL),
+(2051, 20, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-09 22:44:31', NULL, NULL, NULL, NULL),
+(2052, NULL, 'Login failed', 'User', 'Invalid credentials for fhanstestingphonesmsw', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-09 23:03:03', NULL, NULL, NULL, NULL),
+(2053, NULL, 'Login failed', 'User', 'Invalid credentials for 09951281511', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-09 23:03:39', NULL, NULL, NULL, NULL),
+(2054, 3, 'Login partial success', 'User', 'OTP Email sent', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-09 23:04:02', NULL, NULL, NULL, NULL),
+(2055, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-09 23:04:30', NULL, NULL, NULL, NULL),
+(2056, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-09 23:04:33', NULL, NULL, NULL, NULL),
+(2057, 20, 'Login successful', 'User', 'Direct login (phone-only user)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 00:32:48', NULL, NULL, NULL, NULL),
+(2058, 20, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 00:32:57', NULL, NULL, NULL, NULL),
+(2059, 20, 'Login successful', 'User', 'Direct login (phone-only user)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 00:33:01', NULL, NULL, NULL, NULL),
+(2060, 20, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 00:33:04', NULL, NULL, NULL, NULL),
+(2061, NULL, 'Login failed', 'User', 'Invalid credentials for fhanstestingphonesms s', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-10 00:33:11', NULL, NULL, NULL, NULL),
+(2062, NULL, 'Login failed', 'User', 'Invalid credentials for fhanstestingphonesms s', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-10 00:35:51', NULL, NULL, NULL, NULL),
+(2063, NULL, 'Login failed', 'User', 'Invalid credentials for fhanstestingphonesms s', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-10 00:36:46', NULL, NULL, NULL, NULL),
+(2064, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-10 02:06:21', NULL, NULL, NULL, NULL),
+(2065, 2, 'Login partial success', 'User', 'OTP Email sent', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 02:06:43', NULL, NULL, NULL, NULL),
+(2066, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 02:06:54', NULL, NULL, NULL, NULL),
+(2067, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 02:06:54', NULL, NULL, NULL, NULL),
+(2068, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 02:08:00', NULL, NULL, NULL, NULL),
+(2069, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 02:08:43', NULL, NULL, NULL, NULL),
+(2070, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-10 07:24:10', NULL, NULL, NULL, NULL),
+(2071, 20, 'Login successful', 'User', 'Direct login (phone-only user)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 07:24:39', NULL, NULL, NULL, NULL),
+(2072, 20, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 07:24:56', NULL, NULL, NULL, NULL),
+(2073, 20, 'Login successful', 'User', 'Direct login (phone-only user)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 07:39:49', NULL, NULL, NULL, NULL),
+(2074, 20, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 07:39:56', NULL, NULL, NULL, NULL),
+(2075, 20, 'Login partial success', 'User', 'OTP sent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 07:43:17', NULL, NULL, NULL, NULL),
+(2076, 20, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 07:43:49', NULL, NULL, NULL, NULL),
+(2077, 20, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 07:44:01', NULL, NULL, NULL, NULL),
+(2078, 20, 'Login partial success', 'User', 'OTP sent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 08:41:08', NULL, NULL, NULL, NULL),
+(2079, 20, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 08:41:25', NULL, NULL, NULL, NULL),
+(2080, 20, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 08:42:02', NULL, NULL, NULL, NULL),
+(2081, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:29:54', NULL, NULL, NULL, NULL),
+(2082, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:30:11', NULL, NULL, NULL, NULL),
+(2083, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:30:11', NULL, NULL, NULL, NULL),
+(2084, 2, 'View Report', 'Report ID 50', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:30:50', NULL, NULL, NULL, NULL),
+(2085, 2, 'Report Verified', 'Report ID 50', 'Verified report', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:31:30', NULL, NULL, NULL, NULL),
+(2086, 2, 'View Report', 'Report ID 50', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:31:31', NULL, NULL, NULL, NULL),
+(2087, 2, 'Report In Progress', 'Report ID 50', 'Marked report in progress', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:32:49', NULL, NULL, NULL, NULL),
+(2088, 2, 'View Report', 'Report ID 50', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:32:50', NULL, NULL, NULL, NULL),
+(2089, 2, 'Report Resolved', 'Report ID 50', 'Resolved report. Remark: ', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:33:38', NULL, NULL, NULL, NULL),
+(2090, 2, 'View Report', 'Report ID 50', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:33:38', NULL, NULL, NULL, NULL),
+(2091, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:34:13', NULL, NULL, NULL, NULL),
+(2092, 2, 'Report Verified', 'Report ID 52', 'Verified report', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:34:26', NULL, NULL, NULL, NULL),
+(2093, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:34:27', NULL, NULL, NULL, NULL),
+(2094, 2, 'Report In Progress', 'Report ID 52', 'Marked report in progress', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:34:33', NULL, NULL, NULL, NULL),
+(2095, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:34:33', NULL, NULL, NULL, NULL),
+(2096, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:38:21', NULL, NULL, NULL, NULL),
+(2097, 2, 'Report Rejected', 'Report ID 52', 'Rejected report. Reason: ', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:40:28', NULL, NULL, NULL, NULL),
+(2098, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:40:28', NULL, NULL, NULL, NULL),
+(2099, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:44:14', NULL, NULL, NULL, NULL),
+(2100, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:56:03', NULL, NULL, NULL, NULL),
+(2101, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:57:15', NULL, NULL, NULL, NULL),
+(2102, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 11:58:02', NULL, NULL, NULL, NULL),
+(2103, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:00:36', NULL, NULL, NULL, NULL),
+(2104, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:00:58', NULL, NULL, NULL, NULL),
+(2105, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:03:08', NULL, NULL, NULL, NULL),
+(2106, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:10:47', NULL, NULL, NULL, NULL),
+(2107, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:11:21', NULL, NULL, NULL, NULL),
+(2108, 20, 'Login partial success', 'User', 'OTP sent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:12:56', NULL, NULL, NULL, NULL),
+(2109, 20, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:13:17', NULL, NULL, NULL, NULL),
+(2110, 2, 'Profile Updated', 'Profile', 'Admin updated personal information', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:21:40', NULL, NULL, NULL, NULL),
+(2111, 2, 'Profile Updated', 'Profile', 'Admin updated personal information', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:27:53', NULL, NULL, NULL, NULL),
+(2112, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:28:25', NULL, NULL, NULL, NULL),
+(2113, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:28:45', NULL, NULL, NULL, NULL),
+(2114, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:29:04', NULL, NULL, NULL, NULL),
+(2115, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 2', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:32:02', NULL, NULL, NULL, NULL),
+(2116, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:32:08', NULL, NULL, NULL, NULL),
+(2117, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:32:43', NULL, NULL, NULL, NULL),
+(2118, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:32:45', NULL, NULL, NULL, NULL),
+(2119, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:35:49', NULL, NULL, NULL, NULL),
+(2120, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:36:22', NULL, NULL, NULL, NULL),
+(2121, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:36:45', NULL, NULL, NULL, NULL),
+(2122, 20, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:37:24', NULL, NULL, NULL, NULL),
+(2123, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:37:41', NULL, NULL, NULL, NULL),
+(2124, 2, 'View Report', 'Report ID 53', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:43:37', NULL, NULL, NULL, NULL),
+(2125, 2, 'Report Verified', 'Report ID 53', 'Verified report', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:43:54', NULL, NULL, NULL, NULL),
+(2126, 2, 'View Report', 'Report ID 53', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:43:55', NULL, NULL, NULL, NULL),
+(2127, 2, 'Report In Progress', 'Report ID 53', 'Marked report in progress', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:44:07', NULL, NULL, NULL, NULL),
+(2128, 2, 'View Report', 'Report ID 53', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:44:07', NULL, NULL, NULL, NULL),
+(2129, 2, 'Report Resolved', 'Report ID 53', 'Resolved report. Remark: ', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:44:18', NULL, NULL, NULL, NULL),
+(2130, 2, 'View Report', 'Report ID 53', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:44:19', NULL, NULL, NULL, NULL),
+(2131, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:51:12', NULL, NULL, NULL, NULL),
+(2132, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:56:25', NULL, NULL, NULL, NULL),
+(2133, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:57:23', NULL, NULL, NULL, NULL),
+(2134, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:58:49', NULL, NULL, NULL, NULL),
+(2135, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 12:59:21', NULL, NULL, NULL, NULL),
+(2136, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:00:38', NULL, NULL, NULL, NULL),
+(2137, 2, 'Report Generated', 'Report Summary', 'Format: pdf', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:01:08', NULL, NULL, NULL, NULL),
+(2138, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:02:22', NULL, NULL, NULL, NULL),
+(2139, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:09:00', NULL, NULL, NULL, NULL),
+(2140, 2, 'View Report', 'Report ID 46', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:09:50', NULL, NULL, NULL, NULL),
+(2141, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:15:05', NULL, NULL, NULL, NULL),
+(2142, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:15:17', NULL, NULL, NULL, NULL),
+(2143, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:16:00', NULL, NULL, NULL, NULL),
+(2144, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:16:25', NULL, NULL, NULL, NULL),
+(2145, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:18:07', NULL, NULL, NULL, NULL),
+(2146, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:19:47', NULL, NULL, NULL, NULL),
+(2147, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:21:50', NULL, NULL, NULL, NULL),
+(2148, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:21:51', NULL, NULL, NULL, NULL),
+(2149, 2, 'Report Generated', 'Report Summary', 'Format: csv', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:22:49', NULL, NULL, NULL, NULL);
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `affected_record`, `details`, `ip_address`, `user_agent`, `result`, `created_at`, `module`, `record_id`, `old_value`, `new_value`) VALUES
+(2150, 2, 'Report Generated', 'Report Summary', 'Format: csv', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:24:32', NULL, NULL, NULL, NULL),
+(2151, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:25:43', NULL, NULL, NULL, NULL),
+(2152, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:25:46', NULL, NULL, NULL, NULL),
+(2153, 2, 'Add Landmark', 'Settings', 'Added landmark: brgy hall', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:32:14', NULL, NULL, NULL, NULL),
+(2154, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:32:44', NULL, NULL, NULL, NULL),
+(2155, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:33:02', NULL, NULL, NULL, NULL),
+(2156, 3, 'Profile Updated', 'Profile', 'Updated personal information', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:35:13', NULL, NULL, NULL, NULL),
+(2157, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:37:26', NULL, NULL, NULL, NULL),
+(2158, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:38:44', NULL, NULL, NULL, NULL),
+(2159, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:39:17', NULL, NULL, NULL, NULL),
+(2160, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-10 13:39:22', NULL, NULL, NULL, NULL),
+(2161, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-12 02:54:03', NULL, NULL, NULL, NULL),
+(2162, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-12 02:54:18', NULL, NULL, NULL, NULL),
+(2163, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-12 02:55:21', NULL, NULL, NULL, NULL),
+(2164, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-12 02:55:35', NULL, NULL, NULL, NULL),
+(2165, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-12 02:55:35', NULL, NULL, NULL, NULL),
+(2166, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-12 02:56:30', NULL, NULL, NULL, NULL),
+(2167, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-12 02:56:51', NULL, NULL, NULL, NULL),
+(2168, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-14 10:14:16', NULL, NULL, NULL, NULL),
+(2169, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:14:48', NULL, NULL, NULL, NULL),
+(2170, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:14:59', NULL, NULL, NULL, NULL),
+(2171, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:15:06', NULL, NULL, NULL, NULL),
+(2172, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:15:06', NULL, NULL, NULL, NULL),
+(2173, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:15:17', NULL, NULL, NULL, NULL),
+(2174, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:42:06', NULL, NULL, NULL, NULL),
+(2175, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:43:32', NULL, NULL, NULL, NULL),
+(2176, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:44:20', NULL, NULL, NULL, NULL),
+(2177, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 10:44:46', NULL, NULL, NULL, NULL),
+(2178, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:44:55', NULL, NULL, NULL, NULL),
+(2179, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:45:06', NULL, NULL, NULL, NULL),
+(2180, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:45:16', NULL, NULL, NULL, NULL),
+(2181, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:45:17', NULL, NULL, NULL, NULL),
+(2182, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:45:21', NULL, NULL, NULL, NULL),
+(2183, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:45:41', NULL, NULL, NULL, NULL),
+(2184, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:45:48', NULL, NULL, NULL, NULL),
+(2185, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:46:02', NULL, NULL, NULL, NULL),
+(2186, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:46:06', NULL, NULL, NULL, NULL),
+(2187, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:46:40', NULL, NULL, NULL, NULL),
+(2188, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:46:47', NULL, NULL, NULL, NULL),
+(2189, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:46:49', NULL, NULL, NULL, NULL),
+(2190, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 10:48:15', NULL, NULL, NULL, NULL),
+(2191, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 10:55:50', NULL, NULL, NULL, NULL),
+(2192, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:09:29', NULL, NULL, NULL, NULL),
+(2193, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:11:18', NULL, NULL, NULL, NULL),
+(2194, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:13:33', NULL, NULL, NULL, NULL),
+(2195, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-14 11:15:50', NULL, NULL, NULL, NULL),
+(2196, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:16:51', NULL, NULL, NULL, NULL),
+(2197, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 11:17:34', NULL, NULL, NULL, NULL),
+(2198, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:17:47', NULL, NULL, NULL, NULL),
+(2199, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:18:09', NULL, NULL, NULL, NULL),
+(2200, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:19:47', NULL, NULL, NULL, NULL),
+(2201, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:19:54', NULL, NULL, NULL, NULL),
+(2202, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:19:59', NULL, NULL, NULL, NULL),
+(2203, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:20:09', NULL, NULL, NULL, NULL),
+(2204, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:20:21', NULL, NULL, NULL, NULL),
+(2205, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:20:27', NULL, NULL, NULL, NULL),
+(2206, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:20:30', NULL, NULL, NULL, NULL),
+(2207, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:20:46', NULL, NULL, NULL, NULL),
+(2208, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:20:50', NULL, NULL, NULL, NULL),
+(2209, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:20:55', NULL, NULL, NULL, NULL),
+(2210, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:21:01', NULL, NULL, NULL, NULL),
+(2211, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:21:04', NULL, NULL, NULL, NULL),
+(2212, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:21:11', NULL, NULL, NULL, NULL),
+(2213, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:21:20', NULL, NULL, NULL, NULL),
+(2214, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:22:14', NULL, NULL, NULL, NULL),
+(2215, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:22:21', NULL, NULL, NULL, NULL),
+(2216, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:22:29', NULL, NULL, NULL, NULL),
+(2217, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:22:36', NULL, NULL, NULL, NULL),
+(2218, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:22:44', NULL, NULL, NULL, NULL),
+(2219, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:22:49', NULL, NULL, NULL, NULL),
+(2220, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:22:55', NULL, NULL, NULL, NULL),
+(2221, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:23:05', NULL, NULL, NULL, NULL),
+(2222, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:23:22', NULL, NULL, NULL, NULL),
+(2223, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 11:23:57', NULL, NULL, NULL, NULL),
+(2224, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:24:33', NULL, NULL, NULL, NULL),
+(2225, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:24:38', NULL, NULL, NULL, NULL),
+(2226, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:26:30', NULL, NULL, NULL, NULL),
+(2227, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:27:36', NULL, NULL, NULL, NULL),
+(2228, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:28:29', NULL, NULL, NULL, NULL),
+(2229, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:28:59', NULL, NULL, NULL, NULL),
+(2230, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:29:27', NULL, NULL, NULL, NULL),
+(2231, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:29:38', NULL, NULL, NULL, NULL),
+(2232, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:30:20', NULL, NULL, NULL, NULL),
+(2233, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:30:32', NULL, NULL, NULL, NULL),
+(2234, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:30:40', NULL, NULL, NULL, NULL),
+(2235, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 11:34:27', NULL, NULL, NULL, NULL),
+(2236, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:54:20', NULL, NULL, NULL, NULL),
+(2237, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:54:22', NULL, NULL, NULL, NULL),
+(2238, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:54:25', NULL, NULL, NULL, NULL),
+(2239, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:54:27', NULL, NULL, NULL, NULL),
+(2240, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:54:52', NULL, NULL, NULL, NULL),
+(2241, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:54:59', NULL, NULL, NULL, NULL),
+(2242, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:55:03', NULL, NULL, NULL, NULL),
+(2243, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:55:05', NULL, NULL, NULL, NULL),
+(2244, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:55:09', NULL, NULL, NULL, NULL),
+(2245, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:55:20', NULL, NULL, NULL, NULL),
+(2246, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:55:24', NULL, NULL, NULL, NULL),
+(2247, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:55:25', NULL, NULL, NULL, NULL),
+(2248, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:58:22', NULL, NULL, NULL, NULL),
+(2249, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:58:26', NULL, NULL, NULL, NULL),
+(2250, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:58:27', NULL, NULL, NULL, NULL),
+(2251, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:58:32', NULL, NULL, NULL, NULL),
+(2252, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:58:33', NULL, NULL, NULL, NULL),
+(2253, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 11:58:51', NULL, NULL, NULL, NULL),
+(2254, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:07:35', NULL, NULL, NULL, NULL),
+(2255, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:28:04', NULL, NULL, NULL, NULL),
+(2256, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:28:23', NULL, NULL, NULL, NULL),
+(2257, 2, 'Export Reports', 'Reports', 'Admin exported waste reports to CSV', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:43:13', NULL, NULL, NULL, NULL),
+(2258, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:43:24', NULL, NULL, NULL, NULL),
+(2259, 2, 'View Report', 'Report ID 53', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:43:34', NULL, NULL, NULL, NULL),
+(2260, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:43:42', NULL, NULL, NULL, NULL),
+(2261, 2, 'Account Suspended', 'User Management', 'Suspended user ID 20', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:51:24', NULL, NULL, NULL, NULL),
+(2262, 2, 'Account Reactivated', 'User Management', 'Reactivated user ID 20', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:51:31', NULL, NULL, NULL, NULL),
+(2263, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 12:56:20', NULL, NULL, NULL, NULL),
+(2264, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:02:15', NULL, NULL, NULL, NULL),
+(2265, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:05:49', NULL, NULL, NULL, NULL),
+(2266, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:19:23', NULL, NULL, NULL, NULL),
+(2267, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:24:52', NULL, NULL, NULL, NULL),
+(2268, 2, 'View Report', 'Report ID 47', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:25:04', NULL, NULL, NULL, NULL),
+(2269, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:29:24', NULL, NULL, NULL, NULL),
+(2270, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:29:45', NULL, NULL, NULL, NULL),
+(2271, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:14', NULL, NULL, NULL, NULL),
+(2272, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:21', NULL, NULL, NULL, NULL),
+(2273, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:24', NULL, NULL, NULL, NULL),
+(2274, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:31', NULL, NULL, NULL, NULL),
+(2275, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:33', NULL, NULL, NULL, NULL),
+(2276, 2, 'View Report', 'Report ID 53', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:43', NULL, NULL, NULL, NULL),
+(2277, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:46', NULL, NULL, NULL, NULL),
+(2278, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:50', NULL, NULL, NULL, NULL),
+(2279, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:53', NULL, NULL, NULL, NULL),
+(2280, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:30:55', NULL, NULL, NULL, NULL),
+(2281, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:35:30', NULL, NULL, NULL, NULL),
+(2282, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:35:32', NULL, NULL, NULL, NULL),
+(2283, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:35:38', NULL, NULL, NULL, NULL),
+(2284, 2, 'View Report', 'Report ID 50', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:35:43', NULL, NULL, NULL, NULL),
+(2285, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 13:35:50', NULL, NULL, NULL, NULL),
+(2286, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-14 14:12:31', NULL, NULL, NULL, NULL),
+(2287, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:05', NULL, NULL, NULL, NULL),
+(2288, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:14', NULL, NULL, NULL, NULL),
+(2289, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:14', NULL, NULL, NULL, NULL),
+(2290, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:16', NULL, NULL, NULL, NULL),
+(2291, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:17', NULL, NULL, NULL, NULL),
+(2292, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:19', NULL, NULL, NULL, NULL),
+(2293, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:19', NULL, NULL, NULL, NULL),
+(2294, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:21', NULL, NULL, NULL, NULL),
+(2295, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:26', NULL, NULL, NULL, NULL),
+(2296, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:25:30', NULL, NULL, NULL, NULL),
+(2297, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:26:23', NULL, NULL, NULL, NULL),
+(2298, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:26:25', NULL, NULL, NULL, NULL),
+(2299, 2, 'Delete Landmark', 'Settings', 'Deleted landmark ID 3', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:28:18', NULL, NULL, NULL, NULL),
+(2300, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:50:14', NULL, NULL, NULL, NULL),
+(2301, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:50:16', NULL, NULL, NULL, NULL),
+(2302, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:50:19', NULL, NULL, NULL, NULL),
+(2303, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:52:07', NULL, NULL, NULL, NULL),
+(2304, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:52:09', NULL, NULL, NULL, NULL),
+(2305, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:52:11', NULL, NULL, NULL, NULL),
+(2306, 2, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:52:14', NULL, NULL, NULL, NULL),
+(2307, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:58:37', NULL, NULL, NULL, NULL),
+(2308, 2, '2FA failed', 'User', 'Invalid or expired OTP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-14 18:58:59', NULL, NULL, NULL, NULL),
+(2309, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:59:12', NULL, NULL, NULL, NULL),
+(2310, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:59:12', NULL, NULL, NULL, NULL),
+(2311, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:59:21', NULL, NULL, NULL, NULL),
+(2312, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:59:22', NULL, NULL, NULL, NULL),
+(2313, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:59:29', NULL, NULL, NULL, NULL),
+(2314, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:59:31', NULL, NULL, NULL, NULL),
+(2315, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 18:59:41', NULL, NULL, NULL, NULL),
+(2316, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 19:04:11', NULL, NULL, NULL, NULL),
+(2317, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 19:04:25', NULL, NULL, NULL, NULL),
+(2318, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:04:42', NULL, NULL, NULL, NULL),
+(2319, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:05:06', NULL, NULL, NULL, NULL),
+(2320, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:05:06', NULL, NULL, NULL, NULL),
+(2321, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:05:07', NULL, NULL, NULL, NULL),
+(2322, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:05:09', NULL, NULL, NULL, NULL),
+(2323, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:05:33', NULL, NULL, NULL, NULL),
+(2324, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:07:45', NULL, NULL, NULL, NULL),
+(2325, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:07:52', NULL, NULL, NULL, NULL),
+(2326, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:07:58', NULL, NULL, NULL, NULL),
+(2327, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:12:10', NULL, NULL, NULL, NULL),
+(2328, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:12:13', NULL, NULL, NULL, NULL),
+(2329, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:12:27', NULL, NULL, NULL, NULL),
+(2330, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:12:29', NULL, NULL, NULL, NULL),
+(2331, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:12:30', NULL, NULL, NULL, NULL),
+(2332, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:20:20', NULL, NULL, NULL, NULL),
+(2333, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:20:44', NULL, NULL, NULL, NULL),
+(2334, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:20:44', NULL, NULL, NULL, NULL),
+(2335, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:21:18', NULL, NULL, NULL, NULL),
+(2336, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:21:44', NULL, NULL, NULL, NULL),
+(2337, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:21:57', NULL, NULL, NULL, NULL),
+(2338, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:22:10', NULL, NULL, NULL, NULL),
+(2339, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:22:11', NULL, NULL, NULL, NULL),
+(2340, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:22:13', NULL, NULL, NULL, NULL),
+(2341, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:22:14', NULL, NULL, NULL, NULL),
+(2342, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:22:17', NULL, NULL, NULL, NULL),
+(2343, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:22:19', NULL, NULL, NULL, NULL),
+(2344, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:22:20', NULL, NULL, NULL, NULL),
+(2345, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 19:22:52', NULL, NULL, NULL, NULL),
+(2346, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:23:08', NULL, NULL, NULL, NULL),
+(2347, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:26:43', NULL, NULL, NULL, NULL),
+(2348, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-14 19:32:49', NULL, NULL, NULL, NULL),
+(2349, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:40:35', NULL, NULL, NULL, NULL);
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `affected_record`, `details`, `ip_address`, `user_agent`, `result`, `created_at`, `module`, `record_id`, `old_value`, `new_value`) VALUES
+(2350, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:41:10', NULL, NULL, NULL, NULL),
+(2351, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:47:11', NULL, NULL, NULL, NULL),
+(2352, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 19:54:16', NULL, NULL, NULL, NULL),
+(2353, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:03:50', NULL, NULL, NULL, NULL),
+(2354, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:04:05', NULL, NULL, NULL, NULL),
+(2355, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:04:26', NULL, NULL, NULL, NULL),
+(2356, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:05:19', NULL, NULL, NULL, NULL),
+(2357, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:08:55', NULL, NULL, NULL, NULL),
+(2358, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:13:17', NULL, NULL, NULL, NULL),
+(2359, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:21:44', NULL, NULL, NULL, NULL),
+(2360, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:21:48', NULL, NULL, NULL, NULL),
+(2361, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:48:22', NULL, NULL, NULL, NULL),
+(2362, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:48:27', NULL, NULL, NULL, NULL),
+(2363, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:49:38', NULL, NULL, NULL, NULL),
+(2364, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:58:53', NULL, NULL, NULL, NULL),
+(2365, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 20:59:55', NULL, NULL, NULL, NULL),
+(2366, 2, 'View Report', 'Report ID 47', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 21:05:14', NULL, NULL, NULL, NULL),
+(2367, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 21:20:48', NULL, NULL, NULL, NULL),
+(2368, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 21:21:14', NULL, NULL, NULL, NULL),
+(2369, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 21:21:17', NULL, NULL, NULL, NULL),
+(2370, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-14 21:56:58', NULL, NULL, NULL, NULL),
+(2371, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 21:57:13', NULL, NULL, NULL, NULL),
+(2372, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 21:57:30', NULL, NULL, NULL, NULL),
+(2373, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 21:57:30', NULL, NULL, NULL, NULL),
+(2374, 2, 'Update Report Generation Settings', 'Settings', 'Updated report generation settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:07:41', NULL, NULL, NULL, NULL),
+(2375, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:40:14', NULL, NULL, NULL, NULL),
+(2376, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:44:32', NULL, NULL, NULL, NULL),
+(2377, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:44:49', NULL, NULL, NULL, NULL),
+(2378, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:44:55', NULL, NULL, NULL, NULL),
+(2379, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:44:59', NULL, NULL, NULL, NULL),
+(2380, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:45:57', NULL, NULL, NULL, NULL),
+(2381, 2, 'Add Schedule', 'Schedule ID 6', 'Added new schedule for Saturday', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:47:29', NULL, NULL, NULL, NULL),
+(2382, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:47:29', NULL, NULL, NULL, NULL),
+(2383, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:47:39', NULL, NULL, NULL, NULL),
+(2384, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:47:49', NULL, NULL, NULL, NULL),
+(2385, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:47:52', NULL, NULL, NULL, NULL),
+(2386, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:47:54', NULL, NULL, NULL, NULL),
+(2387, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:48:02', NULL, NULL, NULL, NULL),
+(2388, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:48:06', NULL, NULL, NULL, NULL),
+(2389, 2, 'Add Schedule', 'Schedule ID 7', 'Added new schedule for Tuesday', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:49:57', NULL, NULL, NULL, NULL),
+(2390, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:49:57', NULL, NULL, NULL, NULL),
+(2391, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:49:59', NULL, NULL, NULL, NULL),
+(2392, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:50:09', NULL, NULL, NULL, NULL),
+(2393, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:56:42', NULL, NULL, NULL, NULL),
+(2394, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:56:44', NULL, NULL, NULL, NULL),
+(2395, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:56:45', NULL, NULL, NULL, NULL),
+(2396, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:56:47', NULL, NULL, NULL, NULL),
+(2397, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 22:56:48', NULL, NULL, NULL, NULL),
+(2398, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-14 23:59:10', NULL, NULL, NULL, NULL),
+(2399, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 23:59:20', NULL, NULL, NULL, NULL),
+(2400, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 23:59:31', NULL, NULL, NULL, NULL),
+(2401, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 23:59:31', NULL, NULL, NULL, NULL),
+(2402, 2, 'View Report', 'Report ID 51', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-14 23:59:56', NULL, NULL, NULL, NULL),
+(2403, 2, 'Report Verified', 'Report ID 51', 'Verified report', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 00:00:10', NULL, NULL, NULL, NULL),
+(2404, 2, 'View Report', 'Report ID 51', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 00:00:10', NULL, NULL, NULL, NULL),
+(2405, 2, 'Report In Progress', 'Report ID 51', 'Marked report in progress', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 00:00:13', NULL, NULL, NULL, NULL),
+(2406, 2, 'View Report', 'Report ID 51', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 00:00:14', NULL, NULL, NULL, NULL),
+(2407, 2, 'Report Rejected', 'Report ID 51', 'Rejected report. Reason: ', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 00:00:17', NULL, NULL, NULL, NULL),
+(2408, 2, 'View Report', 'Report ID 51', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 00:00:17', NULL, NULL, NULL, NULL),
+(2409, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 00:02:08', NULL, NULL, NULL, NULL),
+(2410, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 00:04:09', NULL, NULL, NULL, NULL),
+(2411, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 01:16:00', NULL, NULL, NULL, NULL),
+(2412, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:16:22', NULL, NULL, NULL, NULL),
+(2413, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:16:33', NULL, NULL, NULL, NULL),
+(2414, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:16:33', NULL, NULL, NULL, NULL),
+(2415, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:30:40', NULL, NULL, NULL, NULL),
+(2416, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:30:56', NULL, NULL, NULL, NULL),
+(2417, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-15 01:35:53', NULL, NULL, NULL, NULL),
+(2418, 2, 'Update Report Generation Settings', 'Settings', 'Updated dual logo and report letterhead settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:40:22', NULL, NULL, NULL, NULL),
+(2419, 2, 'Update Report Generation Settings', 'Settings', 'Updated dual logo and report letterhead settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:40:26', NULL, NULL, NULL, NULL),
+(2420, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:42:05', NULL, NULL, NULL, NULL),
+(2421, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:42:12', NULL, NULL, NULL, NULL),
+(2422, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:42:58', NULL, NULL, NULL, NULL),
+(2423, 2, 'Update Report Generation Settings', 'Settings', 'Updated dual logo and report letterhead settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:46:59', NULL, NULL, NULL, NULL),
+(2424, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:47:11', NULL, NULL, NULL, NULL),
+(2425, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:47:16', NULL, NULL, NULL, NULL),
+(2426, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:47:23', NULL, NULL, NULL, NULL),
+(2427, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:50:36', NULL, NULL, NULL, NULL),
+(2428, 2, 'Add Landmark', 'Settings', 'Added landmark: brgy hall', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:52:38', NULL, NULL, NULL, NULL),
+(2429, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 01:52:43', NULL, NULL, NULL, NULL),
+(2430, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:00:41', NULL, NULL, NULL, NULL),
+(2431, 2, 'View Report', 'Report ID 47', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:01:05', NULL, NULL, NULL, NULL),
+(2432, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:08:28', NULL, NULL, NULL, NULL),
+(2433, 2, 'Update Heatmap Settings', 'Settings', 'Updated heatmap settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:12:51', NULL, NULL, NULL, NULL),
+(2434, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:12:54', NULL, NULL, NULL, NULL),
+(2435, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:13:58', NULL, NULL, NULL, NULL),
+(2436, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:16:25', NULL, NULL, NULL, NULL),
+(2437, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:16:27', NULL, NULL, NULL, NULL),
+(2438, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:24:57', NULL, NULL, NULL, NULL),
+(2439, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:25:02', NULL, NULL, NULL, NULL),
+(2440, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:25:49', NULL, NULL, NULL, NULL),
+(2441, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:25:59', NULL, NULL, NULL, NULL),
+(2442, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:26:12', NULL, NULL, NULL, NULL),
+(2443, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:26:31', NULL, NULL, NULL, NULL),
+(2444, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:26:35', NULL, NULL, NULL, NULL),
+(2445, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:26:40', NULL, NULL, NULL, NULL),
+(2446, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:26:41', NULL, NULL, NULL, NULL),
+(2447, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:26:57', NULL, NULL, NULL, NULL),
+(2448, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:01', NULL, NULL, NULL, NULL),
+(2449, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:18', NULL, NULL, NULL, NULL),
+(2450, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:22', NULL, NULL, NULL, NULL),
+(2451, 2, 'Delete Schedule', 'Schedule ID 5', 'Deleted schedule', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:27', NULL, NULL, NULL, NULL),
+(2452, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:27', NULL, NULL, NULL, NULL),
+(2453, 2, 'Delete Schedule', 'Schedule ID 2', 'Deleted schedule', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:30', NULL, NULL, NULL, NULL),
+(2454, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:30', NULL, NULL, NULL, NULL),
+(2455, 2, 'Delete Schedule', 'Schedule ID 7', 'Deleted schedule', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:32', NULL, NULL, NULL, NULL),
+(2456, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:32', NULL, NULL, NULL, NULL),
+(2457, 2, 'Delete Schedule', 'Schedule ID 3', 'Deleted schedule', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:34', NULL, NULL, NULL, NULL),
+(2458, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:34', NULL, NULL, NULL, NULL),
+(2459, 2, 'Delete Schedule', 'Schedule ID 4', 'Deleted schedule', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:37', NULL, NULL, NULL, NULL),
+(2460, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:37', NULL, NULL, NULL, NULL),
+(2461, 2, 'Delete Schedule', 'Schedule ID 6', 'Deleted schedule', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:39', NULL, NULL, NULL, NULL),
+(2462, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:39', NULL, NULL, NULL, NULL),
+(2463, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:47', NULL, NULL, NULL, NULL),
+(2464, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:27:49', NULL, NULL, NULL, NULL),
+(2465, 2, 'Add Schedule', 'Schedule ID 8', 'Added new schedule for Sunday', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:30:46', NULL, NULL, NULL, NULL),
+(2466, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:30:46', NULL, NULL, NULL, NULL),
+(2467, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:11', NULL, NULL, NULL, NULL),
+(2468, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:15', NULL, NULL, NULL, NULL),
+(2469, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:20', NULL, NULL, NULL, NULL),
+(2470, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:26', NULL, NULL, NULL, NULL),
+(2471, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:32', NULL, NULL, NULL, NULL),
+(2472, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:34', NULL, NULL, NULL, NULL),
+(2473, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:39', NULL, NULL, NULL, NULL),
+(2474, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:41', NULL, NULL, NULL, NULL),
+(2475, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:31:49', NULL, NULL, NULL, NULL),
+(2476, 2, 'Update Schedule', 'Schedule ID 8', 'Updated schedule for Saturday', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:32:00', NULL, NULL, NULL, NULL),
+(2477, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:32:00', NULL, NULL, NULL, NULL),
+(2478, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:32:04', NULL, NULL, NULL, NULL),
+(2479, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:32:08', NULL, NULL, NULL, NULL),
+(2480, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:32:11', NULL, NULL, NULL, NULL),
+(2481, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:32:26', NULL, NULL, NULL, NULL),
+(2482, 3, 'Password Reset', 'User', 'Password reset via email OTP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:34:16', NULL, NULL, NULL, NULL),
+(2483, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:34:27', NULL, NULL, NULL, NULL),
+(2484, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:34:36', NULL, NULL, NULL, NULL),
+(2485, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:36:08', NULL, NULL, NULL, NULL),
+(2486, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:37:13', NULL, NULL, NULL, NULL),
+(2487, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:37:25', NULL, NULL, NULL, NULL),
+(2488, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:37:43', NULL, NULL, NULL, NULL),
+(2489, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 02:40:21', NULL, NULL, NULL, NULL),
+(2490, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 07:14:15', NULL, NULL, NULL, NULL),
+(2491, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:14:27', NULL, NULL, NULL, NULL),
+(2492, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:15:29', NULL, NULL, NULL, NULL),
+(2493, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:15:42', NULL, NULL, NULL, NULL),
+(2494, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:15:42', NULL, NULL, NULL, NULL),
+(2495, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:16:08', NULL, NULL, NULL, NULL),
+(2496, 2, 'Update Report Generation Settings', 'Settings', 'Updated dual logo and report letterhead settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:31:38', NULL, NULL, NULL, NULL),
+(2497, 2, 'Update Report Generation Settings', 'Settings', 'Updated dual logo and report letterhead settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:31:45', NULL, NULL, NULL, NULL),
+(2498, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:32:44', NULL, NULL, NULL, NULL),
+(2499, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:32:58', NULL, NULL, NULL, NULL),
+(2500, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:33:01', NULL, NULL, NULL, NULL),
+(2501, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:33:42', NULL, NULL, NULL, NULL),
+(2502, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:34:09', NULL, NULL, NULL, NULL),
+(2503, 2, 'Export Reports', 'Reports', 'Admin exported waste reports to CSV', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:36:19', NULL, NULL, NULL, NULL),
+(2504, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:40:22', NULL, NULL, NULL, NULL),
+(2505, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:40:28', NULL, NULL, NULL, NULL),
+(2506, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:53:17', NULL, NULL, NULL, NULL),
+(2507, 2, 'View Report', 'Report ID 53', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:54:02', NULL, NULL, NULL, NULL),
+(2508, 2, 'View Report', 'Report ID 51', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:54:07', NULL, NULL, NULL, NULL),
+(2509, 2, 'View Report', 'Report ID 50', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:54:14', NULL, NULL, NULL, NULL),
+(2510, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:54:22', NULL, NULL, NULL, NULL),
+(2511, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 07:56:19', NULL, NULL, NULL, NULL),
+(2512, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 08:00:24', NULL, NULL, NULL, NULL),
+(2513, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 08:20:30', NULL, NULL, NULL, NULL),
+(2514, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 08:46:22', NULL, NULL, NULL, NULL),
+(2515, 2, 'View Report', 'Report ID 44', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 08:47:34', NULL, NULL, NULL, NULL),
+(2516, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:12:00', NULL, NULL, NULL, NULL),
+(2517, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:15:17', NULL, NULL, NULL, NULL),
+(2518, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:15:23', NULL, NULL, NULL, NULL),
+(2519, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:15:36', NULL, NULL, NULL, NULL),
+(2520, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:16:03', NULL, NULL, NULL, NULL),
+(2521, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 09:25:01', NULL, NULL, NULL, NULL),
+(2522, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:25:10', NULL, NULL, NULL, NULL),
+(2523, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:25:14', NULL, NULL, NULL, NULL),
+(2524, 2, 'View Notification Logs', 'Notifications', 'Admin opened notification log center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:25:30', NULL, NULL, NULL, NULL),
+(2525, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:11', NULL, NULL, NULL, NULL),
+(2526, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:16', NULL, NULL, NULL, NULL),
+(2527, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:19', NULL, NULL, NULL, NULL),
+(2528, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:21', NULL, NULL, NULL, NULL),
+(2529, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:22', NULL, NULL, NULL, NULL),
+(2530, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:26', NULL, NULL, NULL, NULL),
+(2531, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:47', NULL, NULL, NULL, NULL),
+(2532, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:48', NULL, NULL, NULL, NULL),
+(2533, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:49', NULL, NULL, NULL, NULL),
+(2534, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:52', NULL, NULL, NULL, NULL),
+(2535, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:55', NULL, NULL, NULL, NULL),
+(2536, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:26:58', NULL, NULL, NULL, NULL),
+(2537, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:02', NULL, NULL, NULL, NULL),
+(2538, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:05', NULL, NULL, NULL, NULL),
+(2539, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:27', NULL, NULL, NULL, NULL),
+(2540, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:29', NULL, NULL, NULL, NULL),
+(2541, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:31', NULL, NULL, NULL, NULL),
+(2542, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:33', NULL, NULL, NULL, NULL),
+(2543, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:39', NULL, NULL, NULL, NULL),
+(2544, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:40', NULL, NULL, NULL, NULL),
+(2545, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 09:27:42', NULL, NULL, NULL, NULL),
+(2546, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 10:28:11', NULL, NULL, NULL, NULL);
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `affected_record`, `details`, `ip_address`, `user_agent`, `result`, `created_at`, `module`, `record_id`, `old_value`, `new_value`) VALUES
+(2547, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:28:27', NULL, NULL, NULL, NULL),
+(2548, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:28:57', NULL, NULL, NULL, NULL),
+(2549, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:28:57', NULL, NULL, NULL, NULL),
+(2550, 2, 'View Notification Logs', 'Notifications', 'Admin opened notification log center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:29:05', NULL, NULL, NULL, NULL),
+(2551, 2, 'View Notification Logs', 'Notifications', 'Admin opened notification log center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:31:08', NULL, NULL, NULL, NULL),
+(2552, 2, 'View Notification Logs', 'Notifications', 'Admin opened notification log center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:31:10', NULL, NULL, NULL, NULL),
+(2553, 2, 'View Notification Logs', 'Notifications', 'Admin opened notification log center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:31:11', NULL, NULL, NULL, NULL),
+(2554, 2, 'View Notification Logs', 'Notifications', 'Admin opened notification log center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:31:13', NULL, NULL, NULL, NULL),
+(2555, 2, 'View Notification Logs', 'Notifications', 'Admin opened notification log center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:31:37', NULL, NULL, NULL, NULL),
+(2556, 2, 'View Notification Logs', 'Notifications', 'Admin opened notification log center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:31:38', NULL, NULL, NULL, NULL),
+(2557, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:56:54', NULL, NULL, NULL, NULL),
+(2558, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:56:55', NULL, NULL, NULL, NULL),
+(2559, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:56:55', NULL, NULL, NULL, NULL),
+(2560, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:56:56', NULL, NULL, NULL, NULL),
+(2561, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:57:55', NULL, NULL, NULL, NULL),
+(2562, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:57:57', NULL, NULL, NULL, NULL),
+(2563, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:58:01', NULL, NULL, NULL, NULL),
+(2564, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:58:02', NULL, NULL, NULL, NULL),
+(2565, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:58:07', NULL, NULL, NULL, NULL),
+(2566, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:58:08', NULL, NULL, NULL, NULL),
+(2567, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 10:58:14', NULL, NULL, NULL, NULL),
+(2568, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:00:01', NULL, NULL, NULL, NULL),
+(2569, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:00:03', NULL, NULL, NULL, NULL),
+(2570, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:00:04', NULL, NULL, NULL, NULL),
+(2571, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:00:04', NULL, NULL, NULL, NULL),
+(2572, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-15 11:00:16', NULL, NULL, NULL, NULL),
+(2573, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:00:27', NULL, NULL, NULL, NULL),
+(2574, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:00:56', NULL, NULL, NULL, NULL),
+(2575, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:01:07', NULL, NULL, NULL, NULL),
+(2576, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:01:08', NULL, NULL, NULL, NULL),
+(2577, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:01:12', NULL, NULL, NULL, NULL),
+(2578, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:01:21', NULL, NULL, NULL, NULL),
+(2579, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:01:22', NULL, NULL, NULL, NULL),
+(2580, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:07:31', NULL, NULL, NULL, NULL),
+(2581, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:07:33', NULL, NULL, NULL, NULL),
+(2582, 1, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', NULL, NULL, 'success', '2026-08-15 11:09:03', NULL, NULL, NULL, NULL),
+(2583, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:27:20', NULL, NULL, NULL, NULL),
+(2584, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:27:32', NULL, NULL, NULL, NULL),
+(2585, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:27:53', NULL, NULL, NULL, NULL),
+(2586, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:27:54', NULL, NULL, NULL, NULL),
+(2587, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:30:08', NULL, NULL, NULL, NULL),
+(2588, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:31:11', NULL, NULL, NULL, NULL),
+(2589, 1, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', NULL, NULL, 'success', '2026-08-15 11:35:03', NULL, NULL, NULL, NULL),
+(2590, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:35:34', NULL, NULL, NULL, NULL),
+(2591, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:35:58', NULL, NULL, NULL, NULL),
+(2592, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:35:59', NULL, NULL, NULL, NULL),
+(2593, 2, 'Export Audit Logs', 'Audit Logs', 'Admin exported system audit trail to CSV', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:38:46', NULL, NULL, NULL, NULL),
+(2594, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:39:35', NULL, NULL, NULL, NULL),
+(2595, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:39:55', NULL, NULL, NULL, NULL),
+(2596, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:39:58', NULL, NULL, NULL, NULL),
+(2597, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:40:00', NULL, NULL, NULL, NULL),
+(2598, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:40:11', NULL, NULL, NULL, NULL),
+(2599, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:40:14', NULL, NULL, NULL, NULL),
+(2600, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:40:50', NULL, NULL, NULL, NULL),
+(2601, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:40:53', NULL, NULL, NULL, NULL),
+(2602, 3, '2FA failed', 'User', 'Invalid or expired OTP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-15 11:42:02', NULL, NULL, NULL, NULL),
+(2603, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:42:14', NULL, NULL, NULL, NULL),
+(2604, 2, 'Profile Updated', 'Profile', 'Admin updated personal information', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:51:12', NULL, NULL, NULL, NULL),
+(2605, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:51:40', NULL, NULL, NULL, NULL),
+(2606, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:53:24', NULL, NULL, NULL, NULL),
+(2607, 2, 'Report Verified', 'Report ID 54', 'Verified report', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:53:27', NULL, NULL, NULL, NULL),
+(2608, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:53:28', NULL, NULL, NULL, NULL),
+(2609, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 11:54:05', NULL, NULL, NULL, NULL),
+(2610, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:01:16', NULL, NULL, NULL, NULL),
+(2611, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:01:17', NULL, NULL, NULL, NULL),
+(2612, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:01:23', NULL, NULL, NULL, NULL),
+(2613, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:01:26', NULL, NULL, NULL, NULL),
+(2614, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:10:02', NULL, NULL, NULL, NULL),
+(2615, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:10:14', NULL, NULL, NULL, NULL),
+(2616, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:13:39', NULL, NULL, NULL, NULL),
+(2617, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:14:01', NULL, NULL, NULL, NULL),
+(2618, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:14:03', NULL, NULL, NULL, NULL),
+(2619, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:14:06', NULL, NULL, NULL, NULL),
+(2620, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:14:12', NULL, NULL, NULL, NULL),
+(2621, 2, 'Profile Updated', 'Profile', 'Admin updated personal information', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:14:17', NULL, NULL, NULL, NULL),
+(2622, 2, 'Profile Updated', 'Profile', 'Admin updated personal information', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:17:58', NULL, NULL, NULL, NULL),
+(2623, 2, 'Profile Updated', 'Profile', 'Admin updated personal information', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:18:12', NULL, NULL, NULL, NULL),
+(2624, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:18:26', NULL, NULL, NULL, NULL),
+(2625, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 12:18:31', NULL, NULL, NULL, NULL),
+(2626, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 13:22:46', NULL, NULL, NULL, NULL),
+(2627, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 13:22:54', NULL, NULL, NULL, NULL),
+(2628, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 13:23:13', NULL, NULL, NULL, NULL),
+(2629, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 14:03:01', NULL, NULL, NULL, NULL),
+(2630, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 14:03:10', NULL, NULL, NULL, NULL),
+(2631, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 14:03:26', NULL, NULL, NULL, NULL),
+(2632, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 14:54:36', NULL, NULL, NULL, NULL),
+(2633, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 14:54:45', NULL, NULL, NULL, NULL),
+(2634, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 14:55:07', NULL, NULL, NULL, NULL),
+(2635, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 17:29:52', NULL, NULL, NULL, NULL),
+(2636, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-15 19:13:18', NULL, NULL, NULL, NULL),
+(2637, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 19:13:40', NULL, NULL, NULL, NULL),
+(2638, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 19:14:00', NULL, NULL, NULL, NULL),
+(2639, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 19:14:00', NULL, NULL, NULL, NULL),
+(2640, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 19:15:16', NULL, NULL, NULL, NULL),
+(2641, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 19:15:47', NULL, NULL, NULL, NULL),
+(2642, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-15 19:24:46', NULL, NULL, NULL, NULL),
+(2643, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-16 06:18:21', NULL, NULL, NULL, NULL),
+(2644, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:18:39', NULL, NULL, NULL, NULL),
+(2645, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:18:50', NULL, NULL, NULL, NULL),
+(2646, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:18:50', NULL, NULL, NULL, NULL),
+(2647, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:24:16', NULL, NULL, NULL, NULL),
+(2648, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:24:44', NULL, NULL, NULL, NULL),
+(2649, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:24:51', NULL, NULL, NULL, NULL),
+(2650, 2, 'View Report', 'Report ID 52', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:26:10', NULL, NULL, NULL, NULL),
+(2651, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:33:37', NULL, NULL, NULL, NULL),
+(2652, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:33:58', NULL, NULL, NULL, NULL),
+(2653, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:33:58', NULL, NULL, NULL, NULL),
+(2654, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:35:34', NULL, NULL, NULL, NULL),
+(2655, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:49:37', NULL, NULL, NULL, NULL),
+(2656, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:49:52', NULL, NULL, NULL, NULL),
+(2657, 2, 'Reset Barangay Boundary', 'Settings', 'Reset boundary to default coordinates', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:51:13', NULL, NULL, NULL, NULL),
+(2658, 2, 'Reset Barangay Boundary', 'Settings', 'Reset boundary to default coordinates', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:55:54', NULL, NULL, NULL, NULL),
+(2659, 2, 'Update Barangay Boundary', 'Settings', 'Updated official Barangay boundary polygon and map center', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-16 06:56:10', NULL, NULL, NULL, NULL),
+(2660, 2, 'Update Barangay Boundary', 'Settings', 'Updated official Barangay boundary polygon and map center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 06:58:10', NULL, NULL, NULL, NULL),
+(2661, 2, 'Update Barangay Boundary', 'Settings', 'Updated official Barangay boundary polygon and map center', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-16 07:00:20', NULL, NULL, NULL, NULL),
+(2662, 2, 'Update Barangay Boundary', 'Settings', 'Updated official Barangay boundary polygon and map center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:01:58', NULL, NULL, NULL, NULL),
+(2663, 2, 'Update Barangay Boundary', 'Settings', 'Updated official Barangay boundary polygon and map center', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:02:39', NULL, NULL, NULL, NULL),
+(2664, 2, 'Reset Barangay Boundary', 'Settings', 'Reset boundary to default coordinates', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:02:44', NULL, NULL, NULL, NULL),
+(2665, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:14:46', NULL, NULL, NULL, NULL),
+(2666, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:15:07', NULL, NULL, NULL, NULL),
+(2667, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-16 07:36:08', NULL, NULL, NULL, NULL),
+(2668, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:36:27', NULL, NULL, NULL, NULL),
+(2669, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:36:40', NULL, NULL, NULL, NULL),
+(2670, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:36:40', NULL, NULL, NULL, NULL),
+(2671, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:36:44', NULL, NULL, NULL, NULL),
+(2672, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:36:46', NULL, NULL, NULL, NULL),
+(2673, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:36:48', NULL, NULL, NULL, NULL),
+(2674, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:36:50', NULL, NULL, NULL, NULL),
+(2675, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:40:23', NULL, NULL, NULL, NULL),
+(2676, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:40:25', NULL, NULL, NULL, NULL),
+(2677, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:40:26', NULL, NULL, NULL, NULL),
+(2678, 2, 'Add Schedule', 'Schedule ID 9', 'Added new schedule for Sunday', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:40:51', NULL, NULL, NULL, NULL),
+(2679, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:40:51', NULL, NULL, NULL, NULL),
+(2680, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:40:53', NULL, NULL, NULL, NULL),
+(2681, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:40:58', NULL, NULL, NULL, NULL),
+(2682, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:41:59', NULL, NULL, NULL, NULL),
+(2683, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:45:36', NULL, NULL, NULL, NULL),
+(2684, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-16 07:46:12', NULL, NULL, NULL, NULL),
+(2685, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-16 07:47:11', NULL, NULL, NULL, NULL),
+(2686, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:47:31', NULL, NULL, NULL, NULL),
+(2687, 2, 'Export Audit Logs', 'Audit Logs', 'Admin exported system audit trail to CSV', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:47:57', NULL, NULL, NULL, NULL),
+(2688, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 07:49:47', NULL, NULL, NULL, NULL),
+(2689, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 08:05:17', NULL, NULL, NULL, NULL),
+(2690, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 08:07:48', NULL, NULL, NULL, NULL),
+(2691, 1, 'Reports Monitoring', 'Reports', 'Supervisor viewed reports monitoring', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL),
+(2692, 1, 'Collection Schedule View', 'Schedule', 'Supervisor viewed collection schedule', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL),
+(2693, 1, 'Announcements View', 'Announcements', 'Supervisor viewed announcements', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL),
+(2694, 1, 'Notifications View', 'Notifications', 'Supervisor viewed notifications', NULL, NULL, 'success', '2026-08-16 13:38:22', NULL, NULL, NULL, NULL),
+(2695, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-16 17:35:24', NULL, NULL, NULL, NULL),
+(2696, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:24', NULL, NULL, NULL, NULL),
+(2697, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:37', NULL, NULL, NULL, NULL),
+(2698, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:37', NULL, NULL, NULL, NULL),
+(2699, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:44', NULL, NULL, NULL, NULL),
+(2700, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:36:55', NULL, NULL, NULL, NULL),
+(2701, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:37:13', NULL, NULL, NULL, NULL),
+(2702, 2, 'Update Schedule', 'Schedule ID 8', 'Updated schedule for Saturday', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:37:44', NULL, NULL, NULL, NULL),
+(2703, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:37:44', NULL, NULL, NULL, NULL),
+(2704, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:01', NULL, NULL, NULL, NULL),
+(2705, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:24', NULL, NULL, NULL, NULL),
+(2706, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:26', NULL, NULL, NULL, NULL),
+(2707, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:30', NULL, NULL, NULL, NULL),
+(2708, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:40:38', NULL, NULL, NULL, NULL),
+(2709, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:43:54', NULL, NULL, NULL, NULL),
+(2710, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:49:48', NULL, NULL, NULL, NULL),
+(2711, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:49:53', NULL, NULL, NULL, NULL),
+(2712, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:49:56', NULL, NULL, NULL, NULL),
+(2713, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:50:00', NULL, NULL, NULL, NULL),
+(2714, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:50:03', NULL, NULL, NULL, NULL),
+(2715, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:50:06', NULL, NULL, NULL, NULL),
+(2716, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 17:50:11', NULL, NULL, NULL, NULL),
+(2717, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:20:32', NULL, NULL, NULL, NULL),
+(2718, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:20:52', NULL, NULL, NULL, NULL),
+(2719, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:22:55', NULL, NULL, NULL, NULL),
+(2720, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:36:25', NULL, NULL, NULL, NULL),
+(2721, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:37:03', NULL, NULL, NULL, NULL),
+(2722, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:37:48', NULL, NULL, NULL, NULL),
+(2723, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:38:03', NULL, NULL, NULL, NULL),
+(2724, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:38:13', NULL, NULL, NULL, NULL),
+(2725, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:50:07', NULL, NULL, NULL, NULL),
+(2726, 2, 'Add Role', 'Settings', 'Created role: brgy tanod', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 18:57:08', NULL, NULL, NULL, NULL),
+(2727, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:10:06', NULL, NULL, NULL, NULL),
+(2728, 2, 'Delete Role', 'Settings', 'Deleted role ID 14', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:16:55', NULL, NULL, NULL, NULL),
+(2729, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:17:12', NULL, NULL, NULL, NULL),
+(2730, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:17:42', NULL, NULL, NULL, NULL),
+(2731, 2, 'Update System Branding', 'Settings', 'Updated system logo, name & barangay details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:19:41', NULL, NULL, NULL, NULL),
+(2732, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:23:13', NULL, NULL, NULL, NULL),
+(2733, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:24:03', NULL, NULL, NULL, NULL),
+(2734, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 19:24:37', NULL, NULL, NULL, NULL),
+(2735, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-16 21:57:37', NULL, NULL, NULL, NULL),
+(2736, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 21:58:31', NULL, NULL, NULL, NULL),
+(2737, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 21:58:47', NULL, NULL, NULL, NULL),
+(2738, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 21:58:47', NULL, NULL, NULL, NULL),
+(2739, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 21:58:53', NULL, NULL, NULL, NULL),
+(2740, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-16 22:00:38', NULL, NULL, NULL, NULL),
+(2741, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36', 'success', '2026-08-16 22:01:21', NULL, NULL, NULL, NULL),
+(2742, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:01:33', NULL, NULL, NULL, NULL),
+(2743, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:05:53', NULL, NULL, NULL, NULL),
+(2744, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:06:26', NULL, NULL, NULL, NULL),
+(2745, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:08:49', NULL, NULL, NULL, NULL),
+(2746, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:09:18', NULL, NULL, NULL, NULL);
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `affected_record`, `details`, `ip_address`, `user_agent`, `result`, `created_at`, `module`, `record_id`, `old_value`, `new_value`) VALUES
+(2747, 2, 'View Report', 'Report ID 54', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:09:29', NULL, NULL, NULL, NULL),
+(2748, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:24:19', NULL, NULL, NULL, NULL),
+(2749, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 1', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:35:50', NULL, NULL, NULL, NULL),
+(2750, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 2', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:36:26', NULL, NULL, NULL, NULL),
+(2751, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 3', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:37:02', NULL, NULL, NULL, NULL),
+(2752, 2, 'Update Purok Boundary', 'Settings', 'Updated boundary for purok ID 4', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:38:05', NULL, NULL, NULL, NULL),
+(2753, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:39:53', NULL, NULL, NULL, NULL),
+(2754, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:40:33', NULL, NULL, NULL, NULL),
+(2755, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:40:39', NULL, NULL, NULL, NULL),
+(2756, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:41:01', NULL, NULL, NULL, NULL),
+(2757, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:41:01', NULL, NULL, NULL, NULL),
+(2758, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:53:29', NULL, NULL, NULL, NULL),
+(2759, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:53:43', NULL, NULL, NULL, NULL),
+(2760, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-16 22:54:10', NULL, NULL, NULL, NULL),
+(2761, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 00:13:29', NULL, NULL, NULL, NULL),
+(2762, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:13:46', NULL, NULL, NULL, NULL),
+(2763, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:14:08', NULL, NULL, NULL, NULL),
+(2764, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:14:08', NULL, NULL, NULL, NULL),
+(2765, 2, 'Disable Maintenance Mode', 'SystemMaintenance', 'Maintenance mode deactivated. System restored to operational.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:15:57', NULL, NULL, NULL, NULL),
+(2766, 2, 'Update Maintenance Settings', 'SystemMaintenance', 'Updated maintenance settings (type: scheduled)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:17:40', NULL, NULL, NULL, NULL),
+(2767, 2, 'Disable Maintenance Mode', 'SystemMaintenance', 'Maintenance mode deactivated. System restored to operational.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:18:07', NULL, NULL, NULL, NULL),
+(2768, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:34:36', NULL, NULL, NULL, NULL),
+(2769, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:34:42', NULL, NULL, NULL, NULL),
+(2770, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:47:49', NULL, NULL, NULL, NULL),
+(2771, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:48:17', NULL, NULL, NULL, NULL),
+(2772, 2, 'View Report', 'Report ID 35', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:49:42', NULL, NULL, NULL, NULL),
+(2773, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:54:19', NULL, NULL, NULL, NULL),
+(2774, 2, 'View Report', 'Report ID 49', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 00:54:33', NULL, NULL, NULL, NULL),
+(2775, 2, 'View Report', 'Report ID 48', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:11:05', NULL, NULL, NULL, NULL),
+(2776, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:13:34', NULL, NULL, NULL, NULL),
+(2777, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:15:29', NULL, NULL, NULL, NULL),
+(2778, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:18:46', NULL, NULL, NULL, NULL),
+(2779, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:22:56', NULL, NULL, NULL, NULL),
+(2780, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:00', NULL, NULL, NULL, NULL),
+(2781, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:15', NULL, NULL, NULL, NULL),
+(2782, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:17', NULL, NULL, NULL, NULL),
+(2783, 2, 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:28', NULL, NULL, NULL, NULL),
+(2784, 2, 'Analytics Export', 'Analytics', 'Exported analytics PDF', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:36', NULL, NULL, NULL, NULL),
+(2785, 2, 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:23:53', NULL, NULL, NULL, NULL),
+(2786, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:24:29', NULL, NULL, NULL, NULL),
+(2787, 2, 'View Report', 'Report ID 46', 'Admin viewed report details', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:25:07', NULL, NULL, NULL, NULL),
+(2788, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:27:09', NULL, NULL, NULL, NULL),
+(2789, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 01:27:26', NULL, NULL, NULL, NULL),
+(2790, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 10:02:24', NULL, NULL, NULL, NULL),
+(2791, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:06:06', NULL, NULL, NULL, NULL),
+(2792, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:06:21', NULL, NULL, NULL, NULL),
+(2793, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:06:22', NULL, NULL, NULL, NULL),
+(2794, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:06:40', NULL, NULL, NULL, NULL),
+(2795, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:07:52', NULL, NULL, NULL, NULL),
+(2796, 2, 'Post Announcement', 'Announcements', 'Posted \'Sobrang Dumi\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:11:11', NULL, NULL, NULL, NULL),
+(2797, 2, 'Delete Announcement', 'Announcement ID 10', 'Deleted announcement', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:11:29', NULL, NULL, NULL, NULL),
+(2798, 2, 'Update Report Generation Settings', 'Settings', 'Updated dual logo and report letterhead settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:16:18', NULL, NULL, NULL, NULL),
+(2799, 2, 'GIS Monitoring', 'GIS', 'Admin viewed GIS monitoring', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:16:26', NULL, NULL, NULL, NULL),
+(2800, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:16:29', NULL, NULL, NULL, NULL),
+(2801, 2, 'Schedule Management', 'Schedule', 'Admin viewed schedule management', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:17:40', NULL, NULL, NULL, NULL),
+(2802, 2, 'Update Maintenance Settings', 'SystemMaintenance', 'Updated maintenance settings (type: emergency)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:20:12', NULL, NULL, NULL, NULL),
+(2803, 2, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:20:18', NULL, NULL, NULL, NULL),
+(2804, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:21:42', NULL, NULL, NULL, NULL),
+(2805, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 10:21:43', NULL, NULL, NULL, NULL),
+(2806, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:21:58', NULL, NULL, NULL, NULL),
+(2807, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:21:58', NULL, NULL, NULL, NULL),
+(2808, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:22:00', NULL, NULL, NULL, NULL),
+(2809, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:23:26', NULL, NULL, NULL, NULL),
+(2810, 2, 'Enable Emergency Lockdown', 'SystemMaintenance', 'EMERGENCY LOCKDOWN activated. Reason: Under Maintenance', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:24:22', NULL, NULL, NULL, NULL),
+(2811, 2, 'Disable Emergency Lockdown', 'SystemMaintenance', 'Emergency lockdown deactivated. System restored to operational.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 10:27:10', NULL, NULL, NULL, NULL),
+(2812, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 11:18:55', NULL, NULL, NULL, NULL),
+(2813, 3, 'OTP send failed', 'User', 'SMTP Error: Could not connect to SMTP host. Failed to connect to server', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-17 11:19:18', NULL, NULL, NULL, NULL),
+(2814, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 11:20:58', NULL, NULL, NULL, NULL),
+(2815, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 11:22:41', NULL, NULL, NULL, NULL),
+(2816, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 13:00:07', NULL, NULL, NULL, NULL),
+(2817, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 13:32:16', NULL, NULL, NULL, NULL),
+(2818, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 13:32:42', NULL, NULL, NULL, NULL),
+(2819, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 13:32:42', NULL, NULL, NULL, NULL),
+(2820, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 16:28:14', NULL, NULL, NULL, NULL),
+(2821, 2, 'OTP send failed', 'User', 'SMTP Error: Could not authenticate.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-17 16:28:38', NULL, NULL, NULL, NULL),
+(2822, 2, 'OTP send failed', 'User', 'SMTP Error: Could not authenticate.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-17 16:34:08', NULL, NULL, NULL, NULL),
+(2823, 2, 'OTP send failed', 'User', 'SMTP Error: Could not authenticate.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'failed', '2026-08-17 16:36:03', NULL, NULL, NULL, NULL),
+(2824, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:45:32', NULL, NULL, NULL, NULL),
+(2825, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:46:21', NULL, NULL, NULL, NULL),
+(2826, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:46:27', NULL, NULL, NULL, NULL),
+(2827, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:50:13', NULL, NULL, NULL, NULL),
+(2828, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:56:39', NULL, NULL, NULL, NULL),
+(2829, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:57:09', NULL, NULL, NULL, NULL),
+(2830, NULL, 'Registration OTP sent', 'User', 'Email OTP sent to limuelle.neust@gmail.com', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 16:59:58', NULL, NULL, NULL, NULL),
+(2831, 23, 'Registration verified', 'User', 'Account activated via OTP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:00:14', NULL, NULL, NULL, NULL),
+(2832, 23, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:00:26', NULL, NULL, NULL, NULL),
+(2833, 23, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:00:35', NULL, NULL, NULL, NULL),
+(2834, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:03:44', NULL, NULL, NULL, NULL),
+(2835, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:03:53', NULL, NULL, NULL, NULL),
+(2836, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:04:12', NULL, NULL, NULL, NULL),
+(2837, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:04:15', NULL, NULL, NULL, NULL),
+(2838, 3, 'Login partial success', 'User', 'OTP sent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:04:24', NULL, NULL, NULL, NULL),
+(2839, 3, '2FA Resend', 'User', 'Code resent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:07:32', NULL, NULL, NULL, NULL),
+(2840, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:07:47', NULL, NULL, NULL, NULL),
+(2841, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:09:54', NULL, NULL, NULL, NULL),
+(2842, 23, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:10:55', NULL, NULL, NULL, NULL),
+(2843, 23, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:11:04', NULL, NULL, NULL, NULL),
+(2844, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:12:50', NULL, NULL, NULL, NULL),
+(2845, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:18:12', NULL, NULL, NULL, NULL),
+(2846, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:18:32', NULL, NULL, NULL, NULL),
+(2847, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:19:42', NULL, NULL, NULL, NULL),
+(2848, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:20:00', NULL, NULL, NULL, NULL),
+(2849, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 17:20:00', NULL, NULL, NULL, NULL),
+(2850, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 17:50:46', NULL, NULL, NULL, NULL),
+(2851, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 18:11:26', NULL, NULL, NULL, NULL),
+(2852, 3, 'Login partial success', 'User', 'OTP sent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 18:17:07', NULL, NULL, NULL, NULL),
+(2853, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 18:17:32', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1669,15 +2501,19 @@ CREATE TABLE `barangays` (
   `official_email` varchar(100) DEFAULT NULL,
   `barangay_logo` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `system_name` varchar(255) DEFAULT 'Barangay Waste Management System',
+  `system_short_name` varchar(100) DEFAULT 'WasteWatch',
+  `system_motto` varchar(255) DEFAULT 'Efficient, Transparent & Eco-Friendly Community Waste Management',
+  `system_logo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `barangays`
 --
 
-INSERT INTO `barangays` (`barangay_id`, `barangay_name`, `municipality`, `province`, `region`, `official_address`, `contact_number`, `official_email`, `barangay_logo`, `created_at`, `updated_at`) VALUES
-(1, 'Dulong Bayan', 'Talavera', 'Nueva Ecija', 'Central Luzon', NULL, NULL, NULL, NULL, '2026-07-25 14:27:25', '2026-07-25 14:27:25');
+INSERT INTO `barangays` (`barangay_id`, `barangay_name`, `municipality`, `province`, `region`, `official_address`, `contact_number`, `official_email`, `barangay_logo`, `created_at`, `updated_at`, `system_name`, `system_short_name`, `system_motto`, `system_logo`) VALUES
+(1, 'Dulong Bayan', 'Quezon', 'Nueva Ecija', 'Central Luzon', 'brgy dulong bayan, quezon, nueva ecija', '09951281511', 'floreshans.neust@gmail.com', '/brgy-waste-app-v3/public/uploads/logos/brgy_seal_1786751779.jpg', '2026-07-25 14:27:25', '2026-08-16 19:19:41', 'Barangay Waste Management System', 'LINARAYA', '', '/brgy-waste-app-v3/public/uploads/logos/sys_logo_1786879181.jpg');
 
 -- --------------------------------------------------------
 
@@ -1691,7 +2527,34 @@ CREATE TABLE `barangay_boundaries` (
   `polygon_geometry` geometry NOT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `center_latitude` decimal(10,8) DEFAULT 15.55800000,
+  `center_longitude` decimal(11,8) DEFAULT 120.80300000,
+  `default_zoom` int(11) DEFAULT 15,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `barangay_boundaries`
+--
+
+INSERT INTO `barangay_boundaries` (`boundary_id`, `barangay_id`, `polygon_geometry`, `created_by`, `created_at`, `updated_at`, `center_latitude`, `center_longitude`, `default_zoom`, `updated_by`) VALUES
+(1, 1, 0x00000000010300000001000000500000000406a45849335e40ea27f796cd232f40ccac4ac741335e40446ff1f09e232f40fdee67c240335e400a3b7b1d27232f40fe70a13c3d335e40d965aec21c232f403aebae473c335e40ffbbf4e5bb222f403e31a13836335e406cf8cc4873222f40747b496334335e409e341eb63e222f40b5368ded35335e402157ea5910222f406c054d4b2c335e401af8510dfb212f407d7b325a22335e40827ae9dca3212f40af6d9bf31d335e4076fd82ddb0212f40b1378cdd19335e4036ba394b7f212f40374591ff13335e40fe65f7e461212f407ced3e6c0e335e40fd1d407562212f40952710760a335e409ec25b316d212f40698d412704335e404fb4064a65212f4092318859f9325e40689ce16135212f40b961ca76f4325e4046e5cbb0f6202f402ffce07cea325e4045c5eef1f8202f40a314be08e4325e4041cddab7a4202f40258b451de7325e408016010462202f406724e769e5325e40b3b3e89d0a202f4051d77f42e2325e40c7dd7b139e1f2f4069bd29f6e1325e40111c9771531f2f4078865fa0da325e40e61ce159271f2f407e9fbb6edb325e40d3f71a82e31e2f4021640fa3d6325e40efa023038a1e2f4097fe25a9cc325e408698011d9c1e2f40567ce827c1325e40757632384a1e2f40fec9294bbe325e405885178e311d2f40e006c60bb3325e40b48f15fc361c2f40592cea38a3325e40cb2c42b1151c2f4046a11b50a5325e40c5313784cf1b2f408c135feda8325e40c1351c3b4d1b2f4001ab7e00ad325e4074e904d9571b2f40c19f2b5b35335e40d3beb9bf7a182f40b3e8425145335e40dbbfb2d2a4182f407bf42b4256335e40eeaaac12d1182f400a174dc260335e400ff91d79d6182f40181f0b7668335e40dfd1b5e512192f400245d1a865335e4049d0042f9f192f409638978771335e40fcabc77dab192f40bbbe6ac07b335e4006234097ba192f409f5be84a84335e4082700514ea192f4050bba99292335e40ea5c514a081a2f409363fc459a335e4090f98040671a2f4045acb47ba8335e408a7a1c61ac1a2f4011ab3fc2b0335e40aee06d94ab1a2f4090b3fa34b8335e408d96033dd41a2f40cf3758eebb335e4055c444decd1a2f4050076811c0335e40f972558fea1a2f407e344179c4335e40de2dda2d131b2f40ad57ec8af4335e40e7902ffc3b1a2f403469ae2e02345e4047ca1649bb192f409bf6de292e345e402faea70cd21a2f40dd28b2d650345e4089ee59d768192f40f89e364f9a345e405616e016871a2f40290417d0b0345e404b4dccc4be1a2f40e152df43d3345e403fe834666d1a2f40a65714c0de345e4077e1bd59391a2f40d6c56d3400355e408e0d935ff51a2f40dadb77561c355e4040a77bf88d1a2f4094162eab30355e407cf6b75f991a2f409774948359355e40e91505b0b71b2f407bdd7de948355e40cc4642b6871c2f40e0e7099549355e40b509e69e641d2f40642e5f4d54355e40c183b064d81e2f40b081be3e04355e403041b22550212f401a5822abb6345e40279b17cc04242f4034ba83d899345e40075273034f232f4004bd81139b345e4038e4558ca9222f404750a15f80345e4011829f820d212f40aa65c63684345e40d89a5203721e2f40e0a8705f62345e40d377c8de9c1f2f4098c4b4ca27345e4048e757ce391f2f409fd44d1803345e407872970ee71f2f4045c1e7e2ca335e409d352ed27a1e2f404ea8966368335e403510262081222f40e514d33b4b335e40d1f35d00d0232f400406a45849335e40ea27f796cd232f40, 1, '2026-08-16 06:39:50', '2026-08-16 07:02:44', 15.55800000, 120.80300000, 15, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `collection_notes`
+--
+
+CREATE TABLE `collection_notes` (
+  `note_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1718,11 +2581,8 @@ CREATE TABLE `collection_schedules` (
 --
 
 INSERT INTO `collection_schedules` (`schedule_id`, `collection_day`, `start_time`, `end_time`, `waste_type`, `status`, `created_by`, `created_at`, `updated_at`, `special_notes`) VALUES
-(1, 'Monday', '06:00:00', '10:00:00', 'Biodegradable', 'active', 1, '2026-07-26 06:58:41', '2026-07-26 06:58:41', 'Segregate biodegradable waste'),
-(2, 'Wednesday', '06:00:00', '10:00:00', 'Non-Biodegradable', 'active', 1, '2026-07-26 06:58:41', '2026-07-26 06:58:41', 'Plastic, bottles, and recyclables'),
-(3, 'Friday', '06:00:00', '12:00:00', 'Residual Waste', 'active', 1, '2026-07-26 06:58:41', '2026-07-26 06:58:41', 'Non-recyclable waste only'),
-(4, 'Saturday', '07:00:00', '11:00:00', 'Special / Hazardous', 'active', 1, '2026-07-26 06:58:41', '2026-07-26 06:58:41', 'By appointment – call office 24h ahead'),
-(5, 'Monday', '10:50:00', '20:50:00', 'Non-Biodegradable', 'active', 2, '2026-08-02 08:51:19', '2026-08-02 08:51:19', 'testing notes');
+(8, 'Saturday', '06:00:00', '08:00:00', 'General', 'active', 2, '2026-08-15 02:30:46', '2026-08-16 17:37:44', 'na eedit ako'),
+(9, 'Sunday', '10:40:00', '19:43:00', 'Non-Biodegradable', 'active', 2, '2026-08-16 07:40:51', '2026-08-16 07:40:51', '');
 
 -- --------------------------------------------------------
 
@@ -1741,26 +2601,14 @@ CREATE TABLE `collection_schedule_puroks` (
 --
 
 INSERT INTO `collection_schedule_puroks` (`schedule_purok_id`, `schedule_id`, `purok_id`) VALUES
-(19, 1, 3),
-(20, 1, 4),
-(21, 1, 5),
-(4, 2, 4),
-(5, 2, 5),
-(7, 3, 1),
-(8, 3, 2),
-(9, 3, 3),
-(10, 3, 4),
-(11, 3, 5),
-(14, 4, 1),
-(15, 4, 2),
-(16, 4, 3),
-(17, 4, 4),
-(18, 4, 5),
-(22, 5, 1),
-(23, 5, 2),
-(24, 5, 3),
-(25, 5, 4),
-(26, 5, 5);
+(45, 8, 1),
+(46, 8, 2),
+(47, 8, 3),
+(48, 8, 4),
+(49, 8, 5),
+(42, 9, 2),
+(43, 9, 3),
+(44, 9, 4);
 
 -- --------------------------------------------------------
 
@@ -1857,7 +2705,47 @@ INSERT INTO `email_otp_rate_limits` (`id`, `email`, `ip`, `window_start`, `send_
 (104, 'floressktt11@gmail.com', '::1', '2026-08-08 21:00:00', 1),
 (105, 'floreshans.neust@gmail.com', '::1', '2026-08-08 22:00:00', 3),
 (108, 'floressktt11@gmail.com', '::1', '2026-08-08 23:00:00', 1),
-(109, 'floressktt11@gmail.com', '::1', '2026-08-09 02:00:00', 1);
+(109, 'floressktt11@gmail.com', '::1', '2026-08-09 02:00:00', 1),
+(110, 'floressktt11@gmail.com', '::1', '2026-08-09 03:00:00', 1),
+(111, 'floreshans.neust@gmail.com', '::1', '2026-08-09 03:00:00', 1),
+(112, 'floressktt11@gmail.com', '::1', '2026-08-09 17:00:00', 1),
+(113, 'floreshans.neust@gmail.com', '::1', '2026-08-09 20:00:00', 1),
+(114, '09951281511', '::1', '2026-08-10 01:00:00', 1),
+(115, '09951281511', '::1', '2026-08-10 02:00:00', 1),
+(116, 'floreshans.neust@gmail.com', '::1', '2026-08-10 05:00:00', 1),
+(117, '09951281511', '::1', '2026-08-10 06:00:00', 1),
+(118, 'floressktt11@gmail.com', '::1', '2026-08-10 07:00:00', 1),
+(119, 'floreshans.neust@gmail.com', '::1', '2026-08-11 20:00:00', 2),
+(121, 'floreshans.neust@gmail.com', '::1', '2026-08-14 04:00:00', 1),
+(122, 'floressktt11@gmail.com', '::1', '2026-08-14 04:00:00', 1),
+(123, 'floreshans.neust@gmail.com', '::1', '2026-08-14 12:00:00', 2),
+(125, 'floreshans.neust@gmail.com', '::1', '2026-08-14 15:00:00', 1),
+(126, 'floreshans.neust@gmail.com', '::1', '2026-08-14 17:00:00', 1),
+(127, 'floreshans.neust@gmail.com', '::1', '2026-08-14 19:00:00', 1),
+(128, 'floressktt11@gmail.com', '::1', '2026-08-14 20:00:00', 1),
+(129, 'floreshans.neust@gmail.com', '::1', '2026-08-15 01:00:00', 2),
+(131, 'floreshans.neust@gmail.com', '::1', '2026-08-15 04:00:00', 1),
+(132, 'floressktt11@gmail.com', '::1', '2026-08-15 05:00:00', 1),
+(133, 'floressktt11@gmail.com', '::1', '2026-08-15 07:00:00', 1),
+(134, 'floressktt11@gmail.com', '::1', '2026-08-15 08:00:00', 2),
+(136, 'floreshans.neust@gmail.com', '::1', '2026-08-15 13:00:00', 1),
+(137, 'floreshans.neust@gmail.com', '::1', '2026-08-16 00:00:00', 1),
+(138, 'floressktt11@gmail.com', '::1', '2026-08-16 01:00:00', 1),
+(139, 'floreshans.neust@gmail.com', '::1', '2026-08-16 01:00:00', 1),
+(140, 'floreshans.neust@gmail.com', '::1', '2026-08-16 11:00:00', 1),
+(141, 'floreshans.neust@gmail.com', '::1', '2026-08-16 15:00:00', 1),
+(142, 'floreshans.neust@gmail.com', '::1', '2026-08-16 18:00:00', 1),
+(143, 'floressktt11@gmail.com', '::1', '2026-08-16 19:00:00', 1),
+(144, 'floreshans.neust@gmail.com', '::1', '2026-08-17 04:00:00', 2),
+(146, 'floressktt11@gmail.com', '::1', '2026-08-17 04:00:00', 1),
+(147, 'floressktt11@gmail.com', '::1', '2026-08-17 05:00:00', 2),
+(149, 'floreshans.neust@gmail.com', '::1', '2026-08-17 07:00:00', 1),
+(150, 'floressktt11@gmail.com', '::1', '2026-08-17 10:00:00', 3),
+(153, 'limuelle.neust@gmail.com', '::1', '2026-08-17 11:00:00', 2),
+(154, 'floressktt11@gmail.com', '::1', '2026-08-17 11:00:00', 5),
+(155, '09951281511', '::1', '2026-08-17 11:00:00', 2),
+(162, 'floreshans.neust@gmail.com', '::1', '2026-08-17 11:00:00', 1),
+(163, '09951281511', '::1', '2026-08-17 12:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -1888,6 +2776,105 @@ INSERT INTO `estimated_quantities` (`quantity_id`, `quantity_name`, `description
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `guest_otp_tokens`
+--
+
+CREATE TABLE `guest_otp_tokens` (
+  `id` int(11) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `token` varchar(10) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `is_used` tinyint(1) NOT NULL DEFAULT 0,
+  `attempts` int(11) NOT NULL DEFAULT 0,
+  `ip` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `guest_otp_tokens`
+--
+
+INSERT INTO `guest_otp_tokens` (`id`, `phone`, `token`, `expires_at`, `is_used`, `attempts`, `ip`, `created_at`) VALUES
+(1, '09951281511', '735473', '2026-08-10 02:05:06', 1, 1, '::1', '2026-08-09 18:00:06'),
+(2, '09951281511', '000450', '2026-08-10 08:00:13', 1, 0, '::1', '2026-08-09 23:55:13'),
+(3, '09951281511', '387667', '2026-08-10 08:03:32', 1, 0, '::1', '2026-08-09 23:58:32'),
+(4, '09951281511', '767685', '2026-08-10 08:12:11', 1, 0, '::1', '2026-08-10 00:07:11'),
+(5, '09951281511', '863607', '2026-08-10 08:14:59', 1, 0, '::1', '2026-08-10 00:09:59'),
+(6, '09951281511', '914604', '2026-08-10 08:15:50', 1, 0, '::1', '2026-08-10 00:10:50'),
+(7, '09123123123', '190492', '2026-08-10 08:22:41', 1, 0, '::1', '2026-08-10 00:17:41'),
+(8, '09123123123', '626620', '2026-08-10 08:25:18', 1, 0, '::1', '2026-08-10 00:20:18'),
+(9, '09123123123', '177837', '2026-08-10 08:26:44', 1, 0, '::1', '2026-08-10 00:21:44'),
+(10, '09123123123', '404176', '2026-08-10 08:29:05', 1, 0, '::1', '2026-08-10 00:24:05'),
+(11, '09123123123', '406234', '2026-08-10 08:30:10', 1, 0, '::1', '2026-08-10 00:25:10'),
+(12, '09123123123', '018857', '2026-08-10 08:31:10', 0, 0, '::1', '2026-08-10 00:26:10'),
+(13, '09951281333', '313123', '2026-08-10 08:32:04', 1, 0, '::1', '2026-08-10 00:27:04'),
+(14, '09951281333', '183502', '2026-08-10 08:33:36', 1, 0, '::1', '2026-08-10 00:28:36'),
+(15, '09951281333', '713762', '2026-08-10 08:35:18', 1, 0, '::1', '2026-08-10 00:30:18'),
+(16, '09951281333', '147605', '2026-08-10 08:37:10', 1, 0, '::1', '2026-08-10 00:32:10'),
+(17, '09951281333', '842708', '2026-08-10 08:39:22', 0, 0, '::1', '2026-08-10 00:34:22'),
+(18, '09121212121', '436756', '2026-08-10 12:43:47', 1, 0, '::1', '2026-08-10 04:38:47'),
+(19, '09121212121', '611784', '2026-08-10 12:46:44', 1, 0, '::1', '2026-08-10 04:41:44'),
+(20, '09121212121', '766824', '2026-08-10 12:56:46', 1, 0, '::1', '2026-08-10 04:51:46'),
+(21, '09951281511', '261213', '2026-08-16 08:13:27', 1, 0, '::1', '2026-08-16 00:08:27'),
+(22, '09951281511', '463877', '2026-08-16 08:16:15', 1, 0, '::1', '2026-08-16 00:11:15'),
+(23, '09951281511', '825180', '2026-08-16 08:56:52', 1, 0, '::1', '2026-08-16 00:51:52'),
+(24, '09951281511', '397382', '2026-08-16 09:14:11', 1, 0, '::1', '2026-08-16 01:09:11'),
+(25, '09951281511', '756733', '2026-08-16 09:19:24', 1, 0, '::1', '2026-08-16 01:14:24'),
+(26, '09951281511', '135119', '2026-08-16 09:23:13', 1, 0, '::1', '2026-08-16 01:18:13'),
+(27, '09951281511', '966293', '2026-08-16 09:24:40', 1, 0, '::1', '2026-08-16 01:19:40'),
+(28, '09951281511', '105568', '2026-08-16 09:32:45', 1, 0, '::1', '2026-08-16 01:27:45'),
+(29, '09951281511', '336498', '2026-08-16 09:35:23', 1, 0, '::1', '2026-08-16 01:30:23'),
+(30, '09951281511', '078924', '2026-08-16 09:53:56', 1, 0, '::1', '2026-08-16 01:48:56'),
+(31, '09121212121', '479242', '2026-08-16 09:58:14', 1, 0, '::1', '2026-08-16 01:53:14'),
+(32, '09121212121', '382043', '2026-08-16 11:17:28', 1, 0, '::1', '2026-08-16 03:12:28'),
+(33, '09121212121', '240460', '2026-08-16 12:41:42', 1, 0, '::1', '2026-08-16 04:36:42'),
+(34, '09121212121', '166230', '2026-08-16 12:56:11', 1, 0, '::1', '2026-08-16 04:51:11'),
+(35, '09121212121', '204412', '2026-08-16 13:32:34', 1, 0, '::1', '2026-08-16 05:27:34'),
+(36, '09121212121', '963061', '2026-08-16 16:16:58', 0, 0, '::1', '2026-08-16 08:11:58'),
+(37, '09951281511', '802020', '2026-08-17 16:42:02', 1, 0, '::1', '2026-08-17 08:37:02'),
+(38, '09951281511', '325038', '2026-08-17 16:43:49', 1, 0, '::1', '2026-08-17 08:38:49'),
+(39, '09951281511', '624216', '2026-08-17 17:55:56', 1, 0, '::1', '2026-08-17 09:50:56'),
+(40, '09951281511', '964366', '2026-08-17 18:18:39', 1, 0, '::1', '2026-08-17 10:13:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `guest_sms_rate_limits`
+--
+
+CREATE TABLE `guest_sms_rate_limits` (
+  `id` int(11) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `ip` varchar(45) NOT NULL,
+  `window_start` datetime NOT NULL,
+  `send_count` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `guest_sms_rate_limits`
+--
+
+INSERT INTO `guest_sms_rate_limits` (`id`, `phone`, `ip`, `window_start`, `send_count`) VALUES
+(1, '09951281511', '::1', '2026-08-09 20:00:00', 1),
+(2, '09951281511', '::1', '2026-08-10 01:00:00', 2),
+(4, '09951281511', '::1', '2026-08-10 02:00:00', 3),
+(7, '09123123123', '::1', '2026-08-10 02:00:00', 6),
+(13, '09951281333', '::1', '2026-08-10 02:00:00', 5),
+(18, '09121212121', '::1', '2026-08-10 06:00:00', 3),
+(21, '09951281511', '::1', '2026-08-16 02:00:00', 3),
+(24, '09951281511', '::1', '2026-08-16 03:00:00', 7),
+(31, '09121212121', '::1', '2026-08-16 03:00:00', 1),
+(32, '09121212121', '::1', '2026-08-16 05:00:00', 1),
+(33, '09121212121', '::1', '2026-08-16 06:00:00', 2),
+(35, '09121212121', '::1', '2026-08-16 07:00:00', 1),
+(36, '09121212121', '::1', '2026-08-16 10:00:00', 1),
+(37, '09951281511', '::1', '2026-08-17 10:00:00', 2),
+(39, '09951281511', '::1', '2026-08-17 11:00:00', 1),
+(40, '09951281511', '::1', '2026-08-17 12:00:00', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `heatmap_settings`
 --
 
@@ -1907,11 +2894,44 @@ CREATE TABLE `heatmap_settings` (
 --
 
 INSERT INTO `heatmap_settings` (`setting_id`, `radius_meters`, `minimum_reports`, `low_density_color`, `medium_density_color`, `high_density_color`, `updated_by`, `updated_at`) VALUES
-(1, 50, 3, '#FDE68A', '#F97316', '#EF4444', NULL, '2026-07-25 13:56:31'),
+(1, 85, 3, '#bae6fd', '#f59e0b', '#b91c1c', 2, '2026-08-15 02:12:51'),
 (2, 50, 3, '#FDE68A', '#F97316', '#EF4444', NULL, '2026-07-25 14:27:25'),
 (3, 50, 3, '#FDE68A', '#F97316', '#EF4444', NULL, '2026-07-25 14:30:39'),
 (4, 50, 3, '#FDE68A', '#F97316', '#EF4444', NULL, '2026-07-25 14:31:01'),
 (5, 50, 3, '#FDE68A', '#F97316', '#EF4444', NULL, '2026-07-25 14:35:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `maintenance_history`
+--
+
+CREATE TABLE `maintenance_history` (
+  `id` int(11) NOT NULL,
+  `action` varchar(100) NOT NULL,
+  `maintenance_type` varchar(50) DEFAULT NULL,
+  `maintenance_message` text DEFAULT NULL,
+  `reason` text DEFAULT NULL,
+  `previous_status` tinyint(1) DEFAULT NULL,
+  `new_status` tinyint(1) DEFAULT NULL,
+  `start_at` datetime DEFAULT NULL,
+  `end_at` datetime DEFAULT NULL,
+  `performed_by` int(11) DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `maintenance_history`
+--
+
+INSERT INTO `maintenance_history` (`id`, `action`, `maintenance_type`, `maintenance_message`, `reason`, `previous_status`, `new_status`, `start_at`, `end_at`, `performed_by`, `ip_address`, `created_at`) VALUES
+(1, 'DISABLE_MAINTENANCE_MODE', 'scheduled', 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.', '', 0, 0, NULL, NULL, 2, '::1', '2026-08-16 16:15:57'),
+(2, 'UPDATE_MAINTENANCE_SETTINGS', 'scheduled', 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.', '', 0, 0, NULL, NULL, 2, '::1', '2026-08-16 16:17:40'),
+(3, 'DISABLE_MAINTENANCE_MODE', 'emergency', 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.', '', 0, 0, NULL, NULL, 2, '::1', '2026-08-16 16:18:07'),
+(4, 'UPDATE_MAINTENANCE_SETTINGS', 'emergency', 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.', 'Database migration', 0, 0, '2026-08-17 10:19:00', '2026-08-17 10:22:00', 2, '::1', '2026-08-17 02:20:12'),
+(5, 'ENABLE_EMERGENCY_LOCKDOWN', 'emergency', 'The system is temporarily unavailable due to an emergency situation. Please check back later or contact the barangay hall for urgent concerns.', 'Under Maintenance', 0, 1, NULL, NULL, 2, '::1', '2026-08-17 02:24:22'),
+(6, 'DISABLE_EMERGENCY_LOCKDOWN', 'emergency', 'The system is temporarily unavailable due to an emergency situation. Please check back later or contact the barangay hall for urgent concerns.', 'Under Maintenance', 1, 0, NULL, NULL, 2, '::1', '2026-08-17 02:27:10');
 
 -- --------------------------------------------------------
 
@@ -1931,6 +2951,13 @@ CREATE TABLE `map_landmarks` (
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `map_landmarks`
+--
+
+INSERT INTO `map_landmarks` (`landmark_id`, `landmark_name`, `landmark_type`, `latitude`, `longitude`, `description`, `is_active`, `created_by`, `created_at`, `updated_at`) VALUES
+(4, 'brgy hall', 'Barangay Hall', 15.56286800, 120.80499500, 'brgy hall', 1, 2, '2026-08-15 01:52:38', '2026-08-15 01:52:38');
 
 -- --------------------------------------------------------
 
@@ -1960,7 +2987,7 @@ INSERT INTO `notifications` (`id`, `user_id`, `report_id`, `announcement_id`, `t
 (44, 3, NULL, NULL, 'New Announcement', 'New hazardous waste drop-off point', 'A new drop-off site is now available near the barangay center for batteries and electronics.', 1, 0, '2026-07-26 07:53:32'),
 (45, 3, NULL, NULL, 'New Announcement', 'Clean-up drive reminder', 'Please join the riverbank clean-up this Sunday at 7:00 AM and bring reusable gloves.', 1, 0, '2026-07-25 08:53:32'),
 (46, 3, NULL, NULL, 'Report Status Update', 'Your report has been verified', 'Your waste report #WR-001 has been verified by the barangay team.', 1, 0, '2026-07-26 06:53:32'),
-(47, 3, NULL, NULL, 'Report Resolved', 'Your report has been resolved', 'Your waste report #WR-002 has been resolved. Thank you for your contribution!', 0, 0, '2026-07-26 08:23:32'),
+(47, 3, NULL, NULL, 'Report Resolved', 'Your report has been resolved', 'Your waste report #WR-002 has been resolved. Thank you for your contribution!', 1, 0, '2026-07-26 08:23:32'),
 (48, NULL, NULL, NULL, 'New Announcement', 'Barangay Clean-Up Drive this Saturday', 'Join us for a community clean-up drive this Saturday at 7:00 AM. Meet at the barangay hall.', 1, 1, '2026-07-24 08:53:32'),
 (49, NULL, NULL, NULL, 'Collection Schedule Update', 'Holiday schedule changes', 'Collection schedule will be adjusted for the upcoming holidays. Please check the collection schedule page for details.', 1, 1, '2026-07-23 08:53:32'),
 (50, 1, NULL, NULL, 'New Announcement', 'Monthly meeting reminder', 'Monthly barangay meeting scheduled for August 1, 2026 at 2:00 PM.', 0, 0, '2026-07-26 04:53:32'),
@@ -1970,12 +2997,12 @@ INSERT INTO `notifications` (`id`, `user_id`, `report_id`, `announcement_id`, `t
 (58, 2, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 1, 0, '2026-08-02 19:28:52'),
 (59, 17, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 0, 0, '2026-08-02 19:28:52'),
 (60, 18, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 0, 0, '2026-08-02 19:28:52'),
-(61, 3, 43, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-02 19:35:21'),
+(61, 3, 43, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-02 19:35:21'),
 (62, 1, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
 (63, 2, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 1, 0, '2026-08-02 20:07:25'),
 (64, 17, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
 (65, 18, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
-(66, 3, 44, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-02 20:09:52'),
+(66, 3, 44, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-02 20:09:52'),
 (67, 1, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 0, 0, '2026-08-02 20:12:38'),
 (68, 2, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 1, 0, '2026-08-02 20:12:38'),
 (69, 17, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 0, 0, '2026-08-02 20:12:38'),
@@ -1986,20 +3013,30 @@ INSERT INTO `notifications` (`id`, `user_id`, `report_id`, `announcement_id`, `t
 (74, 18, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 0, 0, '2026-08-02 20:21:42'),
 (75, 19, 46, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-07 08:57:26'),
 (76, 19, 46, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-07 08:57:47'),
-(77, 3, 45, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-07 09:03:34'),
+(77, 3, 45, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-07 09:03:34'),
 (78, 1, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
-(79, 2, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 1, 0, '2026-08-07 22:52:35'),
 (80, 17, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
 (81, 18, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
-(82, 3, 47, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-07 22:53:15'),
-(83, 3, 47, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-07 23:37:47'),
-(84, 3, 47, NULL, 'report_rejected', 'Report Rejected', 'Your waste report has been rejected. Reason: No reason provided', 0, 0, '2026-08-08 09:40:27'),
-(85, 3, 45, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-08 09:41:23'),
-(86, 3, 45, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-08 09:41:32'),
+(82, 3, 47, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-07 22:53:15'),
+(83, 3, 47, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 1, 0, '2026-08-07 23:37:47'),
+(84, 3, 47, NULL, 'report_rejected', 'Report Rejected', 'Your waste report has been rejected. Reason: No reason provided', 1, 0, '2026-08-08 09:40:27'),
+(85, 3, 45, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 1, 0, '2026-08-08 09:41:23'),
+(86, 3, 45, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 1, 0, '2026-08-08 09:41:32'),
 (87, 1, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
-(88, 2, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 1, 0, '2026-08-08 09:59:25'),
 (89, 17, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
-(90, 18, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25');
+(90, 18, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
+(91, 3, 48, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-09 09:34:05'),
+(92, NULL, 50, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 11:31:30'),
+(93, NULL, 50, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 11:32:49'),
+(94, NULL, 50, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-10 11:33:38'),
+(95, NULL, 52, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 11:34:26'),
+(96, NULL, 52, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 11:34:33'),
+(97, NULL, 53, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 12:43:54'),
+(98, NULL, 53, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 12:44:07'),
+(99, NULL, 53, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-10 12:44:18'),
+(100, NULL, 51, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-15 00:00:10'),
+(101, NULL, 51, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-15 00:00:13'),
+(102, NULL, 54, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-15 11:53:27');
 
 -- --------------------------------------------------------
 
@@ -2049,6 +3086,26 @@ INSERT INTO `notification_types` (`notification_type_id`, `notification_type_nam
 (5, 'Report Verified', 'When a report is verified', '2026-07-25 13:56:31'),
 (6, 'Report Resolved', 'When a report is resolved', '2026-07-25 13:56:31'),
 (7, 'Account Approved', 'When a resident account is approved', '2026-07-25 13:56:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penalty_rules`
+--
+
+CREATE TABLE `penalty_rules` (
+  `rule_id` int(11) NOT NULL,
+  `offense_no` int(11) NOT NULL DEFAULT 0,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `legal_ref` varchar(150) DEFAULT NULL,
+  `fine_range` varchar(150) DEFAULT NULL,
+  `alt_penalty` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -2124,10 +3181,10 @@ CREATE TABLE `purok_boundaries` (
 --
 
 INSERT INTO `purok_boundaries` (`boundary_id`, `purok_id`, `polygon_geometry`, `updated_by`, `updated_at`) VALUES
-(1, 1, 0x000000000103000000010000000d000000f1811dff05335e4001fc53aa44212f4044be4ba94b335e40d670917bba222f40992ec4ea8f335e4041800c1d3b202f4062484e266e335e402a1c412ac51e2f4032022a1c41335e40ac8f87bebb1d2f40fd4ffeee1d335e406e313f37341d2f40a777f17edc325e40fdbe7ff3e21c2f4097715303cd325e406765fb90b71c2f40978bf84ecc325e4061c1fd80071e2f40cd57c9c7ee325e403579ca6aba1e2f40cd57c9c7ee325e40bbd1c77c40202f40ca6dfb1ef5325e408f899466f3202f40f1811dff05335e4001fc53aa44212f40, 2, '2026-08-08 17:18:01'),
-(2, 2, 0x0000000001030000000100000006000000742502d53f345e400745f30016212f4091f2936a9f345e40a79201a08a232f40d39ffd4811355e401024ef1cca202f40f65ca626c1345e405439ed29391f2f40ef01ba2f67345e403bc269c18b1e2f40742502d53f345e400745f30016212f40, 2, '2026-08-08 17:16:42'),
-(3, 3, 0x00000000010300000001000000060000008bfcfa2136345e4030b95164ad192f4097ab1f9be4335e40e753c72aa5172f408ee89e758d335e4045f5d6c056192f40a226fa7c94335e40e3c4573b8a1b2f4033a9a10dc0335e408f6fef1af41d2f408bfcfa2136345e4030b95164ad192f40, 2, '2026-08-08 09:48:40'),
-(4, 4, 0x000000000103000000010000000c0000008066101fd8335e408f6fef1af41d2f409d67ec4b36345e4046b6f3fdd4202f4016dc0f7860345e401a6cea3c2a1e2f40075dc2a1b7345e4008aef204c21e2f40bebf417bf5345e40b4006dab591f2f40fd4cbd6e11355e40996379573d202f4063b7cf2a33355e40a12de7525c1d2f4084d89942e7345e4019575c1c951b2f40a7c98cb795345e40df89592f861a2f4069a7e67283345e40e2afc91af5182f402e55698b6b345e402a00c63368182f408066101fd8335e408f6fef1af41d2f40, 2, '2026-08-08 09:48:56'),
+(1, 1, 0x0000000001030000000100000020000000319a95ed43335e407731cd74af232f4044a4a65d4c335e40a1664815c5232f406abddf68c7335e403048fab48a1e2f40594fadbeba335e401f9dbaf2591e2f40fa60191bba325e4040deab56261c2f40bd8c62b9a5325e40cf6bec12d51b2f4023ba675da3325e4012d90759161c2f4046459c4eb2325e4073a087da361c2f404f232d95b7325e4080ef366f9c1c2f405d8aabcabe325e40e0d8b3e7321d2f406ea7ad11c1325e4080f0a1444b1e2f40850662d9cc325e407711a628971e2f409eb30584d6325e40417fa1478c1e2f40a79196cadb325e40c075c58cf01e2f40a8ab3b16db325e40795a7ee02a1f2f40ba8102efe4325e40b2135e82531f2f40c5ad8218e8325e40522b4cdf6b202f402c0fd253e4325e40a99f3715a9202f403a90f5d4ea325e40ea5910cafb202f4058ace122f7325e403106d671fc202f4037a968acfd325e40257497c459212f4053910a630b335e405e2d776682212f406781768714335e4034f8fbc56c212f407aa52c431c335e406fd8b628b3212f408c135fed28335e40f486fbc8ad212f40950b957f2d335e409c8bbfed09222f40a9fb00a436335e40902e36ad14222f40aa6395d233335e403733fad170222f40c899266c3f335e40df37bef6cc222f40c899266c3f335e40d658c2da18232f40d0436d1b46335e40dba6785c54232f40319a95ed43335e407731cd74af232f40, 2, '2026-08-16 22:35:50'),
+(2, 2, 0x00000000010300000001000000110000007ec7f0d8cf335e40d21bee23b71e2f40060e68e90a345e40d656ec2fbb1f2f406b44300e2e345e40a4552de9281f2f40e19a3bfa5f345e4065e42cec691f2f402cf3565d87345e407b336abe4a1e2f402ea9da6e82345e40edbab72231212f407d1f0e12a2345e40c22ff5f3a6222f4069ad68739c345e4096e7c1dd59232f40a27dace0b7345e409eb30584d6232f4065fcfb8c0b355e4070eb6e9eea202f402c465d6bef345e40361e6cb1db1f2f40de1d19abcd345e40c5abac6d8a1f2f40b709f7cabc345e40a7e67283a11e2f40429946938b345e4062bce6559d1d2f40cbdaa6785c345e40e97de36bcf1c2f4007280d350a345e409df2e846581c2f407ec7f0d8cf335e40d21bee23b71e2f40, 2, '2026-08-16 22:36:26'),
+(3, 3, 0x000000000103000000010000001100000057cd7344be335e407ec9c6832d1e2f4081971936ca335e40de9046054e1e2f40cfd90242eb335e40d2890453cd1c2f4043e21e4b1f345e40cee33098bf1a2f40f437a11001345e40f4ddad2cd1192f40e02d90a0f8335e4082583673481a2f4081971936ca335e403f56f0db101b2f40567f8461c0335e40fb96395d161b2f4044c362d4b5335e40eaebf99ae51a2f401c615111a7335e407ec7f0d8cf1a2f400abfd4cf9b335e40378aac35941a2f40f6b4c35f93335e404cc631923d1a2f40e27668588c335e406d1cb1169f1a2f40e25cc30c8d335e401421753bfb1a2f40e25cc30c8d335e40462234828d1b2f40f54c2f3196335e406af6402b301c2f4057cd7344be335e407ec9c6832d1e2f40, 2, '2026-08-16 22:37:02'),
+(4, 4, 0x00000000010300000001000000170000008ae942acfe335e40ce70033e3f1c2f409f5be84a04345e403cbce7c0721c2f40b39943520b345e40f67ea31d371c2f406cec12d55b345e4033ddeba4be1c2f4057cd7344be345e40b056ed9a901e2f4072193735d0345e40895c70067f1f2f40c075c58cf0345e40de1d19abcd1f2f40116e32aa0c355e40923cd7f7e1202f40ac5626fc52355e40cf85915ed41e2f40840eba8443355e40c59107228b1c2f40b682a62556355e40eeb25f77ba1b2f40541c075e2d355e403dbb7cebc31a2f401762f54718355e40ea77616bb61a2f40d47fd6fcf8345e40861f9c4f1d1b2f408509a359d9345e406da818e76f1a2f40268dd13aaa345e402331410ddf1a2f408044132862345e4071395e81e8192f405930f14751345e40b0aa5e7ea7192f40f4c5de8b2f345e4025581ccefc1a2f40eacda8f92a345e40b98ac56f0a1b2f40e109bdfe24345e40d0ed258dd11a2f40a6b73f170d345e4035f0a31af61b2f408ae942acfe335e40ce70033e3f1c2f40, 2, '2026-08-16 22:38:05'),
 (5, 5, 0x000000000103000000010000000a000000d8d825aab7325e40a6d1e4620c1c2f40ec1681b1be325e4022365838491b2f408e3ba583f5325e409cdd5a26c3192f4059dc7f643a335e402c7e5358a9182f40fa980f0874335e408466d7bd15192f4038876bb587335e409a5fcd0182192f40361fd7868a335e40791edc9db51b2f40c4d155babb335e401a6cea3c2a1e2f401cee23b726335e404a4563edef1c2f40d8d825aab7325e40a6d1e4620c1c2f40, 2, '2026-08-08 17:16:04');
 
 -- --------------------------------------------------------
@@ -2138,7 +3195,15 @@ INSERT INTO `purok_boundaries` (`boundary_id`, `purok_id`, `polygon_geometry`, `
 
 CREATE TABLE `reports` (
   `id` int(11) NOT NULL,
-  `resident_id` int(11) NOT NULL,
+  `resident_id` int(11) DEFAULT NULL,
+  `reporter_type` enum('resident','guest') NOT NULL DEFAULT 'resident',
+  `tracking_number` varchar(30) DEFAULT NULL,
+  `guest_name` varchar(100) DEFAULT NULL,
+  `guest_phone` varchar(20) DEFAULT NULL,
+  `reporter_latitude` decimal(10,8) DEFAULT NULL,
+  `reporter_longitude` decimal(11,8) DEFAULT NULL,
+  `location_plausibility` enum('plausible','requires_review','high_risk') NOT NULL DEFAULT 'plausible',
+  `is_duplicate` tinyint(1) NOT NULL DEFAULT 0,
   `description` text NOT NULL,
   `latitude` decimal(10,8) NOT NULL,
   `longitude` decimal(11,8) NOT NULL,
@@ -2161,15 +3226,21 @@ CREATE TABLE `reports` (
 -- Dumping data for table `reports`
 --
 
-INSERT INTO `reports` (`id`, `resident_id`, `description`, `latitude`, `longitude`, `location_verified`, `submission_date`, `reviewed_by`, `created_at`, `updated_at`, `category_id`, `quantity_id`, `condition_id`, `status_id`, `purok_id`, `location`, `rejected_reason`, `support_count`) VALUES
-(34, 1, 'Hazardous waste dumped near the creek', 15.55480000, 120.80450000, 0, '2026-07-23 13:27:29', 2, '2026-07-26 05:27:29', '2026-08-02 08:45:42', 6, 2, 1, 5, 2, NULL, NULL, 0),
-(35, 1, 'Construction waste blocking roadway', 15.56120000, 120.80680000, 0, '2026-07-25 13:27:29', NULL, '2026-07-26 05:27:29', '2026-07-26 13:27:29', 4, 3, 6, 3, NULL, NULL, NULL, 0),
-(43, 3, 'testingg phaseeeeee', 15.56003000, 120.80475900, 1, '2026-08-02 19:28:52', 2, '2026-08-02 11:28:52', '2026-08-02 19:35:21', 1, 3, 2, 2, 1, '', NULL, 0),
-(44, 3, 'description testttingg', 15.56139800, 120.80701400, 1, '2026-08-02 20:07:25', 2, '2026-08-02 12:07:25', '2026-08-02 20:09:52', 8, 1, 2, 2, 1, '', NULL, 0),
-(45, 3, 'testingggggggg', 15.56152000, 120.80696900, 1, '2026-08-02 20:12:38', 2, '2026-08-02 12:12:38', '2026-08-08 09:41:32', 7, 3, 2, 4, 1, '', NULL, 1),
-(46, 19, 'testinggggg', 15.56185100, 120.80662400, 1, '2026-08-02 20:21:42', 2, '2026-08-02 12:21:42', '2026-08-07 08:57:47', 2, 3, 4, 4, 1, '', NULL, 0),
-(47, 3, 'tessstinnggg', 15.56035300, 120.82494400, 1, '2026-08-07 22:52:35', 2, '2026-08-07 14:52:35', '2026-08-08 09:40:27', 1, 2, 6, 5, 4, '', NULL, 0),
-(48, 3, 'test test test', 15.55713300, 120.81367700, 1, '2026-08-08 09:59:25', NULL, '2026-08-08 01:59:25', '2026-08-08 09:59:25', 6, 3, 3, 1, 4, '', NULL, 0);
+INSERT INTO `reports` (`id`, `resident_id`, `reporter_type`, `tracking_number`, `guest_name`, `guest_phone`, `reporter_latitude`, `reporter_longitude`, `location_plausibility`, `is_duplicate`, `description`, `latitude`, `longitude`, `location_verified`, `submission_date`, `reviewed_by`, `created_at`, `updated_at`, `category_id`, `quantity_id`, `condition_id`, `status_id`, `purok_id`, `location`, `rejected_reason`, `support_count`) VALUES
+(34, 1, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'Hazardous waste dumped near the creek', 15.55480000, 120.80450000, 0, '2026-07-23 13:27:29', 2, '2026-07-26 05:27:29', '2026-08-02 08:45:42', 6, 2, 1, 5, 2, NULL, NULL, 0),
+(35, 1, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'Construction waste blocking roadway', 15.56120000, 120.80680000, 0, '2026-07-25 13:27:29', NULL, '2026-07-26 05:27:29', '2026-07-26 13:27:29', 4, 3, 6, 3, NULL, NULL, NULL, 0),
+(43, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testingg phaseeeeee', 15.56003000, 120.80475900, 1, '2026-08-02 19:28:52', 2, '2026-08-02 11:28:52', '2026-08-02 19:35:21', 1, 3, 2, 2, 1, '', NULL, 0),
+(44, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'description testttingg', 15.56139800, 120.80701400, 1, '2026-08-02 20:07:25', 2, '2026-08-02 12:07:25', '2026-08-02 20:09:52', 8, 1, 2, 2, 1, '', NULL, 0),
+(45, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testingggggggg', 15.56152000, 120.80696900, 1, '2026-08-02 20:12:38', 2, '2026-08-02 12:12:38', '2026-08-08 09:41:32', 7, 3, 2, 4, 1, '', NULL, 1),
+(46, 19, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testinggggg', 15.56185100, 120.80662400, 1, '2026-08-02 20:21:42', 2, '2026-08-02 12:21:42', '2026-08-07 08:57:47', 2, 3, 4, 4, 1, '', NULL, 0),
+(47, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'tessstinnggg', 15.56035300, 120.82494400, 1, '2026-08-07 22:52:35', 2, '2026-08-07 14:52:35', '2026-08-08 09:40:27', 1, 2, 6, 5, 4, '', NULL, 0),
+(48, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'test test test', 15.55713300, 120.81367700, 1, '2026-08-08 09:59:25', 2, '2026-08-08 01:59:25', '2026-08-09 09:34:05', 6, 3, 3, 2, 4, '', NULL, 0),
+(49, NULL, 'guest', 'WRS-2026-43826', 'juan testing guestt', '09951281511', 15.39840200, 120.94193300, 'high_risk', 0, 'testinggggg guesttt', 15.55419462, 120.81403351, 0, '2026-08-10 02:05:34', NULL, '2026-08-09 18:05:34', '2026-08-10 02:05:34', 8, 3, 1, 1, 4, '15.55419, 120.81403', NULL, 0),
+(50, NULL, 'guest', 'WRS-2026-79695', 'juan testing guestt', '09951281511', 15.39842047, 120.94193300, 'high_risk', 0, 'kahit ano naa', 15.48574296, 120.92609613, 0, '2026-08-10 07:57:25', 2, '2026-08-09 23:57:25', '2026-08-10 11:33:38', 8, 4, 1, 4, NULL, '15.48574, 120.92610', NULL, 0),
+(51, NULL, 'guest', 'WRS-2026-55350', 'hasss', '09951281511', NULL, NULL, 'plausible', 0, 'asdasdasdd', 15.54624821, 120.83049093, 0, '2026-08-10 08:09:48', 2, '2026-08-10 00:09:48', '2026-08-15 00:00:17', 8, 2, 3, 5, 3, '15.54625, 120.83049', NULL, 0),
+(52, NULL, 'guest', 'WRS-2026-88354', 'hasss', '09951281511', NULL, NULL, 'plausible', 0, 'asdadadad', 15.56099968, 120.81040672, 0, '2026-08-10 08:10:29', 2, '2026-08-10 00:10:29', '2026-08-10 11:40:28', 6, 2, 6, 5, 5, '15.56100, 120.81041', NULL, 0),
+(53, NULL, 'guest', 'WRS-2026-87082', 'cedrick', '09121212121', 15.39842047, 120.94193300, 'high_risk', 0, 'testinggggg', 15.55872170, 120.80451672, 0, '2026-08-10 12:42:37', 2, '2026-08-10 04:42:37', '2026-08-10 12:44:18', 1, 2, 3, 4, 1, '15.55872, 120.80452', NULL, 0),
+(54, NULL, 'guest', 'WRS-2026-58782', 'cedrick', '09121212121', 15.39229800, 120.94094600, 'high_risk', 0, 'testinggg', 15.55923022, 120.80733736, 0, '2026-08-10 12:55:21', 2, '2026-08-10 04:55:21', '2026-08-15 11:53:27', 8, 2, 5, 2, 2, '15.55923, 120.80734', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -2193,7 +3264,9 @@ CREATE TABLE `report_flags` (
 
 INSERT INTO `report_flags` (`id`, `report_id`, `flag_reason`, `flagged_by`, `flagged_at`, `reviewed_by`, `reviewed_at`) VALUES
 (8, 34, 'Rejected by admin', 2, '2026-08-02 08:45:42', NULL, NULL),
-(9, 47, 'Rejected by admin', 2, '2026-08-08 09:40:27', NULL, NULL);
+(9, 47, 'Rejected by admin', 2, '2026-08-08 09:40:27', NULL, NULL),
+(10, 52, 'Rejected by admin', 2, '2026-08-10 11:40:28', NULL, NULL),
+(11, 51, 'Rejected by admin', 2, '2026-08-15 00:00:17', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2209,19 +3282,26 @@ CREATE TABLE `report_generation_settings` (
   `signatory_position` varchar(255) DEFAULT NULL,
   `disclaimer` text DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `header_logo_left` varchar(255) DEFAULT NULL,
+  `header_logo_right` varchar(255) DEFAULT NULL,
+  `sub_header` varchar(255) DEFAULT NULL,
+  `republic_header` varchar(255) DEFAULT 'Republic of the Philippines',
+  `office_name` varchar(255) DEFAULT 'Office of the Barangay Solid Waste Management Committee',
+  `signatory_approved_name` varchar(255) DEFAULT NULL,
+  `signatory_approved_position` varchar(255) DEFAULT 'Punong Barangay'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `report_generation_settings`
 --
 
-INSERT INTO `report_generation_settings` (`setting_id`, `report_header`, `report_footer`, `signatory_name`, `signatory_position`, `disclaimer`, `updated_by`, `updated_at`) VALUES
-(1, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', 'Rosa Medina', 'Barangay Secretary', '', 2, '2026-08-02 19:56:49'),
-(2, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:27:25'),
-(3, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:30:39'),
-(4, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:31:01'),
-(5, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:35:15');
+INSERT INTO `report_generation_settings` (`setting_id`, `report_header`, `report_footer`, `signatory_name`, `signatory_position`, `disclaimer`, `updated_by`, `updated_at`, `header_logo_left`, `header_logo_right`, `sub_header`, `republic_header`, `office_name`, `signatory_approved_name`, `signatory_approved_position`) VALUES
+(1, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', 'Rosa Medina', 'Barangay Secretary', '', 2, '2026-08-17 10:16:18', '/brgy-waste-app-v3/public/uploads/logos/rep_logo_left_1786932978.jpg', '/brgy-waste-app-v3/public/uploads/logos/rep_logo_right_1786932978.jpg', 'Province of Nueva Ecija · Municipality of Quezon', 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', '', 'Punong Barangay'),
+(2, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:27:25', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
+(3, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:30:39', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
+(4, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:31:01', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
+(5, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:35:15', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay');
 
 -- --------------------------------------------------------
 
@@ -2247,7 +3327,10 @@ INSERT INTO `report_photos` (`photo_id`, `report_id`, `photo_path`, `is_primary`
 (4, 45, '6a6f343691b11_Screenshot 2025-06-22 181737.png', 1, '2026-08-02 20:12:38'),
 (5, 46, '6a6f36567812f_Screenshot 2025-08-18 220556.png', 1, '2026-08-02 20:21:42'),
 (6, 47, '6a75f133acbf0_Screenshot 2025-06-11 000452.png', 1, '2026-08-07 22:52:35'),
-(7, 48, '6a768d7d2ed66_Screenshot 2025-06-24 114030.png', 1, '2026-08-08 09:59:25');
+(7, 48, '6a768d7d2ed66_Screenshot 2025-06-24 114030.png', 1, '2026-08-08 09:59:25'),
+(8, 49, 'guest_6a78c15a5d8ae.png', 1, '2026-08-10 02:05:34'),
+(9, 50, 'guest_6a7913d81f718.jpg', 1, '2026-08-10 07:57:25'),
+(10, 51, 'guest_6a7916bc365af.png', 1, '2026-08-10 08:09:48');
 
 -- --------------------------------------------------------
 
@@ -2328,7 +3411,9 @@ CREATE TABLE `report_status_history` (
 
 INSERT INTO `report_status_history` (`id`, `report_id`, `previous_status`, `new_status`, `remark`, `changed_by`, `changed_at`) VALUES
 (4, 34, 'Resolved', 'rejected', 'Rejected by admin', 2, '2026-08-02 08:45:42'),
-(5, 47, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-08 09:40:27');
+(5, 47, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-08 09:40:27'),
+(6, 52, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-10 11:40:28'),
+(7, 51, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-15 00:00:17');
 
 -- --------------------------------------------------------
 
@@ -2357,7 +3442,18 @@ INSERT INTO `report_summaries` (`id`, `generated_by`, `filename`, `file_path`, `
 (3, 2, 'report_summary_2026-08-02_13-57-16', '', 'csv', '{\"url\":\"admin\\/export\",\"format\":\"csv\"}', 3, '2026-08-02 19:57:16'),
 (4, 2, 'report_summary_2026-08-02_13-57-31', '', 'csv', '{\"url\":\"admin\\/export\",\"format\":\"csv\"}', 3, '2026-08-02 19:57:31'),
 (5, 2, 'analytics_2026-08-07_04-33-36', '', 'pdf', '{\"date_from\":\"2026-07-30\",\"date_to\":\"2026-08-07\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 4, '2026-08-07 10:33:36'),
-(6, 2, 'analytics_report_2026-08-07.csv', '', 'csv', '{\"date_from\":\"2026-07-30\",\"date_to\":\"2026-08-07\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 4, '2026-08-07 10:33:52');
+(6, 2, 'analytics_report_2026-08-07.csv', '', 'csv', '{\"date_from\":\"2026-07-30\",\"date_to\":\"2026-08-07\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 4, '2026-08-07 10:33:52'),
+(7, 2, 'report_summary_2026-08-10_07-01-08', '', 'pdf', '{\"date_from\":\"2026-07-11\",\"date_to\":\"2026-08-10\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-10 13:01:08'),
+(8, 2, 'analytics_2026-08-10_07-16-25', '', 'pdf', '{\"date_from\":\"2026-07-11\",\"date_to\":\"2026-08-10\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-10 13:16:25'),
+(9, 2, 'report_summary_2026-08-10_07-22-39', '', 'csv', '{\"url\":\"admin\\/export\",\"format\":\"csv\"}', 14, '2026-08-10 13:22:39'),
+(10, 2, 'report_summary_2026-08-10_07-24-22', '', 'csv', '{\"url\":\"admin\\/export\",\"format\":\"csv\"}', 14, '2026-08-10 13:24:22'),
+(11, 2, 'analytics_2026-08-10_07-39-17', '', 'pdf', '{\"date_from\":\"2026-07-11\",\"date_to\":\"2026-08-10\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-10 13:39:17'),
+(12, 2, 'analytics_2026-08-14_19-42-12', '', 'pdf', '{\"date_from\":\"2026-07-15\",\"date_to\":\"2026-08-14\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 01:42:12'),
+(13, 2, 'analytics_2026-08-14_19-47-23', '', 'pdf', '{\"date_from\":\"2026-07-15\",\"date_to\":\"2026-08-14\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 01:47:23'),
+(14, 2, 'analytics_2026-08-15_01-40-28', '', 'pdf', '{\"date_from\":\"2026-07-16\",\"date_to\":\"2026-08-15\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 07:40:28'),
+(15, 2, 'analytics_2026-08-15_03-15-23', '', 'pdf', '{\"date_from\":\"2026-07-16\",\"date_to\":\"2026-08-15\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-15 09:15:23'),
+(16, 2, 'analytics_2026-08-16_12-38-03', '', 'pdf', '{\"date_from\":\"2026-07-17\",\"date_to\":\"2026-08-16\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-16 18:38:03'),
+(17, 2, 'analytics_2026-08-16_19-23-36', '', 'pdf', '{\"date_from\":\"2026-07-17\",\"date_to\":\"2026-08-16\",\"category\":0,\"purok\":0,\"status\":\"\",\"quantity\":0,\"condition\":0,\"trend_granularity\":\"monthly\"}', 8, '2026-08-17 01:23:36');
 
 -- --------------------------------------------------------
 
@@ -2404,17 +3500,19 @@ CREATE TABLE `roles` (
   `role_name` varchar(50) NOT NULL,
   `description` text DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `permissions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`permissions`)),
+  `is_custom` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `roles`
 --
 
-INSERT INTO `roles` (`role_id`, `role_name`, `description`, `created_at`, `updated_at`) VALUES
-(1, 'Administrator', 'Full system access and configuration', '2026-07-25 13:56:31', '2026-07-25 13:56:31'),
-(2, 'Supervisor', 'Monitoring and analytics access', '2026-07-25 13:56:31', '2026-07-25 13:56:31'),
-(3, 'Resident', 'Report submission and tracking access', '2026-07-25 13:56:31', '2026-07-25 13:56:31');
+INSERT INTO `roles` (`role_id`, `role_name`, `description`, `created_at`, `updated_at`, `permissions`, `is_custom`) VALUES
+(1, 'Administrator', 'Full system access and configuration', '2026-07-25 13:56:31', '2026-07-25 13:56:31', NULL, 0),
+(2, 'Supervisor', 'Monitoring and analytics access', '2026-07-25 13:56:31', '2026-07-25 13:56:31', NULL, 0),
+(3, 'Resident', 'Report submission and tracking access', '2026-07-25 13:56:31', '2026-07-25 13:56:31', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -2451,6 +3549,32 @@ CREATE TABLE `sms_rate_limits` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `system_maintenance`
+--
+
+CREATE TABLE `system_maintenance` (
+  `id` int(11) NOT NULL DEFAULT 1,
+  `maintenance_mode` tinyint(1) NOT NULL DEFAULT 0,
+  `maintenance_type` enum('scheduled','emergency') NOT NULL DEFAULT 'scheduled',
+  `maintenance_message` text DEFAULT NULL,
+  `reason` text DEFAULT NULL,
+  `start_at` datetime DEFAULT NULL,
+  `end_at` datetime DEFAULT NULL,
+  `allow_admin_access` tinyint(1) NOT NULL DEFAULT 1,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `system_maintenance`
+--
+
+INSERT INTO `system_maintenance` (`id`, `maintenance_mode`, `maintenance_type`, `maintenance_message`, `reason`, `start_at`, `end_at`, `allow_admin_access`, `updated_by`, `updated_at`) VALUES
+(1, 0, 'emergency', 'The system is temporarily unavailable due to an emergency situation. Please check back later or contact the barangay hall for urgent concerns.', 'Under Maintenance', NULL, NULL, 1, 2, '2026-08-17 10:27:10');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `two_factor_tokens`
 --
 
@@ -2474,8 +3598,10 @@ INSERT INTO `two_factor_tokens` (`id`, `user_id`, `email`, `token`, `purpose`, `
 (312, 18, 'floreshanslimuelle.neust@gmail.com', '387496', 'login_2fa', '2026-08-02 19:42:33', 1, 0, '2026-08-02 11:32:33'),
 (323, 19, 'umalicedrick29@gmail.com', '441724', 'login_2fa', '2026-08-02 20:26:39', 1, 0, '2026-08-02 12:16:39'),
 (334, 16, 'testingotp@gmail.com', '064512', 'login_2fa', '2026-08-05 12:48:25', 0, 0, '2026-08-05 04:38:25'),
-(377, 2, 'floreshans.neust@gmail.com', '980669', 'login_2fa', '2026-08-09 05:02:32', 1, 0, '2026-08-08 20:52:32'),
-(379, 3, 'floressktt11@gmail.com', '517088', 'login_2fa', '2026-08-09 09:05:44', 1, 0, '2026-08-09 00:55:44');
+(388, 20, '09951281511', '220447', 'login_2fa', '2026-08-10 12:22:56', 1, 0, '2026-08-10 04:12:56'),
+(436, 23, 'limuelle.neust@gmail.com', '817689', 'login_2fa', '2026-08-17 17:21:03', 0, 0, '2026-08-17 09:11:03'),
+(439, 2, 'floreshans.neust@gmail.com', '865789', 'login_2fa', '2026-08-17 17:29:41', 1, 0, '2026-08-17 09:19:41'),
+(440, 3, '09951281511', '157500', 'login_2fa', '2026-08-17 18:27:06', 1, 0, '2026-08-17 10:17:06');
 
 -- --------------------------------------------------------
 
@@ -2516,13 +3642,15 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `middle_name`, `suffix`, `username`, `account_type`, `address`, `phone_number`, `email`, `password`, `id_front`, `id_back`, `role_id`, `position_id`, `purok_id`, `status`, `last_login`, `created_at`, `updated_at`, `phone_normalized`, `profile_pic`, `email_verified`, `otp_verified_at`, `deleted_at`) VALUES
 (1, 'Barangay Captain', NULL, NULL, NULL, 'resident', 'Barangay Hall', '09123456789', 'captain@dulongbayan.ph', '$2y$10$Z/HeHO5k9Uu8kt3YsKCM9e0Q/5DnYYKhMTcDeQ3LDVX6KTj3iv2Gy', NULL, NULL, 1, 1, 1, 'active', NULL, '2026-04-01 00:28:49', '2026-08-08 18:21:46', NULL, NULL, 0, NULL, NULL),
-(2, 'Secretary Rose', NULL, NULL, NULL, 'resident', 'Barangay Hall', '09123456788', 'floreshans.neust@gmail.com', '$2y$10$NFKPGxb7Hord13zMb9YLzeQOC8Te8geDMwW21XM48pMsuYDx49qSy', NULL, NULL, 1, 2, 1, 'active', NULL, '2026-04-01 00:28:49', '2026-08-05 15:30:50', NULL, NULL, 0, NULL, NULL),
-(3, 'Hans Flores', NULL, NULL, NULL, 'resident', 'brgy.testing.testing', '09951281511', 'floressktt11@gmail.com', '$2y$10$.jggu7XHDkz65Y2Q5L0mOOdnhB9MFl3TjKeSFVfSLrMERH.de9AAy', NULL, NULL, 3, 6, 1, 'active', NULL, '2026-04-01 01:05:23', '2026-07-25 13:54:04', NULL, NULL, 0, NULL, NULL),
+(2, 'Secretary Rose', NULL, NULL, NULL, 'resident', 'Barangay Hall', '09123456788', 'floreshans.neust@gmail.com', '$2y$10$NFKPGxb7Hord13zMb9YLzeQOC8Te8geDMwW21XM48pMsuYDx49qSy', NULL, NULL, 1, 2, 1, 'active', NULL, '2026-04-01 00:28:49', '2026-08-10 12:27:53', NULL, '/public/uploads/profiles/profile_2_1786336073.png', 0, NULL, NULL),
+(3, 'Hans Flores', NULL, NULL, NULL, 'resident', 'brgy.testing.testing', '09951281511', 'floressktt11@gmail.com', '$2y$10$y03L/tBgrsBFqgLuFMFRYOos6Y.svcXlfru15rNSc8dcg2cYLVew2', NULL, NULL, 3, 6, 1, 'active', NULL, '2026-04-01 01:05:23', '2026-08-15 02:34:16', NULL, '/public/uploads/profiles/profile_3_1786340113.jpg', 0, NULL, NULL),
 (15, 'asdasdadad', NULL, NULL, NULL, 'resident', '232323232323', '09951281511', 'floererererer@gmail.com', '$2y$10$fL/0SLQG2zLnUEniuGsTU.ulSh4yLbmpwPMkWFLIbqc2OU1xF1Niq', '/uploads/ids/front_6a6252ecf1d05.jpg', '/uploads/ids/back_6a6252ed00579.jpg', 3, 6, 1, 'active', NULL, '2026-07-24 01:44:13', '2026-08-09 05:54:43', NULL, NULL, 0, NULL, NULL),
 (16, 'test email otp', NULL, NULL, NULL, 'resident', 'awwsdasdad', '09951281511', 'testingotp@gmail.com', '$2y$10$NlxWm4KHBTA2PPazo0MN7ehPrv3RmAtUukEAO8QavMGJAmG.0znou', '/uploads/ids/front_6a6258475b015.jpg', '/uploads/ids/back_6a6258475be3f.jpg', 3, 6, 1, 'active', NULL, '2026-07-24 02:07:03', '2026-08-08 01:10:08', NULL, NULL, 0, NULL, NULL),
 (17, 'Supervisor User', NULL, NULL, NULL, 'resident', '', '', 'supervisor@dulongbayan.ph', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', NULL, NULL, 2, 3, NULL, 'active', NULL, '2026-07-25 23:52:14', '2026-08-08 01:09:10', NULL, NULL, 0, NULL, NULL),
 (18, 'Hans Limuelle Flores', NULL, NULL, 'hansflores', 'resident', 'Barangay Dulong Bayan', '09171234567', 'floreshanslimuelle.neust@gmail.com', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', NULL, NULL, 2, 3, 1, 'active', NULL, '2026-07-26 13:35:01', '2026-07-26 13:47:54', NULL, NULL, 0, NULL, NULL),
-(19, 'Cedrick Umali', NULL, NULL, 'umalicedrick', 'resident', '', '09664185246', 'umalicedrick29@gmail.com', '$2y$10$/6ZSX1XKD5fMpEwneahyIOU8IfbZxxWwoFfKt48t8Z0Z4PmY3Pg3O', NULL, NULL, 3, 6, 1, 'active', NULL, '2026-08-02 20:15:51', '2026-08-08 11:03:30', NULL, NULL, 0, NULL, NULL);
+(19, 'Cedrick Umali', NULL, NULL, 'umalicedrick', 'resident', '', '09664185246', 'umalicedrick29@gmail.com', '$2y$10$/6ZSX1XKD5fMpEwneahyIOU8IfbZxxWwoFfKt48t8Z0Z4PmY3Pg3O', NULL, NULL, 3, 6, 1, 'active', NULL, '2026-08-02 20:15:51', '2026-08-08 11:03:30', NULL, NULL, 0, NULL, NULL),
+(20, 'hans testinggphonesms', NULL, NULL, 'fhanstestingphonesms', 'resident', '', '09951281511', '', '$2y$10$UHXCgTQabJpLgMcE6cfbVOlXnSpLt21c55mkuX55ooqZjjf8Ard/e', NULL, NULL, 3, 6, 2, 'active', NULL, '2026-08-09 22:40:36', '2026-08-14 12:51:31', NULL, NULL, 0, NULL, NULL),
+(23, 'limuel', NULL, NULL, 'limmms', 'resident', '', '', 'limuelle.neust@gmail.com', '$2y$10$8sxdbEPc7kja6m2qINCf4.PLTF1CPWtqtGGpWrY/NbSWJVKbDJ/R6', NULL, NULL, 3, 6, 3, 'active', NULL, '2026-08-17 16:59:53', '2026-08-17 17:00:14', NULL, NULL, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2675,6 +3803,12 @@ ALTER TABLE `barangay_boundaries`
   ADD SPATIAL KEY `polygon_geometry` (`polygon_geometry`);
 
 --
+-- Indexes for table `collection_notes`
+--
+ALTER TABLE `collection_notes`
+  ADD PRIMARY KEY (`note_id`);
+
+--
 -- Indexes for table `collection_schedules`
 --
 ALTER TABLE `collection_schedules`
@@ -2707,11 +3841,34 @@ ALTER TABLE `estimated_quantities`
   ADD UNIQUE KEY `quantity_name` (`quantity_name`);
 
 --
+-- Indexes for table `guest_otp_tokens`
+--
+ALTER TABLE `guest_otp_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_phone` (`phone`),
+  ADD KEY `idx_token` (`token`),
+  ADD KEY `idx_expires` (`expires_at`);
+
+--
+-- Indexes for table `guest_sms_rate_limits`
+--
+ALTER TABLE `guest_sms_rate_limits`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_phone_window` (`phone`,`window_start`),
+  ADD KEY `idx_ip_window` (`ip`,`window_start`);
+
+--
 -- Indexes for table `heatmap_settings`
 --
 ALTER TABLE `heatmap_settings`
   ADD PRIMARY KEY (`setting_id`),
   ADD KEY `updated_by` (`updated_by`);
+
+--
+-- Indexes for table `maintenance_history`
+--
+ALTER TABLE `maintenance_history`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `map_landmarks`
@@ -2737,6 +3894,12 @@ ALTER TABLE `notifications`
 ALTER TABLE `notification_types`
   ADD PRIMARY KEY (`notification_type_id`),
   ADD UNIQUE KEY `notification_type_name` (`notification_type_name`);
+
+--
+-- Indexes for table `penalty_rules`
+--
+ALTER TABLE `penalty_rules`
+  ADD PRIMARY KEY (`rule_id`);
 
 --
 -- Indexes for table `positions`
@@ -2766,6 +3929,7 @@ ALTER TABLE `purok_boundaries`
 --
 ALTER TABLE `reports`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tracking_number` (`tracking_number`),
   ADD KEY `resident_id` (`resident_id`),
   ADD KEY `created_at` (`created_at`),
   ADD KEY `fk_reports_category_id` (`category_id`),
@@ -2866,6 +4030,12 @@ ALTER TABLE `sms_rate_limits`
   ADD KEY `ip` (`ip`);
 
 --
+-- Indexes for table `system_maintenance`
+--
+ALTER TABLE `system_maintenance`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `two_factor_tokens`
 --
 ALTER TABLE `two_factor_tokens`
@@ -2914,7 +4084,7 @@ ALTER TABLE `account_deactivations`
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `announcement_visibilities`
@@ -2926,7 +4096,7 @@ ALTER TABLE `announcement_visibilities`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2026;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2854;
 
 --
 -- AUTO_INCREMENT for table `barangays`
@@ -2938,25 +4108,31 @@ ALTER TABLE `barangays`
 -- AUTO_INCREMENT for table `barangay_boundaries`
 --
 ALTER TABLE `barangay_boundaries`
-  MODIFY `boundary_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `boundary_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `collection_notes`
+--
+ALTER TABLE `collection_notes`
+  MODIFY `note_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `collection_schedules`
 --
 ALTER TABLE `collection_schedules`
-  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `collection_schedule_puroks`
 --
 ALTER TABLE `collection_schedule_puroks`
-  MODIFY `schedule_purok_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `schedule_purok_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `email_otp_rate_limits`
 --
 ALTER TABLE `email_otp_rate_limits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=164;
 
 --
 -- AUTO_INCREMENT for table `estimated_quantities`
@@ -2965,28 +4141,52 @@ ALTER TABLE `estimated_quantities`
   MODIFY `quantity_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
+-- AUTO_INCREMENT for table `guest_otp_tokens`
+--
+ALTER TABLE `guest_otp_tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT for table `guest_sms_rate_limits`
+--
+ALTER TABLE `guest_sms_rate_limits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
 -- AUTO_INCREMENT for table `heatmap_settings`
 --
 ALTER TABLE `heatmap_settings`
   MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `maintenance_history`
+--
+ALTER TABLE `maintenance_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `map_landmarks`
 --
 ALTER TABLE `map_landmarks`
-  MODIFY `landmark_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `landmark_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `notification_types`
 --
 ALTER TABLE `notification_types`
   MODIFY `notification_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `penalty_rules`
+--
+ALTER TABLE `penalty_rules`
+  MODIFY `rule_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `positions`
@@ -3010,13 +4210,13 @@ ALTER TABLE `purok_boundaries`
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `report_flags`
 --
 ALTER TABLE `report_flags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `report_generation_settings`
@@ -3028,7 +4228,7 @@ ALTER TABLE `report_generation_settings`
 -- AUTO_INCREMENT for table `report_photos`
 --
 ALTER TABLE `report_photos`
-  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `report_settings`
@@ -3046,13 +4246,13 @@ ALTER TABLE `report_statuses`
 -- AUTO_INCREMENT for table `report_status_history`
 --
 ALTER TABLE `report_status_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `report_summaries`
 --
 ALTER TABLE `report_summaries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `report_supports`
@@ -3064,7 +4264,7 @@ ALTER TABLE `report_supports`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `sms_otps`
@@ -3082,13 +4282,13 @@ ALTER TABLE `sms_rate_limits`
 -- AUTO_INCREMENT for table `two_factor_tokens`
 --
 ALTER TABLE `two_factor_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=380;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=441;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `waste_categories`

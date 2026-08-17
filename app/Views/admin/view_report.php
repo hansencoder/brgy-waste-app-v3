@@ -103,12 +103,12 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                     <h2 class="text-sm font-bold text-slate-900">Reporter Information</h2>
                                     <?php if (!empty($report['reporter_type']) && $report['reporter_type'] === 'guest'): ?>
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
                                         Guest Report
                                     </span>
                                     <?php else: ?>
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                                         Resident
                                     </span>
                                     <?php endif; ?>
@@ -134,7 +134,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                 </div>
                                 <div class="space-y-2 text-sm">
                                     <p class="flex items-center gap-2 text-slate-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.69-4.69 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                         <?php
                                             if (!empty($report['reporter_type']) && $report['reporter_type'] === 'guest') {
                                                 echo htmlspecialchars($report['guest_phone'] ?? 'N/A');
@@ -145,7 +145,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                     </p>
                                     <?php if (empty($report['reporter_type']) || $report['reporter_type'] !== 'guest'): ?>
                                     <p class="flex items-center gap-2 text-slate-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                                         <?php echo htmlspecialchars($report['resident_email'] ?? 'N/A'); ?>
                                     </p>
                                     <?php endif; ?>
@@ -161,7 +161,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                     </p>
                                     <?php if (!empty($report['reporter_type']) && $report['reporter_type'] === 'guest' && !empty($report['location_plausibility']) && $report['location_plausibility'] !== 'plausible'): ?>
                                     <div class="mt-2 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-xs flex items-start gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                         <span>Location plausibility: <strong><?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $report['location_plausibility']))); ?></strong></span>
                                     </div>
                                     <?php endif; ?>
@@ -178,7 +178,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                     <p class="text-xs text-slate-500 mt-2">Photo attached · <?php echo date('M d, Y', strtotime($report['submission_date'])); ?></p>
                                 <?php else: ?>
                                     <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-300 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-300 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                         <p class="text-sm text-slate-500">No photo attached</p>
                                     </div>
                                 <?php endif; ?>
@@ -196,7 +196,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                                         <input type="hidden" name="action" value="verify">
                                                         <input type="hidden" name="remark" value="">
                                                         <button type="submit" class="w-full rounded-full bg-[#10B981] hover:bg-emerald-600 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                                             Verify Report
                                                         </button>
                                                     </form>
@@ -210,7 +210,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                                             <input type="text" name="remark" placeholder="Enter reason..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none">
                                                         </div>
                                                         <button type="submit" class="w-full rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 transition flex items-center justify-center gap-2 text-sm border border-red-200">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                                                             Reject Report
                                                         </button>
                                                     </form>
@@ -223,7 +223,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                                         <input type="hidden" name="action" value="in_progress">
                                                         <input type="hidden" name="remark" value="">
                                                         <button type="submit" class="w-full rounded-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                                             Start Progress
                                                         </button>
                                                     </form>
@@ -237,7 +237,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                                             <input type="text" name="remark" placeholder="Enter reason..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none">
                                                         </div>
                                                         <button type="submit" class="w-full rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 transition flex items-center justify-center gap-2 text-sm border border-red-200">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                                                             Reject Report
                                                         </button>
                                                     </form>
@@ -250,7 +250,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                                         <input type="hidden" name="action" value="resolve">
                                                         <input type="hidden" name="remark" value="">
                                                         <button type="submit" class="w-full rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 shadow-sm transition flex items-center justify-center gap-2 text-sm">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                                             Resolve Report
                                                         </button>
                                                     </form>
@@ -264,7 +264,7 @@ $imgPath = !empty($report['photo_path']) ? '/brgy-waste-app-v3/public/uploads/' 
                                                             <input type="text" name="remark" placeholder="Enter reason..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-red-300 focus:ring-2 focus:ring-red-100 outline-none">
                                                         </div>
                                                         <button type="submit" class="w-full rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 transition flex items-center justify-center gap-2 text-sm border border-red-200">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                                                             Reject Report
                                                         </button>
                                                     </form>

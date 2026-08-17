@@ -77,7 +77,7 @@ function getSupervisorNotifStyle($type) {
                     <div class="p-4 sm:p-5 rounded-2xl border bg-white shadow-2xs transition flex items-start justify-between gap-4 <?php echo $isRead ? 'border-slate-200 opacity-80' : 'border-emerald-300 ring-2 ring-emerald-500/10'; ?>" id="notif-<?php echo $item['id']; ?>">
                         <div class="flex items-start gap-3.5">
                             <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border <?php echo $st['bg']; ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                             </div>
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">

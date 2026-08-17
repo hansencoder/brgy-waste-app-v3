@@ -60,13 +60,13 @@ foreach ($reports as $r) {
                 <div class="flex items-center gap-2">
                     <a href="?view=map<?php echo http_build_query(array_filter(['status' => $statusFilter, 'category' => $categoryFilter, 'purok' => $purokFilter, 'date_from' => $dateFrom, 'date_to' => $dateTo])); ?>" 
                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition <?php echo $current_view !== 'heatmap' ? 'bg-[#0B2E22] text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'; ?>">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                         <span>Pin Marker View</span>
                     </a>
 
                     <a href="?view=heatmap<?php echo http_build_query(array_filter(['status' => $statusFilter, 'category' => $categoryFilter, 'purok' => $purokFilter, 'date_from' => $dateFrom, 'date_to' => $dateTo])); ?>" 
                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition <?php echo $current_view === 'heatmap' ? 'bg-[#0B2E22] text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'; ?>">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 22v-4M2 12h4M22 12h-4"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 22v-4M2 12h4M22 12h-4"/></svg>
                         <span>Heatmap Density</span>
                     </a>
                 </div>
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div style="font-family: 'Miranda Sans', sans-serif; min-width: 160px;">
                         <span style="font-size: 10px; font-weight: bold; color: ${statusColor}; text-transform: uppercase;">${r.status}</span>
                         <h4 style="font-size: 12px; font-weight: bold; margin: 2px 0;">${r.category}</h4>
-                        <p style="font-size: 11px; color: #64748B; margin: 0 0 6px 0; display: flex; align-items: center; gap: 4px;"><svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='#64748B' stroke-width='2.5'><path d='M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z'/><circle cx='12' cy='10' r='3'/></svg> ${r.purok}</p>
+                        <p style="font-size: 11px; color: #64748B; margin: 0 0 6px 0; display: flex; align-items: center; gap: 4px;"><svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill="none" stroke='#64748B' stroke-width='2.5' fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> ${r.purok}</p>
                         <a href="/brgy-waste-app-v3/public/supervisor/view_report/${r.id}" style="display: inline-block; font-size: 11px; font-weight: bold; color: #10B981; text-decoration: none;">View Report Details →</a>
                     </div>
                 `);

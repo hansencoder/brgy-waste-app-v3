@@ -40,7 +40,7 @@ $permissionGroups = $data['permissionGroups'] ?? [];
                             </p>
                         </div>
                         <button onclick="openAddRoleModal()" class="inline-flex items-center gap-2 px-5 py-3 bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm rounded-xl shadow-xs transition shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                             Add New Role
                         </button>
                     </div>
@@ -48,13 +48,13 @@ $permissionGroups = $data['permissionGroups'] ?? [];
                     <!-- Alerts -->
                     <?php if (!empty($data['error'])): ?>
                         <div class="p-5 bg-red-50 border-2 border-red-200 text-red-950 rounded-2xl text-base font-extrabold flex items-center gap-3 shadow-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             <span><?php echo htmlspecialchars($data['error']); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($data['success'])): ?>
                         <div class="p-5 bg-emerald-50 border-2 border-emerald-200 text-emerald-950 rounded-2xl text-base font-extrabold flex items-center gap-3 shadow-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             <span><?php echo htmlspecialchars($data['success']); ?></span>
                         </div>
                     <?php endif; ?>
@@ -67,7 +67,7 @@ $permissionGroups = $data['permissionGroups'] ?? [];
 
                             <!-- Info Banner -->
                             <div class="p-4 bg-blue-50 border-2 border-blue-200 rounded-2xl flex items-start gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                 <div>
                                     <p class="text-sm font-extrabold text-blue-900">Permission Storage</p>
                                     <p class="text-xs text-blue-800 font-medium mt-0.5">Permissions are stored as a JSON configuration per role. System roles (Administrator, Supervisor, Resident) are locked and cannot be edited or deleted.</p>
@@ -111,7 +111,7 @@ $permissionGroups = $data['permissionGroups'] ?? [];
                                                     <div class="flex items-center gap-2">
                                                         <?php if ($isSystem): ?>
                                                             <span class="w-5 h-5 text-amber-500 shrink-0">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                                                             </span>
                                                         <?php endif; ?>
                                                         <span class="font-extrabold text-slate-900 text-sm capitalize"><?php echo htmlspecialchars($role['role_name']); ?></span>
@@ -182,7 +182,7 @@ $permissionGroups = $data['permissionGroups'] ?? [];
         <div class="p-6 border-b border-slate-200 flex items-center justify-between shrink-0">
             <h3 class="text-xl font-extrabold text-slate-900">Add New Role</h3>
             <button onclick="closeAddRoleModal()" class="p-2 hover:bg-slate-100 rounded-xl transition text-slate-400 hover:text-slate-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
         <form method="POST" class="overflow-y-auto flex-1 p-6 space-y-5">
@@ -203,7 +203,7 @@ $permissionGroups = $data['permissionGroups'] ?? [];
             <!-- Permission Groups -->
             <div>
                 <p class="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     Permissions
                 </p>
                 <div class="space-y-4">
@@ -244,7 +244,7 @@ $permissionGroups = $data['permissionGroups'] ?? [];
         <div class="p-6 border-b border-slate-200 flex items-center justify-between shrink-0">
             <h3 class="text-xl font-extrabold text-slate-900">Edit Role: <span id="editRoleName" class="text-emerald-700"></span></h3>
             <button onclick="closeEditRoleModal()" class="p-2 hover:bg-slate-100 rounded-xl transition text-slate-400 hover:text-slate-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
         <form method="POST" class="overflow-y-auto flex-1 p-6 space-y-5">

@@ -77,7 +77,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                 <?php if (!empty($sideSysLogo)): ?>
                     <img src="<?php echo htmlspecialchars($sideSysLogo); ?>" class="h-full w-full object-cover">
                 <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <?php endif; ?>
             </div>
             <div>
@@ -86,8 +86,8 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
             </div>
         </div>
         <button onclick="toggleMobileSidebar()" class="p-2 text-emerald-400/80 hover:text-white rounded-lg hover:bg-white/5 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
     </div>
@@ -99,13 +99,13 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
             <div class="space-y-1">
                 <?php $mDash = $isPageActive('supervisor'); ?>
                 <a href="/brgy-waste-app-v3/public/supervisor" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition <?php echo $mDash ? 'bg-[#0B2E22] text-white border border-emerald-500/30' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mDash ? 'text-emerald-400' : 'text-slate-400'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mDash ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                     <span>Dashboard</span>
                 </a>
 
                 <?php $mRep = $isPageActive(['reports', 'view_report']); ?>
                 <a href="/brgy-waste-app-v3/public/supervisor/reports" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition <?php echo $mRep ? 'bg-[#0B2E22] text-white border border-emerald-500/30' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mRep ? 'text-emerald-400' : 'text-slate-400'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mRep ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                     <span>Reports</span>
                 </a>
             </div>
@@ -116,19 +116,19 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
             <div class="space-y-1">
                 <?php $mGis = $isPageActive('gis'); ?>
                 <a href="/brgy-waste-app-v3/public/supervisor/gis" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition <?php echo $mGis ? 'bg-[#0B2E22] text-white border border-emerald-500/30' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mGis ? 'text-emerald-400' : 'text-slate-400'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mGis ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                     <span>GIS Monitor</span>
                 </a>
 
                 <?php $mAna = $isPageActive('analytics'); ?>
                 <a href="/brgy-waste-app-v3/public/supervisor/analytics" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition <?php echo $mAna ? 'bg-[#0B2E22] text-white border border-emerald-500/30' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mAna ? 'text-emerald-400' : 'text-slate-400'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10h-10z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mAna ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10h-10z"/></svg>
                     <span>Analytics</span>
                 </a>
 
                 <?php $mSched = $isPageActive('schedule'); ?>
                 <a href="/brgy-waste-app-v3/public/supervisor/schedule" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition <?php echo $mSched ? 'bg-[#0B2E22] text-white border border-emerald-500/30' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mSched ? 'text-emerald-400' : 'text-slate-400'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mSched ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     <span>Schedule</span>
                 </a>
             </div>
@@ -139,14 +139,14 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
             <div class="space-y-1">
                 <?php $mAnn = $isPageActive('announcements'); ?>
                 <a href="/brgy-waste-app-v3/public/supervisor/announcements" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition <?php echo $mAnn ? 'bg-[#0B2E22] text-white border border-emerald-500/30' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mAnn ? 'text-emerald-400' : 'text-slate-400'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mAnn ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                     <span>Bulletins</span>
                 </a>
 
                 <?php $mNot = $isPageActive('notifications'); ?>
                 <a href="/brgy-waste-app-v3/public/supervisor/notifications" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition <?php echo $mNot ? 'bg-[#0B2E22] text-white border border-emerald-500/30' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                     <div class="flex items-center gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mNot ? 'text-emerald-400' : 'text-slate-400'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mNot ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                         <span>Notifications</span>
                     </div>
                     <?php if ($sideUnreadCount > 0): ?>
@@ -161,7 +161,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
             <div class="space-y-1">
                 <?php $mProf = $isPageActive('profile'); ?>
                 <a href="/brgy-waste-app-v3/public/supervisor/profile" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition <?php echo $mProf ? 'bg-[#0B2E22] text-white border border-emerald-500/30' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mProf ? 'text-emerald-400' : 'text-slate-400'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 <?php echo $mProf ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
                     <span>My Profile</span>
                 </a>
             </div>
@@ -171,7 +171,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
     <!-- Mobile Footer Logout -->
     <div class="p-4 border-t border-emerald-900/60 bg-[#062018]">
         <a href="/brgy-waste-app-v3/public/index.php?url=auth/logout" class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 text-xs font-semibold transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             <span>Log Out</span>
         </a>
     </div>
@@ -187,7 +187,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                 <?php if (!empty($sideSysLogo)): ?>
                     <img src="<?php echo htmlspecialchars($sideSysLogo); ?>" class="h-full w-full object-cover">
                 <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <?php endif; ?>
             </div>
             <div class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> min-w-0">
@@ -210,7 +210,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                     <?php if ($dDash): ?>
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full"></span>
                     <?php endif; ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dDash ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dDash ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                     <span class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> truncate">Dashboard</span>
                 </a>
 
@@ -220,7 +220,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                     <?php if ($dRep): ?>
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full"></span>
                     <?php endif; ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dRep ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dRep ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                     <span class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> truncate">Reports</span>
                 </a>
             </div>
@@ -236,7 +236,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                     <?php if ($dGis): ?>
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full"></span>
                     <?php endif; ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dGis ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dGis ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                     <span class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> truncate">GIS Monitor</span>
                 </a>
 
@@ -246,7 +246,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                     <?php if ($dAna): ?>
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full"></span>
                     <?php endif; ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dAna ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10h-10z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dAna ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10h-10z"/></svg>
                     <span class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> truncate">Analytics</span>
                 </a>
 
@@ -256,7 +256,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                     <?php if ($dSchedule): ?>
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full"></span>
                     <?php endif; ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dSchedule ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dSchedule ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     <span class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> truncate">Schedule</span>
                 </a>
             </div>
@@ -272,7 +272,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                     <?php if ($dAnn): ?>
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full"></span>
                     <?php endif; ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dAnn ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dAnn ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                     <span class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> truncate">Bulletins</span>
                 </a>
 
@@ -283,7 +283,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full"></span>
                     <?php endif; ?>
                     <div class="flex items-center gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dNot ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dNot ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                         <span class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> truncate">Notifications</span>
                     </div>
                     <?php if ($sideUnreadCount > 0): ?>
@@ -303,7 +303,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
                     <?php if ($dProf): ?>
                         <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full"></span>
                     <?php endif; ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dProf ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $dProf ? 'text-emerald-400' : 'text-slate-400 group-hover:text-white'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
                     <span class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> truncate">My Profile</span>
                 </a>
             </div>
@@ -325,7 +325,7 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
             </a>
             
             <a href="/brgy-waste-app-v3/public/index.php?url=auth/logout" class="sidebar-text <?php echo $isCollapsed ? 'hidden' : ''; ?> p-1.5 text-slate-400 hover:text-red-400 hover:bg-white/5 rounded-lg transition" title="Log Out">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </a>
         </div>
     </div>

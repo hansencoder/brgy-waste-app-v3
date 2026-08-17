@@ -71,7 +71,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                         </div>
 
                         <a href="/brgy-waste-app-v3/public/settings" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold transition border border-slate-200 self-start sm:self-auto">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             Back to Settings
                         </a>
                     </div>
@@ -81,13 +81,13 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                     <!-- ============================================================ -->
                     <?php if (!empty($data['error'])): ?>
                         <div class="p-4 sm:p-5 bg-red-50 border border-red-200 text-red-950 rounded-2xl text-sm font-extrabold flex items-center gap-3 shadow-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             <span><?php echo htmlspecialchars($data['error']); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($data['success'])): ?>
                         <div class="p-4 sm:p-5 bg-emerald-50 border border-emerald-200 text-emerald-950 rounded-2xl text-sm font-extrabold flex items-center gap-3 shadow-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             <span><?php echo htmlspecialchars($data['success']); ?></span>
                         </div>
                     <?php endif; ?>
@@ -113,7 +113,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-6">
                                     <div class="border-b border-slate-100 pb-4">
                                         <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>
                                             <span>Dual Header Logos Customization</span>
                                         </h2>
                                         <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
@@ -135,16 +135,16 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                                 <div class="w-16 h-16 rounded-full bg-white border-2 border-slate-300 overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                                                     <?php if (!empty($logoLeftUrl)): ?>
                                                         <img id="avatarLogoLeft" src="<?php echo htmlspecialchars($logoLeftUrl); ?>" class="w-full h-full object-cover">
-                                                        <span id="iconLogoLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 hidden"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
+                                                        <span id="iconLogoLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 hidden"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                                                     <?php else: ?>
                                                         <img id="avatarLogoLeft" src="" class="w-full h-full object-cover hidden">
-                                                        <span id="iconLogoLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
+                                                        <span id="iconLogoLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                                                     <?php endif; ?>
                                                 </div>
 
                                                 <div class="flex-1 min-w-0 space-y-2">
                                                     <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-800 text-xs font-extrabold rounded-xl border border-slate-300 cursor-pointer shadow-2xs transition active:scale-[0.98]">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                                         Upload Left Logo
                                                         <input type="file" name="header_logo_left" id="fileLogoLeft" accept="image/*" class="hidden" onchange="previewLeftLogo(this)">
                                                     </label>
@@ -168,16 +168,16 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                                 <div class="w-16 h-16 rounded-full bg-white border-2 border-slate-300 overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                                                     <?php if (!empty($logoRightUrl)): ?>
                                                         <img id="avatarLogoRight" src="<?php echo htmlspecialchars($logoRightUrl); ?>" class="w-full h-full object-cover">
-                                                        <span id="iconLogoRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 hidden"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>
+                                                        <span id="iconLogoRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 hidden"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></span>
                                                     <?php else: ?>
                                                         <img id="avatarLogoRight" src="" class="w-full h-full object-cover hidden">
-                                                        <span id="iconLogoRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>
+                                                        <span id="iconLogoRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></span>
                                                     <?php endif; ?>
                                                 </div>
 
                                                 <div class="flex-1 min-w-0 space-y-2">
                                                     <label class="inline-flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-800 text-xs font-extrabold rounded-xl border border-slate-300 cursor-pointer shadow-2xs transition active:scale-[0.98]">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                                         Upload Right Logo
                                                         <input type="file" name="header_logo_right" id="fileLogoRight" accept="image/*" class="hidden" onchange="previewRightLogo(this)">
                                                     </label>
@@ -196,7 +196,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-5">
                                     <div class="border-b border-slate-100 pb-4">
                                         <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                             <span>Official Letterhead Header Lines</span>
                                         </h2>
                                         <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
@@ -249,7 +249,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-5">
                                     <div class="border-b border-slate-100 pb-4">
                                         <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg>
                                             <span>Signatories &amp; Authorization Blocks</span>
                                         </h2>
                                         <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
@@ -333,7 +333,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <div class="bg-slate-900 rounded-2xl p-6 sm:p-7 text-white space-y-4 shadow-sm border border-slate-800">
                                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                                         <span class="text-xs font-extrabold text-purple-400 uppercase tracking-wider flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                             <span>Live Official Document Letterhead Preview</span>
                                         </span>
                                         <span class="text-xs font-mono text-slate-400">Print / PDF Output Simulation</span>
@@ -348,7 +348,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                             <!-- Left Logo -->
                                             <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-slate-200 bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                                                 <img id="previewLogoLeft" src="<?php echo htmlspecialchars($logoLeftUrl); ?>" class="w-full h-full object-cover <?php echo empty($logoLeftUrl) ? 'hidden' : ''; ?>">
-                                                <span id="previewIconLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 <?php echo !empty($logoLeftUrl) ? 'hidden' : ''; ?>"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
+                                                <span id="previewIconLeft" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 <?php echo !empty($logoLeftUrl) ? 'hidden' : ''; ?>"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                                             </div>
 
                                             <!-- Center Hierarchy Text -->
@@ -370,7 +370,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                             <!-- Right Logo -->
                                             <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-slate-200 bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                                                 <img id="previewLogoRight" src="<?php echo htmlspecialchars($logoRightUrl); ?>" class="w-full h-full object-cover <?php echo empty($logoRightUrl) ? 'hidden' : ''; ?>">
-                                                <span id="previewIconRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 <?php echo !empty($logoRightUrl) ? 'hidden' : ''; ?>"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>
+                                                <span id="previewIconRight" class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 <?php echo !empty($logoRightUrl) ? 'hidden' : ''; ?>"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></span>
                                             </div>
 
                                         </div>
@@ -424,7 +424,7 @@ $logoRightUrl = $formatLogo($settings['header_logo_right'] ?? '', $formatLogo($b
                                 <!-- Form Actions -->
                                 <div class="flex items-center gap-3 pt-2">
                                     <button type="submit" class="inline-flex items-center gap-2 px-7 py-3.5 bg-[#0B2E22] hover:bg-[#084232] text-white text-xs sm:text-sm font-extrabold rounded-xl shadow-xs transition active:scale-[0.98] border border-emerald-900 cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                         Save Report Formatting Settings
                                     </button>
                                     <a href="/brgy-waste-app-v3/public/settings" class="inline-flex items-center px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold rounded-xl transition border border-slate-200 cursor-pointer">

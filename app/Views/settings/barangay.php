@@ -63,13 +63,13 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                     <!-- Alerts -->
                     <?php if (!empty($data['error'])): ?>
                         <div class="p-5 bg-red-50 border-2 border-red-200 text-red-950 rounded-2xl text-base font-extrabold flex items-center gap-3 shadow-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             <span><?php echo htmlspecialchars($data['error']); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($data['success'])): ?>
                         <div class="p-5 bg-emerald-50 border-2 border-emerald-200 text-emerald-950 rounded-2xl text-base font-extrabold flex items-center gap-3 shadow-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             <span><?php echo htmlspecialchars($data['success']); ?></span>
                         </div>
                     <?php endif; ?>
@@ -91,7 +91,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                     <div class="border-b border-slate-200 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                         <div>
                                             <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2.5">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
                                                 System Customization &amp; Branding
                                             </h2>
                                             <p class="text-sm text-slate-600 font-semibold mt-1">Configure the application title, brand logo, and system tagline shown across the platform.</p>
@@ -124,7 +124,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                         <!-- System Dynamic Location Subtitle / Tagline Info -->
                                         <div class="p-4 bg-emerald-50/60 border-2 border-emerald-200/80 rounded-xl text-emerald-950">
                                             <div class="flex items-center gap-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                                                 <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-800">System Location Subtitle</span>
                                             </div>
                                             <p class="text-xs text-emerald-900 font-medium mt-1">
@@ -149,7 +149,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                                         <img id="prevSysLogo" src="<?php echo htmlspecialchars($sysLogoUrl); ?>" class="h-full w-full object-cover">
                                                     <?php else: ?>
                                                         <div id="prevSysLogoPlaceholder" class="flex h-full w-full items-center justify-center rounded-full bg-emerald-100 text-emerald-800">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                                                         </div>
                                                         <img id="prevSysLogo" src="" class="h-full w-full object-cover hidden">
                                                     <?php endif; ?>
@@ -157,7 +157,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                                 <div class="flex-1">
                                                     <input type="file" name="system_logo" id="systemLogoInput" accept="image/*" class="hidden" onchange="previewImage(this, 'prevSysLogo', 'prevSysLogoPlaceholder', 'previewSysLogoImg', 'previewSysLogoIcon')">
                                                     <label for="systemLogoInput" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold cursor-pointer transition shadow-xs">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                                         Upload New Logo
                                                     </label>
                                                 </div>
@@ -180,7 +180,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                                         <img id="prevBrgySeal" src="<?php echo htmlspecialchars($brgyLogoUrl); ?>" class="h-full w-full object-cover">
                                                     <?php else: ?>
                                                         <div id="prevBrgySealPlaceholder" class="flex h-full w-full items-center justify-center rounded-full bg-amber-100 text-amber-800">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg>
                                                         </div>
                                                         <img id="prevBrgySeal" src="" class="h-full w-full object-cover hidden">
                                                     <?php endif; ?>
@@ -188,7 +188,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                                 <div class="flex-1">
                                                     <input type="file" name="barangay_logo" id="barangayLogoInput" accept="image/*" class="hidden" onchange="previewImage(this, 'prevBrgySeal', 'prevBrgySealPlaceholder')">
                                                     <label for="barangayLogoInput" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold cursor-pointer transition shadow-xs">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                                         Upload Barangay Seal
                                                     </label>
                                                 </div>
@@ -212,7 +212,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                                 <?php if (!empty($sysLogoUrl)): ?>
                                                     <img id="previewSysLogoImg" src="<?php echo htmlspecialchars($sysLogoUrl); ?>" class="h-full w-full object-cover">
                                                 <?php else: ?>
-                                                    <span id="previewSysLogoIcon" class="flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
+                                                    <span id="previewSysLogoIcon" class="flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
                                                     <img id="previewSysLogoImg" src="" class="h-full w-full object-cover hidden">
                                                 <?php endif; ?>
                                             </div>
@@ -236,7 +236,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                     <div class="border-b border-slate-200 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                         <div>
                                             <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2.5">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 21h18"/><path d="M3 7v14"/><path d="M21 7v14"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 10h12"/><path d="M12 3L2 7h20L12 3z"/></svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 7v14"/><path d="M21 7v14"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 10h12"/><path d="M12 3L2 7h20L12 3z"/></svg>
                                                 Official Barangay Details
                                             </h2>
                                             <p class="text-sm text-slate-600 font-semibold mt-1">This information will be displayed on official reports, notices, and public exports.</p>
@@ -304,7 +304,7 @@ $brgyLogoUrl = $formatLogoUrl($data['barangay']['barangay_logo'] ?? '');
                                     <!-- Footer Action -->
                                     <div class="pt-6 border-t border-slate-200 flex items-center gap-4">
                                         <button type="submit" class="px-8 py-4 rounded-xl bg-[#083528] hover:bg-[#06291f] text-white font-extrabold text-base shadow-sm hover:shadow-md transition flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                             Save Barangay Information
                                         </button>
                                         <a href="/brgy-waste-app-v3/public/settings" class="px-7 py-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-base font-extrabold rounded-xl transition border border-slate-250">

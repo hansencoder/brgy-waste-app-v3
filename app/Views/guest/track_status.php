@@ -13,11 +13,11 @@ $statusKey = str_replace([' ', '-'], '_', strtolower(trim($rawStatus)));
 $status    = $statusKey;
 
 $statusConfig = [
-    'pending'     => ['label' => 'Pending Review', 'color' => 'amber',   'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', 'desc' => 'Your report has been received and is queued for verification by the barangay desk.'],
-    'verified'    => ['label' => 'Verified',       'color' => 'blue',    'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>', 'desc' => 'Your report has been verified and assigned for collection routing.'],
-    'in_progress' => ['label' => 'In Progress',    'color' => 'violet',  'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>', 'desc' => 'Waste management personnel and collection units are actively addressing the area.'],
-    'resolved'    => ['label' => 'Resolved',       'color' => 'emerald', 'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>', 'desc' => 'The waste site has been successfully cleared and resolved. Thank you for your vigilance!'],
-    'rejected'    => ['label' => 'Rejected',       'color' => 'red',     'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', 'desc' => 'Your report could not be processed. Please contact the barangay hall for details.'],
+    'pending'     => ['label' => 'Pending Review', 'color' => 'amber',   'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', 'desc' => 'Your report has been received and is queued for verification by the barangay desk.'],
+    'verified'    => ['label' => 'Verified',       'color' => 'blue',    'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', 'desc' => 'Your report has been verified and assigned for collection routing.'],
+    'in_progress' => ['label' => 'In Progress',    'color' => 'violet',  'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>', 'desc' => 'Waste management personnel and collection units are actively addressing the area.'],
+    'resolved'    => ['label' => 'Resolved',       'color' => 'emerald', 'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>', 'desc' => 'The waste site has been successfully cleared and resolved. Thank you for your vigilance!'],
+    'rejected'    => ['label' => 'Rejected',       'color' => 'red',     'svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', 'desc' => 'Your report could not be processed. Please contact the barangay hall for details.'],
 ];
 $sc = $statusConfig[$statusKey] ?? $statusConfig['pending'];
 
@@ -69,7 +69,7 @@ if ($currentIdx === false) $currentIdx = -1;
     <!-- Top Bar Navigation & Branding -->
     <div class="flex items-center justify-between gap-4">
         <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-extrabold text-slate-700 hover:text-slate-950 hover:bg-slate-100 transition shadow-2xs">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
             Track Another
         </a>
 
@@ -78,7 +78,7 @@ if ($currentIdx === false) $currentIdx = -1;
                 <?php if (!empty($activeLogo)): ?>
                     <img src="<?php echo htmlspecialchars($activeLogo); ?>" alt="Logo" class="w-full h-full rounded-full object-cover">
                 <?php else: ?>
-                    <div class="w-full h-full rounded-full bg-[#0B2E22] flex items-center justify-center text-white text-xs"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></div>
+                    <div class="w-full h-full rounded-full bg-[#0B2E22] flex items-center justify-center text-white text-xs"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" stroke="#ffffff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></div>
                 <?php endif; ?>
             </div>
             <div class="text-right">
@@ -141,7 +141,7 @@ if ($currentIdx === false) $currentIdx = -1;
                             <?php echo $done ? 'bg-emerald-600 border-emerald-600 text-white shadow-xs' : 'bg-white border-slate-300 text-slate-400'; ?>
                             <?php echo $active ? 'ring-4 ring-emerald-100 ring-offset-1 scale-110' : ''; ?>">
                             <?php if ($done): ?>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                             <?php else: echo $i + 1; endif; ?>
                         </div>
                         <span class="text-[10px] font-extrabold mt-2 text-center <?php echo $done ? 'text-slate-900' : 'text-slate-400'; ?> leading-tight max-w-[65px]">
@@ -210,12 +210,12 @@ if ($currentIdx === false) $currentIdx = -1;
     <div class="flex flex-col sm:flex-row gap-3">
         <a href="/brgy-waste-app-v3/public/index.php?url=guest/track"
            class="flex-1 h-12 bg-white border border-slate-200 text-slate-800 font-extrabold rounded-2xl shadow-2xs hover:bg-slate-100 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             Track Another Incident
         </a>
         <a href="/brgy-waste-app-v3/public/index.php?url=guest"
            class="flex-1 h-12 bg-[#0B2E22] hover:bg-[#084232] text-white font-extrabold rounded-2xl shadow-xs transition flex items-center justify-center gap-2 text-xs sm:text-sm border border-emerald-900">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             Submit New Waste Report
         </a>
     </div>

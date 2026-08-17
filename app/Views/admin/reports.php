@@ -338,26 +338,39 @@ $metrics = [
                         </div>
 
                         <!-- Real-time Live Search & Quick Filter Controls -->
-                        <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
-                            <div class="relative w-full sm:w-80 lg:w-96">
+                        <div class="flex flex-col lg:flex-row gap-3 items-center justify-between">
+                            <div class="relative w-full lg:w-96">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                                 </div>
-                                <input type="text" id="liveSearchInput" onkeyup="filterTableLive()" placeholder="Live search by ID, name, category, purok..." value="<?php echo htmlspecialchars($searchQuery); ?>" 
+                                <input type="text" id="liveSearchInput" onkeyup="onSearchOrFilterChange()" placeholder="Live search by ID, name, category, purok..." value="<?php echo htmlspecialchars($searchQuery); ?>" 
                                        class="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-[#10B981] focus:ring-4 focus:ring-emerald-500/10 outline-none transition">
                             </div>
 
-                            <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                            <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto justify-end">
                                 <!-- Reporter Type Filter -->
-                                <select id="reporterTypeFilter" onchange="filterTableLive()" class="rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 px-3 text-xs font-semibold text-slate-700 outline-none focus:bg-white focus:border-[#10B981] transition cursor-pointer">
+                                <select id="reporterTypeFilter" onchange="onSearchOrFilterChange()" class="rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 px-3 text-xs font-semibold text-slate-700 outline-none focus:bg-white focus:border-[#10B981] transition cursor-pointer">
                                     <option value="">All Reporter Types</option>
                                     <option value="resident">Residents Only</option>
                                     <option value="guest">Guests Only</option>
                                 </select>
 
+                                <!-- Per Page Selector -->
+                                <div class="flex items-center gap-1.5 bg-slate-50/70 border border-slate-200 rounded-xl px-2.5 py-1.5">
+                                    <span class="text-[11px] font-bold text-slate-500">Show:</span>
+                                    <select id="perPageSelect" onchange="changePerPage(this.value)" class="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer">
+                                        <option value="5">5</option>
+                                        <option value="10" selected>10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="all">All</option>
+                                    </select>
+                                    <span class="text-[11px] font-bold text-slate-500">/ page</span>
+                                </div>
+
                                 <!-- Table Rows Counter -->
-                                <span id="recordCountBadge" class="text-xs font-bold font-mono text-slate-500 bg-slate-100 px-3 py-2 rounded-xl">
-                                    Showing <?php echo count($reports); ?> entries
+                                <span id="recordCountBadge" class="text-xs font-bold font-mono text-slate-600 bg-slate-100 px-3 py-2 rounded-xl">
+                                    Total: <?php echo count($reports); ?>
                                 </span>
                             </div>
                         </div>
@@ -502,6 +515,17 @@ $metrics = [
                             </table>
                         </div>
 
+                        <!-- Pagination Footer Bar (No-Print) -->
+                        <div id="paginationBar" class="p-4 bg-slate-50/90 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs no-print">
+                            <div class="text-slate-600 font-semibold" id="paginationInfo">
+                                Showing <span id="pageStart" class="font-bold text-slate-900">0</span> to <span id="pageEnd" class="font-bold text-slate-900">0</span> of <span id="pageTotal" class="font-bold text-slate-900">0</span> entries
+                            </div>
+                            
+                            <div class="flex items-center gap-1" id="paginationControls">
+                                <!-- Dynamic pagination buttons -->
+                            </div>
+                        </div>
+
                         <!-- Print Only: Official Signatures & Footer Notice -->
                         <div class="print-only-block" style="margin-top: 24px;">
                             <div class="print-sig-grid">
@@ -538,40 +562,156 @@ $metrics = [
 </div>
 
 <!-- ============================================================ -->
-<!-- JAVASCRIPT FUNCTIONS FOR FILTERING, EXPORT & BULK ACTIONS    -->
+<!-- JAVASCRIPT FUNCTIONS FOR PAGINATION, FILTERING, EXPORT & BULK -->
 <!-- ============================================================ -->
 <script>
-    // 1. Live Client-side Table Search & Reporter Filter
-    function filterTableLive() {
-        const input = document.getElementById('liveSearchInput').value.toLowerCase().trim();
-        const typeFilter = document.getElementById('reporterTypeFilter').value;
-        const rows = document.querySelectorAll('.report-row');
-        let visibleCount = 0;
+    // Global Pagination State
+    let currentPage = 1;
+    let perPage = 10;
 
-        rows.forEach(row => {
-            const text = row.getAttribute('data-[#0b2e22]') || row.textContent.toLowerCase();
-            const repType = row.getAttribute('data-reporter-type') || '';
-
-            const matchesSearch = !input || text.includes(input);
-            const matchesType = !typeFilter || repType === typeFilter;
-
-            if (matchesSearch && matchesType) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        const badge = document.getElementById('recordCountBadge');
-        if (badge) badge.textContent = `Showing ${visibleCount} entries`;
+    function changePerPage(val) {
+        perPage = (val === 'all') ? 999999 : parseInt(val, 10);
+        currentPage = 1;
+        applyPagination();
     }
 
-    // 2. Select All Checkbox Handler
+    function onSearchOrFilterChange() {
+        currentPage = 1;
+        applyPagination();
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        applyPagination();
+    }
+
+    function applyPagination() {
+        const input = (document.getElementById('liveSearchInput')?.value || '').toLowerCase().trim();
+        const typeFilter = document.getElementById('reporterTypeFilter')?.value || '';
+        const allRows = Array.from(document.querySelectorAll('.report-row'));
+        const noRecordsRow = document.getElementById('noRecordsRow');
+        const paginationBar = document.getElementById('paginationBar');
+
+        // 1. Filter rows that match search and reporter type
+        const matchingRows = allRows.filter(row => {
+            const text = (row.getAttribute('data-[#0b2e22]') || row.textContent).toLowerCase();
+            const repType = row.getAttribute('data-reporter-type') || '';
+            const matchesSearch = !input || text.includes(input);
+            const matchesType = !typeFilter || repType === typeFilter;
+            return matchesSearch && matchesType;
+        });
+
+        const totalMatching = matchingRows.length;
+        const totalPages = Math.max(1, Math.ceil(totalMatching / perPage));
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIdx = (currentPage - 1) * perPage;
+        const endIdx = Math.min(startIdx + perPage, totalMatching);
+
+        // 2. Hide all rows first, then show only the active page's matching rows
+        allRows.forEach(row => row.style.display = 'none');
+
+        matchingRows.slice(startIdx, endIdx).forEach(row => {
+            row.style.display = '';
+        });
+
+        // 3. Handle Empty State
+        if (noRecordsRow) {
+            noRecordsRow.style.display = (totalMatching === 0) ? '' : 'none';
+        }
+
+        // 4. Update Header Badge & Footer Text
+        const recordCountBadge = document.getElementById('recordCountBadge');
+        if (recordCountBadge) {
+            recordCountBadge.textContent = `Total: ${totalMatching}`;
+        }
+
+        const pageStartEl = document.getElementById('pageStart');
+        const pageEndEl = document.getElementById('pageEnd');
+        const pageTotalEl = document.getElementById('pageTotal');
+
+        if (pageStartEl) pageStartEl.textContent = totalMatching > 0 ? (startIdx + 1) : 0;
+        if (pageEndEl) pageEndEl.textContent = endIdx;
+        if (pageTotalEl) pageTotalEl.textContent = totalMatching;
+
+        // 5. Render Pagination Controls
+        renderPaginationControls(totalPages);
+        updateBulkActionState();
+    }
+
+    function renderPaginationControls(totalPages) {
+        const container = document.getElementById('paginationControls');
+        if (!container) return;
+
+        if (totalPages <= 1 && perPage >= 999999) {
+            container.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+
+        // Previous Button
+        const prevDisabled = (currentPage <= 1);
+        html += `
+            <button onclick="goToPage(${currentPage - 1})" ${prevDisabled ? 'disabled' : ''} 
+                    class="px-2.5 py-1.5 rounded-lg border text-xs font-bold transition flex items-center gap-1 ${prevDisabled ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50' : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-100 cursor-pointer active:scale-95'}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Prev</span>
+            </button>
+        `;
+
+        // Page Number Buttons (Show max 5 numbered buttons with window around currentPage)
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        if (startPage > 1) {
+            html += `<button onclick="goToPage(1)" class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer">1</button>`;
+            if (startPage > 2) {
+                html += `<span class="px-1 text-slate-400 font-bold">...</span>`;
+            }
+        }
+
+        for (let p = startPage; p <= endPage; p++) {
+            const isActive = (p === currentPage);
+            html += `
+                <button onclick="goToPage(${p})" 
+                        class="w-8 h-8 rounded-lg text-xs font-bold transition cursor-pointer ${isActive ? 'bg-[#0B2E22] text-white shadow-xs' : 'border border-slate-200 bg-white hover:bg-slate-100 text-slate-700'}">
+                    ${p}
+                </button>
+            `;
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                html += `<span class="px-1 text-slate-400 font-bold">...</span>`;
+            }
+            html += `<button onclick="goToPage(${totalPages})" class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer">${totalPages}</button>`;
+        }
+
+        // Next Button
+        const nextDisabled = (currentPage >= totalPages);
+        html += `
+            <button onclick="goToPage(${currentPage + 1})" ${nextDisabled ? 'disabled' : ''} 
+                    class="px-2.5 py-1.5 rounded-lg border text-xs font-bold transition flex items-center gap-1 ${nextDisabled ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50' : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-100 cursor-pointer active:scale-95'}">
+                <span>Next</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    // Select All Checkbox Handler
     function toggleSelectAllRows(mainCheckbox) {
         const checkboxes = document.querySelectorAll('.row-checkbox');
         checkboxes.forEach(cb => {
-            if (cb.closest('tr').style.display !== 'none') {
+            const row = cb.closest('tr');
+            if (row && row.style.display !== 'none') {
                 cb.checked = mainCheckbox.checked;
             }
         });
@@ -584,10 +724,10 @@ $metrics = [
         const countText = document.getElementById('selectedCount');
 
         if (selected.length > 0) {
-            bulkBar.classList.remove('hidden');
-            countText.textContent = `${selected.length} item(s) selected`;
+            bulkBar?.classList.remove('hidden');
+            if (countText) countText.textContent = `${selected.length} item(s) selected`;
         } else {
-            bulkBar.classList.add('hidden');
+            bulkBar?.classList.add('hidden');
         }
     }
 
@@ -598,7 +738,7 @@ $metrics = [
         updateBulkActionState();
     }
 
-    // 3. Official Print Handler (Prints All Filtered or Selected Reports)
+    // Official Print Handler (Prints All Filtered or Selected Reports)
     function printOfficialReports(onlySelected = false) {
         const selectedBoxes = Array.from(document.querySelectorAll('.row-checkbox:checked'));
         const allRows = Array.from(document.querySelectorAll('.report-row'));
@@ -609,7 +749,6 @@ $metrics = [
             return;
         }
 
-        // Determine mode: if onlySelected is explicitly true OR if checkboxes are currently selected
         const isSelectedMode = onlySelected || selectedBoxes.length > 0;
 
         if (isSelectedMode) {
@@ -621,52 +760,80 @@ $metrics = [
             allRows.forEach(row => {
                 const cb = row.querySelector('.row-checkbox');
                 if (cb && cb.checked) {
+                    row.style.display = '';
                     row.classList.remove('unselected-for-print');
                 } else {
+                    row.style.display = 'none';
                     row.classList.add('unselected-for-print');
                 }
             });
         } else {
-            const visibleRows = allRows.filter(r => r.style.display !== 'none');
+            // Print all filtered records regardless of current page
+            const input = (document.getElementById('liveSearchInput')?.value || '').toLowerCase().trim();
+            const typeFilter = document.getElementById('reporterTypeFilter')?.value || '';
+            
+            let count = 0;
+            allRows.forEach(row => {
+                const text = (row.getAttribute('data-[#0b2e22]') || row.textContent).toLowerCase();
+                const repType = row.getAttribute('data-reporter-type') || '';
+                const matches = (!input || text.includes(input)) && (!typeFilter || repType === typeFilter);
+                if (matches) {
+                    row.style.display = '';
+                    row.classList.remove('unselected-for-print');
+                    count++;
+                } else {
+                    row.style.display = 'none';
+                    row.classList.add('unselected-for-print');
+                }
+            });
+
             if (scopeLabel) {
-                scopeLabel.textContent = `All Filtered Records (${visibleRows.length} item${visibleRows.length > 1 ? 's' : ''})`;
+                scopeLabel.textContent = `All Filtered Records (${count} item${count > 1 ? 's' : ''})`;
             }
             document.body.classList.remove('print-selected-mode');
-            allRows.forEach(row => row.classList.remove('unselected-for-print'));
         }
 
         // Trigger browser print
         window.print();
 
-        // Restore default layout state after print dialog
+        // Restore pagination view after print
         setTimeout(() => {
             document.body.classList.remove('print-selected-mode');
             allRows.forEach(row => row.classList.remove('unselected-for-print'));
+            applyPagination();
         }, 800);
     }
 
-    // 4. Instant Client-Side CSV Exporter
+    // CSV Exporter for All Filtered Records
     function exportTableToCSV() {
-        const rows = document.querySelectorAll('#reportsDataTable tr');
-        let csv = [];
+        const input = (document.getElementById('liveSearchInput')?.value || '').toLowerCase().trim();
+        const typeFilter = document.getElementById('reporterTypeFilter')?.value || '';
+        const allRows = Array.from(document.querySelectorAll('.report-row'));
         
-        rows.forEach((row, idx) => {
-            if (row.style.display === 'none') return;
-            const cols = row.querySelectorAll('th, td');
-            let rowData = [];
-            
-            cols.forEach((col, cIdx) => {
-                // Skip checkbox and actions column
-                if (cIdx === 0 || cIdx === cols.length - 1) return;
-                let text = col.innerText.replace(/(\r\n|\n|\r)/gm, ' ').replace(/"/g, '""').trim();
-                rowData.push(`"${text}"`);
-            });
-            if (rowData.length > 0) {
-                csv.push(rowData.join(','));
+        let csv = [['Report ID', 'Submission Date', 'Reporter Name', 'Reporter Type', 'Category', 'Quantity', 'Purok', 'Status']];
+        
+        allRows.forEach(row => {
+            const text = (row.getAttribute('data-[#0b2e22]') || row.textContent).toLowerCase();
+            const repType = row.getAttribute('data-reporter-type') || '';
+            const matches = (!input || text.includes(input)) && (!typeFilter || repType === typeFilter);
+            if (!matches) return;
+
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 8) {
+                csv.push([
+                    `"${cells[1].innerText.trim()}"`,
+                    `"${cells[2].innerText.replace(/\n/g, ' ').trim()}"`,
+                    `"${cells[3].innerText.replace(/\n/g, ' ').trim()}"`,
+                    `"${row.getAttribute('data-reporter-type') || 'resident'}"`,
+                    `"${cells[4].innerText.trim()}"`,
+                    `"${cells[5].innerText.trim()}"`,
+                    `"${cells[6].innerText.trim()}"`,
+                    `"${cells[7].innerText.trim()}"`
+                ]);
             }
         });
 
-        const csvString = csv.join('\n');
+        const csvString = csv.map(e => e.join(',')).join('\n');
         const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -677,7 +844,7 @@ $metrics = [
         document.body.removeChild(a);
     }
 
-    // 5. Export Selected Rows to CSV
+    // Export Selected Rows to CSV
     function exportSelectedRows() {
         const selected = document.querySelectorAll('.row-checkbox:checked');
         if (selected.length === 0) return;
@@ -711,6 +878,11 @@ $metrics = [
         a.click();
         document.body.removeChild(a);
     }
+
+    // Initialize pagination on DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+        applyPagination();
+    });
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

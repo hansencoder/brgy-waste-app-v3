@@ -1,0 +1,31 @@
+{
+  "name": "brgy-waste-app-v3",
+  "version": "1.0.0",
+  "description": "Barangay Dulong Bayan Waste Management and Incident Reporting System",
+  "main": "public/index.php",
+  "scripts": {
+    "start": "php -S 0.0.0.0:8000 -t public",
+    "dev": "php -S localhost:8000 -t public",
+    "serve": "php -S localhost:8000 -t public",
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "build": "echo \"Build complete.\""
+  },
+  "keywords": [
+    "barangay",
+    "waste-management",
+    "gis",
+    "php",
+    "incident-reporting",
+    "philippines"
+  ],
+  "author": "Hans Flores",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hansencoder/brgy-waste-app-v3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hansencoder/brgy-waste-app-v3/issues"
+  },
+  "homepage": "https://github.com/hansencoder/brgy-waste-app-v3#readme"
+}

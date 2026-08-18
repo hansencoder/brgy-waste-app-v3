@@ -401,6 +401,7 @@ $metrics = [
                                             <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAllRows(this)" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
                                         </th>
                                         <th class="py-3.5 px-4">Report ID</th>
+                                        <th class="py-3.5 px-3">Evidence</th>
                                         <th class="py-3.5 px-4">Submission Date</th>
                                         <th class="py-3.5 px-4">Reporter Info</th>
                                         <th class="py-3.5 px-4">Waste Category</th>
@@ -420,13 +421,14 @@ $metrics = [
                                             $purokName = htmlspecialchars($report['purok'] ?? 'N/A');
                                             $catName = htmlspecialchars($report['waste_category'] ?? 'General Waste');
                                             $qtyName = htmlspecialchars($report['estimated_quantity'] ?? 'N/A');
+                                            $photoCount = (int)($report['photo_count'] ?? 1);
                                         ?>
                                         <tr class="report-row hover:bg-slate-50/70 transition" 
                                             data-[#0b2e22]="<?php echo strtolower($reportId . ' ' . $reporterName . ' ' . $catName . ' ' . $purokName . ' ' . $report['status']); ?>"
                                             data-reporter-type="<?php echo $isGuest ? 'guest' : 'resident'; ?>">
                                             
                                             <!-- Checkbox -->
-                                            <td class="py-4 px-4 text-center no-print">
+                                            <td class="py-3.5 px-4 text-center no-print">
                                                 <input type="checkbox" class="row-checkbox rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer" 
                                                        value="<?php echo $report['id']; ?>"
                                                        data-id="<?php echo htmlspecialchars($reportId); ?>"
@@ -436,20 +438,36 @@ $metrics = [
                                             </td>
 
                                             <!-- Tracking ID -->
-                                            <td class="py-4 px-4 font-mono font-bold text-slate-900">
+                                            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">
                                                 <a href="<?php echo app_url('admin/viewReport/' . ($report['id'])); ?>" class="hover:text-emerald-600 transition">
                                                     <?php echo htmlspecialchars($reportId); ?>
                                                 </a>
                                             </td>
 
+                                            <!-- Evidence Photo Preview -->
+                                            <td class="py-3.5 px-3">
+                                                <?php if (!empty($report['photo_path'])): ?>
+                                                    <a href="<?php echo app_url('admin/viewReport/' . ($report['id'])); ?>" class="relative block w-10 h-10 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 group shadow-2xs" title="View <?php echo $photoCount; ?> attached photo(s)">
+                                                        <img src="<?php echo htmlspecialchars(format_asset_url($report['photo_path'])); ?>" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition duration-200">
+                                                        <?php if ($photoCount > 1): ?>
+                                                            <span class="absolute bottom-0 right-0 px-1 py-0.2 rounded-tl-md bg-black/80 text-white font-mono text-[8px] font-bold">+<?php echo ($photoCount - 1); ?></span>
+                                                        <?php endif; ?>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <div class="w-10 h-10 rounded-lg border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </td>
+
                                             <!-- Submission Date -->
-                                            <td class="py-4 px-4 text-slate-600 font-mono">
+                                            <td class="py-3.5 px-4 text-slate-600 font-mono">
                                                 <div><?php echo date('M d, Y', strtotime($report['submission_date'])); ?></div>
                                                 <div class="text-[10px] text-slate-400 font-sans"><?php echo date('g:i A', strtotime($report['submission_date'])); ?></div>
                                             </td>
 
                                             <!-- Reporter Info -->
-                                            <td class="py-4 px-4">
+                                            <td class="py-3.5 px-4">
                                                 <div class="font-bold text-slate-800 flex items-center gap-1.5">
                                                     <span><?php echo $reporterName; ?></span>
                                                     <?php if ($isGuest): ?>
@@ -461,31 +479,31 @@ $metrics = [
                                             </td>
 
                                             <!-- Waste Category -->
-                                            <td class="py-4 px-4 text-slate-700 font-semibold">
+                                            <td class="py-3.5 px-4 text-slate-700 font-semibold">
                                                 <?php echo $catName; ?>
                                             </td>
 
                                             <!-- Quantity -->
-                                            <td class="py-4 px-4 text-slate-600 font-medium">
+                                            <td class="py-3.5 px-4 text-slate-600 font-medium">
                                                 <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-mono">
                                                     <?php echo $qtyName; ?>
                                                 </span>
                                             </td>
 
                                             <!-- Purok / Zone -->
-                                            <td class="py-4 px-4 text-slate-700 font-medium">
+                                            <td class="py-3.5 px-4 text-slate-700 font-medium">
                                                 <?php echo $purokName; ?>
                                             </td>
 
                                              <!-- Status Badge -->
-                                            <td class="py-4 px-4">
+                                            <td class="py-3.5 px-4">
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border <?php echo $badge['bg']; ?>">
                                                     <?php echo $badge['label']; ?>
                                                 </span>
                                             </td>
 
                                             <!-- Action Button -->
-                                            <td class="py-4 px-4 text-right no-print">
+                                            <td class="py-3.5 px-4 text-right no-print">
                                                 <a href="<?php echo app_url('admin/viewReport/' . ($report['id'])); ?>" 
                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 transition">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -496,7 +514,7 @@ $metrics = [
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr id="noRecordsRow">
-                                            <td colspan="9" class="py-12 text-center text-slate-400 font-medium">
+                                            <td colspan="10" class="py-12 text-center text-slate-400 font-medium">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto text-slate-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                 No waste report records found matching your filters.
                                             </td>

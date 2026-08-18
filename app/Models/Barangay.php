@@ -164,4 +164,72 @@ class Barangay {
             'puroks' => $puroks
         ];
     }
+
+    /**
+     * Check if given GPS coordinates fall strictly inside official Barangay boundary
+     */
+    public function isPointInsideBoundary($latitude, $longitude, $barangayId = 1) {
+        $lat = (float)$latitude;
+        $lng = (float)$longitude;
+
+        if ($lat == 0 || $lng == 0) {
+            return false;
+        }
+
+        try {
+            $this->db->query("
+                SELECT ST_Contains(polygon_geometry, POINT(:lng, :lat)) as is_inside
+                FROM barangay_boundaries
+                WHERE barangay_id = :id AND polygon_geometry IS NOT NULL
+                ORDER BY boundary_id DESC
+                LIMIT 1
+            ");
+            $this->db->bind(':lng', $lng);
+            $this->db->bind(':lat', $lat);
+            $this->db->bind(':id', $barangayId);
+            $row = $this->db->single();
+
+            if ($row && isset($row['is_inside'])) {
+                return (int)$row['is_inside'] === 1;
+            }
+        } catch (Exception $e) {
+            // fallback to PHP raycasting below
+        }
+
+        // Raycasting fallback with GeoJSON coordinates
+        $boundary = $this->getBoundary($barangayId);
+        if (!empty($boundary['polygon_geometry'])) {
+            $geo = is_string($boundary['polygon_geometry']) ? json_decode($boundary['polygon_geometry'], true) : $boundary['polygon_geometry'];
+            if (!empty($geo['coordinates'][0])) {
+                return $this->pointInPolygon([$lng, $lat], $geo['coordinates'][0]);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Ray-casting point-in-polygon algorithm
+     * $point = [$lng, $lat], $polygon = [[$lng1, $lat1], ...]
+     */
+    private function pointInPolygon($point, $polygon) {
+        $x = $point[0];
+        $y = $point[1];
+        $inside = false;
+        $numPoints = count($polygon);
+
+        for ($i = 0, $j = $numPoints - 1; $i < $numPoints; $j = $i++) {
+            $xi = $polygon[$i][0];
+            $yi = $polygon[$i][1];
+            $xj = $polygon[$j][0];
+            $yj = $polygon[$j][1];
+
+            $intersect = (($yi > $y) != ($yj > $y)) && ($x < ($xj - $xi) * ($y - $yi) / ($yj - $yi) + $xi);
+            if ($intersect) {
+                $inside = !$inside;
+            }
+        }
+
+        return $inside;
+    }
 }

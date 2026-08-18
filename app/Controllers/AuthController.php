@@ -487,10 +487,14 @@ class AuthController extends Controller {
             if (!empty($email)) {
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $data['error'] = "Invalid email address format.";
+                    $data['field_error'] = 'email';
+                    $data['field_error_message'] = 'Invalid email address format.';
                     return $this->view('auth/register', $data);
                 }
                 if ($this->userModel->findUserByEmail($email)) {
-                    $data['error'] = "This email address is already registered.";
+                    $data['error'] = "This email address is already in use. Please sign in or use another email.";
+                    $data['field_error'] = 'email';
+                    $data['field_error_message'] = 'This email is already in use.';
                     return $this->view('auth/register', $data);
                 }
             }
@@ -498,10 +502,14 @@ class AuthController extends Controller {
             if (!empty($phone_number)) {
                 if (!preg_match("/^09\d{9}$/", $phone_number)) {
                     $data['error'] = "Invalid PH mobile number format. Standard format: 09XXXXXXXXX.";
+                    $data['field_error'] = 'phone_number';
+                    $data['field_error_message'] = 'Invalid mobile number format (e.g. 09XXXXXXXXX).';
                     return $this->view('auth/register', $data);
                 }
                 if ($this->userModel->findUserByPhone($phone_number)) {
-                    $data['error'] = "This phone number is already registered.";
+                    $data['error'] = "This phone number is already in use. Please sign in or use another phone number.";
+                    $data['field_error'] = 'phone_number';
+                    $data['field_error_message'] = 'This phone number is already in use.';
                     return $this->view('auth/register', $data);
                 }
             }
@@ -510,14 +518,20 @@ class AuthController extends Controller {
             $username = trim($post['username'] ?? '');
             if (empty($username)) {
                 $data['error'] = "Username is required.";
+                $data['field_error'] = 'username';
+                $data['field_error_message'] = 'Username is required.';
                 return $this->view('auth/register', $data);
             }
             if (!preg_match('/^[a-zA-Z0-9_]{3,30}$/', $username)) {
                 $data['error'] = "Username must be 3-30 characters and contain only letters, numbers, and underscores.";
+                $data['field_error'] = 'username';
+                $data['field_error_message'] = 'Username must be 3-30 letters, numbers, or underscores.';
                 return $this->view('auth/register', $data);
             }
             if ($this->userModel->findUserByUsername($username)) {
-                $data['error'] = "Username is already taken.";
+                $data['error'] = "This username is already in use. Please choose another username.";
+                $data['field_error'] = 'username';
+                $data['field_error_message'] = 'This username is already in use.';
                 return $this->view('auth/register', $data);
             }
 

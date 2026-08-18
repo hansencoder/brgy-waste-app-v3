@@ -29,7 +29,7 @@ class SmsHelper
             'verified'    => "Good news! Your waste report {$trackingNumber} has been verified and will be actioned.",
             'in_progress' => "Update: Your waste report {$trackingNumber} is now being actively addressed by our team.",
             'resolved'    => "Your waste report {$trackingNumber} has been resolved. Thank you for helping keep our barangay clean!",
-            'rejected'    => "Your waste report {$trackingNumber} could not be processed. Track your report at: /index.php?url=guest/track"
+            'rejected'    => "Your waste report {$trackingNumber} could not be processed due to invalid or out-of-boundary details."
         ];
 
         $message = $statusMessages[$status] ?? "Your waste report {$trackingNumber} status has been updated to: {$status}.";
@@ -174,10 +174,25 @@ class SmsHelper
 
         if ($httpCode >= 200 && $httpCode < 300) {
             $json = json_decode($response, true);
-            if (isset($json['status']) && ($json['status'] == 200 || $json['status'] === 'success')) {
-                return true;
-            }
-            if (isset($json['message']) && stripos($json['message'], 'successfully') !== false) {
+            if (is_array($json)) {
+                if (isset($json['status']) && ($json['status'] == 200 || $json['status'] === 'success')) {
+                    return true;
+                }
+                if (!empty($json['success'])) {
+                    return true;
+                }
+                if (isset($json['message'])) {
+                    if (is_string($json['message']) && stripos($json['message'], 'successfully') !== false) {
+                        return true;
+                    }
+                    if (is_array($json['message'])) {
+                        $msgStr = json_encode($json['message']);
+                        if ($msgStr && stripos($msgStr, 'successfully') !== false) {
+                            return true;
+                        }
+                    }
+                }
+            } elseif (is_string($response) && stripos($response, 'successfully') !== false) {
                 return true;
             }
         }

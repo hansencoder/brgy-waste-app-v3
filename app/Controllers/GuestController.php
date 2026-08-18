@@ -39,28 +39,38 @@ class GuestController extends Controller {
     }
 
     // ============================================================
-    // HELPER: SMS OTP Rate Limit Check
+    // HELPER: OTP Rate Limit & Cooldown Check
     // ============================================================
-    private function canSendSmsOtp($phone, $ip) {
-        // 60-second cooldown on last unused token
-        $this->db->query('SELECT UNIX_TIMESTAMP(created_at) as ts FROM guest_otp_tokens
-                          WHERE phone = :phone AND is_used = 0
+    private function canSendOtp($contact, $ip) {
+        // 60-second cooldown on last unused token using database timestamp
+        $this->db->query('SELECT TIMESTAMPDIFF(SECOND, created_at, NOW()) as elapsed 
+                          FROM guest_otp_tokens
+                          WHERE phone = :contact AND is_used = 0
                           ORDER BY created_at DESC LIMIT 1');
-        $this->db->bind(':phone', $phone);
+        $this->db->bind(':contact', $contact);
         $row = $this->db->single();
-        if ($row) {
-            $secondsLeft = max(0, 60 - (time() - (int)$row['ts']));
-            if ($secondsLeft > 0) {
-                return ['ok' => false, 'reason' => 'cooldown', 'retry_after' => $secondsLeft];
+        if ($row && isset($row['elapsed'])) {
+            $elapsed = (int)$row['elapsed'];
+            if ($elapsed >= 0 && $elapsed < 60) {
+                return ['ok' => false, 'reason' => 'cooldown', 'retry_after' => (60 - $elapsed)];
             }
         }
 
-        // Hourly limit: max 3 per phone per hour
+        // Hourly limit: max 10 per contact per hour
         $this->db->query('SELECT SUM(send_count) as cnt FROM guest_sms_rate_limits
-                          WHERE phone = :phone AND window_start >= DATE_SUB(NOW(), INTERVAL 1 HOUR)');
-        $this->db->bind(':phone', $phone);
+                          WHERE phone = :contact AND window_start >= DATE_SUB(NOW(), INTERVAL 1 HOUR)');
+        $this->db->bind(':contact', $contact);
         $r = $this->db->single();
-        if ($r && $r['cnt'] >= 3) {
+        if ($r && (int)$r['cnt'] >= 10) {
+            return ['ok' => false, 'reason' => 'hourly_limit'];
+        }
+
+        // IP hourly limit: max 30 per IP per hour
+        $this->db->query('SELECT SUM(send_count) as cnt FROM guest_sms_rate_limits
+                          WHERE ip = :ip AND window_start >= DATE_SUB(NOW(), INTERVAL 1 HOUR)');
+        $this->db->bind(':ip', $ip);
+        $r2 = $this->db->single();
+        if ($r2 && (int)$r2['cnt'] >= 30) {
             return ['ok' => false, 'reason' => 'hourly_limit'];
         }
 
@@ -68,14 +78,14 @@ class GuestController extends Controller {
     }
 
     // ============================================================
-    // HELPER: Record SMS rate
+    // HELPER: Record OTP rate
     // ============================================================
-    private function recordSmsRate($phone, $ip) {
+    private function recordOtpRate($contact, $ip) {
         $windowStart = date('Y-m-d H:00:00');
         $this->db->query('INSERT INTO guest_sms_rate_limits (phone, ip, window_start, send_count)
-                          VALUES (:phone, :ip, :ws, 1)
+                          VALUES (:contact, :ip, :ws, 1)
                           ON DUPLICATE KEY UPDATE send_count = send_count + 1');
-        $this->db->bind(':phone', $phone);
+        $this->db->bind(':contact', $contact);
         $this->db->bind(':ip', $ip);
         $this->db->bind(':ws', $windowStart);
         $this->db->execute();
@@ -116,23 +126,25 @@ class GuestController extends Controller {
     }
 
     // ============================================================
-    // STEP 2: Mobile Number & Name Entry
+    // STEP 2: Contact (Phone / Email) & Name Entry
     // ============================================================
     public function phone() {
         $barangayModel = $this->model('Barangay');
         $barangay = $barangayModel->getInfo();
         $data = [
-            'barangay'   => $barangay,
-            'error'      => '',
-            'success'    => '',
-            'guest_name' => $_SESSION['guest_name'] ?? '',
-            'phone'      => $_SESSION['guest_phone'] ?? '',
+            'barangay'                 => $barangay,
+            'error'                    => '',
+            'success'                  => '',
+            'guest_name'               => $_SESSION['guest_name'] ?? '',
+            'contact'                  => $_SESSION['guest_contact'] ?? ($_SESSION['guest_phone'] ?? ''),
+            'channel'                  => $_SESSION['guest_channel'] ?? 'phone',
+            'is_registered_resident'   => false,
         ];
         $this->view('guest/phone', $data);
     }
 
     // ============================================================
-    // STEP 3: Send OTP via SMS
+    // STEP 3: Send OTP via SMS or Email
     // ============================================================
     public function sendOtp() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -140,83 +152,165 @@ class GuestController extends Controller {
             exit;
         }
 
-        $phone = trim($_POST['phone'] ?? '');
-        $name  = trim($_POST['guest_name'] ?? '');
-        $ip    = get_client_ip();
+        $channel = trim($_POST['channel'] ?? 'phone'); // 'phone' or 'email'
+        if ($channel === 'email') {
+            $contact = trim($_POST['email'] ?? ($_POST['contact'] ?? ''));
+        } else {
+            $contact = trim($_POST['phone'] ?? ($_POST['contact'] ?? ''));
+        }
+        $name    = trim($_POST['guest_name'] ?? '');
+        $ip      = get_client_ip();
 
         $barangayModel = $this->model('Barangay');
         $barangay = $barangayModel->getInfo();
 
-        // Validate PH mobile format
-        if (!preg_match('/^09\d{9}$/', $phone)) {
-            $this->view('guest/phone', [
-                'barangay'   => $barangay,
-                'error'      => 'Invalid phone number. Please use the format 09XXXXXXXXX.',
-                'guest_name' => $name,
-                'phone'      => $phone
-            ]);
-            return;
+        if ($channel === 'email' || filter_var($contact, FILTER_VALIDATE_EMAIL)) {
+            $channel = 'email';
+            $contact = strtolower(trim($contact));
+            if (!filter_var($contact, FILTER_VALIDATE_EMAIL)) {
+                $this->view('guest/phone', [
+                    'barangay'                 => $barangay,
+                    'error'                    => 'Please enter a valid email address.',
+                    'field_error'              => 'email',
+                    'field_error_message'      => 'Invalid email address format.',
+                    'guest_name'               => $name,
+                    'contact'                  => $contact,
+                    'channel'                  => 'email',
+                    'is_registered_resident'   => false
+                ]);
+                return;
+            }
+
+            // Check if email is already in use by a resident account
+            $userModel = $this->model('User');
+            $existingUser = $userModel->findUserByEmail($contact);
+
+            if ($existingUser) {
+                $this->view('guest/phone', [
+                    'barangay'                 => $barangay,
+                    'error'                    => 'This email is already in use by a registered resident. Please sign in to your resident account to submit reports.',
+                    'field_error'              => 'email',
+                    'field_error_message'      => 'This email is already in use.',
+                    'guest_name'               => $name,
+                    'contact'                  => $contact,
+                    'channel'                  => 'email',
+                    'is_registered_resident'   => true
+                ]);
+                return;
+            }
+        } else {
+            $channel = 'phone';
+            // Validate PH mobile format (09XXXXXXXXX)
+            if (!preg_match('/^09\d{9}$/', $contact)) {
+                $this->view('guest/phone', [
+                    'barangay'                 => $barangay,
+                    'error'                    => 'Invalid mobile number. Please use the format 09XXXXXXXXX.',
+                    'field_error'              => 'phone',
+                    'field_error_message'      => 'Invalid mobile number format (e.g. 09XXXXXXXXX).',
+                    'guest_name'               => $name,
+                    'contact'                  => $contact,
+                    'channel'                  => 'phone',
+                    'is_registered_resident'   => false
+                ]);
+                return;
+            }
+
+            // Check if mobile number is already in use by a resident account
+            $userModel = $this->model('User');
+            $existingUser = $userModel->findUserByPhone($contact);
+
+            if ($existingUser) {
+                $this->view('guest/phone', [
+                    'barangay'                 => $barangay,
+                    'error'                    => 'This mobile number is already in use by a registered resident. Please sign in to your resident account to submit reports.',
+                    'field_error'              => 'phone',
+                    'field_error_message'      => 'This mobile number is already in use.',
+                    'guest_name'               => $name,
+                    'contact'                  => $contact,
+                    'channel'                  => 'phone',
+                    'is_registered_resident'   => true
+                ]);
+                return;
+            }
         }
 
-        // Check report submission limit (3 reports per hour)
-        if (!$this->reportModel->canGuestSubmit($phone)) {
+        // Check report submission limit (3 reports per hour per contact)
+        if (!$this->reportModel->canGuestSubmit($contact)) {
             $this->view('guest/phone', [
-                'barangay'   => $barangay,
-                'error'      => 'You have reached the submission limit (3 reports per hour). Please try again later.',
-                'guest_name' => $name,
-                'phone'      => $phone
+                'barangay'                 => $barangay,
+                'error'                    => 'You have reached the submission limit (3 reports per hour). Please try again later.',
+                'guest_name'               => $name,
+                'contact'                  => $contact,
+                'channel'                  => $channel,
+                'is_registered_resident'   => false
             ]);
             return;
         }
 
         // Rate limit check
-        $can = $this->canSendSmsOtp($phone, $ip);
+        $can = $this->canSendOtp($contact, $ip);
         if (!$can['ok']) {
             if ($can['reason'] === 'cooldown') {
                 $wait = $can['retry_after'];
                 $this->view('guest/phone', [
-                    'barangay'   => $barangay,
-                    'error'      => "Please wait {$wait} seconds before requesting a new code.",
-                    'guest_name' => $name,
-                    'phone'      => $phone
+                    'barangay'                 => $barangay,
+                    'error'                    => "Please wait {$wait} seconds before requesting a new code.",
+                    'guest_name'               => $name,
+                    'contact'                  => $contact,
+                    'channel'                  => $channel,
+                    'is_registered_resident'   => false
                 ]);
             } else {
                 $this->view('guest/phone', [
-                    'barangay'   => $barangay,
-                    'error'      => 'Too many OTP requests. Please try again in an hour.',
-                    'guest_name' => $name,
-                    'phone'      => $phone
+                    'barangay'                 => $barangay,
+                    'error'                    => 'Too many OTP requests. Please try again in an hour.',
+                    'guest_name'               => $name,
+                    'contact'                  => $contact,
+                    'channel'                  => $channel,
+                    'is_registered_resident'   => false
                 ]);
             }
             return;
         }
 
-        // Invalidate previous OTPs for this phone
-        $this->db->query('UPDATE guest_otp_tokens SET is_used = 1 WHERE phone = :phone AND is_used = 0');
-        $this->db->bind(':phone', $phone);
+        // Invalidate previous OTPs for this contact
+        $this->db->query('UPDATE guest_otp_tokens SET is_used = 1 WHERE phone = :contact AND is_used = 0');
+        $this->db->bind(':contact', $contact);
         $this->db->execute();
 
         // Generate & save OTP
         $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $this->db->query('INSERT INTO guest_otp_tokens (phone, token, expires_at, ip)
-                          VALUES (:phone, :token, DATE_ADD(NOW(), INTERVAL 5 MINUTE), :ip)');
-        $this->db->bind(':phone', $phone);
+                          VALUES (:contact, :token, DATE_ADD(NOW(), INTERVAL 5 MINUTE), :ip)');
+        $this->db->bind(':contact', $contact);
         $this->db->bind(':token', $otp);
         $this->db->bind(':ip', $ip);
         $this->db->execute();
 
-        // Send SMS OTP
-        require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
-        try {
-            SmsHelper::sendOtp($phone, $otp, $name);
-            $this->recordSmsRate($phone, $ip);
-        } catch (Exception $e) {
-            error_log('[GuestController] SMS send failed: ' . $e->getMessage());
+        // Send OTP via chosen channel
+        if ($channel === 'email') {
+            require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
+            try {
+                OtpMailer::sendOtpEmail($contact, $otp, $name ?: 'Guest Citizen');
+                $this->recordOtpRate($contact, $ip);
+            } catch (Exception $e) {
+                error_log('[GuestController] Email OTP send failed: ' . $e->getMessage());
+            }
+        } else {
+            require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
+            try {
+                SmsHelper::sendOtp($contact, $otp, $name);
+                $this->recordOtpRate($contact, $ip);
+            } catch (Exception $e) {
+                error_log('[GuestController] SMS send failed: ' . $e->getMessage());
+            }
         }
 
         // Store session for OTP verification step
-        $_SESSION['guest_phone'] = $phone;
-        $_SESSION['guest_name']  = $name;
+        $_SESSION['guest_contact'] = $contact;
+        $_SESSION['guest_channel'] = $channel;
+        $_SESSION['guest_phone']   = $contact; // backward compatibility
+        $_SESSION['guest_name']    = $name;
 
         header('Location: ' . app_url('index.php?url=guest/verifyOtp'));
         exit;
@@ -226,12 +320,13 @@ class GuestController extends Controller {
     // STEP 4: OTP Verification Page
     // ============================================================
     public function verifyOtp() {
-        if (!isset($_SESSION['guest_phone'])) {
+        $contact = $_SESSION['guest_contact'] ?? ($_SESSION['guest_phone'] ?? null);
+        $channel = $_SESSION['guest_channel'] ?? 'phone';
+
+        if (!$contact) {
             header('Location: ' . app_url('index.php?url=guest/phone'));
             exit;
         }
-
-        $phone = $_SESSION['guest_phone'];
 
         $barangayModel = $this->model('Barangay');
         $barangay = $barangayModel->getInfo();
@@ -239,9 +334,9 @@ class GuestController extends Controller {
         // Query token metadata for exact countdown timers
         $this->db->query('SELECT UNIX_TIMESTAMP(created_at) as created_ts, UNIX_TIMESTAMP(expires_at) as expires_ts
                           FROM guest_otp_tokens
-                          WHERE phone = :phone AND is_used = 0
+                          WHERE phone = :contact AND is_used = 0
                           ORDER BY created_at DESC LIMIT 1');
-        $this->db->bind(':phone', $phone);
+        $this->db->bind(':contact', $contact);
         $tokenMeta = $this->db->single();
 
         $now = time();
@@ -253,31 +348,33 @@ class GuestController extends Controller {
             $resendCooldown = max(0, 60 - ($now - (int)$tokenMeta['created_ts']));
         }
 
+        $destinationLabel = ($channel === 'email') ? 'email address' : 'mobile number';
         $data = [
             'barangay'                => $barangay,
             'error'                   => !empty($_GET['resend_error']) ? htmlspecialchars($_GET['resend_error'], ENT_QUOTES, 'UTF-8') : '',
-            'success'                 => !empty($_GET['resent']) ? 'A new 6-digit verification code has been sent to your phone.' : '',
-            'phone'                   => $phone,
+            'success'                 => !empty($_GET['resent']) ? "A new 6-digit verification code has been sent to your {$destinationLabel}." : '',
+            'contact'                 => $contact,
+            'phone'                   => $contact,
+            'channel'                 => $channel,
             'expires_in_seconds'      => $expiresIn,
             'resend_cooldown_seconds' => $resendCooldown,
         ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $otp   = trim($_POST['otp'] ?? '');
-            $phone = $_SESSION['guest_phone'];
+            $otp = trim($_POST['otp'] ?? '');
 
             // Validate OTP
             $this->db->query('SELECT * FROM guest_otp_tokens
-                              WHERE phone = :phone AND token = :token
+                              WHERE phone = :contact AND token = :token
                                 AND is_used = 0 AND expires_at >= NOW()
                               ORDER BY created_at DESC LIMIT 1');
-            $this->db->bind(':phone', $phone);
+            $this->db->bind(':contact', $contact);
             $this->db->bind(':token', $otp);
             $tokenRow = $this->db->single();
 
             if ($tokenRow) {
-                // Check report submission limit (3 reports per hour)
-                if (!$this->reportModel->canGuestSubmit($phone)) {
+                // Check report submission limit
+                if (!$this->reportModel->canGuestSubmit($contact)) {
                     $data['error'] = 'You have reached the submission limit (3 reports per hour). Please try again later.';
                     $this->view('guest/verify_otp', $data);
                     return;
@@ -289,17 +386,18 @@ class GuestController extends Controller {
                 $this->db->execute();
 
                 // Set session verified
-                $_SESSION['guest_verified_phone'] = $phone;
-                $_SESSION['guest_verified_at']    = time();
+                $_SESSION['guest_verified_contact'] = $contact;
+                $_SESSION['guest_verified_phone']   = $contact;
+                $_SESSION['guest_verified_at']      = time();
 
                 header('Location: ' . app_url('index.php?url=guest/reportForm'));
                 exit;
             } else {
                 // Increment attempts
                 $this->db->query('SELECT id, attempts FROM guest_otp_tokens
-                                  WHERE phone = :phone AND is_used = 0
+                                  WHERE phone = :contact AND is_used = 0
                                   ORDER BY created_at DESC LIMIT 1');
-                $this->db->bind(':phone', $phone);
+                $this->db->bind(':contact', $contact);
                 $r = $this->db->single();
                 if ($r) {
                     $attempts = (int)$r['attempts'] + 1;
@@ -329,15 +427,17 @@ class GuestController extends Controller {
     // STEP 4: Resend OTP
     // ============================================================
     public function resendOtp() {
-        if (!isset($_SESSION['guest_phone'])) {
+        $contact = $_SESSION['guest_contact'] ?? ($_SESSION['guest_phone'] ?? null);
+        $channel = $_SESSION['guest_channel'] ?? 'phone';
+        $name    = $_SESSION['guest_name'] ?? '';
+        $ip      = get_client_ip();
+
+        if (!$contact) {
             header('Location: ' . app_url('index.php?url=guest'));
             exit;
         }
-        $phone = $_SESSION['guest_phone'];
-        $name  = $_SESSION['guest_name'] ?? '';
-        $ip    = get_client_ip();
 
-        $can = $this->canSendSmsOtp($phone, $ip);
+        $can = $this->canSendOtp($contact, $ip);
         if (!$can['ok'] && $can['reason'] === 'cooldown') {
             $wait = $can['retry_after'];
             header('Location: ' . app_url('index.php?url=guest/verifyOtp&resend_error=' . urlencode("Wait {$wait}s before resending.")));
@@ -345,22 +445,28 @@ class GuestController extends Controller {
         }
 
         // Invalidate previous
-        $this->db->query('UPDATE guest_otp_tokens SET is_used = 1 WHERE phone = :phone AND is_used = 0');
-        $this->db->bind(':phone', $phone);
+        $this->db->query('UPDATE guest_otp_tokens SET is_used = 1 WHERE phone = :contact AND is_used = 0');
+        $this->db->bind(':contact', $contact);
         $this->db->execute();
 
         // New OTP
         $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $this->db->query('INSERT INTO guest_otp_tokens (phone, token, expires_at, ip)
-                          VALUES (:phone, :token, DATE_ADD(NOW(), INTERVAL 5 MINUTE), :ip)');
-        $this->db->bind(':phone', $phone);
+                          VALUES (:contact, :token, DATE_ADD(NOW(), INTERVAL 5 MINUTE), :ip)');
+        $this->db->bind(':contact', $contact);
         $this->db->bind(':token', $otp);
         $this->db->bind(':ip', $ip);
         $this->db->execute();
 
-        require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
-        SmsHelper::sendOtp($phone, $otp, $name);
-        $this->recordSmsRate($phone, $ip);
+        if ($channel === 'email') {
+            require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
+            OtpMailer::sendOtpEmail($contact, $otp, $name ?: 'Guest Citizen');
+            $this->recordOtpRate($contact, $ip);
+        } else {
+            require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
+            SmsHelper::sendOtp($contact, $otp, $name);
+            $this->recordOtpRate($contact, $ip);
+        }
 
         header('Location: ' . app_url('index.php?url=guest/verifyOtp&resent=1'));
         exit;
@@ -375,19 +481,21 @@ class GuestController extends Controller {
             exit;
         }
 
-        $phone       = $_SESSION['guest_verified_phone'];
+        $contact     = $_SESSION['guest_verified_phone'];
         $dropdowns   = $this->getFormDropdowns();
-        $reportCount = $this->reportModel->getGuestReportCount($phone);
-        $hourlyCount = $this->reportModel->getGuestHourlyReportCount($phone);
+        $reportCount = $this->reportModel->getGuestReportCount($contact);
+        $hourlyCount = $this->reportModel->getGuestHourlyReportCount($contact);
 
         $error = '';
-        if (!$this->reportModel->canGuestSubmit($phone)) {
+        if (!$this->reportModel->canGuestSubmit($contact)) {
             $error = 'You have reached the submission limit (3 reports per hour). Please try again later.';
         }
 
         $data = array_merge($dropdowns, [
             'error'        => $error,
-            'phone'        => $phone,
+            'phone'        => $contact,
+            'contact'      => $contact,
+            'channel'      => $_SESSION['guest_channel'] ?? 'phone',
             'name'         => $_SESSION['guest_name'] ?? '',
             'report_count' => $reportCount,
             'hourly_count' => $hourlyCount,
@@ -416,15 +524,16 @@ class GuestController extends Controller {
             exit;
         }
 
-        $phone = $_SESSION['guest_verified_phone'];
+        $contact = $_SESSION['guest_verified_phone'];
 
-        if (!$this->reportModel->canGuestSubmit($phone)) {
+        if (!$this->reportModel->canGuestSubmit($contact)) {
             $dropdowns   = $this->getFormDropdowns();
-            $reportCount = $this->reportModel->getGuestReportCount($phone);
-            $hourlyCount = $this->reportModel->getGuestHourlyReportCount($phone);
+            $reportCount = $this->reportModel->getGuestReportCount($contact);
+            $hourlyCount = $this->reportModel->getGuestHourlyReportCount($contact);
             $data = array_merge($dropdowns, [
                 'error'        => 'You have reached the submission limit (3 reports per hour). Please try again later.',
-                'phone'        => $phone,
+                'phone'        => $contact,
+                'contact'      => $contact,
                 'name'         => $_SESSION['guest_name'] ?? '',
                 'report_count' => $reportCount,
                 'hourly_count' => $hourlyCount,
@@ -433,16 +542,51 @@ class GuestController extends Controller {
             return;
         }
 
-        $name  = $_SESSION['guest_name'] ?? '';
+        $name = $_SESSION['guest_name'] ?? '';
 
-        // Handle photo upload
+        // Sanitize inputs
+        $post = array_map(function($v) {
+            return is_string($v) ? htmlspecialchars(trim($v), ENT_QUOTES, 'UTF-8') : $v;
+        }, $_POST);
+
+        $wasteLat = (float)($post['latitude'] ?? 0);
+        $wasteLng = (float)($post['longitude'] ?? 0);
+
+        // Strict boundary check
+        $barangayModel = $this->model('Barangay');
+        $brgyInfo = $barangayModel->getInfo();
+        $brgyName = $brgyInfo['barangay_name'] ?? 'Dulong Bayan';
+
+        if (!$barangayModel->isPointInsideBoundary($wasteLat, $wasteLng)) {
+            $dropdowns = $this->getFormDropdowns();
+            $reportCount = $this->reportModel->getGuestReportCount($contact);
+            $hourlyCount = $this->reportModel->getGuestHourlyReportCount($contact);
+            $mapConfig = $barangayModel->getMapConfig();
+            $data = array_merge($dropdowns, [
+                'error'             => "The selected location is outside Barangay {$brgyName} boundary. Only locations inside the barangay can be reported.",
+                'phone'             => $contact,
+                'contact'           => $contact,
+                'name'              => $name,
+                'report_count'      => $reportCount,
+                'hourly_count'      => $hourlyCount,
+                'barangay_boundary' => $mapConfig['boundary_geojson'],
+                'map_center'        => $mapConfig['center'],
+            ]);
+            $this->view('guest/report_form', $data);
+            return;
+        }
+
+        // Handle photo upload (multi-photo support)
         $photos = [];
         if (!empty($_FILES['photos']['name'][0])) {
             $uploadDir = dirname(__DIR__, 2) . '/public/uploads/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
             foreach ($_FILES['photos']['tmp_name'] as $key => $tmpName) {
                 if ($_FILES['photos']['error'][$key] === UPLOAD_ERR_OK) {
-                    $ext      = strtolower(pathinfo($_FILES['photos']['name'][$key], PATHINFO_EXTENSION));
-                    $allowed  = ['jpg','jpeg','png','webp'];
+                    $ext = strtolower(pathinfo($_FILES['photos']['name'][$key], PATHINFO_EXTENSION));
+                    $allowed = ['jpg','jpeg','png','webp'];
                     if (!in_array($ext, $allowed)) continue;
                     $fileName = 'guest_' . uniqid() . '.' . $ext;
                     if (move_uploaded_file($tmpName, $uploadDir . $fileName)) {
@@ -452,13 +596,6 @@ class GuestController extends Controller {
             }
         }
 
-        // Sanitize inputs
-        $post = array_map(function($v) {
-            return is_string($v) ? htmlspecialchars(trim($v), ENT_QUOTES, 'UTF-8') : $v;
-        }, $_POST);
-
-        $wasteLat      = (float)($post['latitude'] ?? 0);
-        $wasteLng      = (float)($post['longitude'] ?? 0);
         $reporterLat   = !empty($post['reporter_latitude'])  ? (float)$post['reporter_latitude']  : null;
         $reporterLng   = !empty($post['reporter_longitude']) ? (float)$post['reporter_longitude'] : null;
         $plausibility  = $this->calcPlausibility($wasteLat, $wasteLng, $reporterLat, $reporterLng);
@@ -466,7 +603,7 @@ class GuestController extends Controller {
         // Store pending report in session for review step
         $_SESSION['guest_pending_report'] = [
             'guest_name'          => $name,
-            'guest_phone'         => $phone,
+            'guest_phone'         => $contact,
             'description'         => $post['description'] ?? '',
             'latitude'            => $wasteLat,
             'longitude'           => $wasteLng,
@@ -483,30 +620,27 @@ class GuestController extends Controller {
 
         // Fetch category/quantity/condition names for review display
         $dropdowns = $this->getFormDropdowns();
-        $catMap  = array_column($dropdowns['categories'], 'category_name', 'category_id');
-        $qtyMap  = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
-        $condMap = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
+        $catMap   = array_column($dropdowns['categories'], 'category_name', 'category_id');
+        $qtyMap   = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
+        $condMap  = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
         $purokMap = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
 
-        $reportCount = $this->reportModel->getGuestReportCount($phone);
-        $hourlyCount = $this->reportModel->getGuestHourlyReportCount($phone);
+        $reportCount = $this->reportModel->getGuestReportCount($contact);
+        $hourlyCount = $this->reportModel->getGuestHourlyReportCount($contact);
 
-        $data = [
-            'report'        => $_SESSION['guest_pending_report'],
-            'category_name' => $catMap[$_SESSION['guest_pending_report']['category_id']] ?? 'Unknown',
-            'quantity_name' => $qtyMap[$_SESSION['guest_pending_report']['quantity_id']]  ?? 'Unknown',
-            'condition_name'=> $condMap[$_SESSION['guest_pending_report']['condition_id']] ?? 'Unknown',
-            'purok_name'    => $purokMap[$_SESSION['guest_pending_report']['purok_id'] ?? 0] ?? 'N/A',
-            'report_count'  => $reportCount,
-            'hourly_count'  => $hourlyCount,
-            'error'         => '',
-        ];
-
-        // Dynamic Barangay Boundary & Center
-        $barangayModel = $this->model('Barangay');
         $mapConfig = $barangayModel->getMapConfig();
-        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
-        $data['map_center'] = $mapConfig['center'];
+        $data = [
+            'report'            => $_SESSION['guest_pending_report'],
+            'category_name'     => $catMap[$_SESSION['guest_pending_report']['category_id']] ?? 'Unknown',
+            'quantity_name'     => $qtyMap[$_SESSION['guest_pending_report']['quantity_id']]  ?? 'Unknown',
+            'condition_name'    => $condMap[$_SESSION['guest_pending_report']['condition_id']] ?? 'Unknown',
+            'purok_name'        => $purokMap[$_SESSION['guest_pending_report']['purok_id'] ?? 0] ?? 'N/A',
+            'report_count'      => $reportCount,
+            'hourly_count'      => $hourlyCount,
+            'error'             => '',
+            'barangay_boundary' => $mapConfig['boundary_geojson'],
+            'map_center'        => $mapConfig['center'],
+        ];
 
         $this->view('guest/review', $data);
     }
@@ -525,23 +659,43 @@ class GuestController extends Controller {
             exit;
         }
 
-        $phone  = $_SESSION['guest_verified_phone'];
-        $report = $_SESSION['guest_pending_report'];
+        $contact = $_SESSION['guest_verified_phone'];
+        $report  = $_SESSION['guest_pending_report'];
 
-        // Rate limit: max 3 reports per phone per hour
-        if (!$this->reportModel->canGuestSubmit($phone)) {
-            $dropdowns   = $this->getFormDropdowns();
-            $catMap      = array_column($dropdowns['categories'], 'category_name', 'category_id');
-            $qtyMap      = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
-            $condMap     = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
-            $purokMap    = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
+        // Strict boundary validation
+        $barangayModel = $this->model('Barangay');
+        if (!$barangayModel->isPointInsideBoundary($report['latitude'], $report['longitude'])) {
+            $dropdowns = $this->getFormDropdowns();
+            $catMap    = array_column($dropdowns['categories'], 'category_name', 'category_id');
+            $qtyMap    = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
+            $condMap   = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
+            $purokMap  = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
             $data = [
-                'report'        => $report,
-                'category_name' => $catMap[$report['category_id']] ?? 'Unknown',
-                'quantity_name' => $qtyMap[$report['quantity_id']] ?? 'Unknown',
-                'condition_name'=> $condMap[$report['condition_id']] ?? 'Unknown',
-                'purok_name'    => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
-                'error'         => 'You have reached the submission limit (3 reports per hour). Please try again later.',
+                'report'         => $report,
+                'category_name'  => $catMap[$report['category_id']] ?? 'Unknown',
+                'quantity_name'  => $qtyMap[$report['quantity_id']] ?? 'Unknown',
+                'condition_name' => $condMap[$report['condition_id']] ?? 'Unknown',
+                'purok_name'     => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
+                'error'          => 'Cannot submit report. The coordinates are outside the official Barangay boundary.',
+            ];
+            $this->view('guest/review', $data);
+            return;
+        }
+
+        // Rate limit check
+        if (!$this->reportModel->canGuestSubmit($contact)) {
+            $dropdowns = $this->getFormDropdowns();
+            $catMap    = array_column($dropdowns['categories'], 'category_name', 'category_id');
+            $qtyMap    = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
+            $condMap   = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
+            $purokMap  = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
+            $data = [
+                'report'         => $report,
+                'category_name'  => $catMap[$report['category_id']] ?? 'Unknown',
+                'quantity_name'  => $qtyMap[$report['quantity_id']] ?? 'Unknown',
+                'condition_name' => $condMap[$report['condition_id']] ?? 'Unknown',
+                'purok_name'     => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
+                'error'          => 'You have reached the submission limit (3 reports per hour). Please try again later.',
             ];
             $this->view('guest/review', $data);
             return;
@@ -558,18 +712,18 @@ class GuestController extends Controller {
         // Create guest report
         $result = $this->reportModel->createGuestReport($report);
         if (!$result) {
-            $dropdowns   = $this->getFormDropdowns();
-            $catMap      = array_column($dropdowns['categories'], 'category_name', 'category_id');
-            $qtyMap      = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
-            $condMap     = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
-            $purokMap    = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
+            $dropdowns = $this->getFormDropdowns();
+            $catMap    = array_column($dropdowns['categories'], 'category_name', 'category_id');
+            $qtyMap    = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
+            $condMap   = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
+            $purokMap  = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
             $data = [
-                'report'        => $report,
-                'category_name' => $catMap[$report['category_id']] ?? 'Unknown',
-                'quantity_name' => $qtyMap[$report['quantity_id']] ?? 'Unknown',
-                'condition_name'=> $condMap[$report['condition_id']] ?? 'Unknown',
-                'purok_name'    => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
-                'error'         => 'Failed to submit report. Please try again.',
+                'report'         => $report,
+                'category_name'  => $catMap[$report['category_id']] ?? 'Unknown',
+                'quantity_name'  => $qtyMap[$report['quantity_id']] ?? 'Unknown',
+                'condition_name' => $condMap[$report['condition_id']] ?? 'Unknown',
+                'purok_name'     => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
+                'error'          => 'Failed to submit report. Please try again.',
             ];
             $this->view('guest/review', $data);
             return;
@@ -577,24 +731,30 @@ class GuestController extends Controller {
 
         $trackingNumber = $result['tracking_number'];
 
-        // Send SMS confirmation
-        require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
-        try {
-            SmsHelper::sendStatusUpdate($phone, $trackingNumber, 'pending', $report['guest_name']);
-        } catch (Exception $e) {
-            error_log('[GuestController] SMS confirmation failed: ' . $e->getMessage());
+        // Dispatch status update via appropriate channel
+        if (!empty($_SESSION['guest_channel']) && $_SESSION['guest_channel'] === 'email') {
+            // Note: Guest will receive status updates
+        } else {
+            require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
+            try {
+                SmsHelper::sendStatusUpdate($contact, $trackingNumber, 'pending', $report['guest_name']);
+            } catch (Exception $e) {
+                error_log('[GuestController] SMS confirmation failed: ' . $e->getMessage());
+            }
         }
 
         // Clear pending report session
         unset($_SESSION['guest_pending_report']);
         unset($_SESSION['guest_verified_phone']);
+        unset($_SESSION['guest_verified_contact']);
         unset($_SESSION['guest_verified_at']);
         unset($_SESSION['guest_phone']);
+        unset($_SESSION['guest_contact']);
         unset($_SESSION['guest_name']);
 
         // Store tracking number for confirmation screen
         $_SESSION['guest_confirmed_tracking'] = $trackingNumber;
-        $_SESSION['guest_confirmed_phone']    = $phone;
+        $_SESSION['guest_confirmed_contact']  = $contact;
 
         header('Location: ' . app_url('index.php?url=guest/confirmation'));
         exit;
@@ -611,78 +771,14 @@ class GuestController extends Controller {
 
         $data = [
             'tracking_number' => $_SESSION['guest_confirmed_tracking'],
-            'phone'           => $_SESSION['guest_confirmed_phone'] ?? '',
+            'contact'         => $_SESSION['guest_confirmed_contact'] ?? '',
+            'phone'           => $_SESSION['guest_confirmed_contact'] ?? '',
         ];
 
         // Clear confirmation session after displaying
         unset($_SESSION['guest_confirmed_tracking']);
-        unset($_SESSION['guest_confirmed_phone']);
+        unset($_SESSION['guest_confirmed_contact']);
 
         $this->view('guest/confirmation', $data);
-    }
-
-    // ============================================================
-    // TRACK: Search Form
-    // ============================================================
-    public function track() {
-        $data = ['error' => '', 'success' => ''];
-
-        // Pre-fill from query string (e.g. redirect from confirmation)
-        $data['tracking_number'] = $_GET['tn'] ?? '';
-
-        $this->db->query("SELECT * FROM barangays LIMIT 1");
-        $data['barangay'] = $this->db->single() ?: [];
-
-        $this->view('guest/track', $data);
-    }
-
-    // ============================================================
-    // TRACK: Status View (POST from track search form)
-    // ============================================================
-    public function trackStatus() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . app_url('index.php?url=guest/track'));
-            exit;
-        }
-
-        $this->db->query("SELECT * FROM barangays LIMIT 1");
-        $barangay = $this->db->single() ?: [];
-
-        $trackingNumber = trim($_POST['tracking_number'] ?? '');
-        $phone          = trim($_POST['phone'] ?? '');
-
-        if (empty($trackingNumber) || empty($phone)) {
-            $this->view('guest/track', [
-                'error'           => 'Please enter your tracking number and phone number.',
-                'success'         => '',
-                'tracking_number' => $trackingNumber,
-                'barangay'        => $barangay
-            ]);
-            return;
-        }
-
-        $report = $this->reportModel->getReportByTrackingAndPhone($trackingNumber, $phone);
-        if (!$report) {
-            $this->view('guest/track', [
-                'error'           => 'No report found with that tracking number and phone number combination.',
-                'success'         => '',
-                'tracking_number' => $trackingNumber,
-                'barangay'        => $barangay
-            ]);
-            return;
-        }
-
-        $barangayModel = $this->model('Barangay');
-        $mapConfig = $barangayModel->getMapConfig();
-
-        $data = [
-            'report' => $report, 
-            'error' => '', 
-            'success' => '', 
-            'barangay' => $barangay,
-            'barangay_boundary' => $mapConfig['boundary_geojson'],
-            'map_center' => $mapConfig['center']
-        ];
-        $this->view('guest/track_status', $data);
     }
 }

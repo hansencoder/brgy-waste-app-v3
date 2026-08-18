@@ -746,7 +746,9 @@ class AdminController extends Controller {
                    wc.category_name as waste_category,
                    eq.quantity_name as estimated_quantity,
                    wcnd.condition_name as waste_condition,
-                   p.purok_name as purok
+                   p.purok_name as purok,
+                   (SELECT photo_path FROM report_photos WHERE report_id = r.id AND is_primary = 1 LIMIT 1) as photo_path,
+                   (SELECT COUNT(*) FROM report_photos WHERE report_id = r.id) as photo_count
             FROM reports r
             LEFT JOIN users u ON r.resident_id = u.id
             JOIN report_statuses rs ON r.status_id = rs.status_id
@@ -1074,9 +1076,9 @@ class AdminController extends Controller {
             } elseif (!preg_match('/^09\d{9}$/', $phone)) {
                 $data['error'] = 'Invalid Philippine phone number (must be 11 digits starting with 09).';
             } elseif ($this->userModel->findUserByEmail($email)) {
-                $data['error'] = 'Email already registered.';
+                $data['error'] = 'This email address is already in use. Please use a different email.';
             } elseif ($this->userModel->findUserByUsername($username)) {
-                $data['error'] = 'Username already taken.';
+                $data['error'] = 'This username is already in use. Please choose a different username.';
             } else {
                 // Check if manual password provided or auto-generate
                 $passwordType = $_POST['password_type'] ?? 'auto';

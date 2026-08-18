@@ -31,16 +31,16 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
     <div class="w-full max-w-[440px] bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs">
         
         <!-- Brand Header -->
-        <div class="flex flex-col items-center text-center mb-6">
-            <div class="w-24 h-24 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-sm mb-3 border border-emerald-500/20 overflow-hidden">
+        <div class="flex flex-col items-center text-center mb-5">
+            <a href="<?php echo app_url(''); ?>" class="inline-block transition hover:opacity-90" title="Home">
                 <?php if (!empty($sysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover" alt="Logo">
+                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-14 h-14 object-contain" alt="Logo">
                 <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <div class="w-14 h-14 flex items-center justify-center text-emerald-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
                 <?php endif; ?>
-            </div>
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Welcome back</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Sign in to your Barangay <?php echo htmlspecialchars($barangayName); ?> account</p>
+            </a>
         </div>
 
         <!-- Navigation Switcher (Tabs) -->
@@ -143,14 +143,10 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
             <!-- Guest Reporting Option -->
             <div class="pt-4 border-t border-slate-100 text-center space-y-2">
                 <p class="text-xs text-slate-500 font-normal">Quick public reporting without an account:</p>
-                <div class="flex items-center justify-center gap-2">
-                    <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-semibold transition border border-emerald-100">
+                <div class="flex items-center justify-center">
+                    <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-semibold transition border border-emerald-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         <span>Report as Guest</span>
-                    </a>
-                    <a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold transition border border-slate-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                        <span>Track Report</span>
                     </a>
                 </div>
             </div>

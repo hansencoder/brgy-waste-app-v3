@@ -31,16 +31,16 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
     <div class="w-full max-w-[480px] bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs">
         
         <!-- Brand Header -->
-        <div class="flex flex-col items-center text-center mb-6">
-            <div class="w-24 h-24 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-sm mb-3 border border-emerald-500/20 overflow-hidden">
+        <div class="flex flex-col items-center text-center mb-5">
+            <a href="<?php echo app_url(''); ?>" class="inline-block transition hover:opacity-90" title="Home">
                 <?php if (!empty($sysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover" alt="Logo">
+                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-14 h-14 object-contain" alt="Logo">
                 <?php else: ?>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <div class="w-14 h-14 flex items-center justify-center text-emerald-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
                 <?php endif; ?>
-            </div>
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Join <?php echo htmlspecialchars($sysShortName); ?></h1>
-            <p class="text-xs text-slate-500 mt-0.5">Register as a resident of Barangay <?php echo htmlspecialchars($barangayName); ?></p>
+            </a>
         </div>
 
         <!-- Navigation Switcher (Tabs) -->
@@ -90,8 +90,14 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Username</label>
                 <input type="text" id="username" name="username" required placeholder="juandc"
                     value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8') : ''; ?>"
-                    class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
+                    class="w-full h-10 px-3.5 rounded-xl border <?php echo (($data['field_error'] ?? '') === 'username') ? 'border-rose-500 ring-2 ring-rose-500/10' : 'border-slate-200'; ?> bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
                     oninput="this.value = this.value.replace(/[^a-zA-Z0-9_]/g, ''); validateInput(this)">
+                <?php if (($data['field_error'] ?? '') === 'username' && !empty($data['field_error_message'])): ?>
+                    <p class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span><?php echo htmlspecialchars($data['field_error_message'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    </p>
+                <?php endif; ?>
             </div>
 
             <!-- Contact Information Switcher -->
@@ -109,20 +115,32 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
                     </button>
                 </div>
 
-                <input type="hidden" id="selected_contact_type" name="contact_type" value="<?php echo (isset($_POST['contact_type']) && $_POST['contact_type'] === 'phone') || (!empty($_POST['phone_number']) && empty($_POST['email'])) ? 'phone' : 'email'; ?>">
+                <input type="hidden" id="selected_contact_type" name="contact_type" value="<?php echo (($data['field_error'] ?? '') === 'phone_number') || (isset($_POST['contact_type']) && $_POST['contact_type'] === 'phone') || (!empty($_POST['phone_number']) && empty($_POST['email'])) ? 'phone' : 'email'; ?>">
 
                 <div id="email-input-container">
                     <input type="email" id="email" name="email" placeholder="you@example.com"
                         value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8') : ''; ?>"
-                        class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
+                        class="w-full h-10 px-3.5 rounded-xl border <?php echo (($data['field_error'] ?? '') === 'email') ? 'border-rose-500 ring-2 ring-rose-500/10' : 'border-slate-200'; ?> bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
                         oninput="this.value = this.value.replace(/[^a-zA-Z0-9._%+\-@]/g, ''); validateInput(this)">
+                    <?php if (($data['field_error'] ?? '') === 'email' && !empty($data['field_error_message'])): ?>
+                        <p class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <span><?php echo htmlspecialchars($data['field_error_message'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        </p>
+                    <?php endif; ?>
                 </div>
 
                 <div id="phone-input-container" class="hidden">
                     <input type="text" id="phone_number" name="phone_number" placeholder="09XXXXXXXXX" maxlength="11"
                         value="<?php echo isset($_POST['phone_number']) ? htmlspecialchars($_POST['phone_number'], ENT_QUOTES, 'UTF-8') : ''; ?>"
-                        class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
+                        class="w-full h-10 px-3.5 rounded-xl border <?php echo (($data['field_error'] ?? '') === 'phone_number') ? 'border-rose-500 ring-2 ring-rose-500/10' : 'border-slate-200'; ?> bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
                         oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateInput(this)">
+                    <?php if (($data['field_error'] ?? '') === 'phone_number' && !empty($data['field_error_message'])): ?>
+                        <p class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <span><?php echo htmlspecialchars($data['field_error_message'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        </p>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -399,7 +417,7 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
         return valid;
     }
 
-    <?php if ((isset($_POST['contact_type']) && $_POST['contact_type'] === 'phone') || (!empty($_POST['phone_number']) && empty($_POST['email']))): ?>
+    <?php if ((($data['field_error'] ?? '') === 'phone_number') || (isset($_POST['contact_type']) && $_POST['contact_type'] === 'phone') || (!empty($_POST['phone_number']) && empty($_POST['email']))): ?>
     document.addEventListener('DOMContentLoaded', function() {
         switchContactType('phone');
         const phoneInput = document.getElementById('phone_number');

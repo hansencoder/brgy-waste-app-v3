@@ -7,9 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
+        body, * { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; }
         @keyframes scaleIn { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes fadeUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .scale-in { animation: scaleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
@@ -52,20 +52,20 @@
         <div class="fade-up fade-up-1">
             <h1 class="text-2xl font-bold text-slate-900">Report Submitted!</h1>
             <p class="text-sm text-slate-500 mt-2 leading-relaxed">
-                Thank you for helping keep our barangay clean. Your report has been received and is being reviewed.
+                Thank you for helping keep our barangay clean. Your report has been recorded and queued for verification.
             </p>
         </div>
 
-        <!-- Tracking Number Card -->
+        <!-- Reference Code Card -->
         <div class="mt-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm fade-up fade-up-2">
-            <div class="text-xs text-slate-500 font-medium uppercase tracking-wider mb-2">Your Tracking Number</div>
-            <div class="text-3xl font-bold tracking-widest text-emerald-700 bg-emerald-50 rounded-xl px-4 py-3 select-all border border-emerald-200/80 mb-4">
-                <?php echo htmlspecialchars($data['tracking_number'], ENT_QUOTES, 'UTF-8'); ?>
+            <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Reference Number</div>
+            <div class="text-2xl sm:text-3xl font-bold tracking-widest text-emerald-800 bg-emerald-50/80 rounded-xl px-4 py-3 select-all border border-emerald-200/80 mb-4 font-mono">
+                <?php echo htmlspecialchars($data['tracking_number'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
             </div>
             <button onclick="copyTracking()" id="copyBtn"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer">
                 <svg id="copyIcon" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                Copy Tracking Number
+                Copy Reference Number
             </button>
         </div>
 
@@ -74,11 +74,12 @@
             <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">What happens next</h2>
             <div class="space-y-3">
                 <?php
+                $target = htmlspecialchars($data['phone'] ?? ($data['contact'] ?? 'your contact'));
                 $steps = [
-                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', 'text' => 'Our team will review and verify your report within 24 hours.'],
-                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>', 'text' => "You'll receive SMS updates at {$data['phone']} as the status changes."],
-                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>', 'text' => 'An assigned team will handle the waste collection or cleanup.'],
-                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>', 'text' => 'You\'ll be notified when the issue is resolved.'],
+                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', 'text' => 'Barangay staff will inspect and verify your reported waste within 24 hours.'],
+                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>', 'text' => "You will receive direct status updates sent to {$target} as the resolution progresses."],
+                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>', 'text' => 'An assigned cleanup crew will be dispatched to collect the waste.'],
+                    ['svg' => '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>', 'text' => 'You will be notified once the waste has been fully collected.'],
                 ];
                 foreach ($steps as $step): ?>
                 <div class="flex items-start gap-3">
@@ -89,19 +90,15 @@
             </div>
         </div>
 
-        <!-- CTA Buttons -->
+        <!-- Action Buttons -->
         <div class="mt-6 flex flex-col gap-3 fade-up fade-up-3">
-            <a href="<?php echo app_url('index.php?url=guest/track&tn=' . (urlencode($data['tracking_number']))); ?>"
-                class="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                Track My Report
-            </a>
             <a href="<?php echo app_url('index.php?url=guest'); ?>"
-                class="w-full h-11 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition flex items-center justify-center gap-2 text-sm shadow-sm">
+                class="w-full h-11 bg-[#0B2E22] hover:bg-[#07281E] text-white font-semibold rounded-xl shadow-xs hover:shadow transition flex items-center justify-center gap-2 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Submit Another Report
             </a>
             <a href="<?php echo app_url(''); ?>"
-                class="text-xs text-slate-400 hover:text-slate-600 font-medium transition">
+                class="w-full h-11 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition flex items-center justify-center gap-2 text-sm shadow-2xs">
                 Return to Home
             </a>
         </div>
@@ -109,13 +106,13 @@
 
     <script>
         function copyTracking() {
-            const tn = <?php echo json_encode($data['tracking_number']); ?>;
+            const tn = <?php echo json_encode($data['tracking_number'] ?? ''); ?>;
             navigator.clipboard.writeText(tn).then(() => {
                 const btn = document.getElementById('copyBtn');
                 btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
                 btn.classList.add('bg-emerald-100','text-emerald-700');
                 setTimeout(() => {
-                    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>Copy Tracking Number';
+                    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>Copy Reference Number';
                     btn.classList.remove('bg-emerald-100','text-emerald-700');
                 }, 2000);
             });

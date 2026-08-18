@@ -288,13 +288,38 @@
         iconAnchor: [15, 30],
     });
 
+    function isInsideBoundary(lat, lng) {
+        if (!rawBrgyBoundary) return true;
+        try {
+            const geo = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            const poly = geo.coordinates ? geo.coordinates[0] : null;
+            if (!poly || !poly.length) return true;
+
+            let inside = false;
+            for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                const xi = poly[i][0], yi = poly[i][1];
+                const xj = poly[j][0], yj = poly[j][1];
+                const intersect = ((yi > lat) !== (yj > lat)) && (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        } catch(e) {
+            return true;
+        }
+    }
+
     function placeMarker(lat, lng, label) {
+        if (!isInsideBoundary(lat, lng)) {
+            alert('The selected location is outside the official Barangay boundary. Please select a point within the green boundary outline.');
+            return false;
+        }
         if (marker) map.removeLayer(marker);
         marker = L.marker([lat, lng], { icon: wasteIcon }).addTo(map);
         document.getElementById('latitude').value  = lat.toFixed(8);
         document.getElementById('longitude').value = lng.toFixed(8);
         document.getElementById('location').value  = label || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
         document.getElementById('location-error').classList.add('hidden');
+        return true;
     }
 
     map.on('click', function(e) {

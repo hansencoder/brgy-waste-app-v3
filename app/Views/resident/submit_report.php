@@ -359,7 +359,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let marker = null;
 
+    function isInsideBoundary(lat, lng) {
+        if (!rawBrgyBoundary) return true;
+        try {
+            const geo = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            const poly = geo.coordinates ? geo.coordinates[0] : null;
+            if (!poly || !poly.length) return true;
+
+            let inside = false;
+            for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                const xi = poly[i][0], yi = poly[i][1];
+                const xj = poly[j][0], yj = poly[j][1];
+                const intersect = ((yi > lat) !== (yj > lat)) && (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        } catch(e) {
+            return true;
+        }
+    }
+
     function setPin(lat, lng) {
+        if (!isInsideBoundary(lat, lng)) {
+            alert('The selected location is outside the official Barangay boundary. Please choose a location within the barangay boundaries.');
+            return false;
+        }
         if (marker) {
             marker.setLatLng([lat, lng]);
         } else {
@@ -372,10 +396,16 @@ document.addEventListener('DOMContentLoaded', function() {
             marker = L.marker([lat, lng], { icon: icon, draggable: true }).addTo(map);
             marker.on('dragend', function(e) {
                 const pos = e.target.getLatLng();
+                if (!isInsideBoundary(pos.lat, pos.lng)) {
+                    alert('Cannot move pin outside the official Barangay boundary.');
+                    marker.setLatLng([parseFloat(document.getElementById('latitude').value), parseFloat(document.getElementById('longitude').value)]);
+                    return;
+                }
                 updateCoords(pos.lat, pos.lng);
             });
         }
         updateCoords(lat, lng);
+        return true;
     }
 
     function updateCoords(lat, lng) {

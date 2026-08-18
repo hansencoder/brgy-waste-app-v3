@@ -1,5 +1,5 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
-
+<?php
 $sysLogoUrl = format_asset_url($data['barangay']['system_logo'] ?? '');
 $brgyLogoUrl = format_asset_url($data['barangay']['barangay_logo'] ?? '');
 ?>

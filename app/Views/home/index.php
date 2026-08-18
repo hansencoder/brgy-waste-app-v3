@@ -207,13 +207,6 @@ foreach ($publicReports as $pr) {
         <!-- Gradient Overlay -->
         <div class="absolute inset-0 bg-gradient-to-br from-[#07281E]/40 via-[#07281E]/80 to-emerald-900/50 pointer-events-none"></div>
         
-        <button id="heroPrev" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all duration-300 hover:scale-110">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button id="heroNext" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all duration-300 hover:scale-110">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-        
         <div id="heroDots" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-white/30 cursor-pointer transition-colors" data-index="0"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-white/30 cursor-pointer transition-colors" data-index="1"></span>
@@ -239,10 +232,6 @@ foreach ($publicReports as $pr) {
                 <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs sm:text-sm rounded-xl backdrop-blur-xs transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <span>Report as Guest</span>
-                </a>
-                <a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="inline-flex items-center gap-2 px-4 py-3 text-emerald-200 hover:text-white font-medium text-xs sm:text-sm transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <span>Track Status</span>
                 </a>
             </div>
         </div>
@@ -443,10 +432,6 @@ foreach ($publicReports as $pr) {
                 <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs font-semibold rounded-xl shadow-xs transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     <span>Pin New Report</span>
-                </a>
-                <a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-2xs transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <span>Track ID</span>
                 </a>
             </div>
         </div>
@@ -1240,7 +1225,6 @@ foreach ($publicReports as $pr) {
                 <h4 class="text-white font-semibold text-xs mb-3 uppercase tracking-wider">Services</h4>
                 <ul class="space-y-2 text-xs">
                     <li><a href="<?php echo app_url('index.php?url=guest'); ?>" class="text-slate-400 hover:text-white transition">Report as Guest</a></li>
-                    <li><a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="text-slate-400 hover:text-white transition">Track Incident</a></li>
                     <li><a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="text-slate-400 hover:text-white transition">Resident Registration</a></li>
                     <li><a href="<?php echo app_url('index.php?url=auth'); ?>" class="text-slate-400 hover:text-white transition">Sign In</a></li>
                 </ul>
@@ -1518,8 +1502,7 @@ foreach ($publicReports as $pr) {
                         </div>
                         <h4 style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0 0 2px 0; line-height: 1.3;">${r.category}</h4>
                         <p style="font-size: 11px; color: #64748B; margin: 0 0 6px 0; display: flex; align-items: center; gap: 4px;"><svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill="none" stroke='#64748B' stroke-width='2.5' fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> ${r.purok}</p>
-                        <p style="font-size: 11px; color: #475569; margin: 0 0 8px 0; line-height: 1.4;">${r.desc}</p>
-                        <a href="<?php echo app_url('index.php?url=guest/track&track_id=${r.id}'); ?>" style="display: inline-block; font-size: 11px; font-weight: 700; color: #10B981; text-decoration: none;">Track Incident →</a>
+                        <p style="font-size: 11px; color: #475569; margin: 0 0 4px 0; line-height: 1.4;">${r.desc}</p>
                     </div>
                 `;
 

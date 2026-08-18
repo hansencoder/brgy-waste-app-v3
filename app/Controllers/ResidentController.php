@@ -258,31 +258,12 @@ class ResidentController extends Controller {
                 $photoPath = $data['resume_data']['photo'];
             }
 
-            $barangayBoundary = [
-                [15.56992, 120.80135], [15.56728, 120.80018], [15.56570, 120.79897],
-                [15.56528, 120.79751], [15.56375, 120.79516], [15.56032, 120.79464],
-                [15.55485, 120.79121], [15.54781, 120.80013], [15.55061, 120.80494],
-                [15.55288, 120.80886], [15.54962, 120.81743], [15.55121, 120.82609],
-                [15.55413, 120.83358], [15.55740, 120.83261], [15.56506, 120.82838],
-                [15.57034, 120.82364], [15.56455, 120.82033], [15.56098, 120.81492],
-                [15.56739, 120.80324], [15.56992, 120.80135]
-            ];
+            $barangayModel = $this->model('Barangay');
+            $brgyInfo = $barangayModel->getInfo();
+            $brgyName = $brgyInfo['barangay_name'] ?? 'Dulong Bayan';
 
-            $isInside = false;
-            $j = count($barangayBoundary) - 1;
-            for ($i = 0; $i < count($barangayBoundary); $i++) {
-                $xi = $barangayBoundary[$i][0]; $yi = $barangayBoundary[$i][1];
-                $xj = $barangayBoundary[$j][0]; $yj = $barangayBoundary[$j][1];
-
-                $intersect = (($yi > $lng) != ($yj > $lng)) && ($lat < ($xj - $xi) * ($lng - $yi) / ($yj - $yi) + $xi);
-                if ($intersect) {
-                    $isInside = !$isInside;
-                }
-                $j = $i;
-            }
-
-            if (!$isInside) {
-                $data['error'] = 'This location is outside of Barangay Dulong Bayan coverage area. Reports can only be submitted within the barangay boundaries.';
+            if (!$barangayModel->isPointInsideBoundary($lat, $lng)) {
+                $data['error'] = "This location is outside the official boundary of Barangay {$brgyName}. Reports can only be submitted within the barangay boundaries.";
                 $this->deleteUploadedPhotoFile($fileName);
                 return $this->view('resident/submit_report', $data);
             }

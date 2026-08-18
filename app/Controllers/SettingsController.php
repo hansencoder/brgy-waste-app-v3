@@ -1090,7 +1090,7 @@ class SettingsController extends Controller {
     // ============================================================
 
     public function system_availability() {
-        require_once '../app/Models/SystemMaintenance.php';
+        require_once dirname(__DIR__) . '/Models/SystemMaintenance.php';
         $maintenanceModel = new SystemMaintenance();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -1210,7 +1210,7 @@ class SettingsController extends Controller {
      * AJAX endpoint: returns maintenance history as JSON.
      */
     public function maintenanceHistory() {
-        require_once '../app/Models/SystemMaintenance.php';
+        require_once dirname(__DIR__) . '/Models/SystemMaintenance.php';
         $maintenanceModel = new SystemMaintenance();
         $limit   = min((int)($_GET['limit'] ?? 50), 200);
         $history = $maintenanceModel->getHistory($limit);

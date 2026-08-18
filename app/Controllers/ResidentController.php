@@ -374,7 +374,7 @@ class ResidentController extends Controller {
         }
 
         // Get location name from coordinates
-        require_once '../app/Core/Geocoding.php';
+        require_once dirname(__DIR__) . '/Core/Geocoding.php';
         $data['report']['location_name'] = Geocoding::getLocationName(
             $data['report']['latitude'],
             $data['report']['longitude']
@@ -729,7 +729,7 @@ class ResidentController extends Controller {
         $db->bind(':token', $token);
         $db->execute();
 
-        require_once '../app/Models/Helpers/OtpMailer.php';
+        require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
         try {
             OtpMailer::sendOtpEmail($user['email'], $token, $user['name']);
             $_SESSION['profile_otp_sent'] = true;

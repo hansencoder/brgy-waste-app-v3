@@ -64,7 +64,7 @@ class SupervisorController extends Controller {
         $db->bind(':token', $token);
         $db->execute();
 
-        require_once '../app/Models/Helpers/OtpMailer.php';
+        require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
         try {
             OtpMailer::sendOtpEmail($user['email'], $token, $user['name']);
             echo json_encode(['success' => true, 'message' => 'OTP sent to your email.']);
@@ -664,7 +664,7 @@ public function getHotspots() {
         $data['timeline'] = $reportModel->getReportTimeline($id);
 
         // Get location name
-        require_once '../app/Core/Geocoding.php';
+        require_once dirname(__DIR__) . '/Core/Geocoding.php';
         $data['report']['location_name'] = Geocoding::getLocationName(
             $data['report']['latitude'],
             $data['report']['longitude']

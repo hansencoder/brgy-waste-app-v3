@@ -16,7 +16,7 @@ class MaintenanceController extends Controller {
      * Fetches current maintenance config for display.
      */
     public function index() {
-        require_once '../app/Models/SystemMaintenance.php';
+        require_once dirname(__DIR__) . '/Models/SystemMaintenance.php';
         $maintenanceModel = new SystemMaintenance();
         $status = $maintenanceModel->getStatus();
 

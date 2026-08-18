@@ -138,7 +138,10 @@ class User {
         $this->db->bind(':purok_id', $purok_id);
         $this->db->bind(':status', $data['status'] ?? 'pending'); // default pending until OTP verified
 
-        return $this->db->execute();
+        if ($this->db->execute()) {
+            return $this->db->lastInsertId();
+        }
+        return false;
     }
 
     // ============================================================

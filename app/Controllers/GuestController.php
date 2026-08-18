@@ -8,7 +8,7 @@ class GuestController extends Controller {
     public function __construct() {
         // Block guest flows during maintenance mode
         // (init.php covers page routes; this covers any direct instantiation)
-        require_once '../app/Models/SystemMaintenance.php';
+        require_once dirname(__DIR__) . '/Models/SystemMaintenance.php';
         $_guestMaintenance = new SystemMaintenance();
         if ($_guestMaintenance->isMaintenanceActive()) {
             header('Location: /brgy-waste-app-v3/public/index.php?url=maintenance');
@@ -206,7 +206,7 @@ class GuestController extends Controller {
         $this->db->execute();
 
         // Send SMS OTP
-        require_once '../app/Models/Helpers/SmsHelper.php';
+        require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
         try {
             SmsHelper::sendOtp($phone, $otp, $name);
             $this->recordSmsRate($phone, $ip);
@@ -358,7 +358,7 @@ class GuestController extends Controller {
         $this->db->bind(':ip', $ip);
         $this->db->execute();
 
-        require_once '../app/Models/Helpers/SmsHelper.php';
+        require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
         SmsHelper::sendOtp($phone, $otp, $name);
         $this->recordSmsRate($phone, $ip);
 
@@ -578,7 +578,7 @@ class GuestController extends Controller {
         $trackingNumber = $result['tracking_number'];
 
         // Send SMS confirmation
-        require_once '../app/Models/Helpers/SmsHelper.php';
+        require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
         try {
             SmsHelper::sendStatusUpdate($phone, $trackingNumber, 'pending', $report['guest_name']);
         } catch (Exception $e) {

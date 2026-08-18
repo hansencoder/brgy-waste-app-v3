@@ -64,7 +64,7 @@ class AdminController extends Controller {
         $db->bind(':token', $token);
         $db->execute();
 
-        require_once '../app/Models/Helpers/OtpMailer.php';
+        require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
         try {
             OtpMailer::sendOtpEmail($user['email'], $token, $user['name']);
             echo json_encode(['success' => true, 'message' => 'OTP sent to your email.']);
@@ -1112,7 +1112,7 @@ class AdminController extends Controller {
                 if ($this->userModel->register($regData)) {
                     $data['generated_password'] = $tempPassword;
                     // Send email with temporary password
-                    require_once '../app/Models/Helpers/OtpMailer.php';
+                    require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
                     try {
                         OtpMailer::sendTempPasswordEmail($email, $tempPassword, $name);
                         $data['success'] = 'Staff account created successfully! Credentials sent to ' . htmlspecialchars($email);

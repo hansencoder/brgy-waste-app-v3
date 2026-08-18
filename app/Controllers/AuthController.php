@@ -145,7 +145,7 @@ class AuthController extends Controller {
             $this->userModel->savePasswordResetToken($user['id'], $email, $token);
 
             // Send email
-            require_once '../app/Models/Helpers/OtpMailer.php';
+            require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
             try {
                 OtpMailer::sendPasswordResetEmail($email, $token, $user['name']);
                 $_SESSION['reset_email'] = $email;
@@ -220,8 +220,8 @@ class AuthController extends Controller {
                 }
 
                 // Handle OTP verification: Match login input type (Phone vs Email)
-                require_once '../app/Models/Helpers/OtpMailer.php';
-                require_once '../app/Models/Helpers/SmsHelper.php';
+                require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
+                require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
 
                 $email = $user['email'] ?? '';
                 $phone = $user['phone_number'] ?? '';
@@ -394,8 +394,8 @@ class AuthController extends Controller {
 
         // Handle Resend
         if (isset($_GET['action']) && $_GET['action'] == 'resend') {
-            require_once '../app/Models/Helpers/OtpMailer.php';
-            require_once '../app/Models/Helpers/SmsHelper.php';
+            require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
+            require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
 
             $contactTarget = $_SESSION['mfa_email'] ?? null;
             $mfaType = $_SESSION['mfa_type'] ?? 'email';
@@ -543,10 +543,8 @@ class AuthController extends Controller {
                 'status' => 'pending' // Always pending until OTP verified
             ];
 
-            if ($this->userModel->register($regData)) {
-                $db = new Database();
-                $userId = $db->lastInsertId();
-
+            $userId = $this->userModel->register($regData);
+            if ($userId) {
                 $contactTarget = !empty($email) ? $email : $phone_number;
                 $isPhoneOnly = empty($email);
 
@@ -554,8 +552,8 @@ class AuthController extends Controller {
                 $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
                 $this->userModel->saveMfaToken($userId, $contactTarget, $token);
 
-                require_once '../app/Models/Helpers/OtpMailer.php';
-                require_once '../app/Models/Helpers/SmsHelper.php';
+                require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
+                require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
                 try {
                     if ($isPhoneOnly) {
                         SmsHelper::sendOtp($phone_number, $token, $regData['name']);
@@ -633,8 +631,8 @@ class AuthController extends Controller {
 
         // Handle Resend
         if (isset($_GET['action']) && $_GET['action'] == 'resend') {
-            require_once '../app/Models/Helpers/OtpMailer.php';
-            require_once '../app/Models/Helpers/SmsHelper.php';
+            require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
+            require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
 
             $user_id = $_SESSION['reg_user_id'];
             $email = $_SESSION['reg_email'];

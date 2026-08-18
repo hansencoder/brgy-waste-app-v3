@@ -143,7 +143,7 @@ $iconColor     = $isEmergency ? 'text-red-600'        : 'text-amber-600';
 
         <!-- Back to login link (for authenticated users who might still have session) -->
         <div class="text-center mt-6">
-            <a href="/brgy-waste-app-v3/public/index.php?url=auth"
+            <a href="<?php echo app_url('index.php?url=auth'); ?>"
                class="text-sm text-white/50 hover:text-white/80 transition font-medium">
                 Administrator? <span class="underline underline-offset-2">Sign in here</span>
             </a>

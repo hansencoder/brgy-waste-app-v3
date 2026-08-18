@@ -79,7 +79,7 @@ $success = $data['success'] ?? '';
                     <p class="text-xs text-slate-500 mt-0.5">Update your display name, contact phone number, and physical assignment</p>
                 </div>
 
-                <form action="/brgy-waste-app-v3/public/supervisor/profile" method="POST" class="space-y-4">
+                <form action="<?php echo app_url('supervisor/profile'); ?>" method="POST" class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Full Name</label>
@@ -124,7 +124,7 @@ $success = $data['success'] ?? '';
                     <p class="text-xs text-slate-500 mt-0.5">Ensure your supervisor account is protected with a strong password</p>
                 </div>
 
-                <form action="/brgy-waste-app-v3/public/supervisor/change_password" method="POST" class="space-y-4">
+                <form action="<?php echo app_url('supervisor/change_password'); ?>" method="POST" class="space-y-4">
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Current Password</label>
                         <input type="password" name="current_password" required placeholder="••••••••" class="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition">

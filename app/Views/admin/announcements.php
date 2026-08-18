@@ -167,7 +167,7 @@ function getVisibilityBadge($visName) {
                             </button>
                         </div>
 
-                        <form action="/brgy-waste-app-v3/public/admin/announcements" method="POST" enctype="multipart/form-data" class="space-y-5">
+                        <form action="<?php echo app_url('admin/announcements'); ?>" method="POST" enctype="multipart/form-data" class="space-y-5">
                             <!-- Headline -->
                             <div>
                                 <label class="block text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-2">Announcement Title / Headline <span class="text-red-500">*</span></label>
@@ -244,7 +244,7 @@ function getVisibilityBadge($visName) {
 
                     <!-- Search & Filter Bar -->
                     <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-                        <form method="GET" action="/brgy-waste-app-v3/public/admin/announcements" class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        <form method="GET" action="<?php echo app_url('admin/announcements'); ?>" class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                             <!-- Search Field -->
                             <div class="relative flex-1 min-w-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -267,7 +267,7 @@ function getVisibilityBadge($visName) {
                                     Filter
                                 </button>
                                 <?php if (!empty($searchQuery) || $filterVisibility !== 'all'): ?>
-                                    <a href="/brgy-waste-app-v3/public/admin/announcements" class="px-3 py-2.5 text-xs font-bold text-red-600 hover:underline">Reset</a>
+                                    <a href="<?php echo app_url('admin/announcements'); ?>" class="px-3 py-2.5 text-xs font-bold text-red-600 hover:underline">Reset</a>
                                 <?php endif; ?>
                             </div>
                         </form>
@@ -342,7 +342,7 @@ function getVisibilityBadge($visName) {
                                         </button>
 
                                         <?php if ($_SESSION['user_role'] == 'secretary' || $_SESSION['user_role'] == 'administrator'): ?>
-                                            <a href="/brgy-waste-app-v3/public/admin/edit_announcement/<?php echo $item['id']; ?>" 
+                                            <a href="<?php echo app_url('admin/edit_announcement/<?php echo $item['id']; ?>'); ?>" 
                                                class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-xs font-extrabold transition border border-emerald-200 flex items-center gap-1.5">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                                                 Edit
@@ -435,7 +435,7 @@ function getVisibilityBadge($visName) {
             <button onclick="hideDeleteConfirm()" class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-xl font-extrabold text-xs hover:bg-slate-50 transition cursor-pointer">
                 Cancel
             </button>
-            <form id="deleteAnnouncementForm" action="/brgy-waste-app-v3/public/admin/delete_announcement" method="POST" class="flex-1">
+            <form id="deleteAnnouncementForm" action="<?php echo app_url('admin/delete_announcement'); ?>" method="POST" class="flex-1">
                 <input type="hidden" id="announcementId" name="announcement_id" value="">
                 <button type="submit" class="w-full px-4 py-2.5 bg-red-600 text-white rounded-xl font-extrabold text-xs hover:bg-red-700 transition shadow-xs cursor-pointer">
                     Delete Announcement

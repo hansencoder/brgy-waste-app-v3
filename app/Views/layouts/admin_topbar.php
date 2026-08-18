@@ -70,7 +70,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="h-6 w-px bg-slate-200 mx-1"></div>
 
         <!-- Admin Avatar & Name Pill (Navigates to Profile) -->
-        <a href="/brgy-waste-app-v3/public/admin/profile" class="flex items-center gap-2.5 p-1 pr-3 rounded-full hover:bg-slate-200/60 transition">
+        <a href="<?php echo app_url('admin/profile'); ?>" class="flex items-center gap-2.5 p-1 pr-3 rounded-full hover:bg-slate-200/60 transition">
             <div class="h-8 w-8 rounded-full bg-[#194D33] text-white flex items-center justify-center text-xs font-bold shadow-xs">
                 <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)); ?>
             </div>

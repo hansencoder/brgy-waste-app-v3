@@ -47,7 +47,7 @@ if (!isset($data) || !is_array($data)) {
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-250 shadow-xs">
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <a href="/brgy-waste-app-v3/public/admin/accounts" class="text-xs font-bold text-slate-400 hover:text-emerald-700 transition">User Management</a>
+                                <a href="<?php echo app_url('admin/accounts'); ?>" class="text-xs font-bold text-slate-400 hover:text-emerald-700 transition">User Management</a>
                                 <span class="text-xs text-slate-300">/</span>
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -63,7 +63,7 @@ if (!isset($data) || !is_array($data)) {
                         </div>
 
                         <!-- Back Button -->
-                        <a href="/brgy-waste-app-v3/public/admin/accounts" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition self-start sm:self-auto">
+                        <a href="<?php echo app_url('admin/accounts'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition self-start sm:self-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             Back to Accounts
                         </a>
@@ -109,7 +109,7 @@ if (!isset($data) || !is_array($data)) {
                     <!-- ============================================================ -->
                     <!-- 3. MAIN FORM CONTAINER                                       -->
                     <!-- ============================================================ -->
-                    <form action="/brgy-waste-app-v3/public/admin/createStaff" method="POST" class="space-y-6">
+                    <form action="<?php echo app_url('admin/createStaff'); ?>" method="POST" class="space-y-6">
                         
                         <!-- SECTION 1: PERSONAL & CONTACT IDENTITY -->
                         <div class="bg-white rounded-2xl border border-slate-250 p-6 shadow-xs space-y-5">
@@ -216,7 +216,7 @@ if (!isset($data) || !is_array($data)) {
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <label class="block text-xs font-bold text-slate-800 tracking-tight">System Access Role <span class="text-red-500">*</span></label>
-                                        <a href="/brgy-waste-app-v3/public/settings/role_management" target="_blank" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1">
+                                        <a href="<?php echo app_url('settings/role_management'); ?>" target="_blank" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1">
                                             <span>Manage Roles</span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                                         </a>
@@ -312,7 +312,7 @@ if (!isset($data) || !is_array($data)) {
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
                                 Create Staff Account
                             </button>
-                            <a href="/brgy-waste-app-v3/public/admin/accounts" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                            <a href="<?php echo app_url('admin/accounts'); ?>" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
                                 Cancel
                             </a>
                         </div>

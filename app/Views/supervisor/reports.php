@@ -53,7 +53,7 @@ $conditionFilter = $_GET['condition'] ?? '';
                     <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold font-mono">
                         <?php echo count($reports); ?> Reports
                     </span>
-                    <a href="/brgy-waste-app-v3/public/supervisor/reports?export=csv" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs font-semibold rounded-xl shadow-xs transition">
+                    <a href="<?php echo app_url('supervisor/reports?export=csv'); ?>" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs font-semibold rounded-xl shadow-xs transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                         <span>Export CSV</span>
                     </a>
@@ -157,7 +157,7 @@ $conditionFilter = $_GET['condition'] ?? '';
                             <button type="submit" class="flex-1 h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm shadow-xs transition">
                                 Apply Filter
                             </button>
-                            <a href="/brgy-waste-app-v3/public/supervisor/reports" class="h-10 px-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold transition flex items-center justify-center">
+                            <a href="<?php echo app_url('supervisor/reports'); ?>" class="h-10 px-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold transition flex items-center justify-center">
                                 Reset
                             </a>
                         </div>
@@ -206,7 +206,7 @@ $conditionFilter = $_GET['condition'] ?? '';
                                 ?>
                                 <tr class="sup-report-row hover:bg-slate-50/80 transition">
                                     <td class="py-3.5 px-4 font-mono font-bold text-slate-900 text-xs">
-                                        <a href="/brgy-waste-app-v3/public/supervisor/view_report/<?php echo $report['id']; ?>" class="text-emerald-700 hover:underline">
+                                        <a href="<?php echo app_url('supervisor/view_report/<?php echo $report['id']; ?>'); ?>" class="text-emerald-700 hover:underline">
                                             <?php echo htmlspecialchars($reportId); ?>
                                         </a>
                                     </td>
@@ -243,7 +243,7 @@ $conditionFilter = $_GET['condition'] ?? '';
                                         </span>
                                     </td>
                                     <td class="py-3.5 px-4 text-right whitespace-nowrap">
-                                        <a href="/brgy-waste-app-v3/public/supervisor/view_report/<?php echo $report['id']; ?>" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-slate-700 text-xs font-semibold transition">
+                                        <a href="<?php echo app_url('supervisor/view_report/<?php echo $report['id']; ?>'); ?>" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-slate-700 text-xs font-semibold transition">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                             <span>Inspect</span>
                                         </a>

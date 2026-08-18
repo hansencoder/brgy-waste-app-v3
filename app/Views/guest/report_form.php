@@ -39,7 +39,7 @@
 
     <!-- Header -->
     <div class="flex items-center gap-3 mb-6">
-        <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 transition shadow-sm">
+        <a href="<?php echo app_url('index.php?url=guest'); ?>" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 transition shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
         </a>
         <div>
@@ -93,7 +93,7 @@
     </div>
 
     <!-- Form Card -->
-    <form action="/brgy-waste-app-v3/public/guest/review" method="POST" enctype="multipart/form-data" onsubmit="return validateReportForm()" class="space-y-5">
+    <form action="<?php echo app_url('guest/review'); ?>" method="POST" enctype="multipart/form-data" onsubmit="return validateReportForm()" class="space-y-5">
 
         <!-- Description -->
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">

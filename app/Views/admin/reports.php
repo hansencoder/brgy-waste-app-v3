@@ -282,7 +282,7 @@ $metrics = [
                         <?php foreach ($metrics as $label => $m): 
                             $isSelected = ($activeStatus === $m['filter']) || ($label === 'Total' && empty($activeStatus));
                         ?>
-                            <a href="/brgy-waste-app-v3/public/admin/reports<?php echo !empty($m['filter']) ? '?status=' . urlencode($m['filter']) : ''; ?>" 
+                            <a href="<?php echo app_url('admin/reports<?php echo !empty($m['filter']) ? '?status=' . urlencode($m['filter']) : ''; ?>'); ?>" 
                                class="rounded-lg p-4 text-center border transition-all shadow-xs hover:scale-[1.02] <?php echo $m['bg']; ?> <?php echo $m['border']; ?> <?php echo $isSelected ? 'ring-2 ring-emerald-500 shadow-sm' : ''; ?>">
                                 <p class="text-2xl font-extrabold font-mono <?php echo $m['color']; ?>"><?php echo number_format($m['value']); ?></p>
                                 <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mt-1"><?php echo $label; ?></p>
@@ -297,31 +297,31 @@ $metrics = [
                         
                         <!-- Status Filter Tabs -->
                         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-100 text-xs font-bold scrollbar-none">
-                            <a href="/brgy-waste-app-v3/public/admin/reports" 
+                            <a href="<?php echo app_url('admin/reports'); ?>" 
                                class="px-4 py-2 rounded-xl transition shrink-0 <?php echo empty($activeStatus) ? 'bg-[#0B2E22] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'; ?>">
                                 All Reports (<?php echo $status_counts['Total']; ?>)
                             </a>
-                            <a href="/brgy-waste-app-v3/public/admin/reports?status=Pending" 
+                            <a href="<?php echo app_url('admin/reports?status=Pending'); ?>" 
                                class="px-4 py-2 rounded-xl transition shrink-0 flex items-center gap-1.5 <?php echo $activeStatus === 'Pending' ? 'bg-amber-600 text-white shadow-xs' : 'text-amber-700 hover:bg-amber-50'; ?>">
                                 <span class="w-2 h-2 rounded-full bg-amber-400"></span>
                                 Pending (<?php echo $status_counts['Pending']; ?>)
                             </a>
-                            <a href="/brgy-waste-app-v3/public/admin/reports?status=Verified" 
+                            <a href="<?php echo app_url('admin/reports?status=Verified'); ?>" 
                                class="px-4 py-2 rounded-xl transition shrink-0 flex items-center gap-1.5 <?php echo $activeStatus === 'Verified' ? 'bg-blue-600 text-white shadow-xs' : 'text-blue-700 hover:bg-blue-50'; ?>">
                                 <span class="w-2 h-2 rounded-full bg-blue-400"></span>
                                 Verified (<?php echo $status_counts['Verified']; ?>)
                             </a>
-                            <a href="/brgy-waste-app-v3/public/admin/reports?status=In Progress" 
+                            <a href="<?php echo app_url('admin/reports?status=In Progress'); ?>" 
                                class="px-4 py-2 rounded-xl transition shrink-0 flex items-center gap-1.5 <?php echo $activeStatus === 'In Progress' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-700 hover:bg-emerald-50'; ?>">
                                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                                 In Progress (<?php echo $status_counts['In Progress']; ?>)
                             </a>
-                            <a href="/brgy-waste-app-v3/public/admin/reports?status=Resolved" 
+                            <a href="<?php echo app_url('admin/reports?status=Resolved'); ?>" 
                                class="px-4 py-2 rounded-xl transition shrink-0 flex items-center gap-1.5 <?php echo $activeStatus === 'Resolved' ? 'bg-teal-600 text-white shadow-xs' : 'text-teal-700 hover:bg-teal-50'; ?>">
                                 <span class="w-2 h-2 rounded-full bg-teal-400"></span>
                                 Resolved (<?php echo $status_counts['Resolved']; ?>)
                             </a>
-                            <a href="/brgy-waste-app-v3/public/admin/reports?status=Rejected" 
+                            <a href="<?php echo app_url('admin/reports?status=Rejected'); ?>" 
                                class="px-4 py-2 rounded-xl transition shrink-0 flex items-center gap-1.5 <?php echo $activeStatus === 'Rejected' ? 'bg-red-600 text-white shadow-xs' : 'text-red-700 hover:bg-red-50'; ?>">
                                 <span class="w-2 h-2 rounded-full bg-red-400"></span>
                                 Rejected (<?php echo $status_counts['Rejected']; ?>)
@@ -437,7 +437,7 @@ $metrics = [
 
                                             <!-- Tracking ID -->
                                             <td class="py-4 px-4 font-mono font-bold text-slate-900">
-                                                <a href="/brgy-waste-app-v3/public/admin/viewReport/<?php echo $report['id']; ?>" class="hover:text-emerald-600 transition">
+                                                <a href="<?php echo app_url('admin/viewReport/<?php echo $report['id']; ?>'); ?>" class="hover:text-emerald-600 transition">
                                                     <?php echo htmlspecialchars($reportId); ?>
                                                 </a>
                                             </td>
@@ -486,7 +486,7 @@ $metrics = [
 
                                             <!-- Action Button -->
                                             <td class="py-4 px-4 text-right no-print">
-                                                <a href="/brgy-waste-app-v3/public/admin/viewReport/<?php echo $report['id']; ?>" 
+                                                <a href="<?php echo app_url('admin/viewReport/<?php echo $report['id']; ?>'); ?>" 
                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 transition">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                                     Review

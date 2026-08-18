@@ -28,7 +28,7 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
 
         <!-- Top Branding -->
         <div class="flex flex-col items-center text-center space-y-2">
-            <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-3 group transition">
+            <a href="<?php echo app_url(''); ?>" class="inline-flex items-center gap-3 group transition">
                 <div class="w-11 h-11 rounded-full bg-[#07281E] p-0.5 shadow-sm flex items-center justify-center overflow-hidden border border-slate-200 group-hover:scale-105 transition">
                     <?php if (!empty($activeLogo)): ?>
                         <img src="<?php echo htmlspecialchars($activeLogo); ?>" alt="Logo" class="w-full h-full rounded-full object-cover">
@@ -71,7 +71,7 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
             </div>
 
             <!-- Form -->
-            <form id="phoneForm" action="/brgy-waste-app-v3/public/index.php?url=guest/sendOtp" method="POST" class="space-y-4" onsubmit="return validatePhoneForm()">
+            <form id="phoneForm" action="<?php echo app_url('index.php?url=guest/sendOtp'); ?>" method="POST" class="space-y-4" onsubmit="return validatePhoneForm()">
                 
                 <!-- FULL NAME -->
                 <div>
@@ -129,7 +129,7 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
 
         <!-- Back Button -->
         <div class="text-center">
-            <a href="/brgy-waste-app-v3/public/index.php?url=guest" 
+            <a href="<?php echo app_url('index.php?url=guest'); ?>" 
                class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition py-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>

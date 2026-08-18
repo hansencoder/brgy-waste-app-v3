@@ -7,7 +7,7 @@ class SupervisorController extends Controller {
     public function __construct() {
         // Check if user is logged in
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=auth');
+            header('Location: ' . app_url('index.php?url=auth'));
             exit;
         }
 
@@ -20,7 +20,7 @@ class SupervisorController extends Controller {
 
         // Only allow supervisor access
         if ($roleName !== 'supervisor' && $roleName !== 'administrator') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=auth');
+            header('Location: ' . app_url('index.php?url=auth'));
             exit;
         }
 
@@ -36,7 +36,7 @@ class SupervisorController extends Controller {
 
     public function requestProfileOTP() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile'));
+            header('Location: ' . app_url('index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile')));
             exit;
         }
 
@@ -76,7 +76,7 @@ class SupervisorController extends Controller {
 
     public function verifyProfileOTP() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile'));
+            header('Location: ' . app_url('index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile')));
             exit;
         }
 
@@ -655,7 +655,7 @@ public function getHotspots() {
         $data['report'] = $db->single();
 
         if (!$data['report']) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=supervisor/reports');
+            header('Location: ' . app_url('index.php?url=supervisor/reports'));
             exit;
         }
 
@@ -700,7 +700,7 @@ public function getHotspots() {
 public function gis() {
     // Check if user has supervisor or admin role
     if (!in_array($_SESSION['user_role'], ['supervisor', 'administrator'])) {
-        header('Location: /brgy-waste-app-v3/public/index.php?url=auth');
+        header('Location: ' . app_url('index.php?url=auth'));
         exit;
     }
 

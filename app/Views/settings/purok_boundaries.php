@@ -190,7 +190,7 @@ if (!isset($data) || !is_array($data)) {
 </div>
 
 <!-- Hidden Form -->
-<form id="boundarySaveForm" action="/brgy-waste-app-v3/public/settings/purok_boundaries" method="POST" class="hidden">
+<form id="boundarySaveForm" action="<?php echo app_url('settings/purok_boundaries'); ?>" method="POST" class="hidden">
     <input type="hidden" name="save_boundary" value="1">
     <input type="hidden" name="purok_id" id="postPurokId" value="">
     <input type="hidden" name="polygon_geojson" id="postGeoJson" value="">

@@ -15,7 +15,7 @@ if (empty($report)) {
             </div>
             <h1 class="text-xl font-bold text-slate-900">Report Not Found</h1>
             <p class="mt-2 text-xs text-slate-500">The waste report you are looking for does not exist or has been removed.</p>
-            <a href="/brgy-waste-app-v3/public/resident/my_report" class="mt-5 inline-flex items-center justify-center rounded-xl bg-[#0B2E22] px-5 py-2.5 text-xs font-bold text-white transition hover:bg-[#083528]">Back to My Reports</a>
+            <a href="<?php echo app_url('resident/my_report'); ?>" class="mt-5 inline-flex items-center justify-center rounded-xl bg-[#0B2E22] px-5 py-2.5 text-xs font-bold text-white transition hover:bg-[#083528]">Back to My Reports</a>
         </div>
     </div>';
     include __DIR__ . '/../layouts/footer.php';
@@ -84,7 +84,7 @@ if (!empty($timeline)) {
                 <!-- Header Title Bar -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
                     <div class="flex items-center gap-3">
-                        <a href="/brgy-waste-app-v3/public/resident/my_report" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition" title="Back to Reports">
+                        <a href="<?php echo app_url('resident/my_report'); ?>" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition" title="Back to Reports">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                         </a>
                         <div>
@@ -98,7 +98,7 @@ if (!empty($timeline)) {
                         </div>
                     </div>
                     
-                    <a href="/brgy-waste-app-v3/public/resident/submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B2E22] hover:bg-[#083528] text-white font-bold text-xs shadow-xs self-start sm:self-auto transition">
+                    <a href="<?php echo app_url('resident/submit'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B2E22] hover:bg-[#083528] text-white font-bold text-xs shadow-xs self-start sm:self-auto transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                         <span>New Report</span>
                     </a>

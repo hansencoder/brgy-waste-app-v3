@@ -27,7 +27,7 @@ $lng    = $data['lng'] ?? 120.803;
                     <p class="text-xs text-emerald-200/80 mt-0.5"><?php echo count($nearby); ?> existing report(s) found within 50 meters</p>
                 </div>
             </div>
-            <a href="/brgy-waste-app-v3/public/resident/submit" class="text-emerald-300 hover:text-white transition">
+            <a href="<?php echo app_url('resident/submit'); ?>" class="text-emerald-300 hover:text-white transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </a>
         </div>
@@ -66,7 +66,7 @@ $lng    = $data['lng'] ?? 120.803;
                                 <span><?php echo $distM; ?>m away <?php if ($dateStr): ?>• <?php echo $dateStr; ?><?php endif; ?></span>
                             </p>
                         </div>
-                        <form action="/brgy-waste-app-v3/public/resident/support_report" method="POST" class="shrink-0">
+                        <form action="<?php echo app_url('resident/support_report'); ?>" method="POST" class="shrink-0">
                             <input type="hidden" name="report_id" value="<?php echo (int)$rep['id']; ?>">
                             <button type="submit" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
                                 Support This
@@ -79,10 +79,10 @@ $lng    = $data['lng'] ?? 120.803;
 
             <!-- Action Buttons -->
             <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
-                <a href="/brgy-waste-app-v3/public/resident/submit" class="py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs text-center transition">
+                <a href="<?php echo app_url('resident/submit'); ?>" class="py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs text-center transition">
                     Cancel
                 </a>
-                <form action="/brgy-waste-app-v3/public/resident/continue_report" method="POST">
+                <form action="<?php echo app_url('resident/continue_report'); ?>" method="POST">
                     <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#0B2E22] hover:bg-[#083528] text-white font-bold text-xs transition cursor-pointer">
                         Continue Report
                     </button>

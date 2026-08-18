@@ -138,11 +138,11 @@ function getPriorityBadge($count) {
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                                 Print Map
                             </button>
-                            <a href="/brgy-waste-app-v3/public/settings/landmarks" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-extrabold transition border border-slate-200 shadow-xs">
+                            <a href="<?php echo app_url('settings/landmarks'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-extrabold transition border border-slate-200 shadow-xs">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                                 Landmarks
                             </a>
-                            <a href="/brgy-waste-app-v3/public/settings/heatmap" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#084232] text-white text-xs sm:text-sm font-extrabold transition shadow-xs border border-emerald-900">
+                            <a href="<?php echo app_url('settings/heatmap'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#084232] text-white text-xs sm:text-sm font-extrabold transition shadow-xs border border-emerald-900">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="2"/></svg>
                                 Heatmap Config
                             </a>
@@ -443,7 +443,7 @@ function getPriorityBadge($count) {
                                 <div id="tabContentLandmarks" class="p-5 overflow-y-auto space-y-3 flex-1 scrollbar-thin hidden">
                                     <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                                         <h2 class="text-xs font-black text-slate-500 uppercase tracking-wider">Barangay Infrastructure</h2>
-                                        <a href="/brgy-waste-app-v3/public/settings/landmarks" class="text-[11px] font-bold text-emerald-700 hover:underline">+ Manage</a>
+                                        <a href="<?php echo app_url('settings/landmarks'); ?>" class="text-[11px] font-bold text-emerald-700 hover:underline">+ Manage</a>
                                     </div>
 
                                     <?php if (!empty($landmarks)): ?>
@@ -465,7 +465,7 @@ function getPriorityBadge($count) {
                                     <?php else: ?>
                                         <div class="p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
                                             <p class="text-xs font-bold text-slate-500">No landmarks configured yet.</p>
-                                            <a href="/brgy-waste-app-v3/public/settings/landmarks" class="mt-2 inline-block text-xs font-extrabold text-emerald-700 underline">Add landmark pin</a>
+                                            <a href="<?php echo app_url('settings/landmarks'); ?>" class="mt-2 inline-block text-xs font-extrabold text-emerald-700 underline">Add landmark pin</a>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -770,7 +770,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ${r.description ? `<p style="font-size:11px; color:#64748b; margin:0 0 8px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${r.description}</p>` : ''}
                 <div style="display:flex; align-items:center; justify-content:space-between; padding-top:8px; border-top:1px solid #f1f5f9; margin-top:6px;">
                     <span style="font-size:10px; color:#94a3b8; font-weight:600;">${dateStr}</span>
-                    <a href="/brgy-waste-app-v3/public/admin/viewReport/${r.id}" target="_blank" 
+                    <a href="<?php echo app_url('admin/viewReport/${r.id}'); ?>" target="_blank" 
                        style="font-size:11px; font-weight:800; color:#059669; text-decoration:none;">View Full Report &rarr;</a>
                 </div>
             </div>
@@ -919,7 +919,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const statusVal = document.getElementById('statusFilter').value;
         const searchVal = document.getElementById('gisSearchInput').value.trim().toLowerCase();
 
-        let url = '/brgy-waste-app-v3/public/admin/getGisData?';
+        let url = '<?php echo app_url('admin/getGisData?'); ?>';
         if (currentCategoryId > 0) url += `category=${currentCategoryId}&`;
         if (purokVal > 0) url += `purok=${purokVal}&`;
         if (statusVal) url += `status=${encodeURIComponent(statusVal)}&`;

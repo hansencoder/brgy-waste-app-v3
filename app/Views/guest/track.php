@@ -32,7 +32,7 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
 
         <!-- Top Branding -->
         <div class="flex flex-col items-center text-center space-y-2">
-            <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-3 group transition">
+            <a href="<?php echo app_url(''); ?>" class="inline-flex items-center gap-3 group transition">
                 <div class="w-11 h-11 rounded-full bg-[#07281E] p-0.5 shadow-sm flex items-center justify-center overflow-hidden border border-slate-200 group-hover:scale-105 transition">
                     <?php if (!empty($activeLogo)): ?>
                         <img src="<?php echo htmlspecialchars($activeLogo); ?>" alt="Logo" class="w-full h-full rounded-full object-cover">
@@ -80,7 +80,7 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
             <?php endif; ?>
 
             <!-- Form -->
-            <form action="/brgy-waste-app-v3/public/index.php?url=guest/trackStatus" method="POST" class="space-y-4">
+            <form action="<?php echo app_url('index.php?url=guest/trackStatus'); ?>" method="POST" class="space-y-4">
                 
                 <!-- Tracking Number Input -->
                 <div class="space-y-1">
@@ -122,9 +122,9 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
 
         <!-- Links -->
         <div class="flex items-center justify-center gap-4 text-xs font-medium text-slate-500">
-            <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="hover:text-slate-800 transition">Report an Incident</a>
+            <a href="<?php echo app_url('index.php?url=guest'); ?>" class="hover:text-slate-800 transition">Report an Incident</a>
             <span>•</span>
-            <a href="/brgy-waste-app-v3/public/" class="hover:text-slate-800 transition">Return to Home</a>
+            <a href="<?php echo app_url(''); ?>" class="hover:text-slate-800 transition">Return to Home</a>
         </div>
 
     </div>

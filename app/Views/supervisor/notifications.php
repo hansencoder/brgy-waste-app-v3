@@ -112,7 +112,7 @@ function getSupervisorNotifStyle($type) {
 
 <script>
 function markAsRead(id) {
-    fetch('/brgy-waste-app-v3/public/supervisor/markNotificationRead', {
+    fetch('<?php echo app_url('supervisor/markNotificationRead'); ?>', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'notification_id=' + id
@@ -124,7 +124,7 @@ function markAsRead(id) {
 }
 
 function markAllAsRead() {
-    fetch('/brgy-waste-app-v3/public/supervisor/markAllNotificationsRead', {
+    fetch('<?php echo app_url('supervisor/markAllNotificationsRead'); ?>', {
         method: 'POST'
     }).then(r => r.json()).then(res => {
         if (res.success) {

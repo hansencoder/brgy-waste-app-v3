@@ -29,7 +29,7 @@ class SmsHelper
             'verified'    => "Good news! Your waste report {$trackingNumber} has been verified and will be actioned.",
             'in_progress' => "Update: Your waste report {$trackingNumber} is now being actively addressed by our team.",
             'resolved'    => "Your waste report {$trackingNumber} has been resolved. Thank you for helping keep our barangay clean!",
-            'rejected'    => "Your waste report {$trackingNumber} could not be processed. Track your report at: /brgy-waste-app-v3/public/index.php?url=guest/track"
+            'rejected'    => "Your waste report {$trackingNumber} could not be processed. Track your report at: /index.php?url=guest/track"
         ];
 
         $message = $statusMessages[$status] ?? "Your waste report {$trackingNumber} status has been updated to: {$status}.";

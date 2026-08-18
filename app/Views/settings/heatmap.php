@@ -75,7 +75,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xs">
                         <div>
                             <div class="flex items-center gap-2 mb-2">
-                                <a href="/brgy-waste-app-v3/public/settings" class="text-xs sm:text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
+                                <a href="<?php echo app_url('settings'); ?>" class="text-xs sm:text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
                                 <span class="text-sm text-slate-300">/</span>
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
                                     Heatmap &amp; Spatial Rules
@@ -91,11 +91,11 @@
 
                         <!-- Header Action Buttons -->
                         <div class="flex flex-wrap items-center gap-2.5">
-                            <a href="/brgy-waste-app-v3/public/admin/gis" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-extrabold transition border border-emerald-200 shadow-xs">
+                            <a href="<?php echo app_url('admin/gis'); ?>" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-extrabold transition border border-emerald-200 shadow-xs">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                                 View Live GIS Map
                             </a>
-                            <a href="/brgy-waste-app-v3/public/settings" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold transition border border-slate-200">
+                            <a href="<?php echo app_url('settings'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold transition border border-slate-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                                 Back to Hub
                             </a>
@@ -297,7 +297,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                         Save Heatmap Settings
                                     </button>
-                                    <a href="/brgy-waste-app-v3/public/settings" class="inline-flex items-center px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold rounded-xl transition border border-slate-200 cursor-pointer">
+                                    <a href="<?php echo app_url('settings'); ?>" class="inline-flex items-center px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold rounded-xl transition border border-slate-200 cursor-pointer">
                                         Cancel
                                     </a>
                                 </div>

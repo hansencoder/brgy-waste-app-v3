@@ -22,7 +22,7 @@ class MaintenanceController extends Controller {
 
         // If maintenance is not actually active, redirect to home
         if (!$maintenanceModel->isMaintenanceActive()) {
-            header('Location: /brgy-waste-app-v3/public/');
+            header('Location: ' . app_url(''));
             exit;
         }
 

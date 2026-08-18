@@ -28,7 +28,7 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
 
         <!-- Top Branding -->
         <div class="flex flex-col items-center text-center space-y-2">
-            <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-3 group transition">
+            <a href="<?php echo app_url(''); ?>" class="inline-flex items-center gap-3 group transition">
                 <!-- Circular Logo -->
                 <div class="w-11 h-11 rounded-full bg-[#07281E] p-0.5 shadow-sm flex items-center justify-center overflow-hidden border border-slate-200 group-hover:scale-105 transition">
                     <?php if (!empty($activeLogo)): ?>
@@ -136,7 +136,7 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
 
         <!-- CTA Button -->
         <div>
-            <a href="/brgy-waste-app-v3/public/index.php?url=guest/phone" 
+            <a href="<?php echo app_url('index.php?url=guest/phone'); ?>" 
                class="w-full py-3 bg-[#0B2E22] hover:bg-[#07281E] text-white font-semibold rounded-xl shadow-xs hover:shadow transition-all flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-[0.99]">
                 <span>I Understand &amp; Agree</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -147,7 +147,7 @@ $activeLogo = !empty($sysLogo) ? $sysLogo : (!empty($brgyLogo) ? $brgyLogo : '')
 
         <!-- Return to Homepage Link -->
         <div class="text-center">
-            <a href="/brgy-waste-app-v3/public/" 
+            <a href="<?php echo app_url(''); ?>" 
                class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition py-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>

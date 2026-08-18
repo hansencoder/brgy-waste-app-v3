@@ -110,7 +110,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
     
     <!-- Brand Header -->
     <div class="flex h-16 shrink-0 items-center gap-3 px-4 border-b border-emerald-900/40">
-        <a href="/brgy-waste-app-v3/public/resident" class="flex items-center gap-3 min-w-0 flex-1 group">
+        <a href="<?php echo app_url('resident'); ?>" class="flex items-center gap-3 min-w-0 flex-1 group">
             <div class="h-9 w-9 rounded-full bg-[#083528] flex items-center justify-center overflow-hidden border border-emerald-500/40 shrink-0 shadow-sm group-hover:scale-105 transition">
                 <?php if (!empty($sysLogo)): ?>
                     <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="h-full w-full object-cover">
@@ -139,7 +139,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
             <!-- Dashboard Link -->
             <?php $activeDash = $isActive('/resident') && !$isActive('/resident/submit') && !$isActive('/resident/my_report') && !$isActive('/resident/profile') && !$isActive('/resident/announcements') && !$isActive('/resident/collection_schedule') && !$isActive('/resident/notification'); ?>
-            <a href="/brgy-waste-app-v3/public/resident" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeDash ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeDash ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                 <?php if ($activeDash): ?>
                     <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
                 <?php endif; ?>
@@ -152,7 +152,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
             <!-- Submit Report Link -->
             <?php $activeSubmit = $isActive('/resident/submit'); ?>
-            <a href="/brgy-waste-app-v3/public/resident/submit" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeSubmit ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/submit'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeSubmit ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                 <?php if ($activeSubmit): ?>
                     <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
                 <?php endif; ?>
@@ -163,7 +163,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
             <!-- My Reports Link -->
             <?php $activeMyReports = $isActive('/resident/my_report') || strpos($currentUri, '/resident/viewReport') !== false; ?>
-            <a href="/brgy-waste-app-v3/public/resident/my_report" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeMyReports ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/my_report'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeMyReports ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                 <?php if ($activeMyReports): ?>
                     <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
                 <?php endif; ?>
@@ -179,7 +179,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
             <!-- Collection Schedule Link -->
             <?php $activeSched = $isActive('/resident/collection_schedule'); ?>
-            <a href="/brgy-waste-app-v3/public/resident/collection_schedule" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeSched ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/collection_schedule'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeSched ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                 <?php if ($activeSched): ?>
                     <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
                 <?php endif; ?>
@@ -190,7 +190,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
             <!-- Announcements Link -->
             <?php $activeAnnounce = $isActive('/resident/announcements'); ?>
-            <a href="/brgy-waste-app-v3/public/resident/announcements" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeAnnounce ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/announcements'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeAnnounce ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                 <?php if ($activeAnnounce): ?>
                     <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
                 <?php endif; ?>
@@ -208,7 +208,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
             <!-- Profile Link -->
             <?php $activeProfile = $isActive('/resident/profile'); ?>
-            <a href="/brgy-waste-app-v3/public/resident/profile" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeProfile ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/profile'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeProfile ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                 <?php if ($activeProfile): ?>
                     <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
                 <?php endif; ?>
@@ -219,7 +219,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
             <!-- Notifications Link -->
             <?php $activeNotif = $isActive('/resident/notification'); ?>
-            <a href="/brgy-waste-app-v3/public/resident/notification" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeNotif ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/notification'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeNotif ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
                 <?php if ($activeNotif): ?>
                     <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
                 <?php endif; ?>
@@ -236,7 +236,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
     <!-- Bottom User Profile Card & Logout -->
     <div class="shrink-0 p-3 border-t border-emerald-900/40">
         <div class="flex items-center justify-between p-2 rounded-xl bg-white/5 hover:bg-white/10 transition">
-            <a href="/brgy-waste-app-v3/public/resident/profile" class="flex items-center gap-2.5 min-w-0 flex-1 group">
+            <a href="<?php echo app_url('resident/profile'); ?>" class="flex items-center gap-2.5 min-w-0 flex-1 group">
                 <div class="h-8 w-8 rounded-full bg-[#083528] text-white flex items-center justify-center text-xs font-bold border border-emerald-500/30 shrink-0">
                     <?php echo strtoupper(substr($firstName, 0, 1)); ?>
                 </div>
@@ -245,7 +245,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                     <p class="text-[10px] font-semibold text-emerald-400/80 truncate"><?php echo htmlspecialchars($purok); ?></p>
                 </div>
             </a>
-            <a href="/brgy-waste-app-v3/public/auth/logout" class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition" title="Sign Out">
+            <a href="<?php echo app_url('auth/logout'); ?>" class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition" title="Sign Out">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </a>
         </div>

@@ -7,7 +7,7 @@ class AdminController extends Controller {
     public function __construct() {
         // Check if user is logged in and has admin role (secretary or captain)
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=auth');
+            header('Location: ' . app_url('index.php?url=auth'));
             exit;
         }
 
@@ -19,7 +19,7 @@ class AdminController extends Controller {
         $roleName = $user ? strtolower($user['role_name']) : '';
 
         if (!in_array($roleName, ['administrator', 'secretary', 'captain'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=auth');
+            header('Location: ' . app_url('index.php?url=auth'));
             exit;
         }
 
@@ -36,7 +36,7 @@ class AdminController extends Controller {
 
     public function requestProfileOTP() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile'));
+            header('Location: ' . app_url('index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile')));
             exit;
         }
 
@@ -76,7 +76,7 @@ class AdminController extends Controller {
 
     public function verifyProfileOTP() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile'));
+            header('Location: ' . app_url('index.php?url=' . urlencode(strtolower($_SESSION['user_role']) . '/profile')));
             exit;
         }
 
@@ -517,7 +517,7 @@ class AdminController extends Controller {
                 }
             }
             $currentTab = $_GET['tab'] ?? 'resident';
-            header("Location: /brgy-waste-app-v3/public/admin/accounts?tab=" . urlencode($currentTab));
+            header('Location: ' . app_url('admin/accounts?tab=' . urlencode($currentTab)));
             exit;
         }
 
@@ -710,7 +710,7 @@ class AdminController extends Controller {
                 }
             }
 
-            header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/reports'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('admin/reports')));
             exit;
         }
 
@@ -832,7 +832,7 @@ class AdminController extends Controller {
         $report = $db->single();
 
         if (!$report) {
-            header('Location: /brgy-waste-app-v3/public/admin/reports');
+            header('Location: ' . app_url('admin/reports'));
             exit;
         }
 
@@ -897,7 +897,7 @@ class AdminController extends Controller {
     // ============================================================
     public function updateReportStatus() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            header('Location: /brgy-waste-app-v3/public/admin/reports');
+            header('Location: ' . app_url('admin/reports'));
             exit;
         }
 
@@ -911,7 +911,7 @@ class AdminController extends Controller {
 
         // UPDATED: Added 'in_progress' and 'resolve' to the allowed actions
         if (!$report_id || !in_array($action, ['verify', 'in_progress', 'reject', 'resolve'])) {
-            header("Location: /brgy-waste-app-v3/public/admin/reports");
+            header('Location: ' . app_url('admin/reports'));
             exit;
         }
 
@@ -1002,7 +1002,7 @@ class AdminController extends Controller {
         }
 
         // Redirect back to the detail page
-        header("Location: /brgy-waste-app-v3/public/admin/viewReport/$report_id");
+        header('Location: ' . app_url('admin/viewReport/' . $report_id));
         exit;
     }
 
@@ -1421,7 +1421,7 @@ class AdminController extends Controller {
                 $notificationModel->createAnnouncementNotification($announcementId, $_SESSION['user_id']);
 
                 $this->auditModel->logAction($_SESSION['user_id'], 'Post Announcement', 'Announcements', "Posted '{$_POST['title']}'", 'success');
-                header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/announcements'));
+                header('Location: ' . app_url('index.php?url=' . urlencode('admin/announcements')));
                 exit;
             }
         }
@@ -1461,7 +1461,7 @@ class AdminController extends Controller {
             $this->auditModel->logAction($_SESSION['user_id'], 'Delete Announcement', "Announcement ID $announcementId", "Deleted announcement", 'success');
         }
 
-        header("Location: /brgy-waste-app-v3/public/index.php?url=" . urlencode('admin/announcements'));
+        header('Location: ' . app_url('index.php?url=' . urlencode('admin/announcements')));
         exit;
     }
 
@@ -1479,7 +1479,7 @@ class AdminController extends Controller {
         $announcement = $db->single();
 
         if (!$announcement) {
-            header('Location: /brgy-waste-app-v3/public/admin/announcements');
+            header('Location: ' . app_url('admin/announcements'));
             exit;
         }
 
@@ -1532,7 +1532,7 @@ class AdminController extends Controller {
 
             $this->auditModel->logAction($_SESSION['user_id'], 'Edit Announcement', "Announcement ID $id", "Updated announcement", 'success');
             $_SESSION['flash_success'] = 'Announcement updated successfully.';
-            header('Location: /brgy-waste-app-v3/public/admin/announcements');
+            header('Location: ' . app_url('admin/announcements'));
             exit;
         }
 
@@ -1646,7 +1646,7 @@ private function generateCalendarData($month, $year, $schedules) {
     // ============================================================
     public function addSchedule() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
-            header('Location: /brgy-waste-app-v3/public/admin/schedule');
+            header('Location: ' . app_url('admin/schedule'));
             exit;
         }
 
@@ -1689,7 +1689,7 @@ private function generateCalendarData($month, $year, $schedules) {
         $this->auditModel->logAction($_SESSION['user_id'], 'Add Schedule', "Schedule ID $schedule_id", "Added new schedule for $collection_day", 'success');
 
         $_SESSION['flash_success'] = 'Schedule added successfully!';
-        header('Location: /brgy-waste-app-v3/public/admin/schedule');
+        header('Location: ' . app_url('admin/schedule'));
         exit;
     }
 
@@ -1716,7 +1716,7 @@ private function generateCalendarData($month, $year, $schedules) {
         $schedule = $db->single();
 
         if (!$schedule) {
-            header('Location: /brgy-waste-app-v3/public/admin/schedule');
+            header('Location: ' . app_url('admin/schedule'));
             exit;
         }
 
@@ -1734,7 +1734,7 @@ private function generateCalendarData($month, $year, $schedules) {
     // ============================================================
     public function updateSchedule() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
-            header('Location: /brgy-waste-app-v3/public/admin/schedule');
+            header('Location: ' . app_url('admin/schedule'));
             exit;
         }
 
@@ -1787,7 +1787,7 @@ private function generateCalendarData($month, $year, $schedules) {
         $this->auditModel->logAction($_SESSION['user_id'], 'Update Schedule', "Schedule ID $schedule_id", "Updated schedule for $collection_day", 'success');
 
         $_SESSION['flash_success'] = 'Schedule updated successfully!';
-        header('Location: /brgy-waste-app-v3/public/admin/schedule');
+        header('Location: ' . app_url('admin/schedule'));
         exit;
     }
 
@@ -1796,7 +1796,7 @@ private function generateCalendarData($month, $year, $schedules) {
     // ============================================================
     public function deleteSchedule() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
-            header('Location: /brgy-waste-app-v3/public/admin/schedule');
+            header('Location: ' . app_url('admin/schedule'));
             exit;
         }
 
@@ -1817,7 +1817,7 @@ private function generateCalendarData($month, $year, $schedules) {
         $this->auditModel->logAction($_SESSION['user_id'], 'Delete Schedule', "Schedule ID $schedule_id", "Deleted schedule", 'success');
 
         $_SESSION['flash_success'] = 'Schedule deleted successfully!';
-        header('Location: /brgy-waste-app-v3/public/admin/schedule');
+        header('Location: ' . app_url('admin/schedule'));
         exit;
     }
 
@@ -1826,7 +1826,7 @@ private function generateCalendarData($month, $year, $schedules) {
      */
     public function postpone_schedule() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator'])) {
-            header('Location: /brgy-waste-app-v3/public/admin/schedule');
+            header('Location: ' . app_url('admin/schedule'));
             exit;
         }
 
@@ -1836,7 +1836,7 @@ private function generateCalendarData($month, $year, $schedules) {
 
         if (!$schedule_id || empty($new_date)) {
             $_SESSION['flash_error'] = 'Please provide a new date.';
-            header('Location: /brgy-waste-app-v3/public/admin/schedule');
+            header('Location: ' . app_url('admin/schedule'));
             exit;
         }
 
@@ -1861,7 +1861,7 @@ private function generateCalendarData($month, $year, $schedules) {
             $_SESSION['flash_success'] = 'Schedule postponed. Residents have been notified.';
         }
 
-        header('Location: /brgy-waste-app-v3/public/admin/schedule');
+        header('Location: ' . app_url('admin/schedule'));
         exit;
     }
 

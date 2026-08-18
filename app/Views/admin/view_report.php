@@ -2,7 +2,7 @@
 <?php
 $report = $data['report'] ?? null;
 if (!$report) {
-    header('Location: /brgy-waste-app-v3/public/admin/reports');
+    header('Location: ' . app_url('admin/reports'));
     exit;
 }
 
@@ -33,7 +33,7 @@ $imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path'
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
                     <!-- Back Link -->
-                    <a href="/brgy-waste-app-v3/public/admin/reports" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-700 transition mb-6">
+                    <a href="<?php echo app_url('admin/reports'); ?>" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-700 transition mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                         Back to Reports
                     </a>
@@ -191,7 +191,7 @@ $imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path'
                                                 <!-- CASE 1: REPORT IS PENDING -->
                                                 <?php if ($report['status'] === 'Pending'): ?>
                                                     <!-- Option: Verify Report -->
-                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                    <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
                                                         <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
                                                         <input type="hidden" name="action" value="verify">
                                                         <input type="hidden" name="remark" value="">
@@ -202,7 +202,7 @@ $imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path'
                                                     </form>
 
                                                     <!-- Option: Reject Report -->
-                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                    <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
                                                         <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
                                                         <input type="hidden" name="action" value="reject">
                                                         <div class="mb-3">
@@ -218,7 +218,7 @@ $imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path'
                                                 <!-- CASE 2: REPORT IS VERIFIED -->
                                                 <?php elseif ($report['status'] === 'Verified'): ?>
                                                     <!-- Option: Mark as In Progress -->
-                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                    <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
                                                         <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
                                                         <input type="hidden" name="action" value="in_progress">
                                                         <input type="hidden" name="remark" value="">
@@ -229,7 +229,7 @@ $imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path'
                                                     </form>
 
                                                     <!-- Option: Reject Report -->
-                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                    <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
                                                         <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
                                                         <input type="hidden" name="action" value="reject">
                                                         <div class="mb-3">
@@ -245,7 +245,7 @@ $imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path'
                                                 <!-- CASE 3: REPORT IS IN PROGRESS -->
                                                 <?php elseif ($report['status'] === 'In Progress'): ?>
                                                     <!-- Option: Resolve Report -->
-                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                    <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
                                                         <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
                                                         <input type="hidden" name="action" value="resolve">
                                                         <input type="hidden" name="remark" value="">
@@ -256,7 +256,7 @@ $imgPath = !empty($report['photo_path']) ? format_asset_url($report['photo_path'
                                                     </form>
 
                                                     <!-- Option: Reject Report -->
-                                                    <form action="/brgy-waste-app-v3/public/admin/updateReportStatus" method="POST" class="w-full">
+                                                    <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
                                                         <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
                                                         <input type="hidden" name="action" value="reject">
                                                         <div class="mb-3">

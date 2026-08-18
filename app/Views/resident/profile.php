@@ -94,11 +94,11 @@ $initial = strtoupper(substr($firstName, 0, 1));
                         <p class="text-xs sm:text-sm text-emerald-200/80 mt-1 font-medium">Manage your contact details, security credentials, and barangay notifications.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <a href="/brgy-waste-app-v3/public/resident/my_report" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/10 transition">
+                        <a href="<?php echo app_url('resident/my_report'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/10 transition">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                             <span>My Reports</span>
                         </a>
-                        <a href="/brgy-waste-app-v3/public/auth/logout" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition shadow-sm">
+                        <a href="<?php echo app_url('auth/logout'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition shadow-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                             <span>Sign Out</span>
                         </a>
@@ -203,7 +203,7 @@ $initial = strtoupper(substr($firstName, 0, 1));
                                 <span class="text-xs font-semibold text-slate-400">Step 1</span>
                             </div>
 
-                            <form id="profileForm" action="/brgy-waste-app-v3/public/resident/profile" method="POST" enctype="multipart/form-data" class="space-y-4">
+                            <form id="profileForm" action="<?php echo app_url('resident/profile'); ?>" method="POST" enctype="multipart/form-data" class="space-y-4">
                                 <input id="profilePicInput" type="file" name="profile_pic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -271,7 +271,7 @@ $initial = strtoupper(substr($firstName, 0, 1));
                                 <span class="text-xs font-semibold text-slate-400">Security</span>
                             </div>
 
-                            <form id="passwordForm" action="/brgy-waste-app-v3/public/resident/change_password" method="POST" class="space-y-4">
+                            <form id="passwordForm" action="<?php echo app_url('resident/change_password'); ?>" method="POST" class="space-y-4">
                                 <!-- Current Password -->
                                 <div>
                                     <label class="field-label">Current Password</label>
@@ -393,7 +393,7 @@ $initial = strtoupper(substr($firstName, 0, 1));
                             </div>
 
                             <div class="pt-3 border-t border-slate-100">
-                                <a href="/brgy-waste-app-v3/public/resident/my_report" class="block text-center py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 transition">
+                                <a href="<?php echo app_url('resident/my_report'); ?>" class="block text-center py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 transition">
                                     View Submitted Reports →
                                 </a>
                             </div>
@@ -562,7 +562,7 @@ $initial = strtoupper(substr($firstName, 0, 1));
 
     // OTP Logic
     function requestOTP() {
-        fetch('/brgy-waste-app-v3/public/resident/requestProfileOTP', {
+        fetch('<?php echo app_url('resident/requestProfileOTP'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
@@ -598,7 +598,7 @@ $initial = strtoupper(substr($firstName, 0, 1));
         btn.disabled = true;
         btn.textContent = 'Verifying...';
 
-        fetch('/brgy-waste-app-v3/public/resident/verifyProfileOTP', {
+        fetch('<?php echo app_url('resident/verifyProfileOTP'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'otp=' + encodeURIComponent(otp)

@@ -2,7 +2,7 @@
 <?php
 $report = $data['report'] ?? null;
 if (!$report) {
-    header('Location: /brgy-waste-app-v3/public/supervisor/reports');
+    header('Location: ' . app_url('supervisor/reports'));
     exit;
 }
 
@@ -50,7 +50,7 @@ $currentStep = $stepMap[$statusName] ?? 1;
             <!-- Breadcrumb Navigation -->
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <a href="/brgy-waste-app-v3/public/supervisor/reports" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition shadow-2xs">
+                    <a href="<?php echo app_url('supervisor/reports'); ?>" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition shadow-2xs">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
                     </a>
                     <div>
@@ -66,7 +66,7 @@ $currentStep = $stepMap[$statusName] ?? 1;
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <a href="/brgy-waste-app-v3/public/supervisor/reports" class="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                    <a href="<?php echo app_url('supervisor/reports'); ?>" class="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
                         Back to Reports
                     </a>
                 </div>

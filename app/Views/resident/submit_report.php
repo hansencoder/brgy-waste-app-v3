@@ -68,7 +68,7 @@ $resume_description = $resume_data['description'] ?? '';
                         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Submit Waste Report</h1>
                         <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Report uncollected waste, illegal dumps, or hazardous materials for prompt barangay response.</p>
                     </div>
-                    <a href="/brgy-waste-app-v3/public/resident/my_report" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-xs self-start">
+                    <a href="<?php echo app_url('resident/my_report'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-xs self-start">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                         <span>View My Reports</span>
                     </a>
@@ -89,7 +89,7 @@ $resume_description = $resume_data['description'] ?? '';
                 <?php endif; ?>
 
                 <!-- Main Form Grid -->
-                <form id="reportForm" action="/brgy-waste-app-v3/public/resident/submit" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-3 gap-6" onsubmit="return validateForm()">
+                <form id="reportForm" action="<?php echo app_url('resident/submit'); ?>" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-3 gap-6" onsubmit="return validateForm()">
                     
                     <!-- Left Column (2 cols): Details & Attachments -->
                     <div class="lg:col-span-2 space-y-6">
@@ -411,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const content = document.getElementById('dupCheckContent');
         const idle = document.getElementById('dupCheckIdle');
 
-        fetch(`/brgy-waste-app-v3/public/resident/check_duplicate?lat=${lat}&lng=${lng}`)
+        fetch('<?php echo app_url('resident/check_duplicate?lat=${lat}&lng=${lng}'); ?>')
             .then(res => res.json())
             .then(data => {
                 idle.classList.add('hidden');

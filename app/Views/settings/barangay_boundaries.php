@@ -88,7 +88,7 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xs">
                         <div>
                             <div class="flex items-center gap-2 mb-2">
-                                <a href="/brgy-waste-app-v3/public/settings" class="text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
+                                <a href="<?php echo app_url('settings'); ?>" class="text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
                                 <span class="text-sm text-slate-300">/</span>
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
                                     Master GIS Boundary
@@ -111,7 +111,7 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
                                 <span>Import / Export GeoJSON</span>
                             </button>
-                            <form action="/brgy-waste-app-v3/public/settings/barangay_boundaries" method="POST" onsubmit="return confirm('Are you sure you want to reset the official boundary to default coordinates?');" class="inline">
+                            <form action="<?php echo app_url('settings/barangay_boundaries'); ?>" method="POST" onsubmit="return confirm('Are you sure you want to reset the official boundary to default coordinates?');" class="inline">
                                 <input type="hidden" name="reset_default" value="1">
                                 <button type="submit" class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-800 text-sm font-extrabold rounded-xl transition border border-rose-200 flex items-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
@@ -351,7 +351,7 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
 </div>
 
 <!-- Hidden Form for Boundary Submission -->
-<form id="masterBoundaryForm" action="/brgy-waste-app-v3/public/settings/barangay_boundaries" method="POST" class="hidden">
+<form id="masterBoundaryForm" action="<?php echo app_url('settings/barangay_boundaries'); ?>" method="POST" class="hidden">
     <input type="hidden" name="save_boundary" value="1">
     <input type="hidden" name="polygon_geojson" id="formGeoJson" value="">
     <input type="hidden" name="center_latitude" id="formCenterLat" value="">

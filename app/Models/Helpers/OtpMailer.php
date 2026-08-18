@@ -179,6 +179,6 @@ class OtpMailer
     private static function getBaseUrl() {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        return $protocol . $host . '/brgy-waste-app-v3/public';
+        return $protocol . $host;
     }
 }

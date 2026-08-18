@@ -11,10 +11,7 @@ try {
 }
 $barangayName    = $authBranding['barangay_name'] ?? 'Dulong Bayan';
 $sysShortName    = $authBranding['system_short_name'] ?? 'WasteWatch';
-$sysLogo         = $authBranding['system_logo'] ?? null;
-if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysLogo, '/public') === 0) {
-    $sysLogo = '/brgy-waste-app-v3' . $sysLogo;
-}
+$sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding['system_logo']) : null;
 ?>
 
 <div class="w-full min-h-[calc(100vh-2rem)] flex-1 flex flex-col justify-center items-center py-10 px-4 sm:px-6">

@@ -112,7 +112,7 @@ foreach ($publicReports as $pr) {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="/brgy-waste-app-v3/public/" class="flex items-center gap-3 flex-shrink-0 group">
+            <a href="<?php echo app_url(''); ?>" class="flex items-center gap-3 flex-shrink-0 group">
                 <div class="w-10 h-10 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-sm overflow-hidden group-hover:border-emerald-400/50 transition-colors">
                     <?php if (!empty($sysLogo)): ?>
                         <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover">
@@ -142,13 +142,13 @@ foreach ($publicReports as $pr) {
             <!-- Right Actions -->
             <div class="flex items-center gap-3">
                 <?php if ($isLoggedIn): ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>" class="inline-flex items-center gap-2 px-4 py-2 bg-[#0B2E22] hover:bg-[#083528] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
+                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>'); ?>" class="inline-flex items-center gap-2 px-4 py-2 bg-[#0B2E22] hover:bg-[#083528] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
                         Dashboard
                     </a>
                 <?php else: ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth'); ?>" class="hidden sm:inline-flex text-xs font-medium text-slate-700 hover:text-emerald-800 transition-colors">Sign In</a>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth/register'); ?>" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#10B981] hover:bg-emerald-600 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
+                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode('auth'); ?>'); ?>" class="hidden sm:inline-flex text-xs font-medium text-slate-700 hover:text-emerald-800 transition-colors">Sign In</a>
+                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode('auth/register'); ?>'); ?>" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#10B981] hover:bg-emerald-600 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                         Register
                     </a>
@@ -185,10 +185,10 @@ foreach ($publicReports as $pr) {
             
             <div class="pt-4 border-t border-slate-200 flex flex-col gap-2.5 mt-2">
                 <?php if ($isLoggedIn): ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>" class="w-full bg-[#0B2E22] text-white font-semibold py-2.5 text-center text-xs rounded-xl shadow-xs">Go to Dashboard</a>
+                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>'); ?>" class="w-full bg-[#0B2E22] text-white font-semibold py-2.5 text-center text-xs rounded-xl shadow-xs">Go to Dashboard</a>
                 <?php else: ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth'); ?>" class="w-full text-slate-700 font-medium py-2 text-center text-xs">Sign In</a>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode('auth/register'); ?>" class="w-full bg-[#10B981] text-white font-semibold py-2.5 text-center text-xs rounded-xl shadow-md">Register Free Account</a>
+                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode('auth'); ?>'); ?>" class="w-full text-slate-700 font-medium py-2 text-center text-xs">Sign In</a>
+                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode('auth/register'); ?>'); ?>" class="w-full bg-[#10B981] text-white font-semibold py-2.5 text-center text-xs rounded-xl shadow-md">Register Free Account</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -232,15 +232,15 @@ foreach ($publicReports as $pr) {
             </p>
             
             <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
-                <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo $isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register'; ?>" class="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition active:scale-[0.98]">
+                <a href="<?php echo app_url('index.php?url=<?php echo $isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register'; ?>'); ?>" class="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition active:scale-[0.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     <span>Report Waste (Resident)</span>
                 </a>
-                <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs sm:text-sm rounded-xl backdrop-blur-xs transition">
+                <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs sm:text-sm rounded-xl backdrop-blur-xs transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <span>Report as Guest</span>
                 </a>
-                <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-2 px-4 py-3 text-emerald-200 hover:text-white font-medium text-xs sm:text-sm transition">
+                <a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="inline-flex items-center gap-2 px-4 py-3 text-emerald-200 hover:text-white font-medium text-xs sm:text-sm transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     <span>Track Status</span>
                 </a>
@@ -440,11 +440,11 @@ foreach ($publicReports as $pr) {
 
             <!-- Quick Action Links -->
             <div class="flex items-center gap-2.5 flex-shrink-0">
-                <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs font-semibold rounded-xl shadow-xs transition">
+                <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs font-semibold rounded-xl shadow-xs transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     <span>Pin New Report</span>
                 </a>
-                <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-2xs transition">
+                <a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-2xs transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     <span>Track ID</span>
                 </a>
@@ -810,7 +810,7 @@ foreach ($publicReports as $pr) {
                 <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Garbage Collection Schedule</h2>
                 <p class="text-xs sm:text-sm text-slate-500 mt-1">Official route schedule for all Puroks in Barangay <?php echo htmlspecialchars($barangayName); ?>.</p>
             </div>
-            <a href="/brgy-waste-app-v3/public/index.php?url=resident/collection_schedule" class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition">
+            <a href="<?php echo app_url('index.php?url=resident/collection_schedule'); ?>" class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition">
                 <span>View Full Interactive Calendar</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </a>
@@ -1074,7 +1074,7 @@ foreach ($publicReports as $pr) {
                 <span class="inline-flex items-center justify-center w-9 h-9 bg-[#10B981] text-white font-bold text-xs rounded-xl mb-3 shadow-sm">01</span>
                 <h4 class="font-bold text-slate-900 text-sm">Register &amp; Log In</h4>
                 <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Create a free resident account using your email or mobile number to track all your barangay incident reports in one place.</p>
-                <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="inline-flex items-center gap-1 text-xs font-semibold text-[#10B981] mt-3 hover:underline">Get started →</a>
+                <a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="inline-flex items-center gap-1 text-xs font-semibold text-[#10B981] mt-3 hover:underline">Get started →</a>
             </div>
 
             <div class="bg-white rounded-2xl p-6 border border-slate-200 hover-lift text-center relative shadow-2xs">
@@ -1082,7 +1082,7 @@ foreach ($publicReports as $pr) {
                 <h4 class="font-bold text-slate-900 text-sm">Snap &amp; Pin Report</h4>
                 <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Take a photo of the waste issue, describe it briefly, and pin the exact location on the interactive map.</p>
                 <?php if ($isLoggedIn && $role == 'resident'): ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=resident/submit" class="inline-flex items-center gap-1 text-xs font-semibold text-[#10B981] mt-3 hover:underline">Submit now →</a>
+                    <a href="<?php echo app_url('index.php?url=resident/submit'); ?>" class="inline-flex items-center gap-1 text-xs font-semibold text-[#10B981] mt-3 hover:underline">Submit now →</a>
                 <?php endif; ?>
             </div>
 
@@ -1091,7 +1091,7 @@ foreach ($publicReports as $pr) {
                 <h4 class="font-bold text-slate-900 text-sm">Track Resolution</h4>
                 <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Receive real-time progress updates as barangay officers inspect, dispatch collection crews, and resolve the report.</p>
                 <?php if ($isLoggedIn && $role == 'resident'): ?>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=resident/my_report" class="inline-flex items-center gap-1 text-xs font-semibold text-[#10B981] mt-3 hover:underline">View my reports →</a>
+                    <a href="<?php echo app_url('index.php?url=resident/my_report'); ?>" class="inline-flex items-center gap-1 text-xs font-semibold text-[#10B981] mt-3 hover:underline">View my reports →</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -1181,14 +1181,14 @@ foreach ($publicReports as $pr) {
                 <p class="text-emerald-100/80 text-xs sm:text-sm leading-relaxed">Register your resident account to submit reports, track collection status, and stay updated on local ordinances.</p>
                 <div class="flex flex-wrap items-center gap-3 pt-2">
                     <?php if ($isLoggedIn): ?>
-                        <a href="/brgy-waste-app-v3/public/index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition">
+                        <a href="<?php echo app_url('index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>'); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition">
                             Go to Dashboard →
                         </a>
                     <?php else: ?>
-                        <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs shadow-sm transition">
+                        <a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs shadow-sm transition">
                             Register Free Account
                         </a>
-                        <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="inline-flex items-center gap-2 px-4 py-2.5 border border-white/20 hover:bg-white/10 text-white font-semibold rounded-xl text-xs transition">
+                        <a href="<?php echo app_url('index.php?url=auth'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 border border-white/20 hover:bg-white/10 text-white font-semibold rounded-xl text-xs transition">
                             Login
                         </a>
                     <?php endif; ?>
@@ -1227,7 +1227,7 @@ foreach ($publicReports as $pr) {
             <div>
                 <h4 class="text-white font-semibold text-xs mb-3 uppercase tracking-wider">Navigation</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="/brgy-waste-app-v3/public/" class="text-slate-400 hover:text-white transition">Home</a></li>
+                    <li><a href="<?php echo app_url(''); ?>" class="text-slate-400 hover:text-white transition">Home</a></li>
                     <li><a href="#features" class="text-slate-400 hover:text-white transition">Features</a></li>
                     <li><a href="#community-guide" class="text-slate-400 hover:text-white transition">Waste Guide</a></li>
                     <li><a href="#penalties" class="text-slate-400 hover:text-white transition">Penalties &amp; Laws</a></li>
@@ -1239,10 +1239,10 @@ foreach ($publicReports as $pr) {
             <div>
                 <h4 class="text-white font-semibold text-xs mb-3 uppercase tracking-wider">Services</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="/brgy-waste-app-v3/public/index.php?url=guest" class="text-slate-400 hover:text-white transition">Report as Guest</a></li>
-                    <li><a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="text-slate-400 hover:text-white transition">Track Incident</a></li>
-                    <li><a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="text-slate-400 hover:text-white transition">Resident Registration</a></li>
-                    <li><a href="/brgy-waste-app-v3/public/index.php?url=auth" class="text-slate-400 hover:text-white transition">Sign In</a></li>
+                    <li><a href="<?php echo app_url('index.php?url=guest'); ?>" class="text-slate-400 hover:text-white transition">Report as Guest</a></li>
+                    <li><a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="text-slate-400 hover:text-white transition">Track Incident</a></li>
+                    <li><a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="text-slate-400 hover:text-white transition">Resident Registration</a></li>
+                    <li><a href="<?php echo app_url('index.php?url=auth'); ?>" class="text-slate-400 hover:text-white transition">Sign In</a></li>
                 </ul>
             </div>
 
@@ -1519,7 +1519,7 @@ foreach ($publicReports as $pr) {
                         <h4 style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0 0 2px 0; line-height: 1.3;">${r.category}</h4>
                         <p style="font-size: 11px; color: #64748B; margin: 0 0 6px 0; display: flex; align-items: center; gap: 4px;"><svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill="none" stroke='#64748B' stroke-width='2.5' fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> ${r.purok}</p>
                         <p style="font-size: 11px; color: #475569; margin: 0 0 8px 0; line-height: 1.4;">${r.desc}</p>
-                        <a href="/brgy-waste-app-v3/public/index.php?url=guest/track&track_id=${r.id}" style="display: inline-block; font-size: 11px; font-weight: 700; color: #10B981; text-decoration: none;">Track Incident →</a>
+                        <a href="<?php echo app_url('index.php?url=guest/track&track_id=${r.id}'); ?>" style="display: inline-block; font-size: 11px; font-weight: 700; color: #10B981; text-decoration: none;">Track Incident →</a>
                     </div>
                 `;
 

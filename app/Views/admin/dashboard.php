@@ -96,7 +96,7 @@ function getStatusBadgeProps($status) {
                                 <?php echo $active_hotspots; ?> Purok hotspot(s) detected with high report density (Top: <strong class="underline"><?php echo htmlspecialchars($highest_purok); ?></strong>).
                             </div>
                         </div>
-                        <a href="/brgy-waste-app-v3/public/admin/gis" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shrink-0 transition">
+                        <a href="<?php echo app_url('admin/gis'); ?>" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shrink-0 transition">
                             Open GIS Map →
                         </a>
                     </div>
@@ -252,7 +252,7 @@ function getStatusBadgeProps($status) {
                                         <p class="text-[11px] text-slate-400 font-medium">Scheduled Route</p>
                                     </div>
                                 </div>
-                                <a href="/brgy-waste-app-v3/public/admin/schedule" class="text-xs font-bold text-sky-600 hover:text-sky-700">Manage →</a>
+                                <a href="<?php echo app_url('admin/schedule'); ?>" class="text-xs font-bold text-sky-600 hover:text-sky-700">Manage →</a>
                             </div>
 
                             <?php if ($next_schedule): ?>
@@ -281,7 +281,7 @@ function getStatusBadgeProps($status) {
                                         <p class="text-[11px] text-slate-400 font-medium">User Accounts</p>
                                     </div>
                                 </div>
-                                <a href="/brgy-waste-app-v3/public/admin/accounts" class="text-xs font-bold text-purple-600 hover:text-purple-700">Accounts →</a>
+                                <a href="<?php echo app_url('admin/accounts'); ?>" class="text-xs font-bold text-purple-600 hover:text-purple-700">Accounts →</a>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3 text-center">
@@ -308,7 +308,7 @@ function getStatusBadgeProps($status) {
                                         <p class="text-[11px] text-slate-400 font-medium">Public Bulletins</p>
                                     </div>
                                 </div>
-                                <a href="/brgy-waste-app-v3/public/admin/announcements" class="text-xs font-bold text-amber-600 hover:text-amber-700">Announce →</a>
+                                <a href="<?php echo app_url('admin/announcements'); ?>" class="text-xs font-bold text-amber-600 hover:text-amber-700">Announce →</a>
                             </div>
 
                             <?php if ($latest_announce): ?>
@@ -338,7 +338,7 @@ function getStatusBadgeProps($status) {
                                         <p class="text-xs text-slate-500">Latest resident &amp; guest report submissions</p>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <a href="/brgy-waste-app-v3/public/admin/reports" class="text-xs font-bold text-emerald-600 hover:text-emerald-700">View All Reports →</a>
+                                        <a href="<?php echo app_url('admin/reports'); ?>" class="text-xs font-bold text-emerald-600 hover:text-emerald-700">View All Reports →</a>
                                     </div>
                                 </div>
 
@@ -380,7 +380,7 @@ function getStatusBadgeProps($status) {
                                                     </span>
                                                 </td>
                                                 <td class="py-4 px-6 text-right">
-                                                    <a href="/brgy-waste-app-v3/public/admin/viewReport/<?php echo $report['id']; ?>" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 transition">
+                                                    <a href="<?php echo app_url('admin/viewReport/<?php echo $report['id']; ?>'); ?>" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 transition">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                                         Review
                                                     </a>
@@ -416,7 +416,7 @@ function getStatusBadgeProps($status) {
                                                 <p class="font-bold text-slate-800"><?php echo htmlspecialchars($report['category'] ?? 'General'); ?></p>
                                                 <p class="text-slate-500"><?php echo htmlspecialchars($report['resident_name'] ?? 'Guest'); ?> · <?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></p>
                                             </div>
-                                            <a href="/brgy-waste-app-v3/public/admin/viewReport/<?php echo $report['id']; ?>" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-xs border border-emerald-200 hover:bg-emerald-100 transition self-center">Review →</a>
+                                            <a href="<?php echo app_url('admin/viewReport/<?php echo $report['id']; ?>'); ?>" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-xs border border-emerald-200 hover:bg-emerald-100 transition self-center">Review →</a>
                                         </div>
                                     </div>
                                     <?php endforeach; ?>
@@ -435,7 +435,7 @@ function getStatusBadgeProps($status) {
                                         </h2>
                                         <p class="text-xs text-slate-500">Live admin &amp; system audit log</p>
                                     </div>
-                                    <a href="/brgy-waste-app-v3/public/admin/audit_logs" class="text-xs font-bold text-slate-500 hover:text-slate-800">All Logs →</a>
+                                    <a href="<?php echo app_url('admin/audit_logs'); ?>" class="text-xs font-bold text-slate-500 hover:text-slate-800">All Logs →</a>
                                 </div>
 
                                 <div class="space-y-4 my-3 relative pl-3 border-l-2 border-slate-100">

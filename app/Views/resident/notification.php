@@ -169,7 +169,7 @@ $total_count   = count($notifications);
     }
 
     function markSingleRead(id) {
-        fetch('/brgy-waste-app-v3/public/resident/markNotificationRead', {
+        fetch('<?php echo app_url('resident/markNotificationRead'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'id=' + encodeURIComponent(id)
@@ -188,7 +188,7 @@ $total_count   = count($notifications);
     }
 
     function markAllAsRead() {
-        fetch('/brgy-waste-app-v3/public/resident/markAllNotificationsRead', {
+        fetch('<?php echo app_url('resident/markAllNotificationsRead'); ?>', {
             method: 'POST'
         })
         .then(() => {

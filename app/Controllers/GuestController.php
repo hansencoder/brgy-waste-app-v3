@@ -11,7 +11,7 @@ class GuestController extends Controller {
         require_once dirname(__DIR__) . '/Models/SystemMaintenance.php';
         $_guestMaintenance = new SystemMaintenance();
         if ($_guestMaintenance->isMaintenanceActive()) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=maintenance');
+            header('Location: ' . app_url('index.php?url=maintenance'));
             exit;
         }
 
@@ -136,7 +136,7 @@ class GuestController extends Controller {
     // ============================================================
     public function sendOtp() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest/phone');
+            header('Location: ' . app_url('index.php?url=guest/phone'));
             exit;
         }
 
@@ -218,7 +218,7 @@ class GuestController extends Controller {
         $_SESSION['guest_phone'] = $phone;
         $_SESSION['guest_name']  = $name;
 
-        header('Location: /brgy-waste-app-v3/public/index.php?url=guest/verifyOtp');
+        header('Location: ' . app_url('index.php?url=guest/verifyOtp'));
         exit;
     }
 
@@ -227,7 +227,7 @@ class GuestController extends Controller {
     // ============================================================
     public function verifyOtp() {
         if (!isset($_SESSION['guest_phone'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest/phone');
+            header('Location: ' . app_url('index.php?url=guest/phone'));
             exit;
         }
 
@@ -292,7 +292,7 @@ class GuestController extends Controller {
                 $_SESSION['guest_verified_phone'] = $phone;
                 $_SESSION['guest_verified_at']    = time();
 
-                header('Location: /brgy-waste-app-v3/public/index.php?url=guest/reportForm');
+                header('Location: ' . app_url('index.php?url=guest/reportForm'));
                 exit;
             } else {
                 // Increment attempts
@@ -330,7 +330,7 @@ class GuestController extends Controller {
     // ============================================================
     public function resendOtp() {
         if (!isset($_SESSION['guest_phone'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest');
+            header('Location: ' . app_url('index.php?url=guest'));
             exit;
         }
         $phone = $_SESSION['guest_phone'];
@@ -340,7 +340,7 @@ class GuestController extends Controller {
         $can = $this->canSendSmsOtp($phone, $ip);
         if (!$can['ok'] && $can['reason'] === 'cooldown') {
             $wait = $can['retry_after'];
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest/verifyOtp&resend_error=' . urlencode("Wait {$wait}s before resending."));
+            header('Location: ' . app_url('index.php?url=guest/verifyOtp&resend_error=' . urlencode("Wait {$wait}s before resending.")));
             exit;
         }
 
@@ -362,7 +362,7 @@ class GuestController extends Controller {
         SmsHelper::sendOtp($phone, $otp, $name);
         $this->recordSmsRate($phone, $ip);
 
-        header('Location: /brgy-waste-app-v3/public/index.php?url=guest/verifyOtp&resent=1');
+        header('Location: ' . app_url('index.php?url=guest/verifyOtp&resent=1'));
         exit;
     }
 
@@ -371,7 +371,7 @@ class GuestController extends Controller {
     // ============================================================
     public function reportForm() {
         if (empty($_SESSION['guest_verified_phone'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest');
+            header('Location: ' . app_url('index.php?url=guest'));
             exit;
         }
 
@@ -407,12 +407,12 @@ class GuestController extends Controller {
     // ============================================================
     public function review() {
         if (empty($_SESSION['guest_verified_phone'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest');
+            header('Location: ' . app_url('index.php?url=guest'));
             exit;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest/reportForm');
+            header('Location: ' . app_url('index.php?url=guest/reportForm'));
             exit;
         }
 
@@ -516,12 +516,12 @@ class GuestController extends Controller {
     // ============================================================
     public function submitReport() {
         if (empty($_SESSION['guest_verified_phone']) || empty($_SESSION['guest_pending_report'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest');
+            header('Location: ' . app_url('index.php?url=guest'));
             exit;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest/reportForm');
+            header('Location: ' . app_url('index.php?url=guest/reportForm'));
             exit;
         }
 
@@ -596,7 +596,7 @@ class GuestController extends Controller {
         $_SESSION['guest_confirmed_tracking'] = $trackingNumber;
         $_SESSION['guest_confirmed_phone']    = $phone;
 
-        header('Location: /brgy-waste-app-v3/public/index.php?url=guest/confirmation');
+        header('Location: ' . app_url('index.php?url=guest/confirmation'));
         exit;
     }
 
@@ -605,7 +605,7 @@ class GuestController extends Controller {
     // ============================================================
     public function confirmation() {
         if (empty($_SESSION['guest_confirmed_tracking'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest');
+            header('Location: ' . app_url('index.php?url=guest'));
             exit;
         }
 
@@ -641,7 +641,7 @@ class GuestController extends Controller {
     // ============================================================
     public function trackStatus() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=guest/track');
+            header('Location: ' . app_url('index.php?url=guest/track'));
             exit;
         }
 

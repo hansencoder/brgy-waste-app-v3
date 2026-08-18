@@ -282,7 +282,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                         <!-- Quick Actions Card -->
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-2.5">
                             <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">Quick Actions</h3>
-                            <a href="/brgy-waste-app-v3/public/admin/auditLogs" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
+                            <a href="<?php echo app_url('admin/auditLogs'); ?>" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
                                 <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center border border-purple-100">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                 </div>
@@ -291,7 +291,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                     <p class="text-[10px] text-slate-400">System forensic trail</p>
                                 </div>
                             </a>
-                            <a href="/brgy-waste-app-v3/public/admin/reports" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
+                            <a href="<?php echo app_url('admin/reports'); ?>" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
                                 <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                                 </div>
@@ -300,7 +300,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                     <p class="text-[10px] text-slate-400">Review &amp; verify reports</p>
                                 </div>
                             </a>
-                            <a href="/brgy-waste-app-v3/public/admin/schedule" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
+                            <a href="<?php echo app_url('admin/schedule'); ?>" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition group">
                                 <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-100">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                 </div>
@@ -310,7 +310,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                 </div>
                             </a>
                             <div class="pt-2 border-t border-slate-100">
-                                <a href="/brgy-waste-app-v3/public/auth/logout"
+                                <a href="<?php echo app_url('auth/logout'); ?>"
                                    class="flex items-center gap-3 p-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-100 hover:border-red-200 transition group">
                                     <div class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center border border-red-200">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -389,7 +389,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                     <p class="text-xs text-slate-500 font-semibold mt-0.5">Update your administrative account contact details.</p>
                                 </div>
 
-                                <form id="profileForm" action="/brgy-waste-app-v3/public/admin/profile" method="POST" enctype="multipart/form-data" class="space-y-5">
+                                <form id="profileForm" action="<?php echo app_url('admin/profile'); ?>" method="POST" enctype="multipart/form-data" class="space-y-5">
                                     <input id="profilePicInput2" type="file" name="profile_pic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
 
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -514,7 +514,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                     </div>
                                 </div>
 
-                                <form id="passwordForm" action="/brgy-waste-app-v3/public/admin/change_password" method="POST" class="space-y-4">
+                                <form id="passwordForm" action="<?php echo app_url('admin/change_password'); ?>" method="POST" class="space-y-4">
                                     <!-- Current Password -->
                                     <div>
                                         <label class="form-label">Current Password</label>
@@ -683,7 +683,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                     <?php endforeach; ?>
 
                                     <div class="text-center pt-3">
-                                        <a href="/brgy-waste-app-v3/public/admin/auditLogs" class="text-xs font-extrabold text-emerald-700 hover:text-emerald-900 underline underline-offset-2">
+                                        <a href="<?php echo app_url('admin/auditLogs'); ?>" class="text-xs font-extrabold text-emerald-700 hover:text-emerald-900 underline underline-offset-2">
                                             View full audit trail →
                                         </a>
                                     </div>
@@ -907,7 +907,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
 
     // ---- OTP ----
     function requestOTP() {
-        fetch('/brgy-waste-app-v3/public/admin/requestProfileOTP', {
+        fetch('<?php echo app_url('admin/requestProfileOTP'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
@@ -947,7 +947,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
         spinner.classList.remove('hidden');
         btn.disabled = true;
 
-        fetch('/brgy-waste-app-v3/public/admin/verifyProfileOTP', {
+        fetch('<?php echo app_url('admin/verifyProfileOTP'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'otp=' + encodeURIComponent(otp)

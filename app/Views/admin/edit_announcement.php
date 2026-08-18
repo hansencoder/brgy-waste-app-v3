@@ -24,10 +24,10 @@ $isPublished = !empty($announcement['is_published']);
         <main class="flex-1 relative overflow-y-auto focus:outline-none">
             <div class="max-w-3xl mx-auto px-4 py-8">
                 <h1 class="text-3xl font-bold text-foreground mb-6">Edit Announcement</h1>
-                <a href="/brgy-waste-app-v3/public/admin/announcements" class="text-sm text-emerald-600 hover:underline mb-4 inline-block">← Back to Announcements</a>
+                <a href="<?php echo app_url('admin/announcements'); ?>" class="text-sm text-emerald-600 hover:underline mb-4 inline-block">← Back to Announcements</a>
 
                 <div class="bg-white rounded-lg shadow p-6">
-                    <form action="/brgy-waste-app-v3/public/admin/edit_announcement/<?php echo $data['announcement']['id']; ?>" method="POST" enctype="multipart/form-data">
+                    <form action="<?php echo app_url('admin/edit_announcement/<?php echo $data['announcement']['id']; ?>'); ?>" method="POST" enctype="multipart/form-data">
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-foreground mb-1">Title</label>
                             <input type="text" name="title" value="<?php echo htmlspecialchars($announcementTitle); ?>" required class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background">
@@ -72,7 +72,7 @@ $isPublished = !empty($announcement['is_published']);
                         
                         <div class="flex gap-4">
                             <button type="submit" class="px-6 py-2 bg-emerald-600 text-white font-bold rounded-md hover:bg-emerald-700 transition">Update Announcement</button>
-                            <a href="/brgy-waste-app-v3/public/admin/announcements" class="px-6 py-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 transition">Cancel</a>
+                            <a href="<?php echo app_url('admin/announcements'); ?>" class="px-6 py-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 transition">Cancel</a>
                         </div>
                     </form>
                 </div>

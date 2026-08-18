@@ -251,7 +251,7 @@ function getCalendarWasteColor($type) {
                                         </button>
 
                                         <!-- Edit Action -->
-                                        <a href="/brgy-waste-app-v3/public/admin/editSchedule/<?php echo $schedule['schedule_id']; ?>" 
+                                        <a href="<?php echo app_url('admin/editSchedule/<?php echo $schedule['schedule_id']; ?>'); ?>" 
                                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 hover:border-emerald-300 text-xs font-extrabold transition active:scale-[0.97] cursor-pointer shadow-2xs" 
                                            title="Edit Schedule Details">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-500 group-hover:text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
@@ -392,7 +392,7 @@ function getCalendarWasteColor($type) {
                                 <p class="text-xs sm:text-sm text-amber-800 font-semibold mt-0.5">Need to postpone collection or announce holiday rescheduling? Broadcast a notice to all registered residents.</p>
                             </div>
                         </div>
-                        <a href="/brgy-waste-app-v3/public/admin/announcements" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-xs sm:text-sm shadow-xs transition active:scale-[0.98] whitespace-nowrap self-stretch sm:self-auto justify-center">
+                        <a href="<?php echo app_url('admin/announcements'); ?>" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-xs sm:text-sm shadow-xs transition active:scale-[0.98] whitespace-nowrap self-stretch sm:self-auto justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
                             Publish Public Notice
                         </a>
@@ -426,7 +426,7 @@ function getCalendarWasteColor($type) {
         </div>
 
         <!-- Form -->
-        <form action="/brgy-waste-app-v3/public/admin/addSchedule" method="POST" class="p-6 sm:p-7 space-y-5">
+        <form action="<?php echo app_url('admin/addSchedule'); ?>" method="POST" class="p-6 sm:p-7 space-y-5">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                     <label class="block text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-2">Collection Day <span class="text-red-600">*</span></label>
@@ -535,7 +535,7 @@ function getCalendarWasteColor($type) {
             </button>
         </div>
 
-        <form action="/brgy-waste-app-v3/public/admin/postpone_schedule" method="POST" class="p-6 sm:p-7 space-y-5">
+        <form action="<?php echo app_url('admin/postpone_schedule'); ?>" method="POST" class="p-6 sm:p-7 space-y-5">
             <input type="hidden" name="schedule_id" id="postponeScheduleId">
 
             <!-- Target Schedule Info Box -->
@@ -603,7 +603,7 @@ function getCalendarWasteColor($type) {
             <button onclick="closeDeleteModal()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-700 rounded-xl font-extrabold text-sm hover:bg-slate-100 transition cursor-pointer">
                 Cancel
             </button>
-            <form action="/brgy-waste-app-v3/public/admin/deleteSchedule" method="POST" class="flex-1">
+            <form action="<?php echo app_url('admin/deleteSchedule'); ?>" method="POST" class="flex-1">
                 <input type="hidden" id="deleteScheduleId" name="schedule_id" value="">
                 <button type="submit" class="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-extrabold text-sm transition shadow-sm active:scale-[0.98] cursor-pointer">
                     Delete Schedule

@@ -166,12 +166,12 @@
 
     <!-- Submit Actions -->
     <div class="mt-6 flex gap-3">
-        <a href="/brgy-waste-app-v3/public/index.php?url=guest/reportForm"
+        <a href="<?php echo app_url('index.php?url=guest/reportForm'); ?>"
             class="flex-1 h-12 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl shadow-sm hover:bg-slate-50 transition flex items-center justify-center gap-2 text-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
             Edit Report
         </a>
-        <form action="/brgy-waste-app-v3/public/guest/submitReport" method="POST" class="flex-[2]">
+        <form action="<?php echo app_url('guest/submitReport'); ?>" method="POST" class="flex-[2]">
             <button type="submit" class="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.99]">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                 Submit Report

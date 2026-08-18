@@ -36,7 +36,7 @@ $brgyLogoUrl = format_asset_url($data['barangay']['barangay_logo'] ?? '');
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-250 shadow-xs">
                         <div>
                             <div class="flex items-center gap-2 mb-2">
-                                <a href="/brgy-waste-app-v3/public/settings" class="text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
+                                <a href="<?php echo app_url('settings'); ?>" class="text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
                                 <span class="text-sm text-slate-300">/</span>
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
                                     Branding &amp; Barangay Profile
@@ -76,7 +76,7 @@ $brgyLogoUrl = format_asset_url($data['barangay']['barangay_logo'] ?? '');
                         <!-- Main Form Card -->
                         <div class="flex-1 min-w-0 space-y-6">
                             
-                            <form action="/brgy-waste-app-v3/public/settings/barangay" method="POST" enctype="multipart/form-data" class="space-y-6">
+                            <form action="<?php echo app_url('settings/barangay'); ?>" method="POST" enctype="multipart/form-data" class="space-y-6">
                                 
                                 <!-- SECTION 1: SYSTEM BRANDING & LOGO CUSTOMIZATION -->
                                 <div class="bg-white rounded-2xl border-2 border-slate-250 p-6 sm:p-8 shadow-xs space-y-6">
@@ -299,7 +299,7 @@ $brgyLogoUrl = format_asset_url($data['barangay']['barangay_logo'] ?? '');
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                             Save Barangay Information
                                         </button>
-                                        <a href="/brgy-waste-app-v3/public/settings" class="px-7 py-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-base font-extrabold rounded-xl transition border border-slate-250">
+                                        <a href="<?php echo app_url('settings'); ?>" class="px-7 py-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-base font-extrabold rounded-xl transition border border-slate-250">
                                             Cancel
                                         </a>
                                     </div>

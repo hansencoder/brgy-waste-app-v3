@@ -17,7 +17,7 @@ class ResidentController extends Controller {
 
     public function __construct() {
         if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'resident') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth')));
             exit;
         }
 
@@ -312,7 +312,7 @@ class ResidentController extends Controller {
                     'photo'         => $fileName,
                     'nearby'        => $nearby
                 ];
-                header('Location: /brgy-waste-app-v3/public/resident/duplicate_check');
+                header('Location: ' . app_url('resident/duplicate_check'));
                 exit;
             }
 
@@ -369,7 +369,7 @@ class ResidentController extends Controller {
         $data['report'] = $this->reportModel->getReportById($id, $_SESSION['user_id']);
 
         if (!$data['report']) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('resident/my_report'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('resident/my_report')));
             exit;
         }
 
@@ -407,7 +407,7 @@ class ResidentController extends Controller {
     public function duplicate_check()
     {
         if (!isset($_SESSION['pending_report'])) {
-            header('Location: /brgy-waste-app-v3/public/resident/submit');
+            header('Location: ' . app_url('resident/submit'));
             exit;
         }
         $data = $_SESSION['pending_report'];
@@ -427,7 +427,7 @@ class ResidentController extends Controller {
     public function support_report()
     {
         if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST['report_id'])) {
-            header('Location: /brgy-waste-app-v3/public/resident');
+            header('Location: ' . app_url('resident'));
             exit;
         }
         $reportId = (int)$_POST['report_id'];
@@ -440,7 +440,7 @@ class ResidentController extends Controller {
 
         unset($_SESSION['pending_report']);
         $_SESSION['success'] = 'You have supported an existing report. Thank you for your feedback!';
-        header('Location: /brgy-waste-app-v3/public/resident');
+        header('Location: ' . app_url('resident'));
         exit;
     }
 
@@ -450,7 +450,7 @@ class ResidentController extends Controller {
     public function continue_report()
     {
         if (!isset($_SESSION['pending_report'])) {
-            header('Location: /brgy-waste-app-v3/public/resident/submit');
+            header('Location: ' . app_url('resident/submit'));
             exit;
         }
         $pending = $_SESSION['pending_report'];
@@ -458,7 +458,7 @@ class ResidentController extends Controller {
         unset($pending['nearby']);
         $_SESSION['pending_report'] = $pending;
         // Redirect back to submit with resume flag to prefill
-        header('Location: /brgy-waste-app-v3/public/resident/submit?resume=1');
+        header('Location: ' . app_url('resident/submit?resume=1'));
         exit;
     }
 
@@ -490,14 +490,14 @@ class ResidentController extends Controller {
 
         if (!$report) {
             $_SESSION['error'] = 'Report not found or you do not have permission to delete it.';
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('resident/my_report'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('resident/my_report')));
             exit;
         }
 
         // Only allow deletion of pending reports (check the status field from the joined query)
         if (strtolower($report['status']) !== 'pending') {
             $_SESSION['error'] = 'Only pending reports can be deleted.';
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('resident/view_report/' . $id));
+            header('Location: ' . app_url('index.php?url=' . urlencode('resident/view_report/' . $id)));
             exit;
         }
 
@@ -508,7 +508,7 @@ class ResidentController extends Controller {
             $_SESSION['error'] = 'Failed to delete report.';
         }
 
-        header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('resident/my_report'));
+        header('Location: ' . app_url('index.php?url=' . urlencode('resident/my_report')));
         exit;
     }
 
@@ -701,7 +701,7 @@ class ResidentController extends Controller {
      */
     public function requestProfileOTP() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            header('Location: /brgy-waste-app-v3/public/resident/profile');
+            header('Location: ' . app_url('resident/profile'));
             exit;
         }
 
@@ -746,7 +746,7 @@ class ResidentController extends Controller {
      */
     public function verifyProfileOTP() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            header('Location: /brgy-waste-app-v3/public/resident/profile');
+            header('Location: ' . app_url('resident/profile'));
             exit;
         }
 

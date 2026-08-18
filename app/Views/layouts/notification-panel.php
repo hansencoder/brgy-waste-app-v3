@@ -321,7 +321,7 @@ if ($userId) {
                             <div class="pt-1.5 flex items-center justify-between gap-2">
                                 <div>
                                     ${reportId ? `
-                                        <a href="/brgy-waste-app-v3/public/admin/viewReport/${reportId}" class="inline-flex items-center gap-1 text-[11px] font-extrabold text-emerald-800 hover:text-emerald-950 underline underline-offset-2">
+                                        <a href="<?php echo app_url('admin/viewReport/${reportId}'); ?>" class="inline-flex items-center gap-1 text-[11px] font-extrabold text-emerald-800 hover:text-emerald-950 underline underline-offset-2">
                                             <span>Inspect Report #${reportId}</span>
                                             <span>&rarr;</span>
                                         </a>
@@ -354,7 +354,7 @@ if ($userId) {
 
     // Mark single notification as read
     function markAsRead(id) {
-        fetch('/brgy-waste-app-v3/public/api/notifications.php', {
+        fetch('<?php echo app_url('api/notifications.php'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ notification_id: id })
@@ -370,7 +370,7 @@ if ($userId) {
 
     // Mark all notifications as read
     function markAllAsRead() {
-        fetch('/brgy-waste-app-v3/public/api/notifications.php', {
+        fetch('<?php echo app_url('api/notifications.php'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ mark_all: true })
@@ -385,7 +385,7 @@ if ($userId) {
 
     // Delete single notification
     function deleteNotification(id) {
-        fetch('/brgy-waste-app-v3/public/api/notifications.php', {
+        fetch('<?php echo app_url('api/notifications.php'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ delete_id: id })
@@ -401,7 +401,7 @@ if ($userId) {
     // Clear all read notifications
     function clearReadNotifications() {
         if (!confirm('Clear all read notifications?')) return;
-        fetch('/brgy-waste-app-v3/public/api/notifications.php', {
+        fetch('<?php echo app_url('api/notifications.php'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clear_read: true })
@@ -455,7 +455,7 @@ if ($userId) {
         btn.disabled = true;
         btn.textContent = 'Broadcasting...';
 
-        fetch('/brgy-waste-app-v3/public/api/notifications.php', {
+        fetch('<?php echo app_url('api/notifications.php'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ broadcast: true, type, title, content })
@@ -466,7 +466,7 @@ if ($userId) {
                 closeBroadcastModal();
                 alert('Broadcast alert dispatched successfully!');
                 // Reload list
-                fetch('/brgy-waste-app-v3/public/api/notifications.php', {
+                fetch('<?php echo app_url('api/notifications.php'); ?>', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ get_list: true })

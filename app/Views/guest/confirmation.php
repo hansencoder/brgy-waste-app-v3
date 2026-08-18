@@ -91,16 +91,16 @@
 
         <!-- CTA Buttons -->
         <div class="mt-6 flex flex-col gap-3 fade-up fade-up-3">
-            <a href="/brgy-waste-app-v3/public/index.php?url=guest/track&tn=<?php echo urlencode($data['tracking_number']); ?>"
+            <a href="<?php echo app_url('index.php?url=guest/track&tn=<?php echo urlencode($data['tracking_number']); ?>'); ?>"
                 class="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                 Track My Report
             </a>
-            <a href="/brgy-waste-app-v3/public/index.php?url=guest"
+            <a href="<?php echo app_url('index.php?url=guest'); ?>"
                 class="w-full h-11 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition flex items-center justify-center gap-2 text-sm shadow-sm">
                 Submit Another Report
             </a>
-            <a href="/brgy-waste-app-v3/public/"
+            <a href="<?php echo app_url(''); ?>"
                 class="text-xs text-slate-400 hover:text-slate-600 font-medium transition">
                 Return to Home
             </a>

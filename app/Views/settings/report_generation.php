@@ -47,7 +47,7 @@ $logoRightUrl = format_asset_url(!empty($settings['header_logo_right']) ? $setti
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xs">
                         <div>
                             <div class="flex items-center gap-2 mb-2">
-                                <a href="/brgy-waste-app-v3/public/settings" class="text-xs sm:text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
+                                <a href="<?php echo app_url('settings'); ?>" class="text-xs sm:text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
                                 <span class="text-sm text-slate-300">/</span>
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold bg-purple-100 text-purple-900 border border-purple-300">
                                     Report Generation &amp; Letterhead
@@ -61,7 +61,7 @@ $logoRightUrl = format_asset_url(!empty($settings['header_logo_right']) ? $setti
                             </p>
                         </div>
 
-                        <a href="/brgy-waste-app-v3/public/settings" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold transition border border-slate-200 self-start sm:self-auto">
+                        <a href="<?php echo app_url('settings'); ?>" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold transition border border-slate-200 self-start sm:self-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             Back to Settings
                         </a>
@@ -95,7 +95,7 @@ $logoRightUrl = format_asset_url(!empty($settings['header_logo_right']) ? $setti
                         <!-- Main Form & Live Preview -->
                         <div class="flex-1 min-w-0 space-y-6">
                             
-                            <form action="/brgy-waste-app-v3/public/settings/report_generation" method="POST" enctype="multipart/form-data" id="reportSettingsForm" class="space-y-6">
+                            <form action="<?php echo app_url('settings/report_generation'); ?>" method="POST" enctype="multipart/form-data" id="reportSettingsForm" class="space-y-6">
                                 
                                 <input type="hidden" name="remove_logo_left" id="removeLogoLeftInput" value="0">
                                 <input type="hidden" name="remove_logo_right" id="removeLogoRightInput" value="0">
@@ -418,7 +418,7 @@ $logoRightUrl = format_asset_url(!empty($settings['header_logo_right']) ? $setti
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                         Save Report Formatting Settings
                                     </button>
-                                    <a href="/brgy-waste-app-v3/public/settings" class="inline-flex items-center px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold rounded-xl transition border border-slate-200 cursor-pointer">
+                                    <a href="<?php echo app_url('settings'); ?>" class="inline-flex items-center px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold rounded-xl transition border border-slate-200 cursor-pointer">
                                         Cancel
                                     </a>
                                 </div>

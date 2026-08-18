@@ -95,7 +95,7 @@
 
     <div class="text-center mt-6 no-print space-x-4">
         <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2 rounded shadow font-bold hover:bg-blue-700">Print as PDF</button>
-        <a href="/brgy-waste-app-v3/public/admin/reports" class="bg-gray-600 text-white px-6 py-2 rounded shadow font-bold hover:bg-gray-700">Back</a>
+        <a href="<?php echo app_url('admin/reports'); ?>" class="bg-gray-600 text-white px-6 py-2 rounded shadow font-bold hover:bg-gray-700">Back</a>
     </div>
 </body>
 </html>

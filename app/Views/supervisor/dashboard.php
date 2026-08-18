@@ -86,11 +86,11 @@ function getSupervisorStatusBadge($status) {
 
                     <!-- Action Shortcuts -->
                     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-                        <a href="/brgy-waste-app-v3/public/supervisor/reports" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-xs transition border border-white/10">
+                        <a href="<?php echo app_url('supervisor/reports'); ?>" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-xs transition border border-white/10">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                             <span>Manage Reports</span>
                         </a>
-                        <a href="/brgy-waste-app-v3/public/supervisor/gis" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold shadow-xs transition">
+                        <a href="<?php echo app_url('supervisor/gis'); ?>" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold shadow-xs transition">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
                             <span>GIS Heatmap</span>
                         </a>
@@ -236,7 +236,7 @@ function getSupervisorStatusBadge($status) {
                             <h2 class="text-sm font-bold text-slate-900">Recent Incident Reports</h2>
                             <p class="text-xs text-slate-500">Latest field reports submitted by residents and guests</p>
                         </div>
-                        <a href="/brgy-waste-app-v3/public/supervisor/reports" class="text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition">
+                        <a href="<?php echo app_url('supervisor/reports'); ?>" class="text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition">
                             View all →
                         </a>
                     </div>
@@ -246,7 +246,7 @@ function getSupervisorStatusBadge($status) {
                             <?php foreach ($recentReports as $report):
                                 $badge = getSupervisorStatusBadge($report['status'] ?? 'Pending');
                             ?>
-                            <a href="/brgy-waste-app-v3/public/supervisor/view_report/<?php echo $report['id']; ?>" class="flex items-center justify-between py-3 hover:bg-slate-50 px-2 rounded-xl transition gap-3">
+                            <a href="<?php echo app_url('supervisor/view_report/<?php echo $report['id']; ?>'); ?>" class="flex items-center justify-between py-3 hover:bg-slate-50 px-2 rounded-xl transition gap-3">
                                 <div class="min-w-0 flex-1">
                                     <div class="flex items-center gap-2">
                                         <span class="font-mono text-xs font-semibold text-emerald-800">WR-<?php echo str_pad($report['id'], 4, '0', STR_PAD_LEFT); ?></span>
@@ -282,7 +282,7 @@ function getSupervisorStatusBadge($status) {
                             <h2 class="text-sm font-bold text-slate-900">Purok Density &amp; Hotspots</h2>
                             <p class="text-xs text-slate-500">Priority areas requiring truck dispatch</p>
                         </div>
-                        <a href="/brgy-waste-app-v3/public/supervisor/gis" class="text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition">
+                        <a href="<?php echo app_url('supervisor/gis'); ?>" class="text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition">
                             Open Map →
                         </a>
                     </div>

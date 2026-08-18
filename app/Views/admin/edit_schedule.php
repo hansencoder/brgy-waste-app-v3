@@ -5,7 +5,7 @@ $puroks = $data['puroks'] ?? [];
 $selected_puroks = $data['selected_puroks'] ?? [];
 
 if (!$schedule) {
-    header('Location: /brgy-waste-app-v3/public/admin/schedule');
+    header('Location: ' . app_url('admin/schedule'));
     exit;
 }
 ?>
@@ -31,7 +31,7 @@ if (!$schedule) {
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xs">
                         <div>
                             <div class="flex items-center gap-2 mb-2">
-                                <a href="/brgy-waste-app-v3/public/admin/schedule" class="text-xs sm:text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Schedule Management</a>
+                                <a href="<?php echo app_url('admin/schedule'); ?>" class="text-xs sm:text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Schedule Management</a>
                                 <span class="text-slate-300">/</span>
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
                                     Edit Schedule #<?php echo $schedule['schedule_id']; ?>
@@ -45,7 +45,7 @@ if (!$schedule) {
                             </p>
                         </div>
 
-                        <a href="/brgy-waste-app-v3/public/admin/schedule" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold transition self-start sm:self-auto border border-slate-200">
+                        <a href="<?php echo app_url('admin/schedule'); ?>" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-extrabold transition self-start sm:self-auto border border-slate-200">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                             Back to Schedules
                         </a>
@@ -53,7 +53,7 @@ if (!$schedule) {
 
                     <!-- Main Edit Card -->
                     <div class="bg-white rounded-2xl border-2 border-slate-200 p-6 sm:p-8 shadow-xs">
-                        <form action="/brgy-waste-app-v3/public/admin/updateSchedule" method="POST" class="space-y-6">
+                        <form action="<?php echo app_url('admin/updateSchedule'); ?>" method="POST" class="space-y-6">
                             <input type="hidden" name="schedule_id" value="<?php echo $schedule['schedule_id']; ?>">
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -131,7 +131,7 @@ if (!$schedule) {
 
                             <!-- Footer Action Buttons -->
                             <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-200">
-                                <a href="/brgy-waste-app-v3/public/admin/schedule" class="px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-sm transition border border-slate-200 cursor-pointer">
+                                <a href="<?php echo app_url('admin/schedule'); ?>" class="px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-sm transition border border-slate-200 cursor-pointer">
                                     Cancel
                                 </a>
                                 <button type="submit" class="px-8 py-3.5 rounded-xl bg-[#0B2E22] hover:bg-[#084232] text-white font-extrabold text-sm shadow-sm transition active:scale-[0.98] cursor-pointer flex items-center gap-2">

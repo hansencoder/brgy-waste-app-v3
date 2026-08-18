@@ -112,7 +112,7 @@
                                     <!-- Form -->
                                     <div class="bg-white rounded-2xl border-2 border-slate-250 p-6 shadow-xs space-y-4">
                                         <h3 class="text-base font-extrabold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-3">Add New Landmark</h3>
-                                        <form action="/brgy-waste-app-v3/public/settings/landmarks" method="POST" class="space-y-4">
+                                        <form action="<?php echo app_url('settings/landmarks'); ?>" method="POST" class="space-y-4">
                                             <input type="hidden" name="add_landmark" value="1">
                                             <input type="hidden" name="latitude" id="landmarkLat" value="">
                                             <input type="hidden" name="longitude" id="landmarkLng" value="">

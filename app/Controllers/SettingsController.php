@@ -7,7 +7,7 @@ class SettingsController extends Controller {
     public function __construct() {
         // Check if user is logged in and is administrator
         if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'administrator') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=auth');
+            header('Location: ' . app_url('index.php?url=auth'));
             exit;
         }
         $this->userModel = $this->model('User');
@@ -18,7 +18,7 @@ class SettingsController extends Controller {
      * Settings Dashboard – defaults directly to Barangay Information section.
      */
     public function index() {
-        header('Location: /brgy-waste-app-v3/public/settings/barangay');
+        header('Location: ' . app_url('settings/barangay'));
         exit;
     }
 
@@ -1219,4 +1219,4 @@ class SettingsController extends Controller {
         exit;
     }
 }
-
+

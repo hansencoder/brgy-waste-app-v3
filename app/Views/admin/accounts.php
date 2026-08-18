@@ -66,7 +66,7 @@ function getAccountBadgeProps($status) {
                         </div>
 
                         <!-- Create Staff Button -->
-                        <a href="/brgy-waste-app-v3/public/admin/createStaff" 
+                        <a href="<?php echo app_url('admin/createStaff'); ?>" 
                            class="inline-flex items-center gap-2 rounded-xl bg-slate-900 hover:bg-black px-4 py-2.5 text-xs font-bold text-white shadow-sm transition active:scale-[0.98] self-start sm:self-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             Create Staff Account
@@ -303,7 +303,7 @@ function getAccountBadgeProps($status) {
             <button onclick="closeActionModal()" class="flex-1 px-4 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-bold text-xs hover:bg-slate-100 transition">
                 Cancel
             </button>
-            <form id="actionForm" action="/brgy-waste-app-v3/public/admin/accounts" method="POST" class="flex-1">
+            <form id="actionForm" action="<?php echo app_url('admin/accounts'); ?>" method="POST" class="flex-1">
                 <input type="hidden" id="form_user_id" name="user_id">
                 <input type="hidden" id="form_action" name="action">
                 <input type="hidden" id="form_reason" name="reason" value="">

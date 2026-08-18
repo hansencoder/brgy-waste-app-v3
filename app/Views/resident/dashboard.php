@@ -67,12 +67,12 @@ function getResidentReportBadge($status) {
 
                         <!-- Action Buttons -->
                         <div class="flex items-center gap-3 shrink-0">
-                            <a href="/brgy-waste-app-v3/public/resident/submit"
+                            <a href="<?php echo app_url('resident/submit'); ?>"
                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#10B981] hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                                 <span>Report Waste Issue</span>
                             </a>
-                            <a href="/brgy-waste-app-v3/public/resident/collection_schedule"
+                            <a href="<?php echo app_url('resident/collection_schedule'); ?>"
                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/15 transition backdrop-blur-xs">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                 <span>Collection Schedule</span>
@@ -139,7 +139,7 @@ function getResidentReportBadge($status) {
                                     <h2 class="text-base font-extrabold text-slate-900 tracking-tight">Recent Report Activity</h2>
                                     <p class="text-xs font-semibold text-slate-400 mt-0.5">Your latest waste incident submissions</p>
                                 </div>
-                                <a href="/brgy-waste-app-v3/public/resident/my_report" class="text-xs font-extrabold text-emerald-700 hover:text-emerald-900 transition">
+                                <a href="<?php echo app_url('resident/my_report'); ?>" class="text-xs font-extrabold text-emerald-700 hover:text-emerald-900 transition">
                                     View All Reports →
                                 </a>
                             </div>
@@ -178,7 +178,7 @@ function getResidentReportBadge($status) {
                                                     </span>
                                                 </td>
                                                 <td class="py-3.5 px-6 text-right">
-                                                    <a href="/brgy-waste-app-v3/public/resident/view_report/<?php echo $report['id']; ?>"
+                                                    <a href="<?php echo app_url('resident/view_report/<?php echo $report['id']; ?>'); ?>"
                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition">
                                                         <span>View</span>
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -215,7 +215,7 @@ function getResidentReportBadge($status) {
                                             <p class="font-semibold text-slate-800"><?php echo htmlspecialchars($report['waste_category'] ?? 'General Waste'); ?></p>
                                             <p class="text-[10px] text-slate-400 font-mono mt-0.5"><?php echo date('M d, Y - h:i A', strtotime($report['submission_date'])); ?></p>
                                         </div>
-                                        <a href="/brgy-waste-app-v3/public/resident/view_report/<?php echo $report['id']; ?>" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 shrink-0">
+                                        <a href="<?php echo app_url('resident/view_report/<?php echo $report['id']; ?>'); ?>" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 shrink-0">
                                             View
                                         </a>
                                     </div>
@@ -300,7 +300,7 @@ function getResidentReportBadge($status) {
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-3">
                             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                                 <h3 class="text-sm font-extrabold text-slate-900">Collection Schedules</h3>
-                                <a href="/brgy-waste-app-v3/public/resident/collection_schedule" class="text-xs font-bold text-emerald-700 hover:text-emerald-900">
+                                <a href="<?php echo app_url('resident/collection_schedule'); ?>" class="text-xs font-bold text-emerald-700 hover:text-emerald-900">
                                     Full Schedule →
                                 </a>
                             </div>
@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;background:${cfg.bg};color:${cfg.txt};margin-bottom:4px;">${cfg.label}</span>
             <p style="font-weight:800;color:#0f172a;margin:0 0 2px;">${pin.category_name||'Waste Report'}</p>
             <p style="color:#64748b;font-size:11px;margin:0 0 6px;">${shortDesc}</p>
-            <a href="/brgy-waste-app-v3/public/resident/view_report/${pin.id}" style="display:block;text-align:center;background:#0B2E22;color:white;padding:4px 0;border-radius:6px;font-weight:700;text-decoration:none;font-size:11px;">View Details →</a>
+            <a href="<?php echo app_url('resident/view_report/${pin.id}'); ?>" style="display:block;text-align:center;background:#0B2E22;color:white;padding:4px 0;border-radius:6px;font-weight:700;text-decoration:none;font-size:11px;">View Details →</a>
         </div>`;
         L.marker([pin.latitude, pin.longitude], { icon }).addTo(map).bindPopup(popup);
     });

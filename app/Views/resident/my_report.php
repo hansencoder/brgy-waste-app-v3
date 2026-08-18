@@ -64,7 +64,7 @@ function getReportBadge($status) {
                         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">My Waste Reports</h1>
                         <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Track the real-time status and collection history of your submitted waste issues.</p>
                     </div>
-                    <a href="/brgy-waste-app-v3/public/resident/submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#083528] text-white font-bold text-xs sm:text-sm shadow-sm transition active:scale-[0.98] self-start">
+                    <a href="<?php echo app_url('resident/submit'); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#083528] text-white font-bold text-xs sm:text-sm shadow-sm transition active:scale-[0.98] self-start">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                         <span>Submit New Report</span>
                     </a>
@@ -156,7 +156,7 @@ function getReportBadge($status) {
                                         data-category="<?php echo $catSlug; ?>"
                                         data-desc="<?php echo htmlspecialchars($desc); ?>">
                                         <td class="py-4 px-6 font-mono font-bold text-slate-900">
-                                            <a href="/brgy-waste-app-v3/public/resident/view_report/<?php echo $r['id']; ?>" class="hover:text-emerald-700">
+                                            <a href="<?php echo app_url('resident/view_report/<?php echo $r['id']; ?>'); ?>" class="hover:text-emerald-700">
                                                 <?php echo $reportId; ?>
                                             </a>
                                         </td>
@@ -175,7 +175,7 @@ function getReportBadge($status) {
                                             </span>
                                         </td>
                                         <td class="py-4 px-6 text-right">
-                                            <a href="/brgy-waste-app-v3/public/resident/view_report/<?php echo $r['id']; ?>"
+                                            <a href="<?php echo app_url('resident/view_report/<?php echo $r['id']; ?>'); ?>"
                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition">
                                                 <span>Track</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -221,7 +221,7 @@ function getReportBadge($status) {
                                 <?php endif; ?>
                                 <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
                                     <span><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></span>
-                                    <a href="/brgy-waste-app-v3/public/resident/view_report/<?php echo $r['id']; ?>" class="font-bold text-emerald-700">
+                                    <a href="<?php echo app_url('resident/view_report/<?php echo $r['id']; ?>'); ?>" class="font-bold text-emerald-700">
                                         Track Status →
                                     </a>
                                 </div>

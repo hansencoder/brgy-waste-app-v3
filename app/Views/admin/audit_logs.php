@@ -15,7 +15,7 @@ $barangay = $data['barangay'] ?? [];
 $brgyName = $barangay['barangay_name'] ?? 'Barangay Dulong Bayan';
 $brgyCity = $barangay['municipality'] ?? 'Quezon City';
 $brgyProv = $barangay['province'] ?? 'Metro Manila';
-$sysLogo = !empty($barangay['system_logo']) ? $barangay['system_logo'] : '/brgy-waste-app-v3/public/images/logo.png';
+$sysLogo = !empty($barangay['system_logo']) ? $barangay['system_logo'] : '/images/logo.png';
 
 // Helper to determine action styling & badges
 function getActionMeta($action) {

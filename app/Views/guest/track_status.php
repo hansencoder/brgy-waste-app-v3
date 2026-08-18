@@ -68,7 +68,7 @@ if ($currentIdx === false) $currentIdx = -1;
 
     <!-- Top Bar Navigation & Branding -->
     <div class="flex items-center justify-between gap-4">
-        <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-extrabold text-slate-700 hover:text-slate-950 hover:bg-slate-100 transition shadow-2xs">
+        <a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-extrabold text-slate-700 hover:text-slate-950 hover:bg-slate-100 transition shadow-2xs">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
             Track Another
         </a>
@@ -208,12 +208,12 @@ if ($currentIdx === false) $currentIdx = -1;
 
     <!-- Actions -->
     <div class="flex flex-col sm:flex-row gap-3">
-        <a href="/brgy-waste-app-v3/public/index.php?url=guest/track"
+        <a href="<?php echo app_url('index.php?url=guest/track'); ?>"
            class="flex-1 h-12 bg-white border border-slate-200 text-slate-800 font-extrabold rounded-2xl shadow-2xs hover:bg-slate-100 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             Track Another Incident
         </a>
-        <a href="/brgy-waste-app-v3/public/index.php?url=guest"
+        <a href="<?php echo app_url('index.php?url=guest'); ?>"
            class="flex-1 h-12 bg-[#0B2E22] hover:bg-[#084232] text-white font-extrabold rounded-2xl shadow-xs transition flex items-center justify-center gap-2 text-xs sm:text-sm border border-emerald-900">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             Submit New Waste Report

@@ -142,7 +142,7 @@ class GuestController extends Controller {
 
         $phone = trim($_POST['phone'] ?? '');
         $name  = trim($_POST['guest_name'] ?? '');
-        $ip    = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $ip    = get_client_ip();
 
         $barangayModel = $this->model('Barangay');
         $barangay = $barangayModel->getInfo();
@@ -335,7 +335,7 @@ class GuestController extends Controller {
         }
         $phone = $_SESSION['guest_phone'];
         $name  = $_SESSION['guest_name'] ?? '';
-        $ip    = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $ip    = get_client_ip();
 
         $can = $this->canSendSmsOtp($phone, $ip);
         if (!$can['ok'] && $can['reason'] === 'cooldown') {

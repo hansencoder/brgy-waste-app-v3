@@ -15,7 +15,7 @@ if (empty($report)) {
             </div>
             <h1 class="text-xl font-bold text-slate-900">Report Not Found</h1>
             <p class="mt-2 text-xs text-slate-500">The waste report you are looking for does not exist or has been removed.</p>
-            <a href="<?php echo app_url('resident/my_report'); ?>" class="mt-5 inline-flex items-center justify-center rounded-xl bg-[#0B2E22] px-5 py-2.5 text-xs font-bold text-white transition hover:bg-[#083528]">Back to My Reports</a>
+            <a href="' . htmlspecialchars(app_url('resident/my_report')) . '" class="mt-5 inline-flex items-center justify-center rounded-xl bg-[#0B2E22] px-5 py-2.5 text-xs font-bold text-white transition hover:bg-[#083528]">Back to My Reports</a>
         </div>
     </div>';
     include __DIR__ . '/../layouts/footer.php';

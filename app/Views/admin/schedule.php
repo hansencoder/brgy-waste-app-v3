@@ -251,7 +251,7 @@ function getCalendarWasteColor($type) {
                                         </button>
 
                                         <!-- Edit Action -->
-                                        <a href="<?php echo app_url('admin/editSchedule/<?php echo $schedule['schedule_id']; ?>'); ?>" 
+                                        <a href="<?php echo app_url('admin/editSchedule/' . ($schedule['schedule_id'])); ?>" 
                                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 hover:border-emerald-300 text-xs font-extrabold transition active:scale-[0.97] cursor-pointer shadow-2xs" 
                                            title="Edit Schedule Details">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-500 group-hover:text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>

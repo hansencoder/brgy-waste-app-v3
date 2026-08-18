@@ -156,7 +156,7 @@ function getReportBadge($status) {
                                         data-category="<?php echo $catSlug; ?>"
                                         data-desc="<?php echo htmlspecialchars($desc); ?>">
                                         <td class="py-4 px-6 font-mono font-bold text-slate-900">
-                                            <a href="<?php echo app_url('resident/view_report/<?php echo $r['id']; ?>'); ?>" class="hover:text-emerald-700">
+                                            <a href="<?php echo app_url('resident/view_report/' . ($r['id'])); ?>" class="hover:text-emerald-700">
                                                 <?php echo $reportId; ?>
                                             </a>
                                         </td>
@@ -175,7 +175,7 @@ function getReportBadge($status) {
                                             </span>
                                         </td>
                                         <td class="py-4 px-6 text-right">
-                                            <a href="<?php echo app_url('resident/view_report/<?php echo $r['id']; ?>'); ?>"
+                                            <a href="<?php echo app_url('resident/view_report/' . ($r['id'])); ?>"
                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition">
                                                 <span>Track</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -221,7 +221,7 @@ function getReportBadge($status) {
                                 <?php endif; ?>
                                 <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
                                     <span><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></span>
-                                    <a href="<?php echo app_url('resident/view_report/<?php echo $r['id']; ?>'); ?>" class="font-bold text-emerald-700">
+                                    <a href="<?php echo app_url('resident/view_report/' . ($r['id'])); ?>" class="font-bold text-emerald-700">
                                         Track Status →
                                     </a>
                                 </div>

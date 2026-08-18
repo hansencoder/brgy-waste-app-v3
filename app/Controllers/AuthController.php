@@ -252,7 +252,7 @@ class AuthController extends Controller {
                     return $this->view('auth/login', ['error' => 'No valid email or phone number on file for authentication.']);
                 }
 
-                $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+                $ip = get_client_ip();
                 $can = $this->userModel->canSendEmailOtp($contactTarget, $ip);
                 if (!$can['ok']) {
                     if ($can['reason'] === 'cooldown') {
@@ -322,7 +322,7 @@ class AuthController extends Controller {
 
         $email = $_SESSION['mfa_email'] ?? null;
         if ($email) {
-            $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+            $ip = get_client_ip();
             $can = $this->userModel->canSendEmailOtp($email, $ip);
             if (!$can['ok'] && $can['reason'] === 'cooldown') {
                 $data['retry_after_seconds'] = (int)$can['retry_after'];
@@ -403,7 +403,7 @@ class AuthController extends Controller {
             if (!$contactTarget) {
                 $data['error'] = 'No contact information available to resend code.';
             } else {
-                $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+                $ip = get_client_ip();
                 $can = $this->userModel->canSendEmailOtp($contactTarget, $ip);
                 if (!$can['ok']) {
                     if ($can['reason'] === 'cooldown') {
@@ -593,7 +593,7 @@ class AuthController extends Controller {
         $data = ['error' => '', 'success' => ''];
         $email = $_SESSION['reg_email'];
         $regType = $_SESSION['reg_type'] ?? 'email';
-        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $ip = get_client_ip();
 
         // Check for existing cooldown
         $can = $this->userModel->canSendEmailOtp($email, $ip);

@@ -117,7 +117,7 @@ foreach ($reports as $r) {
                         <button type="submit" class="flex-1 h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition">
                             Apply
                         </button>
-                        <a href="<?php echo app_url('supervisor/gis?view=<?php echo $current_view; ?>'); ?>" class="h-10 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold transition flex items-center justify-center">
+                        <a href="<?php echo app_url('supervisor/gis?view=' . ($current_view)); ?>" class="h-10 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold transition flex items-center justify-center">
                             Reset
                         </a>
                     </div>

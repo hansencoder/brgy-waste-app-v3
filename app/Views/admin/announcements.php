@@ -342,7 +342,7 @@ function getVisibilityBadge($visName) {
                                         </button>
 
                                         <?php if ($_SESSION['user_role'] == 'secretary' || $_SESSION['user_role'] == 'administrator'): ?>
-                                            <a href="<?php echo app_url('admin/edit_announcement/<?php echo $item['id']; ?>'); ?>" 
+                                            <a href="<?php echo app_url('admin/edit_announcement/' . ($item['id'])); ?>" 
                                                class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-xs font-extrabold transition border border-emerald-200 flex items-center gap-1.5">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                                                 Edit

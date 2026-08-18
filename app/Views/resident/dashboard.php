@@ -178,7 +178,7 @@ function getResidentReportBadge($status) {
                                                     </span>
                                                 </td>
                                                 <td class="py-3.5 px-6 text-right">
-                                                    <a href="<?php echo app_url('resident/view_report/<?php echo $report['id']; ?>'); ?>"
+                                                    <a href="<?php echo app_url('resident/view_report/' . ($report['id'])); ?>"
                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition">
                                                         <span>View</span>
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -215,7 +215,7 @@ function getResidentReportBadge($status) {
                                             <p class="font-semibold text-slate-800"><?php echo htmlspecialchars($report['waste_category'] ?? 'General Waste'); ?></p>
                                             <p class="text-[10px] text-slate-400 font-mono mt-0.5"><?php echo date('M d, Y - h:i A', strtotime($report['submission_date'])); ?></p>
                                         </div>
-                                        <a href="<?php echo app_url('resident/view_report/<?php echo $report['id']; ?>'); ?>" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 shrink-0">
+                                        <a href="<?php echo app_url('resident/view_report/' . ($report['id'])); ?>" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 shrink-0">
                                             View
                                         </a>
                                     </div>

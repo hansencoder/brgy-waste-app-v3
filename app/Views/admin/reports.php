@@ -282,7 +282,7 @@ $metrics = [
                         <?php foreach ($metrics as $label => $m): 
                             $isSelected = ($activeStatus === $m['filter']) || ($label === 'Total' && empty($activeStatus));
                         ?>
-                            <a href="<?php echo app_url('admin/reports<?php echo !empty($m['filter']) ? '?status=' . urlencode($m['filter']) : ''; ?>'); ?>" 
+                            <a href="<?php echo app_url('admin/reports' . (!empty($m['filter']) ? '?status=' . urlencode($m['filter']) : '')); ?>" 
                                class="rounded-lg p-4 text-center border transition-all shadow-xs hover:scale-[1.02] <?php echo $m['bg']; ?> <?php echo $m['border']; ?> <?php echo $isSelected ? 'ring-2 ring-emerald-500 shadow-sm' : ''; ?>">
                                 <p class="text-2xl font-extrabold font-mono <?php echo $m['color']; ?>"><?php echo number_format($m['value']); ?></p>
                                 <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mt-1"><?php echo $label; ?></p>
@@ -437,7 +437,7 @@ $metrics = [
 
                                             <!-- Tracking ID -->
                                             <td class="py-4 px-4 font-mono font-bold text-slate-900">
-                                                <a href="<?php echo app_url('admin/viewReport/<?php echo $report['id']; ?>'); ?>" class="hover:text-emerald-600 transition">
+                                                <a href="<?php echo app_url('admin/viewReport/' . ($report['id'])); ?>" class="hover:text-emerald-600 transition">
                                                     <?php echo htmlspecialchars($reportId); ?>
                                                 </a>
                                             </td>
@@ -486,7 +486,7 @@ $metrics = [
 
                                             <!-- Action Button -->
                                             <td class="py-4 px-4 text-right no-print">
-                                                <a href="<?php echo app_url('admin/viewReport/<?php echo $report['id']; ?>'); ?>" 
+                                                <a href="<?php echo app_url('admin/viewReport/' . ($report['id'])); ?>" 
                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 transition">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                                     Review

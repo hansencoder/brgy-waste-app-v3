@@ -120,13 +120,13 @@ function statusBadgeClass($status) {
 
                         <!-- Header Action Buttons -->
                         <div class="flex items-center gap-3">
-                            <a href="<?php echo app_url('admin/exportAnalyticsPDF?<?php echo $exportQuery; ?>'); ?>"
+                            <a href="<?php echo app_url('admin/exportAnalyticsPDF?' . ($exportQuery)); ?>"
                                target="_blank"
                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-extrabold text-xs sm:text-sm border border-red-200 shadow-xs transition active:scale-[0.98]">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                 Print Report View
                             </a>
-                            <a href="<?php echo app_url('admin/exportAnalyticsExcel?<?php echo $exportQuery; ?>'); ?>"
+                            <a href="<?php echo app_url('admin/exportAnalyticsExcel?' . ($exportQuery)); ?>"
                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#084232] text-white font-extrabold text-xs sm:text-sm shadow-xs transition active:scale-[0.98] border border-emerald-900">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                 Export Dataset
@@ -483,12 +483,12 @@ function statusBadgeClass($status) {
                                 <p class="text-xs sm:text-sm font-semibold text-slate-500"><?php echo count($filteredReports); ?> record(s) matching selected parameters</p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <a href="<?php echo app_url('admin/exportReportSummaryXLSX?<?php echo $exportQuery; ?>'); ?>"
+                                <a href="<?php echo app_url('admin/exportReportSummaryXLSX?' . ($exportQuery)); ?>"
                                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-extrabold text-xs shadow-xs transition active:scale-[0.98]">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                     Export CSV
                                 </a>
-                                <a href="<?php echo app_url('admin/exportReportSummaryPDF?<?php echo $exportQuery; ?>'); ?>"
+                                <a href="<?php echo app_url('admin/exportReportSummaryPDF?' . ($exportQuery)); ?>"
                                    target="_blank"
                                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-extrabold text-xs shadow-xs transition active:scale-[0.98]">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>

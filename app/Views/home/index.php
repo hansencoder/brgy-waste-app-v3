@@ -142,13 +142,13 @@ foreach ($publicReports as $pr) {
             <!-- Right Actions -->
             <div class="flex items-center gap-3">
                 <?php if ($isLoggedIn): ?>
-                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>'); ?>" class="inline-flex items-center gap-2 px-4 py-2 bg-[#0B2E22] hover:bg-[#083528] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
+                    <a href="<?php echo app_url('index.php?url=' . (urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')))); ?>" class="inline-flex items-center gap-2 px-4 py-2 bg-[#0B2E22] hover:bg-[#083528] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
                         Dashboard
                     </a>
                 <?php else: ?>
-                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode('auth'); ?>'); ?>" class="hidden sm:inline-flex text-xs font-medium text-slate-700 hover:text-emerald-800 transition-colors">Sign In</a>
-                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode('auth/register'); ?>'); ?>" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#10B981] hover:bg-emerald-600 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
+                    <a href="<?php echo app_url('index.php?url=' . (urlencode('auth'))); ?>" class="hidden sm:inline-flex text-xs font-medium text-slate-700 hover:text-emerald-800 transition-colors">Sign In</a>
+                    <a href="<?php echo app_url('index.php?url=' . (urlencode('auth/register'))); ?>" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#10B981] hover:bg-emerald-600 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                         Register
                     </a>
@@ -185,10 +185,10 @@ foreach ($publicReports as $pr) {
             
             <div class="pt-4 border-t border-slate-200 flex flex-col gap-2.5 mt-2">
                 <?php if ($isLoggedIn): ?>
-                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>'); ?>" class="w-full bg-[#0B2E22] text-white font-semibold py-2.5 text-center text-xs rounded-xl shadow-xs">Go to Dashboard</a>
+                    <a href="<?php echo app_url('index.php?url=' . (urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')))); ?>" class="w-full bg-[#0B2E22] text-white font-semibold py-2.5 text-center text-xs rounded-xl shadow-xs">Go to Dashboard</a>
                 <?php else: ?>
-                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode('auth'); ?>'); ?>" class="w-full text-slate-700 font-medium py-2 text-center text-xs">Sign In</a>
-                    <a href="<?php echo app_url('index.php?url=<?php echo urlencode('auth/register'); ?>'); ?>" class="w-full bg-[#10B981] text-white font-semibold py-2.5 text-center text-xs rounded-xl shadow-md">Register Free Account</a>
+                    <a href="<?php echo app_url('index.php?url=' . (urlencode('auth'))); ?>" class="w-full text-slate-700 font-medium py-2 text-center text-xs">Sign In</a>
+                    <a href="<?php echo app_url('index.php?url=' . (urlencode('auth/register'))); ?>" class="w-full bg-[#10B981] text-white font-semibold py-2.5 text-center text-xs rounded-xl shadow-md">Register Free Account</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -232,7 +232,7 @@ foreach ($publicReports as $pr) {
             </p>
             
             <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
-                <a href="<?php echo app_url('index.php?url=<?php echo $isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register'; ?>'); ?>" class="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition active:scale-[0.98]">
+                <a href="<?php echo app_url('index.php?url=' . ($isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register')); ?>" class="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition active:scale-[0.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     <span>Report Waste (Resident)</span>
                 </a>
@@ -1181,7 +1181,7 @@ foreach ($publicReports as $pr) {
                 <p class="text-emerald-100/80 text-xs sm:text-sm leading-relaxed">Register your resident account to submit reports, track collection status, and stay updated on local ordinances.</p>
                 <div class="flex flex-wrap items-center gap-3 pt-2">
                     <?php if ($isLoggedIn): ?>
-                        <a href="<?php echo app_url('index.php?url=<?php echo urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')); ?>'); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition">
+                        <a href="<?php echo app_url('index.php?url=' . (urlencode($role == 'resident' ? 'resident' : ($role == 'supervisor' ? 'supervisor' : 'admin')))); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition">
                             Go to Dashboard →
                         </a>
                     <?php else: ?>

@@ -206,7 +206,7 @@ $conditionFilter = $_GET['condition'] ?? '';
                                 ?>
                                 <tr class="sup-report-row hover:bg-slate-50/80 transition">
                                     <td class="py-3.5 px-4 font-mono font-bold text-slate-900 text-xs">
-                                        <a href="<?php echo app_url('supervisor/view_report/<?php echo $report['id']; ?>'); ?>" class="text-emerald-700 hover:underline">
+                                        <a href="<?php echo app_url('supervisor/view_report/' . ($report['id'])); ?>" class="text-emerald-700 hover:underline">
                                             <?php echo htmlspecialchars($reportId); ?>
                                         </a>
                                     </td>
@@ -243,7 +243,7 @@ $conditionFilter = $_GET['condition'] ?? '';
                                         </span>
                                     </td>
                                     <td class="py-3.5 px-4 text-right whitespace-nowrap">
-                                        <a href="<?php echo app_url('supervisor/view_report/<?php echo $report['id']; ?>'); ?>" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-slate-700 text-xs font-semibold transition">
+                                        <a href="<?php echo app_url('supervisor/view_report/' . ($report['id'])); ?>" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-slate-700 text-xs font-semibold transition">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                             <span>Inspect</span>
                                         </a>

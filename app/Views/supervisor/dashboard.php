@@ -246,7 +246,7 @@ function getSupervisorStatusBadge($status) {
                             <?php foreach ($recentReports as $report):
                                 $badge = getSupervisorStatusBadge($report['status'] ?? 'Pending');
                             ?>
-                            <a href="<?php echo app_url('supervisor/view_report/<?php echo $report['id']; ?>'); ?>" class="flex items-center justify-between py-3 hover:bg-slate-50 px-2 rounded-xl transition gap-3">
+                            <a href="<?php echo app_url('supervisor/view_report/' . ($report['id'])); ?>" class="flex items-center justify-between py-3 hover:bg-slate-50 px-2 rounded-xl transition gap-3">
                                 <div class="min-w-0 flex-1">
                                     <div class="flex items-center gap-2">
                                         <span class="font-mono text-xs font-semibold text-emerald-800">WR-<?php echo str_pad($report['id'], 4, '0', STR_PAD_LEFT); ?></span>

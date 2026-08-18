@@ -259,34 +259,35 @@ class User {
     // ============================================================
 
     public function canSendEmailOtp($email, $ip) {
-        // 60s cooldown on last unused token
-        $this->db->query('SELECT UNIX_TIMESTAMP(created_at) as created_at_ts 
+        // 60s cooldown on last unused token using database timestamp
+        $this->db->query('SELECT TIMESTAMPDIFF(SECOND, created_at, NOW()) as elapsed 
                           FROM two_factor_tokens 
                           WHERE email = :email AND is_used = 0 
                           ORDER BY created_at DESC LIMIT 1');
         $this->db->bind(':email', $email);
         $row = $this->db->single();
-        if ($row) {
-            $secondsLeft = max(0, 60 - (time() - (int)$row['created_at_ts']));
-            if ($secondsLeft > 0) {
-                return ['ok' => false, 'reason' => 'cooldown', 'retry_after' => $secondsLeft];
+        if ($row && isset($row['elapsed'])) {
+            $elapsed = (int)$row['elapsed'];
+            if ($elapsed >= 0 && $elapsed < 60) {
+                return ['ok' => false, 'reason' => 'cooldown', 'retry_after' => (60 - $elapsed)];
             }
         }
 
-        // Hourly limits per email and IP (max 3 per hour)
+        // Hourly limits per email/contact (max 15 per hour)
         $this->db->query('SELECT SUM(send_count) as cnt FROM email_otp_rate_limits 
                           WHERE email = :email AND window_start >= DATE_SUB(NOW(), INTERVAL 1 HOUR)');
         $this->db->bind(':email', $email);
         $r = $this->db->single();
-        if ($r && $r['cnt'] >= 3) {
+        if ($r && (int)$r['cnt'] >= 15) {
             return ['ok' => false, 'reason' => 'email_hourly_limit'];
         }
 
+        // Hourly limits per IP (max 50 per hour)
         $this->db->query('SELECT SUM(send_count) as cnt FROM email_otp_rate_limits 
                           WHERE ip = :ip AND window_start >= DATE_SUB(NOW(), INTERVAL 1 HOUR)');
         $this->db->bind(':ip', $ip);
         $r2 = $this->db->single();
-        if ($r2 && $r2['cnt'] >= 3) {
+        if ($r2 && (int)$r2['cnt'] >= 50) {
             return ['ok' => false, 'reason' => 'ip_hourly_limit'];
         }
 
@@ -294,6 +295,10 @@ class User {
     }
 
     public function recordEmailRate($email, $ip) {
+        // Clean up old rate limit records older than 24 hours
+        $this->db->query('DELETE FROM email_otp_rate_limits WHERE window_start < DATE_SUB(NOW(), INTERVAL 24 HOUR)');
+        $this->db->execute();
+
         $windowStart = date('Y-m-d H:00:00');
         $this->db->query('INSERT INTO email_otp_rate_limits (email, ip, window_start, send_count) 
                           VALUES (:email, :ip, :window_start, 1) 

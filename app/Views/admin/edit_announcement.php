@@ -27,7 +27,7 @@ $isPublished = !empty($announcement['is_published']);
                 <a href="<?php echo app_url('admin/announcements'); ?>" class="text-sm text-emerald-600 hover:underline mb-4 inline-block">← Back to Announcements</a>
 
                 <div class="bg-white rounded-lg shadow p-6">
-                    <form action="<?php echo app_url('admin/edit_announcement/<?php echo $data['announcement']['id']; ?>'); ?>" method="POST" enctype="multipart/form-data">
+                    <form action="<?php echo app_url('admin/edit_announcement/' . ($data['announcement']['id'])); ?>" method="POST" enctype="multipart/form-data">
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-foreground mb-1">Title</label>
                             <input type="text" name="title" value="<?php echo htmlspecialchars($announcementTitle); ?>" required class="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-primary outline-none bg-background">

@@ -21,7 +21,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
 
     <!-- Top Back Link -->
     <div class="w-full max-w-[480px] mb-4 flex items-center justify-between">
-        <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition">
+        <a href="<?php echo app_url(''); ?>" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M19 12H5" />
                 <path d="m12 5-7 7 7 7" />
@@ -48,10 +48,10 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
 
         <!-- Navigation Switcher (Tabs) -->
         <div class="mb-6 p-1 bg-slate-100 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
-            <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="py-2 text-center rounded-lg text-slate-600 hover:text-slate-900 transition-all">
+            <a href="<?php echo app_url('index.php?url=auth'); ?>" class="py-2 text-center rounded-lg text-slate-600 hover:text-slate-900 transition-all">
                 Sign In
             </a>
-            <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="py-2 text-center rounded-lg bg-white text-slate-900 shadow-2xs transition-all">
+            <a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="py-2 text-center rounded-lg bg-white text-slate-900 shadow-2xs transition-all">
                 Create Account
             </a>
         </div>
@@ -75,7 +75,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
         <?php endif; ?>
 
         <!-- Form -->
-        <form action="/brgy-waste-app-v3/public/auth/register" method="POST" class="space-y-4" onsubmit="return validateRegisterForm()">
+        <form action="<?php echo app_url('index.php?url=auth/register'); ?>" method="POST" class="space-y-4" onsubmit="return validateRegisterForm()">
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
             <input type="hidden" name="account_type" value="resident">
 
@@ -228,7 +228,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
             <!-- Footer -->
             <p class="text-center text-xs text-slate-500 pt-2 font-normal">
                 Already have an account? 
-                <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
+                <a href="<?php echo app_url('index.php?url=auth'); ?>" class="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
                     Sign in
                 </a>
             </p>

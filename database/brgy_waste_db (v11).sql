@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 17, 2026 at 01:01 PM
+-- Generation Time: Aug 18, 2026 at 01:50 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -2023,7 +2023,20 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `affected_record`, `details
 (2850, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 17:50:46', NULL, NULL, NULL, NULL),
 (2851, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 18:11:26', NULL, NULL, NULL, NULL),
 (2852, 3, 'Login partial success', 'User', 'OTP sent to phone', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 18:17:07', NULL, NULL, NULL, NULL),
-(2853, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 18:17:32', NULL, NULL, NULL, NULL);
+(2853, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-17 18:17:32', NULL, NULL, NULL, NULL),
+(2854, 3, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-17 20:09:42', NULL, NULL, NULL, NULL),
+(2917, 3, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:24:35', NULL, NULL, NULL, NULL),
+(2918, 3, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:24:59', NULL, NULL, NULL, NULL),
+(2919, 3, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:28:29', NULL, NULL, NULL, NULL),
+(2920, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:29:14', NULL, NULL, NULL, NULL),
+(2921, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:29:29', NULL, NULL, NULL, NULL),
+(2922, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 00:29:29', NULL, NULL, NULL, NULL),
+(2923, 2, 'Auto Logout', 'Session', 'User logged out due to inactivity', NULL, NULL, 'success', '2026-08-18 01:37:07', NULL, NULL, NULL, NULL),
+(2924, 2, 'Login partial success', 'User', 'OTP sent to email', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 01:37:18', NULL, NULL, NULL, NULL),
+(2925, 2, 'Login successful', 'User', 'Successfully completed 2FA', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 01:37:34', NULL, NULL, NULL, NULL),
+(2926, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 01:37:34', NULL, NULL, NULL, NULL),
+(2927, 2, 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 01:37:49', NULL, NULL, NULL, NULL),
+(2928, 2, 'Logout', 'User', 'User logged out manually', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'success', '2026-08-18 01:38:22', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2513,7 +2526,7 @@ CREATE TABLE `barangays` (
 --
 
 INSERT INTO `barangays` (`barangay_id`, `barangay_name`, `municipality`, `province`, `region`, `official_address`, `contact_number`, `official_email`, `barangay_logo`, `created_at`, `updated_at`, `system_name`, `system_short_name`, `system_motto`, `system_logo`) VALUES
-(1, 'Dulong Bayan', 'Quezon', 'Nueva Ecija', 'Central Luzon', 'brgy dulong bayan, quezon, nueva ecija', '09951281511', 'floreshans.neust@gmail.com', '/brgy-waste-app-v3/public/uploads/logos/brgy_seal_1786751779.jpg', '2026-07-25 14:27:25', '2026-08-16 19:19:41', 'Barangay Waste Management System', 'LINARAYA', '', '/brgy-waste-app-v3/public/uploads/logos/sys_logo_1786879181.jpg');
+(1, 'Dulong Bayan', 'Quezon', 'Nueva Ecija', 'Central Luzon', 'brgy dulong bayan, quezon, nueva ecija', '09951281511', 'floreshans.neust@gmail.com', '/uploads/logos/brgy_seal_1786751779.jpg', '2026-07-25 14:27:25', '2026-08-18 01:07:46', 'Barangay Waste Management System', 'LINARAYA', '', '/uploads/logos/sys_logo_1786879181.jpg');
 
 -- --------------------------------------------------------
 
@@ -2745,7 +2758,10 @@ INSERT INTO `email_otp_rate_limits` (`id`, `email`, `ip`, `window_start`, `send_
 (154, 'floressktt11@gmail.com', '::1', '2026-08-17 11:00:00', 5),
 (155, '09951281511', '::1', '2026-08-17 11:00:00', 2),
 (162, 'floreshans.neust@gmail.com', '::1', '2026-08-17 11:00:00', 1),
-(163, '09951281511', '::1', '2026-08-17 12:00:00', 1);
+(163, '09951281511', '::1', '2026-08-17 12:00:00', 1),
+(164, 'floressktt11@gmail.com', '::1', '2026-08-17 18:00:00', 1),
+(165, 'floreshans.neust@gmail.com', '::1', '2026-08-17 18:00:00', 1),
+(166, 'floreshans.neust@gmail.com', '::1', '2026-08-17 19:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -2991,52 +3007,7 @@ INSERT INTO `notifications` (`id`, `user_id`, `report_id`, `announcement_id`, `t
 (48, NULL, NULL, NULL, 'New Announcement', 'Barangay Clean-Up Drive this Saturday', 'Join us for a community clean-up drive this Saturday at 7:00 AM. Meet at the barangay hall.', 1, 1, '2026-07-24 08:53:32'),
 (49, NULL, NULL, NULL, 'Collection Schedule Update', 'Holiday schedule changes', 'Collection schedule will be adjusted for the upcoming holidays. Please check the collection schedule page for details.', 1, 1, '2026-07-23 08:53:32'),
 (50, 1, NULL, NULL, 'New Announcement', 'Monthly meeting reminder', 'Monthly barangay meeting scheduled for August 1, 2026 at 2:00 PM.', 0, 0, '2026-07-26 04:53:32'),
-(51, 2, NULL, NULL, 'Report Status Update', 'New reports pending review', 'There are 5 new waste reports pending your review.', 1, 0, '2026-07-26 03:53:32'),
-(56, 1, 34, NULL, 'report_rejected', 'Report Rejected', 'Your waste report has been rejected. Reason: No reason provided', 0, 0, '2026-08-02 08:45:42'),
-(57, 1, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 0, 0, '2026-08-02 19:28:52'),
-(58, 2, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 1, 0, '2026-08-02 19:28:52'),
-(59, 17, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 0, 0, '2026-08-02 19:28:52'),
-(60, 18, 43, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingg phaseeeeee', 0, 0, '2026-08-02 19:28:52'),
-(61, 3, 43, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-02 19:35:21'),
-(62, 1, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
-(63, 2, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 1, 0, '2026-08-02 20:07:25'),
-(64, 17, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
-(65, 18, 44, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: description testttingg', 0, 0, '2026-08-02 20:07:25'),
-(66, 3, 44, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-02 20:09:52'),
-(67, 1, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 0, 0, '2026-08-02 20:12:38'),
-(68, 2, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 1, 0, '2026-08-02 20:12:38'),
-(69, 17, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 0, 0, '2026-08-02 20:12:38'),
-(70, 18, 45, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: testingggggggg', 0, 0, '2026-08-02 20:12:38'),
-(71, 1, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 0, 0, '2026-08-02 20:21:42'),
-(72, 2, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 1, 0, '2026-08-02 20:21:42'),
-(73, 17, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 0, 0, '2026-08-02 20:21:42'),
-(74, 18, 46, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Cedrick Umali: testinggggg', 0, 0, '2026-08-02 20:21:42'),
-(75, 19, 46, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-07 08:57:26'),
-(76, 19, 46, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-07 08:57:47'),
-(77, 3, 45, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-07 09:03:34'),
-(78, 1, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
-(80, 17, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
-(81, 18, 47, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: tessstinnggg', 0, 0, '2026-08-07 22:52:35'),
-(82, 3, 47, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-07 22:53:15'),
-(83, 3, 47, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 1, 0, '2026-08-07 23:37:47'),
-(84, 3, 47, NULL, 'report_rejected', 'Report Rejected', 'Your waste report has been rejected. Reason: No reason provided', 1, 0, '2026-08-08 09:40:27'),
-(85, 3, 45, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 1, 0, '2026-08-08 09:41:23'),
-(86, 3, 45, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 1, 0, '2026-08-08 09:41:32'),
-(87, 1, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
-(89, 17, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
-(90, 18, 48, NULL, 'report_update', 'New Report Submitted', 'New report submitted by Hans Flores: test test test', 0, 0, '2026-08-08 09:59:25'),
-(91, 3, 48, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 1, 0, '2026-08-09 09:34:05'),
-(92, NULL, 50, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 11:31:30'),
-(93, NULL, 50, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 11:32:49'),
-(94, NULL, 50, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-10 11:33:38'),
-(95, NULL, 52, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 11:34:26'),
-(96, NULL, 52, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 11:34:33'),
-(97, NULL, 53, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-10 12:43:54'),
-(98, NULL, 53, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-10 12:44:07'),
-(99, NULL, 53, NULL, 'report_update', 'Report Resolved', 'Your report has been resolved. Thank you for reporting!', 0, 0, '2026-08-10 12:44:18'),
-(100, NULL, 51, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-15 00:00:10'),
-(101, NULL, 51, NULL, 'report_update', 'Report In Progress', 'Your report is now in progress and being addressed.', 0, 0, '2026-08-15 00:00:13'),
-(102, NULL, 54, NULL, 'report_update', 'Report Verified', 'Your report has been verified by Secretary Rose.', 0, 0, '2026-08-15 11:53:27');
+(51, 2, NULL, NULL, 'Report Status Update', 'New reports pending review', 'There are 5 new waste reports pending your review.', 1, 0, '2026-07-26 03:53:32');
 
 -- --------------------------------------------------------
 
@@ -3227,20 +3198,36 @@ CREATE TABLE `reports` (
 --
 
 INSERT INTO `reports` (`id`, `resident_id`, `reporter_type`, `tracking_number`, `guest_name`, `guest_phone`, `reporter_latitude`, `reporter_longitude`, `location_plausibility`, `is_duplicate`, `description`, `latitude`, `longitude`, `location_verified`, `submission_date`, `reviewed_by`, `created_at`, `updated_at`, `category_id`, `quantity_id`, `condition_id`, `status_id`, `purok_id`, `location`, `rejected_reason`, `support_count`) VALUES
-(34, 1, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'Hazardous waste dumped near the creek', 15.55480000, 120.80450000, 0, '2026-07-23 13:27:29', 2, '2026-07-26 05:27:29', '2026-08-02 08:45:42', 6, 2, 1, 5, 2, NULL, NULL, 0),
-(35, 1, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'Construction waste blocking roadway', 15.56120000, 120.80680000, 0, '2026-07-25 13:27:29', NULL, '2026-07-26 05:27:29', '2026-07-26 13:27:29', 4, 3, 6, 3, NULL, NULL, NULL, 0),
-(43, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testingg phaseeeeee', 15.56003000, 120.80475900, 1, '2026-08-02 19:28:52', 2, '2026-08-02 11:28:52', '2026-08-02 19:35:21', 1, 3, 2, 2, 1, '', NULL, 0),
-(44, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'description testttingg', 15.56139800, 120.80701400, 1, '2026-08-02 20:07:25', 2, '2026-08-02 12:07:25', '2026-08-02 20:09:52', 8, 1, 2, 2, 1, '', NULL, 0),
-(45, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testingggggggg', 15.56152000, 120.80696900, 1, '2026-08-02 20:12:38', 2, '2026-08-02 12:12:38', '2026-08-08 09:41:32', 7, 3, 2, 4, 1, '', NULL, 1),
-(46, 19, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'testinggggg', 15.56185100, 120.80662400, 1, '2026-08-02 20:21:42', 2, '2026-08-02 12:21:42', '2026-08-07 08:57:47', 2, 3, 4, 4, 1, '', NULL, 0),
-(47, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'tessstinnggg', 15.56035300, 120.82494400, 1, '2026-08-07 22:52:35', 2, '2026-08-07 14:52:35', '2026-08-08 09:40:27', 1, 2, 6, 5, 4, '', NULL, 0),
-(48, 3, 'resident', NULL, NULL, NULL, NULL, NULL, 'plausible', 0, 'test test test', 15.55713300, 120.81367700, 1, '2026-08-08 09:59:25', 2, '2026-08-08 01:59:25', '2026-08-09 09:34:05', 6, 3, 3, 2, 4, '', NULL, 0),
-(49, NULL, 'guest', 'WRS-2026-43826', 'juan testing guestt', '09951281511', 15.39840200, 120.94193300, 'high_risk', 0, 'testinggggg guesttt', 15.55419462, 120.81403351, 0, '2026-08-10 02:05:34', NULL, '2026-08-09 18:05:34', '2026-08-10 02:05:34', 8, 3, 1, 1, 4, '15.55419, 120.81403', NULL, 0),
-(50, NULL, 'guest', 'WRS-2026-79695', 'juan testing guestt', '09951281511', 15.39842047, 120.94193300, 'high_risk', 0, 'kahit ano naa', 15.48574296, 120.92609613, 0, '2026-08-10 07:57:25', 2, '2026-08-09 23:57:25', '2026-08-10 11:33:38', 8, 4, 1, 4, NULL, '15.48574, 120.92610', NULL, 0),
-(51, NULL, 'guest', 'WRS-2026-55350', 'hasss', '09951281511', NULL, NULL, 'plausible', 0, 'asdasdasdd', 15.54624821, 120.83049093, 0, '2026-08-10 08:09:48', 2, '2026-08-10 00:09:48', '2026-08-15 00:00:17', 8, 2, 3, 5, 3, '15.54625, 120.83049', NULL, 0),
-(52, NULL, 'guest', 'WRS-2026-88354', 'hasss', '09951281511', NULL, NULL, 'plausible', 0, 'asdadadad', 15.56099968, 120.81040672, 0, '2026-08-10 08:10:29', 2, '2026-08-10 00:10:29', '2026-08-10 11:40:28', 6, 2, 6, 5, 5, '15.56100, 120.81041', NULL, 0),
-(53, NULL, 'guest', 'WRS-2026-87082', 'cedrick', '09121212121', 15.39842047, 120.94193300, 'high_risk', 0, 'testinggggg', 15.55872170, 120.80451672, 0, '2026-08-10 12:42:37', 2, '2026-08-10 04:42:37', '2026-08-10 12:44:18', 1, 2, 3, 4, 1, '15.55872, 120.80452', NULL, 0),
-(54, NULL, 'guest', 'WRS-2026-58782', 'cedrick', '09121212121', 15.39229800, 120.94094600, 'high_risk', 0, 'testinggg', 15.55923022, 120.80733736, 0, '2026-08-10 12:55:21', 2, '2026-08-10 04:55:21', '2026-08-15 11:53:27', 8, 2, 5, 2, 2, '15.55923, 120.80734', NULL, 0);
+(1, 3, 'resident', 'WRS-2026-32459', NULL, NULL, NULL, NULL, 'plausible', 0, 'Overflowing public concrete waste bin near the chapel. Trash spilling onto the sidewalk and causing unpleasant odor in the morning.', 15.56045000, 120.80490000, 0, '2026-08-14 08:30:00', NULL, '2026-08-14 00:30:00', '2026-08-14 08:30:00', 2, 2, 3, 2, 1, 'Near Purok 1 Community Chapel, Corner Mabini St.', NULL, 12),
+(2, 3, 'resident', 'WRS-2026-31419', NULL, NULL, NULL, NULL, 'plausible', 0, 'May nagtapon ng mga sirang sako at halo-halong plastic waste sa tabi ng kanal. May mga lumulutang na plastic bottles.', 15.55980000, 120.80410000, 0, '2026-08-16 09:15:00', NULL, '2026-08-16 01:15:00', '2026-08-16 09:15:00', 1, 3, 1, 1, 1, 'Purok 1 Irrigation Canal Path, Rizal Street', NULL, 10),
+(3, 3, 'resident', 'WRS-2026-96649', NULL, NULL, NULL, NULL, 'plausible', 0, 'Discarded paint buckets, chemical thinner cans, and fluorescent tubes left beside the health center fence.', 15.56110000, 120.80690000, 0, '2026-08-15 14:20:00', NULL, '2026-08-15 06:20:00', '2026-08-15 14:20:00', 6, 1, 4, 2, 1, 'Purok 1 Health Center perimeter alleyway', NULL, 10),
+(4, 3, 'resident', 'WRS-2026-33101', NULL, NULL, NULL, NULL, 'plausible', 0, 'Regular household trash bins left uncollected since Tuesday. Bags are beginning to pile up and need immediate collection.', 15.56140000, 120.80710000, 0, '2026-08-12 11:00:00', NULL, '2026-08-12 03:00:00', '2026-08-12 11:00:00', 3, 2, 2, 4, 1, 'Bonifacio St. alley near Purok 1 Day Care Center', NULL, 4),
+(5, 3, 'resident', 'WRS-2026-80100', NULL, NULL, NULL, NULL, 'plausible', 0, 'Semento, graba, at sirang hollow blocks na iniwan matapos ang fencing repair. Nakaharang sa daanan ng mga tricycle.', 15.56010000, 120.80440000, 0, '2026-08-15 16:45:00', NULL, '2026-08-15 08:45:00', '2026-08-15 16:45:00', 4, 3, 6, 3, 1, 'Corner Mabini St. & Purok 1 Barangay Road', NULL, 3),
+(6, 3, 'resident', 'WRS-2026-15520', NULL, NULL, NULL, NULL, 'plausible', 0, 'Piles of dry bamboo cuttings, coconut fronds, and pruned mango branches after weekend neighborhood clearing.', 15.55910000, 120.80350000, 0, '2026-08-10 10:30:00', NULL, '2026-08-10 02:30:00', '2026-08-10 10:30:00', 5, 3, 2, 4, 1, 'Purok 1 West Boundary, Riverside Pathway', NULL, 5),
+(7, 3, 'resident', 'WRS-2026-81474', NULL, NULL, NULL, NULL, 'plausible', 0, 'Tambak ng plastic wrappers, sako ng ipa, at sirang karton sa tabi ng feeder road. Kailangan mahakot ng utility truck.', 15.56300000, 120.82400000, 0, '2026-08-17 07:45:00', NULL, '2026-08-16 23:45:00', '2026-08-17 07:45:00', 1, 3, 1, 1, 2, 'Purok 2 North Access Road, near Rice Mill', NULL, 7),
+(8, 3, 'resident', 'WRS-2026-32379', NULL, NULL, NULL, NULL, 'plausible', 0, 'Overflowing steel garbage drums after barangay sports event. Single-use plastic cups and snack packs scattered.', 15.56200000, 120.82200000, 0, '2026-08-16 13:10:00', NULL, '2026-08-16 05:10:00', '2026-08-16 13:10:00', 2, 2, 3, 2, 2, 'Purok 2 Secondary Alley, near Purok Basketball Half-court', NULL, 1),
+(9, 3, 'resident', 'WRS-2026-53660', NULL, NULL, NULL, NULL, 'plausible', 0, 'Baradong culvert dahil sa mga naipit na sanga at plastic sacks ng domestic trash. Bahagyang tumataas ang tubig.', 15.56050000, 120.81600000, 0, '2026-08-15 15:30:00', NULL, '2026-08-15 07:30:00', '2026-08-15 15:30:00', 7, 3, 5, 3, 2, 'Purok 2 East Sub-feeder Canal Road', NULL, 2),
+(10, 3, 'resident', 'WRS-2026-31044', NULL, NULL, NULL, NULL, 'plausible', 0, 'Leftover concrete masonry fragments and broken hollow blocks after wall reconstruction. Need clearing.', 15.55850000, 120.81800000, 0, '2026-08-11 09:00:00', NULL, '2026-08-11 01:00:00', '2026-08-11 09:00:00', 4, 2, 4, 4, 2, 'Purok 2 South Sector, Boundary Pathway', NULL, 2),
+(11, 3, 'resident', 'WRS-2026-86577', NULL, NULL, NULL, NULL, 'plausible', 0, 'Tree pruning debris and dry weeds from farm boundary trimming. Cleaned and processed for communal compost.', 15.56500000, 120.82500000, 0, '2026-08-09 14:00:00', NULL, '2026-08-09 06:00:00', '2026-08-09 14:00:00', 5, 4, 2, 4, 2, 'Purok 2 Farm-to-Market Road, Kilometro 2', NULL, 6),
+(12, 3, 'resident', 'WRS-2026-35263', NULL, NULL, NULL, NULL, 'plausible', 0, 'Missed household waste collection along northern corner. Scheduled for priority dispatch this afternoon.', 15.56600000, 120.82300000, 0, '2026-08-16 11:20:00', NULL, '2026-08-16 03:20:00', '2026-08-16 11:20:00', 3, 2, 2, 2, 2, 'Purok 2 North Gate Entry Point', NULL, 3),
+(13, 3, 'resident', 'WRS-2026-85731', NULL, NULL, NULL, NULL, 'plausible', 0, 'Commercial waste sacks and fast-food packaging discarded overnight beside the waiting shed bench.', 15.55600000, 120.80950000, 0, '2026-08-17 06:30:00', NULL, '2026-08-16 22:30:00', '2026-08-17 06:30:00', 1, 2, 1, 1, 3, 'Purok 3 Central Avenue, near Purok Waiting Shed', NULL, 5),
+(14, 3, 'resident', 'WRS-2026-95842', NULL, NULL, NULL, NULL, 'plausible', 0, 'Baradong drainage inlet dahil sa mga naipong mineral water bottles at single-use plastic cups. Kailangan ng declogging.', 15.55450000, 120.80750000, 0, '2026-08-16 16:15:00', NULL, '2026-08-16 08:15:00', '2026-08-16 16:15:00', 7, 2, 5, 2, 3, 'Purok 3 Drainage Culvert Junction', NULL, 7),
+(15, 3, 'resident', 'WRS-2026-23288', NULL, NULL, NULL, NULL, 'plausible', 0, 'Concrete debris, plaster residue, and discarded wall tiles left on the roadside. Road team dispatched for hauling.', 15.55350000, 120.80650000, 0, '2026-08-15 10:00:00', NULL, '2026-08-15 02:00:00', '2026-08-15 10:00:00', 4, 3, 6, 3, 3, 'Purok 3 South Road, near Purok Outpost', NULL, 11),
+(16, 3, 'resident', 'WRS-2026-69669', NULL, NULL, NULL, NULL, 'plausible', 0, 'Biodegradable vegetable refuse and rotten fruit crates from weekend market vendors. Fully cleared and sanitized.', 15.55700000, 120.80880000, 0, '2026-08-13 15:40:00', NULL, '2026-08-13 07:40:00', '2026-08-13 15:40:00', 5, 3, 4, 4, 3, 'Purok 3 Market Feeder Road', NULL, 11),
+(17, 3, 'resident', 'WRS-2026-58237', NULL, NULL, NULL, NULL, 'plausible', 0, 'Two household trash bins overflowing due to delayed pickup schedule. Resident requests immediate sweep.', 15.55500000, 120.81100000, 0, '2026-08-17 08:50:00', NULL, '2026-08-17 00:50:00', '2026-08-17 08:50:00', 2, 1, 3, 1, 3, 'Purok 3 East Alleyway, Residential Block 4', NULL, 6),
+(18, 3, 'resident', 'WRS-2026-16026', NULL, NULL, NULL, NULL, 'plausible', 0, 'Old automotive batteries and motor oil containers left near mechanic shop. Hazardous chemicals disposed safely.', 15.55800000, 120.80800000, 0, '2026-08-12 13:25:00', NULL, '2026-08-12 05:25:00', '2026-08-12 13:25:00', 6, 2, 4, 4, 3, 'Purok 3 Main Crossing, Rizal Extension', NULL, 6),
+(19, 3, 'resident', 'WRS-2026-23531', NULL, NULL, NULL, NULL, 'plausible', 0, 'Plastic snack packaging, styrofoam meal boxes, and plastic bottles scattered outside the campus fence.', 15.55800000, 120.82800000, 0, '2026-08-16 15:00:00', NULL, '2026-08-16 07:00:00', '2026-08-16 15:00:00', 1, 2, 4, 2, 4, 'Purok 4 Barangay Road, near High School Extension', NULL, 10),
+(20, 3, 'resident', 'WRS-2026-42400', NULL, NULL, NULL, NULL, 'plausible', 0, 'Truck unloaded construction soil, broken pavement chunks, and asphalt debris blocking half of the bypass road.', 15.55600000, 120.82500000, 0, '2026-08-15 11:30:00', NULL, '2026-08-15 03:30:00', '2026-08-15 11:30:00', 4, 4, 6, 3, 4, 'Purok 4 Agri-Industrial Bypass, Corner Sitio Riverside', NULL, 1),
+(21, 3, 'resident', 'WRS-2026-62850', NULL, NULL, NULL, NULL, 'plausible', 0, 'Silt and domestic waste accumulation restricting water flow to agricultural plots. Declogging operation planned.', 15.55400000, 120.82800000, 0, '2026-08-17 09:20:00', NULL, '2026-08-17 01:20:00', '2026-08-17 09:20:00', 7, 3, 5, 1, 4, 'Purok 4 Irrigation Gate 2 Canal', NULL, 13),
+(22, 3, 'resident', 'WRS-2026-42876', NULL, NULL, NULL, NULL, 'plausible', 0, 'Piles of pruned acacia branches and garden weeds. Hauled by the barangay dump truck for organic processing.', 15.56000000, 120.82700000, 0, '2026-08-14 16:10:00', NULL, '2026-08-14 08:10:00', '2026-08-14 16:10:00', 5, 3, 2, 4, 4, 'Purok 4 Communal Nursery Perimeter', NULL, 1),
+(23, 3, 'resident', 'WRS-2026-42885', NULL, NULL, NULL, NULL, 'plausible', 0, 'Community waste receptacle completely filled. Commuters dropping waste around the perimeter base.', 15.55700000, 120.82200000, 0, '2026-08-16 10:45:00', NULL, '2026-08-16 02:45:00', '2026-08-16 10:45:00', 2, 2, 3, 2, 4, 'Purok 4 Public Tricycle Terminal', NULL, 13),
+(24, 3, 'resident', 'WRS-2026-22985', NULL, NULL, NULL, NULL, 'plausible', 0, 'Household garbage bags uncollected for 4 days. Waste properly collected and disposed by sanitation team.', 15.55300000, 120.82000000, 0, '2026-08-13 14:15:00', NULL, '2026-08-13 06:15:00', '2026-08-13 14:15:00', 3, 2, 2, 4, 4, 'Purok 4 South Access Way, Sitio Ilang-Ilang', NULL, 12),
+(25, 3, 'resident', 'WRS-2026-83871', NULL, NULL, NULL, NULL, 'plausible', 0, 'Multiple sacks of commercial poultry feeds and torn plastic sheeting dumped on the road shoulder.', 15.55300000, 120.80000000, 0, '2026-08-17 08:00:00', NULL, '2026-08-17 00:00:00', '2026-08-17 08:00:00', 1, 3, 1, 1, 5, 'Purok 5 Main Road, near Barangay Boundary Marker', NULL, 2),
+(26, 3, 'resident', 'WRS-2026-71513', NULL, NULL, NULL, NULL, 'plausible', 0, 'Baradong daluyan ng patubig dahil sa naipong plastic containers at sirang lambat. Apektado ang daloy ng tubig.', 15.55150000, 120.79800000, 0, '2026-08-16 14:50:00', NULL, '2026-08-16 06:50:00', '2026-08-16 14:50:00', 7, 2, 5, 2, 5, 'Purok 5 West Feeder Canal, near Rice Field Entry', NULL, 8),
+(27, 3, 'resident', 'WRS-2026-18646', NULL, NULL, NULL, NULL, 'plausible', 0, 'Leftover concrete masonry fragments and broken culvert pieces after ditch repair. Cleared by utility crew.', 15.55400000, 120.80300000, 0, '2026-08-11 11:15:00', NULL, '2026-08-11 03:15:00', '2026-08-11 11:15:00', 4, 3, 6, 4, 5, 'Purok 5 East Perimeter Road, near Barangay Multi-purpose Hall', NULL, 3),
+(28, 3, 'resident', 'WRS-2026-83764', NULL, NULL, NULL, NULL, 'plausible', 0, 'Piles of dry bamboo cuttings, pruned ipil-ipil branches, and dried foliage ready for municipal collection.', 15.55200000, 120.80200000, 0, '2026-08-15 13:00:00', NULL, '2026-08-15 05:00:00', '2026-08-15 13:00:00', 5, 2, 2, 3, 5, 'Purok 5 Central Crossing, Sitio Pag-asa', NULL, 6),
+(29, 3, 'resident', 'WRS-2026-42164', NULL, NULL, NULL, NULL, 'plausible', 0, 'Overflowing communal garbage drum near the residential alleyway. Stray dogs tearing through discarded sacks.', 15.55500000, 120.80500000, 0, '2026-08-17 10:10:00', NULL, '2026-08-17 02:10:00', '2026-08-17 10:10:00', 2, 2, 3, 1, 5, 'Purok 5 North Crossing, near Purok 1 & 5 Boundary', NULL, 6),
+(30, 3, 'resident', 'WRS-2026-69008', NULL, NULL, NULL, NULL, 'plausible', 0, 'Missed regular collection for household garbage bags. Swept and hauled by special barangay truck deployment.', 15.55350000, 120.79500000, 0, '2026-08-12 16:30:00', NULL, '2026-08-12 08:30:00', '2026-08-12 16:30:00', 3, 2, 2, 4, 5, 'Purok 5 Far West Access, Sitio Maligaya', NULL, 3);
 
 -- --------------------------------------------------------
 
@@ -3257,16 +3244,6 @@ CREATE TABLE `report_flags` (
   `reviewed_by` int(11) DEFAULT NULL,
   `reviewed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `report_flags`
---
-
-INSERT INTO `report_flags` (`id`, `report_id`, `flag_reason`, `flagged_by`, `flagged_at`, `reviewed_by`, `reviewed_at`) VALUES
-(8, 34, 'Rejected by admin', 2, '2026-08-02 08:45:42', NULL, NULL),
-(9, 47, 'Rejected by admin', 2, '2026-08-08 09:40:27', NULL, NULL),
-(10, 52, 'Rejected by admin', 2, '2026-08-10 11:40:28', NULL, NULL),
-(11, 51, 'Rejected by admin', 2, '2026-08-15 00:00:17', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3297,11 +3274,11 @@ CREATE TABLE `report_generation_settings` (
 --
 
 INSERT INTO `report_generation_settings` (`setting_id`, `report_header`, `report_footer`, `signatory_name`, `signatory_position`, `disclaimer`, `updated_by`, `updated_at`, `header_logo_left`, `header_logo_right`, `sub_header`, `republic_header`, `office_name`, `signatory_approved_name`, `signatory_approved_position`) VALUES
-(1, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', 'Rosa Medina', 'Barangay Secretary', '', 2, '2026-08-17 10:16:18', '/brgy-waste-app-v3/public/uploads/logos/rep_logo_left_1786932978.jpg', '/brgy-waste-app-v3/public/uploads/logos/rep_logo_right_1786932978.jpg', 'Province of Nueva Ecija · Municipality of Quezon', 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', '', 'Punong Barangay'),
-(2, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:27:25', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
-(3, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:30:39', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
-(4, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:31:01', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
-(5, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-07-25 14:35:15', NULL, NULL, NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay');
+(1, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', 'Rosa Medina', 'Barangay Secretary', '', 2, '2026-08-18 01:07:46', '/uploads/logos/rep_logo_left_1786932978.jpg', '/uploads/logos/rep_logo_right_1786932978.jpg', 'Province of Nueva Ecija · Municipality of Quezon', 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', '', 'Punong Barangay'),
+(2, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-08-18 01:07:46', '/uploads/logos/rep_logo_left_1786932978.jpg', '/uploads/logos/rep_logo_right_1786932978.jpg', NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
+(3, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-08-18 01:07:46', '/uploads/logos/rep_logo_left_1786932978.jpg', '/uploads/logos/rep_logo_right_1786932978.jpg', NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
+(4, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-08-18 01:07:46', '/uploads/logos/rep_logo_left_1786932978.jpg', '/uploads/logos/rep_logo_right_1786932978.jpg', NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay'),
+(5, 'Barangay Dulong Bayan Waste Management Report', 'This report is for official use only.', '', 'Barangay Secretary', NULL, NULL, '2026-08-18 01:07:46', '/uploads/logos/rep_logo_left_1786932978.jpg', '/uploads/logos/rep_logo_right_1786932978.jpg', NULL, 'Republic of the Philippines', 'Office of the Barangay Solid Waste Management Committee', NULL, 'Punong Barangay');
 
 -- --------------------------------------------------------
 
@@ -3322,15 +3299,36 @@ CREATE TABLE `report_photos` (
 --
 
 INSERT INTO `report_photos` (`photo_id`, `report_id`, `photo_path`, `is_primary`, `uploaded_at`) VALUES
-(2, 43, '6a6f29f41892f_Screenshot 2025-06-22 181737.png', 1, '2026-08-02 19:28:52'),
-(3, 44, '6a6f32fddca0e_Screenshot 2025-06-18 225708.png', 1, '2026-08-02 20:07:25'),
-(4, 45, '6a6f343691b11_Screenshot 2025-06-22 181737.png', 1, '2026-08-02 20:12:38'),
-(5, 46, '6a6f36567812f_Screenshot 2025-08-18 220556.png', 1, '2026-08-02 20:21:42'),
-(6, 47, '6a75f133acbf0_Screenshot 2025-06-11 000452.png', 1, '2026-08-07 22:52:35'),
-(7, 48, '6a768d7d2ed66_Screenshot 2025-06-24 114030.png', 1, '2026-08-08 09:59:25'),
-(8, 49, 'guest_6a78c15a5d8ae.png', 1, '2026-08-10 02:05:34'),
-(9, 50, 'guest_6a7913d81f718.jpg', 1, '2026-08-10 07:57:25'),
-(10, 51, 'guest_6a7916bc365af.png', 1, '2026-08-10 08:09:48');
+(1, 1, '6a6f29f41892f_Screenshot 2025-06-22 181737.png', 1, '2026-08-14 08:30:00'),
+(2, 2, '69e3f0fe0e532_images.jpg', 1, '2026-08-16 09:15:00'),
+(3, 3, '6a6f32fddca0e_Screenshot 2025-06-18 225708.png', 1, '2026-08-15 14:20:00'),
+(4, 4, '6a6f343691b11_Screenshot 2025-06-22 181737.png', 1, '2026-08-12 11:00:00'),
+(5, 5, '6a75f133acbf0_Screenshot 2025-06-11 000452.png', 1, '2026-08-15 16:45:00'),
+(6, 6, '6a6e76cf63dd9_Screenshot 2025-06-22 190140.png', 1, '2026-08-10 10:30:00'),
+(7, 7, '69e4791c58512_images.jpg', 1, '2026-08-17 07:45:00'),
+(8, 8, '69e47e9105490_images.jpg', 1, '2026-08-16 13:10:00'),
+(9, 9, '6a6f36567812f_Screenshot 2025-08-18 220556.png', 1, '2026-08-15 15:30:00'),
+(10, 10, '69e480a039c44_images.jpg', 1, '2026-08-11 09:00:00'),
+(11, 11, '6a768d7d2ed66_Screenshot 2025-06-24 114030.png', 1, '2026-08-09 14:00:00'),
+(12, 12, '69e482f21dfa7_images.jpg', 1, '2026-08-16 11:20:00'),
+(13, 13, '69e485c125cd7_images.jpg', 1, '2026-08-17 06:30:00'),
+(14, 14, '69e492223969c_images.jpg', 1, '2026-08-16 16:15:00'),
+(15, 15, '69e4ab6846abd_images (1).jpg', 1, '2026-08-15 10:00:00'),
+(16, 16, '6a6e672cc530e_Screenshot 2025-06-22 181737.png', 1, '2026-08-13 15:40:00'),
+(17, 17, '6a6e76e0124a4_Screenshot 2025-06-22 190140.png', 1, '2026-08-17 08:50:00'),
+(18, 18, '6a6e76f797d1d_Screenshot 2025-06-07 201142.png', 1, '2026-08-12 13:25:00'),
+(19, 19, '6a6e770f6a72d_Screenshot 2025-06-18 131648.png', 1, '2026-08-16 15:00:00'),
+(20, 20, '6a6f35d3ab354_Screenshot 2025-06-07 201121.png', 1, '2026-08-15 11:30:00'),
+(21, 21, '69e18b79be572_peakpx.jpg', 1, '2026-08-17 09:20:00'),
+(22, 22, '69e18b83b4a7c_peakpx.jpg', 1, '2026-08-14 16:10:00'),
+(23, 23, 'guest_6a7913d81f718.jpg', 1, '2026-08-16 10:45:00'),
+(24, 24, 'guest_6a810e2053ec1.png', 1, '2026-08-13 14:15:00'),
+(25, 25, '69e3f0fe0e532_images.jpg', 1, '2026-08-17 08:00:00'),
+(26, 26, '6a6f29f41892f_Screenshot 2025-06-22 181737.png', 1, '2026-08-16 14:50:00'),
+(27, 27, '6a6f32fddca0e_Screenshot 2025-06-18 225708.png', 1, '2026-08-11 11:15:00'),
+(28, 28, '6a6f343691b11_Screenshot 2025-06-22 181737.png', 1, '2026-08-15 13:00:00'),
+(29, 29, '6a75f133acbf0_Screenshot 2025-06-11 000452.png', 1, '2026-08-17 10:10:00'),
+(30, 30, '6a6e76cf63dd9_Screenshot 2025-06-22 190140.png', 1, '2026-08-12 16:30:00');
 
 -- --------------------------------------------------------
 
@@ -3410,10 +3408,36 @@ CREATE TABLE `report_status_history` (
 --
 
 INSERT INTO `report_status_history` (`id`, `report_id`, `previous_status`, `new_status`, `remark`, `changed_by`, `changed_at`) VALUES
-(4, 34, 'Resolved', 'rejected', 'Rejected by admin', 2, '2026-08-02 08:45:42'),
-(5, 47, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-08 09:40:27'),
-(6, 52, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-10 11:40:28'),
-(7, 51, 'In Progress', 'rejected', 'Rejected by admin', 2, '2026-08-15 00:00:17');
+(1, 1, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-14 08:30:00'),
+(2, 2, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-16 09:15:00'),
+(3, 3, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-15 14:20:00'),
+(4, 4, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-12 11:00:00'),
+(5, 5, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 16:45:00'),
+(6, 6, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-10 10:30:00'),
+(7, 7, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 07:45:00'),
+(8, 8, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 13:10:00'),
+(9, 9, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 15:30:00'),
+(10, 10, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-11 09:00:00'),
+(11, 11, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-09 14:00:00'),
+(12, 12, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 11:20:00'),
+(13, 13, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 06:30:00'),
+(14, 14, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 16:15:00'),
+(15, 15, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 10:00:00'),
+(16, 16, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-13 15:40:00'),
+(17, 17, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 08:50:00'),
+(18, 18, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-12 13:25:00'),
+(19, 19, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 15:00:00'),
+(20, 20, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 11:30:00'),
+(21, 21, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 09:20:00'),
+(22, 22, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-14 16:10:00'),
+(23, 23, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 10:45:00'),
+(24, 24, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-13 14:15:00'),
+(25, 25, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 08:00:00'),
+(26, 26, 'Submitted', 'Verified', 'Incident report submitted by resident.', 3, '2026-08-16 14:50:00'),
+(27, 27, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-11 11:15:00'),
+(28, 28, 'Submitted', 'In Progress', 'Incident report submitted by resident.', 3, '2026-08-15 13:00:00'),
+(29, 29, 'Submitted', 'Pending', 'Incident report submitted by resident.', 3, '2026-08-17 10:10:00'),
+(30, 30, 'Submitted', 'Resolved', 'Incident report submitted by resident.', 3, '2026-08-12 16:30:00');
 
 -- --------------------------------------------------------
 
@@ -3481,13 +3505,6 @@ CREATE TABLE `report_supports` (
   `user_id` int(11) NOT NULL,
   `supported_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `report_supports`
---
-
-INSERT INTO `report_supports` (`support_id`, `report_id`, `user_id`, `supported_at`) VALUES
-(1, 45, 19, '2026-08-02 20:18:34');
 
 -- --------------------------------------------------------
 
@@ -3600,8 +3617,8 @@ INSERT INTO `two_factor_tokens` (`id`, `user_id`, `email`, `token`, `purpose`, `
 (334, 16, 'testingotp@gmail.com', '064512', 'login_2fa', '2026-08-05 12:48:25', 0, 0, '2026-08-05 04:38:25'),
 (388, 20, '09951281511', '220447', 'login_2fa', '2026-08-10 12:22:56', 1, 0, '2026-08-10 04:12:56'),
 (436, 23, 'limuelle.neust@gmail.com', '817689', 'login_2fa', '2026-08-17 17:21:03', 0, 0, '2026-08-17 09:11:03'),
-(439, 2, 'floreshans.neust@gmail.com', '865789', 'login_2fa', '2026-08-17 17:29:41', 1, 0, '2026-08-17 09:19:41'),
-(440, 3, '09951281511', '157500', 'login_2fa', '2026-08-17 18:27:06', 1, 0, '2026-08-17 10:17:06');
+(441, 3, 'floressktt11@gmail.com', '725865', 'login_2fa', '2026-08-18 00:34:34', 1, 0, '2026-08-17 16:24:34'),
+(443, 2, 'floreshans.neust@gmail.com', '268063', 'login_2fa', '2026-08-18 01:47:17', 1, 0, '2026-08-17 17:37:17');
 
 -- --------------------------------------------------------
 
@@ -3646,7 +3663,6 @@ INSERT INTO `users` (`id`, `name`, `middle_name`, `suffix`, `username`, `account
 (3, 'Hans Flores', NULL, NULL, NULL, 'resident', 'brgy.testing.testing', '09951281511', 'floressktt11@gmail.com', '$2y$10$y03L/tBgrsBFqgLuFMFRYOos6Y.svcXlfru15rNSc8dcg2cYLVew2', NULL, NULL, 3, 6, 1, 'active', NULL, '2026-04-01 01:05:23', '2026-08-15 02:34:16', NULL, '/public/uploads/profiles/profile_3_1786340113.jpg', 0, NULL, NULL),
 (15, 'asdasdadad', NULL, NULL, NULL, 'resident', '232323232323', '09951281511', 'floererererer@gmail.com', '$2y$10$fL/0SLQG2zLnUEniuGsTU.ulSh4yLbmpwPMkWFLIbqc2OU1xF1Niq', '/uploads/ids/front_6a6252ecf1d05.jpg', '/uploads/ids/back_6a6252ed00579.jpg', 3, 6, 1, 'active', NULL, '2026-07-24 01:44:13', '2026-08-09 05:54:43', NULL, NULL, 0, NULL, NULL),
 (16, 'test email otp', NULL, NULL, NULL, 'resident', 'awwsdasdad', '09951281511', 'testingotp@gmail.com', '$2y$10$NlxWm4KHBTA2PPazo0MN7ehPrv3RmAtUukEAO8QavMGJAmG.0znou', '/uploads/ids/front_6a6258475b015.jpg', '/uploads/ids/back_6a6258475be3f.jpg', 3, 6, 1, 'active', NULL, '2026-07-24 02:07:03', '2026-08-08 01:10:08', NULL, NULL, 0, NULL, NULL),
-(17, 'Supervisor User', NULL, NULL, NULL, 'resident', '', '', 'supervisor@dulongbayan.ph', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', NULL, NULL, 2, 3, NULL, 'active', NULL, '2026-07-25 23:52:14', '2026-08-08 01:09:10', NULL, NULL, 0, NULL, NULL),
 (18, 'Hans Limuelle Flores', NULL, NULL, 'hansflores', 'resident', 'Barangay Dulong Bayan', '09171234567', 'floreshanslimuelle.neust@gmail.com', '$2y$10$E2mUTFGVt51XHw43Ie.kMuI9cvRZPmwbpaMR4i49KqQT5nrLASx.W', NULL, NULL, 2, 3, 1, 'active', NULL, '2026-07-26 13:35:01', '2026-07-26 13:47:54', NULL, NULL, 0, NULL, NULL),
 (19, 'Cedrick Umali', NULL, NULL, 'umalicedrick', 'resident', '', '09664185246', 'umalicedrick29@gmail.com', '$2y$10$/6ZSX1XKD5fMpEwneahyIOU8IfbZxxWwoFfKt48t8Z0Z4PmY3Pg3O', NULL, NULL, 3, 6, 1, 'active', NULL, '2026-08-02 20:15:51', '2026-08-08 11:03:30', NULL, NULL, 0, NULL, NULL),
 (20, 'hans testinggphonesms', NULL, NULL, 'fhanstestingphonesms', 'resident', '', '09951281511', '', '$2y$10$UHXCgTQabJpLgMcE6cfbVOlXnSpLt21c55mkuX55ooqZjjf8Ard/e', NULL, NULL, 3, 6, 2, 'active', NULL, '2026-08-09 22:40:36', '2026-08-14 12:51:31', NULL, NULL, 0, NULL, NULL),
@@ -4096,7 +4112,7 @@ ALTER TABLE `announcement_visibilities`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2854;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2929;
 
 --
 -- AUTO_INCREMENT for table `barangays`
@@ -4132,7 +4148,7 @@ ALTER TABLE `collection_schedule_puroks`
 -- AUTO_INCREMENT for table `email_otp_rate_limits`
 --
 ALTER TABLE `email_otp_rate_limits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=164;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=167;
 
 --
 -- AUTO_INCREMENT for table `estimated_quantities`
@@ -4210,7 +4226,7 @@ ALTER TABLE `purok_boundaries`
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `report_flags`
@@ -4228,7 +4244,7 @@ ALTER TABLE `report_generation_settings`
 -- AUTO_INCREMENT for table `report_photos`
 --
 ALTER TABLE `report_photos`
-  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `report_settings`
@@ -4246,7 +4262,7 @@ ALTER TABLE `report_statuses`
 -- AUTO_INCREMENT for table `report_status_history`
 --
 ALTER TABLE `report_status_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `report_summaries`
@@ -4282,13 +4298,13 @@ ALTER TABLE `sms_rate_limits`
 -- AUTO_INCREMENT for table `two_factor_tokens`
 --
 ALTER TABLE `two_factor_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=441;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=444;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `waste_categories`

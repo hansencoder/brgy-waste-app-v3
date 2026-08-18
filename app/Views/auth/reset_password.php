@@ -11,10 +11,7 @@ try {
 }
 $barangayName    = $authBranding['barangay_name'] ?? 'Dulong Bayan';
 $sysShortName    = $authBranding['system_short_name'] ?? 'WasteWatch';
-$sysLogo         = $authBranding['system_logo'] ?? null;
-if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysLogo, '/public') === 0) {
-    $sysLogo = '/brgy-waste-app-v3' . $sysLogo;
-}
+$sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($authBranding['system_logo']) : null;
 ?>
 
 <div class="w-full min-h-[calc(100vh-2rem)] flex-1 flex flex-col justify-center items-center py-10 px-4 sm:px-6">
@@ -49,7 +46,7 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
             </div>
         <?php endif; ?>
 
-        <form action="/brgy-waste-app-v3/public/index.php?url=auth/verifyResetOtp" method="POST" class="space-y-5">
+        <form action="<?php echo app_url('index.php?url=auth/verifyResetOtp'); ?>" method="POST" class="space-y-5">
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
             <input type="hidden" name="otp" id="otp">
 
@@ -73,10 +70,10 @@ if ($sysLogo && strpos($sysLogo, '/brgy-waste-app-v3') === false && strpos($sysL
         <div class="mt-5 text-center space-y-2">
             <p class="text-xs text-slate-500 font-normal">
                 Didn't receive the code? 
-                <a href="/brgy-waste-app-v3/public/index.php?url=auth/forgotPassword" class="font-semibold text-emerald-700 hover:underline">Resend code</a>
+                <a href="<?php echo app_url('index.php?url=auth/forgotPassword'); ?>" class="font-semibold text-emerald-700 hover:underline">Resend code</a>
             </p>
             <div>
-                <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
+                <a href="<?php echo app_url('index.php?url=auth'); ?>" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
                     <span>Back to Sign In</span>
                 </a>

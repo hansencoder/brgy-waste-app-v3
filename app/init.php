@@ -17,6 +17,20 @@ if (!function_exists('get_base_url')) {
     }
 }
 
+if (!function_exists('app_url')) {
+    function app_url($path = '') {
+        $base = get_base_url();
+        $path = ltrim($path, '/');
+        $path = preg_replace('#^brgy-waste-app-v3/public/#', '', $path);
+        $path = preg_replace('#^public/#', '', $path);
+        $path = ltrim($path, '/');
+        if ($base === '') {
+            return '/' . $path;
+        }
+        return $base . '/' . $path;
+    }
+}
+
 if (!function_exists('format_asset_url')) {
     function format_asset_url($path, $fallback = '') {
         if (empty($path)) return $fallback;

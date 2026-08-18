@@ -32,7 +32,7 @@ class AuthController extends Controller {
     // ============================================================
     public function resetPassword() {
         if (!isset($_SESSION['reset_email'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/forgotPassword')));
             exit;
         }
         $data = ['error' => '', 'success' => ''];
@@ -41,7 +41,7 @@ class AuthController extends Controller {
 
     public function verifyResetOtp() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/forgotPassword')));
             exit;
         }
 
@@ -50,7 +50,7 @@ class AuthController extends Controller {
         $userId = $_SESSION['reset_user_id'] ?? null;
 
         if (!$email || !$userId) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/forgotPassword')));
             exit;
         }
 
@@ -61,13 +61,13 @@ class AuthController extends Controller {
 
         $_SESSION['reset_otp_verified'] = true;
         $_SESSION['reset_otp'] = $otp;
-        header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/newPassword'));
+        header('Location: ' . app_url('index.php?url=' . urlencode('auth/newPassword')));
         exit;
     }
 
     public function newPassword() {
         if (!isset($_SESSION['reset_email']) || !isset($_SESSION['reset_user_id']) || empty($_SESSION['reset_otp_verified'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/forgotPassword')));
             exit;
         }
 
@@ -87,7 +87,7 @@ class AuthController extends Controller {
             $user_id = $_SESSION['reset_user_id'] ?? null;
 
             if (!$email || !$user_id || empty($_SESSION['reset_otp_verified'])) {
-                header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/forgotPassword'));
+                header('Location: ' . app_url('index.php?url=' . urlencode('auth/forgotPassword')));
                 exit;
             }
 
@@ -118,7 +118,7 @@ class AuthController extends Controller {
             $this->auditModel->logAction($user_id, 'Password Reset', 'User', 'Password reset via email OTP', 'success');
 
             $_SESSION['flash_success'] = 'Password reset successfully. You can now log in.';
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth')));
             exit;
         }
     }
@@ -152,7 +152,7 @@ class AuthController extends Controller {
                 $_SESSION['reset_user_id'] = $user['id'];
                 unset($_SESSION['reset_otp_verified']);
                 unset($_SESSION['reset_otp']);
-                header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/resetPassword'));
+                header('Location: ' . app_url('index.php?url=' . urlencode('auth/resetPassword')));
                 exit;
             } catch (Exception $e) {
                 return $this->view('auth/forgot_password', ['error' => 'Could not send reset email. Please try again later.']);
@@ -173,9 +173,9 @@ class AuthController extends Controller {
     public function index() {
         if (isset($_SESSION['user_id'])) {
             if ($_SESSION['user_role'] == 'resident') {
-                header('Location: /brgy-waste-app-v3/public/index.php?url=resident');
+                header('Location: ' . app_url('index.php?url=resident'));
             } else {
-                header('Location: /brgy-waste-app-v3/public/index.php?url=admin');
+                header('Location: ' . app_url('index.php?url=admin'));
             }
             exit;
         }
@@ -285,7 +285,7 @@ class AuthController extends Controller {
 
                     $this->auditModel->logAction($user['id'], 'Login partial success', 'User', 'OTP sent to ' . ($sendViaSms ? 'phone' : 'email'), 'success');
 
-                    header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/mfa'));
+                    header('Location: ' . app_url('index.php?url=' . urlencode('auth/mfa')));
                     exit;
                 } catch (Exception $e) {
                     $this->auditModel->logAction($user['id'], 'OTP send failed', 'User', $e->getMessage(), 'failed');
@@ -314,7 +314,7 @@ class AuthController extends Controller {
     // ============================================================
     public function mfa() {
         if (!isset($_SESSION['mfa_user_id'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth')));
             exit;
         }
 
@@ -330,12 +330,12 @@ class AuthController extends Controller {
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $otp = trim($_POST['otp']);
-            $user_id = $_SESSION['mfa_user_id'];
+            $otp = trim($_POST['otp'] ?? '');
+            $user_id = $_SESSION['mfa_user_id'] ?? null;
             $email = $_SESSION['mfa_email'] ?? null;
 
-            if (!$email) {
-                header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth'));
+            if (!$user_id) {
+                header('Location: ' . app_url('index.php?url=' . urlencode('auth')));
                 exit;
             }
 
@@ -362,7 +362,8 @@ class AuthController extends Controller {
                 $db->bind(':id', $user_id);
                 $user = $db->single();
 
-                $_SESSION['user_role'] = strtolower($user['role_name'] ?? 'resident');
+                $role_name = strtolower($user['role_name'] ?? 'resident');
+                $_SESSION['user_role'] = $role_name;
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_purok'] = $user['purok_name'] ?? 'Purok 1';
                 $_SESSION['user_position'] = $user['position_name'] ?? 'Resident';
@@ -373,12 +374,12 @@ class AuthController extends Controller {
                 unset($_SESSION['mfa_email']);
 
                 // Redirect based on role
-                if ($_SESSION['user_role'] == 'resident') {
-                    header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('resident'));
-                } elseif ($_SESSION['user_role'] == 'supervisor') {
-                    header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('supervisor'));
+                if ($role_name == 'resident') {
+                    header('Location: ' . app_url('index.php?url=' . urlencode('resident')));
+                } elseif ($role_name == 'supervisor') {
+                    header('Location: ' . app_url('index.php?url=' . urlencode('supervisor')));
                 } else {
-                    header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('admin'));
+                    header('Location: ' . app_url('index.php?url=' . urlencode('admin')));
                 }
                 exit;
             } else {
@@ -572,7 +573,7 @@ class AuthController extends Controller {
                 $_SESSION['reg_type']    = $isPhoneOnly ? 'phone' : 'email';
                 $_SESSION['reg_name']    = $regData['name'];
 
-                header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/verifyRegistration'));
+                header('Location: ' . app_url('index.php?url=' . urlencode('auth/verifyRegistration')));
                 exit;
             } else {
                 $data['error'] = 'Something went wrong. Please try again.';
@@ -587,7 +588,7 @@ class AuthController extends Controller {
     // ============================================================
     public function verifyRegistration() {
         if (!isset($_SESSION['reg_user_id']) || !isset($_SESSION['reg_email'])) {
-            header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth/register'));
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/register')));
             exit;
         }
 
@@ -618,7 +619,7 @@ class AuthController extends Controller {
                 unset($_SESSION['reg_name']);
 
                 $_SESSION['flash_success'] = 'Your account has been verified. You can now log in.';
-                header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth'));
+                header('Location: ' . app_url('index.php?url=' . urlencode('auth')));
                 exit;
             } else {
                 $this->auditModel->logAction($user_id, 'Registration OTP failed', 'User', 'Invalid or expired OTP', 'failed');
@@ -681,7 +682,7 @@ class AuthController extends Controller {
         }
         session_unset();
         session_destroy();
-        header('Location: /brgy-waste-app-v3/public/index.php?url=' . urlencode('auth'));
+        header('Location: ' . app_url('index.php?url=' . urlencode('auth')));
         exit;
     }
 

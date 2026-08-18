@@ -17,6 +17,10 @@ Options -Indexes
     Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
+# Transparently support legacy subfolder paths on live domains
+RewriteRule ^brgy-waste-app-v3/public/(.*)$ public/$1 [L]
+RewriteRule ^brgy-waste-app-v3/(.*)$ public/$1 [L]
+
 # Handle static uploads & assets directly
 RewriteRule ^uploads/(.*)$ public/uploads/$1 [L]
 RewriteRule ^images/(.*)$ public/images/$1 [L]

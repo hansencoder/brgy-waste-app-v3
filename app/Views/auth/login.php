@@ -18,7 +18,7 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
 
     <!-- Top Back Link -->
     <div class="w-full max-w-[440px] mb-4 flex items-center justify-between">
-        <a href="/brgy-waste-app-v3/public/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition">
+        <a href="<?php echo app_url(''); ?>" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M19 12H5" />
                 <path d="m12 5-7 7 7 7" />
@@ -45,10 +45,10 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
 
         <!-- Navigation Switcher (Tabs) -->
         <div class="mb-5 p-1 bg-slate-100 rounded-xl grid grid-cols-2 gap-1 text-xs font-semibold">
-            <a href="/brgy-waste-app-v3/public/index.php?url=auth" class="py-2 text-center rounded-lg bg-white text-slate-900 shadow-2xs transition-all">
+            <a href="<?php echo app_url('index.php?url=auth'); ?>" class="py-2 text-center rounded-lg bg-white text-slate-900 shadow-2xs transition-all">
                 Sign In
             </a>
-            <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="py-2 text-center rounded-lg text-slate-600 hover:text-slate-900 transition-all">
+            <a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="py-2 text-center rounded-lg text-slate-600 hover:text-slate-900 transition-all">
                 Create Account
             </a>
         </div>
@@ -67,7 +67,7 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
         <?php endif; ?>
 
         <!-- Form -->
-        <form action="/brgy-waste-app-v3/public/auth/login" method="POST" class="space-y-4" onsubmit="return validateLoginForm()">
+        <form action="<?php echo app_url('index.php?url=auth/login'); ?>" method="POST" class="space-y-4" onsubmit="return validateLoginForm()">
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
 
             <!-- Email / Phone Input -->
@@ -89,7 +89,7 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
             <div>
                 <div class="flex items-center justify-between mb-1">
                     <label for="password" class="block text-xs font-semibold text-slate-700">Password</label>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=auth/forgotPassword" class="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                    <a href="<?php echo app_url('index.php?url=auth/forgotPassword'); ?>" class="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
                         Forgot password?
                     </a>
                 </div>
@@ -135,7 +135,7 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
             <!-- Footer Sign-up Prompt -->
             <p class="text-center text-xs text-slate-500 pt-2 font-normal">
                 Don't have an account yet? 
-                <a href="/brgy-waste-app-v3/public/index.php?url=auth/register" class="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
+                <a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
                     Create an account
                 </a>
             </p>
@@ -144,11 +144,11 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
             <div class="pt-4 border-t border-slate-100 text-center space-y-2">
                 <p class="text-xs text-slate-500 font-normal">Quick public reporting without an account:</p>
                 <div class="flex items-center justify-center gap-2">
-                    <a href="/brgy-waste-app-v3/public/index.php?url=guest" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-semibold transition border border-emerald-100">
+                    <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-semibold transition border border-emerald-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         <span>Report as Guest</span>
                     </a>
-                    <a href="/brgy-waste-app-v3/public/index.php?url=guest/track" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold transition border border-slate-200">
+                    <a href="<?php echo app_url('index.php?url=guest/track'); ?>" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold transition border border-slate-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                         <span>Track Report</span>
                     </a>

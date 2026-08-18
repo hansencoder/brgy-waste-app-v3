@@ -28,7 +28,7 @@
                 </div>
             <?php endif; ?>
 
-            <form action="/brgy-waste-app-v3/public/auth/mfa" method="POST" class="space-y-6">
+            <form action="<?php echo app_url('index.php?url=auth/mfa'); ?>" method="POST" class="space-y-6">
                 <input type="hidden" id="cooldownEnd" value="<?php echo isset($data['retry_after_seconds']) ? (time() + $data['retry_after_seconds']) : 0; ?>">
                 <div>
                     <input type="text" id="otp" name="otp" required maxlength="6" placeholder="000000" autocomplete="off"
@@ -42,11 +42,11 @@
 
             <div class="mt-6 text-center">
                 <p class="text-sm text-slate-500">Didn't receive the code? 
-                    <a id="resendLink" href="/brgy-waste-app-v3/public/auth/mfa?action=resend" class="text-[#15281f] font-semibold hover:underline">Resend</a>
+                    <a id="resendLink" href="<?php echo app_url('index.php?url=auth/mfa&action=resend'); ?>" class="text-[#15281f] font-semibold hover:underline">Resend</a>
                     <span id="resendCountdown" class="ml-2 text-sm text-slate-400"></span>
                 </p>
                 <div class="mt-2">
-                    <a href="/brgy-waste-app-v3/public/auth" class="text-xs text-red-500 hover:text-red-700">Cancel Login</a>
+                    <a href="<?php echo app_url('index.php?url=auth'); ?>" class="text-xs text-red-500 hover:text-red-700">Cancel Login</a>
                 </div>
             </div>
         </div>

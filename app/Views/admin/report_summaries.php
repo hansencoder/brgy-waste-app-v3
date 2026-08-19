@@ -56,15 +56,17 @@ $exportQuery = http_build_query([
     'trend_granularity' => $trendGranularity,
 ]);
 
-function statusBadgeClass($status) {
-    $map = [
-        'Pending' => 'bg-amber-50 text-amber-700 border border-amber-200',
-        'Verified' => 'bg-sky-50 text-sky-700 border border-sky-200',
-        'In Progress' => 'bg-orange-50 text-orange-700 border border-orange-200',
-        'Resolved' => 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-        'Rejected' => 'bg-red-50 text-red-700 border border-red-200',
-    ];
-    return $map[$status] ?? 'bg-slate-50 text-slate-700 border border-slate-200';
+if (!function_exists('statusBadgeClass')) {
+    function statusBadgeClass($status) {
+        $map = [
+            'Pending' => 'bg-amber-50 text-amber-700 border border-amber-200',
+            'Verified' => 'bg-sky-50 text-sky-700 border border-sky-200',
+            'In Progress' => 'bg-orange-50 text-orange-700 border border-orange-200',
+            'Resolved' => 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+            'Rejected' => 'bg-red-50 text-red-700 border border-red-200',
+        ];
+        return $map[$status] ?? 'bg-slate-50 text-slate-700 border border-slate-200';
+    }
 }
 ?>
 

@@ -70,9 +70,9 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
     <!-- Mobile Drawer Header -->
     <div class="h-16 flex items-center justify-between px-5 border-b border-emerald-900/60 bg-[#062018]">
         <div class="flex items-center gap-3">
-            <div class="h-9 w-9 rounded-full bg-[#0B2E22] flex items-center justify-center overflow-hidden border border-emerald-500/40 shrink-0">
+            <div class="h-9 w-9 rounded-full flex items-center justify-center overflow-hidden shrink-0">
                 <?php if (!empty($sideSysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sideSysLogo); ?>" class="h-full w-full object-cover">
+                    <img src="<?php echo htmlspecialchars($sideSysLogo); ?>" class="h-full w-full rounded-full object-cover" alt="Logo">
                 <?php else: ?>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <?php endif; ?>
@@ -180,9 +180,9 @@ $isCollapsed = isset($_COOKIE['supervisor_sidebar_collapsed']) && $_COOKIE['supe
     <!-- Branding Header -->
     <div class="h-16 flex items-center <?php echo $isCollapsed ? 'justify-center px-0' : 'justify-between px-5'; ?> border-b border-emerald-900/60 bg-[#062018]/50">
         <a href="<?php echo app_url('supervisor'); ?>" class="flex items-center gap-3 overflow-hidden group">
-            <div class="h-9 w-9 rounded-full bg-[#0B2E22] flex items-center justify-center overflow-hidden border border-emerald-500/40 shrink-0 group-hover:scale-105 transition">
+            <div class="h-9 w-9 rounded-full flex items-center justify-center overflow-hidden shrink-0 group-hover:scale-105 transition">
                 <?php if (!empty($sideSysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sideSysLogo); ?>" class="h-full w-full object-cover">
+                    <img src="<?php echo htmlspecialchars($sideSysLogo); ?>" class="h-full w-full rounded-full object-cover" alt="Logo">
                 <?php else: ?>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <?php endif; ?>

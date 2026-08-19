@@ -112,12 +112,12 @@ foreach ($publicReports as $pr) {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="<?php echo app_url(''); ?>" class="flex items-center gap-3 flex-shrink-0 group">
-                <div class="w-10 h-10 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-sm overflow-hidden group-hover:border-emerald-400/50 transition-colors">
+            <a href="<?php echo app_url(''); ?>" class="flex items-center gap-2.5 flex-shrink-0 group">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
                     <?php if (!empty($sysLogo)): ?>
-                        <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover">
+                        <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full rounded-full object-cover group-hover:scale-105 transition duration-200" alt="<?php echo htmlspecialchars($sysShortName); ?> Logo">
                     <?php else: ?>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <?php endif; ?>
                 </div>
                 <div>
@@ -1192,11 +1192,11 @@ foreach ($publicReports as $pr) {
             <!-- Brand -->
             <div>
                 <div class="flex items-center gap-2.5 mb-3">
-                    <div class="w-8 h-8 rounded-full bg-[#07281E] flex items-center justify-center text-white shadow-sm overflow-hidden border border-emerald-500/20">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden">
                         <?php if (!empty($sysLogo)): ?>
-                            <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full object-cover" alt="<?php echo htmlspecialchars($sysShortName); ?> Logo">
+                            <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full rounded-full object-cover" alt="<?php echo htmlspecialchars($sysShortName); ?> Logo">
                         <?php else: ?>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" class="text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         <?php endif; ?>
                     </div>
                     <span class="font-bold text-white text-base"><?php echo htmlspecialchars($sysShortName); ?></span>
@@ -1491,11 +1491,8 @@ foreach ($publicReports as $pr) {
                     iconAnchor: [7, 7]
                 });
 
-                const photoHtml = r.photo ? `<div style="margin-bottom: 8px; border-radius: 8px; overflow: hidden; max-height: 100px;"><img src="${r.photo}" style="width: 100%; height: 80px; object-fit: cover;"></div>` : '';
-
                 const popupContent = `
-                    <div style="font-family: 'Miranda Sans', sans-serif; min-width: 180px; max-width: 220px;">
-                        ${photoHtml}
+                    <div style="font-family: 'Miranda Sans', sans-serif; min-width: 180px; max-width: 220px; padding: 2px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                             <span style="font-size: 10px; font-weight: 700; color: ${markerColor}; text-transform: uppercase; letter-spacing: 0.5px;">${r.status}</span>
                             <span style="font-size: 10px; color: #94A3B8;">${r.date}</span>

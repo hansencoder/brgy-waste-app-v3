@@ -34,9 +34,11 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
         <div class="flex flex-col items-center text-center mb-5">
             <a href="<?php echo app_url(''); ?>" class="inline-block transition hover:opacity-90" title="Home">
                 <?php if (!empty($sysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-14 h-14 object-contain" alt="Logo">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden">
+                        <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full rounded-full object-cover" alt="Logo">
+                    </div>
                 <?php else: ?>
-                    <div class="w-14 h-14 flex items-center justify-center text-emerald-600">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-emerald-600">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                 <?php endif; ?>
@@ -62,6 +64,29 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
                     <?php if (isset($data['lockout_seconds']) && $data['lockout_seconds'] > 0): ?>
                         <span id="loginCountdown" class="font-bold ml-1"></span>
                     <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Server Success Alert -->
+        <?php if (!empty($data['success'])): ?>
+            <div class="mb-5 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs flex items-start gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <div class="flex-1 font-medium">
+                    <?php echo htmlspecialchars($data['success'], ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Server Warning Alert (e.g. Suspended Account) -->
+        <?php if (!empty($data['warning'])): ?>
+            <div class="mb-5 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs flex items-start gap-3 shadow-xs">
+                <div class="w-8 h-8 rounded-xl bg-amber-200/80 flex items-center justify-center shrink-0 mt-0.5 text-amber-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                </div>
+                <div class="flex-1 space-y-1">
+                    <p class="font-extrabold text-amber-950 text-xs sm:text-sm">Account Suspended</p>
+                    <p class="font-medium text-amber-800 text-xs leading-relaxed"><?php echo htmlspecialchars($data['warning'], ENT_QUOTES, 'UTF-8'); ?></p>
                 </div>
             </div>
         <?php endif; ?>

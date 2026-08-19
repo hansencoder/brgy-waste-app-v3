@@ -73,6 +73,24 @@ function getAccountBadgeProps($status) {
                         </a>
                     </div>
 
+                    <!-- Flash Messages -->
+                    <?php if (!empty($_SESSION['success_message'])): ?>
+                        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between shadow-xs">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <span><?php echo htmlspecialchars($_SESSION['success_message']); unset($_SESSION['success_message']); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($_SESSION['error_message'])): ?>
+                        <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-bold flex items-center justify-between shadow-xs">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                <span><?php echo htmlspecialchars($_SESSION['error_message']); unset($_SESSION['error_message']); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <!-- ============================================================ -->
                     <!-- 2. KPI METRICS SUMMARY CARDS ROW (BLACK & WHITE)             -->
                     <!-- ============================================================ -->
@@ -218,7 +236,7 @@ function getAccountBadgeProps($status) {
                                             </td>
 
                                             <!-- Purok -->
-                                            <td class="py-4 px-6 text-slate-700 font-medium">
+                                            <td class="py-4 px-4 text-slate-700 font-medium">
                                                 <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-semibold text-[11px] border border-slate-200">
                                                     <?php echo htmlspecialchars($user['purok_name'] ?? 'N/A'); ?>
                                                 </span>
@@ -251,15 +269,29 @@ function getAccountBadgeProps($status) {
                                                 <div class="flex items-center justify-end gap-2">
                                                     <?php if ($user['status'] === 'suspended'): ?>
                                                         <button onclick="openActionModal('reactivate', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" 
-                                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs border border-slate-300 transition">
+                                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs border border-slate-300 transition"
+                                                                title="Reactivate Account">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                                                             Reactivate
                                                         </button>
                                                     <?php else: ?>
                                                         <button onclick="openActionModal('suspend', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" 
-                                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs border border-slate-300 transition">
+                                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs border border-slate-300 transition"
+                                                                title="Suspend Account">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                                                             Suspend
+                                                        </button>
+                                                    <?php endif; ?>
+
+                                                    <?php if ((int)$user['id'] !== (int)($_SESSION['user_id'] ?? 0)): ?>
+                                                        <button onclick="openActionModal('delete', <?php echo $user['id']; ?>, '<?php echo htmlspecialchars(addslashes($user['name'])); ?>')" 
+                                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs border border-red-200 shadow-2xs transition"
+                                                                title="Delete Account">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                                                <line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
+                                                            </svg>
+                                                            Delete
                                                         </button>
                                                     <?php endif; ?>
                                                 </div>
@@ -346,20 +378,28 @@ function getAccountBadgeProps($status) {
         const titles = {
             'suspend': 'Suspend Account',
             'reactivate': 'Reactivate Account',
-            'deactivate': 'Deactivate Account'
+            'deactivate': 'Deactivate Account',
+            'delete': 'Delete Account Permanently'
         };
 
         const messages = {
             'suspend': `Are you sure you want to suspend <strong class="text-slate-900">${userName}</strong>? This user will temporarily lose login access.`,
             'reactivate': `Are you sure you want to reactivate <strong class="text-slate-900">${userName}</strong>? This will restore full portal access.`,
-            'deactivate': `Are you sure you want to deactivate <strong class="text-slate-900">${userName}</strong>?`
+            'deactivate': `Are you sure you want to deactivate <strong class="text-slate-900">${userName}</strong>?`,
+            'delete': `Are you sure you want to permanently delete the account of <strong class="text-slate-900">${userName}</strong>?<br><span class="inline-block mt-2 p-2.5 rounded-lg bg-red-50 text-red-700 text-xs font-semibold border border-red-200">⚠️ <strong>Warning:</strong> This will permanently delete the user and all associated records from the database. This action cannot be undone.</span>`
         };
 
         document.getElementById('modalTitle').textContent = titles[action] || 'Confirm Action';
         document.getElementById('modalMessage').innerHTML = messages[action] || 'Are you sure?';
         
         const btn = document.getElementById('modalSubmitBtn');
-        btn.className = 'w-full px-4 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-black transition';
+        if (action === 'delete') {
+            btn.className = 'w-full px-4 py-2.5 bg-red-600 text-white rounded-xl font-bold text-xs hover:bg-red-700 transition shadow-sm';
+            btn.textContent = 'Delete Permanently';
+        } else {
+            btn.className = 'w-full px-4 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-black transition';
+            btn.textContent = 'Confirm';
+        }
 
         document.getElementById('actionModal').classList.remove('hidden');
     }

@@ -23,9 +23,11 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
         <div class="flex flex-col items-center text-center mb-5">
             <a href="<?php echo app_url(''); ?>" class="inline-block transition hover:opacity-90 mb-3" title="Home">
                 <?php if (!empty($sysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-14 h-14 object-contain" alt="Logo">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden">
+                        <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full rounded-full object-cover" alt="Logo">
+                    </div>
                 <?php else: ?>
-                    <div class="w-14 h-14 flex items-center justify-center text-emerald-600">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-emerald-600">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                 <?php endif; ?>

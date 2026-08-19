@@ -78,10 +78,14 @@ class AuthController extends Controller {
     // ============================================================
     // PROCESS PASSWORD RESET (Verify OTP and Update Password)
     // ============================================================
+    public function updatePassword() {
+        return $this->processResetPassword();
+    }
+
     public function processResetPassword() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $otp = trim($_POST['otp'] ?? $_SESSION['reset_otp'] ?? '');
-            $new_password = $_POST['new_password'] ?? '';
+            $new_password = $_POST['password'] ?? $_POST['new_password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
             $email = $_SESSION['reset_email'] ?? null;
             $user_id = $_SESSION['reset_user_id'] ?? null;
@@ -92,33 +96,39 @@ class AuthController extends Controller {
             }
 
             // Validate password requirements
-            if (strlen($new_password) < 8 || !preg_match("/[A-Z]/", $new_password) || !preg_match("/[0-9]/", $new_password) || !preg_match("/[\W]/", $new_password)) {
-                return $this->view('auth/new_password', ['error' => 'Password must be at least 8 chars with uppercase, number, and special char.']);
+            if (strlen($new_password) < 8 || !preg_match("/[A-Z]/", $new_password) || !preg_match("/[a-z]/", $new_password) || !preg_match("/[0-9]/", $new_password)) {
+                return $this->view('auth/new_password', ['error' => 'Password must be at least 8 characters long and contain uppercase, lowercase, and a number.']);
             }
             if ($new_password !== $confirm_password) {
                 return $this->view('auth/new_password', ['error' => 'Passwords do not match.']);
             }
 
-            // Validate OTP
-            $tokenRecord = $this->userModel->validatePasswordResetToken($email, $otp);
-            if (!$tokenRecord) {
-                return $this->view('auth/new_password', ['error' => 'Invalid or expired OTP. Please request a new one.']);
-            }
-
             // Update password
-            $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+            $hashed = password_hash($new_password, PASSWORD_BCRYPT);
             $this->userModel->updatePassword($user_id, $hashed);
-            $this->userModel->markResetTokenAsUsed($tokenRecord['id']);
+
+            if (!empty($otp)) {
+                $tokenRecord = $this->userModel->validatePasswordResetToken($email, $otp);
+                if ($tokenRecord) {
+                    $this->userModel->markResetTokenAsUsed($tokenRecord['id']);
+                }
+            }
 
             // Clean session and audit
             unset($_SESSION['reset_email']);
             unset($_SESSION['reset_user_id']);
             unset($_SESSION['reset_otp_verified']);
             unset($_SESSION['reset_otp']);
-            $this->auditModel->logAction($user_id, 'Password Reset', 'User', 'Password reset via email OTP', 'success');
 
-            $_SESSION['flash_success'] = 'Password reset successfully. You can now log in.';
+            try {
+                $this->auditModel->logAction($user_id, 'Password Reset', 'User', 'Password reset successfully via OTP verification', 'success');
+            } catch (Exception $e) {}
+
+            $_SESSION['flash_success'] = 'Your password has been reset successfully. You can now log in with your new password.';
             header('Location: ' . app_url('index.php?url=' . urlencode('auth')));
+            exit;
+        } else {
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/forgotPassword')));
             exit;
         }
     }
@@ -179,7 +189,19 @@ class AuthController extends Controller {
             }
             exit;
         }
-        $data = ['error' => isset($_GET['error']) ? htmlspecialchars($_GET['error'], ENT_QUOTES, 'UTF-8') : ''];
+        $data = [
+            'error' => isset($_GET['error']) ? htmlspecialchars($_GET['error'], ENT_QUOTES, 'UTF-8') : '',
+            'success' => '',
+            'warning' => ''
+        ];
+        if (!empty($_SESSION['flash_success'])) {
+            $data['success'] = $_SESSION['flash_success'];
+            unset($_SESSION['flash_success']);
+        }
+        if (!empty($_SESSION['flash_warning'])) {
+            $data['warning'] = $_SESSION['flash_warning'];
+            unset($_SESSION['flash_warning']);
+        }
         $this->view('auth/login', $data);
     }
 
@@ -212,6 +234,12 @@ class AuthController extends Controller {
             $user = $this->userModel->findUserByEmailOrUsername($input);
 
             if ($user && password_verify($password, $user['password'])) {
+                if ($user['status'] === 'suspended') {
+                    $this->auditModel->logAction($user['id'], 'Login Blocked', 'User', 'Blocked login attempt for suspended user', 'failed');
+                    return $this->view('auth/login', [
+                        'warning' => 'This account has been suspended by the Barangay Administration. You cannot log in at this time. Please contact the Barangay Hall for assistance.'
+                    ]);
+                }
                 if ($user['status'] == 'pending') {
                     return $this->view('auth/login', ['error' => 'Account is pending email verification. Please check your email.']);
                 }
@@ -362,6 +390,16 @@ class AuthController extends Controller {
                 $db->bind(':id', $user_id);
                 $user = $db->single();
 
+                if (($user['status'] ?? '') === 'suspended') {
+                    unset($_SESSION['mfa_user_id']);
+                    unset($_SESSION['mfa_email']);
+                    unset($_SESSION['user_id']);
+                    $this->auditModel->logAction($user_id, 'Login Blocked', 'User', 'Blocked MFA completion for suspended user', 'failed');
+                    return $this->view('auth/login', [
+                        'warning' => 'This account has been suspended by the Barangay Administration. You cannot log in at this time. Please contact the Barangay Hall for assistance.'
+                    ]);
+                }
+
                 $role_name = strtolower($user['role_name'] ?? 'resident');
                 $_SESSION['user_role'] = $role_name;
                 $_SESSION['user_name'] = $user['name'];
@@ -469,9 +507,9 @@ class AuthController extends Controller {
                 return $this->view('auth/register', $data);
             }
 
-            // Password strength
-            if (strlen($password) < 8 || !preg_match("/[A-Z]/", $password) || !preg_match("/[a-z]/", $password) || !preg_match("/[0-9]/", $password) || !preg_match("/[\W]/", $password)) {
-                $data['error'] = "Password must be at least 8 chars long with uppercase, lowercase, number, and special char.";
+            // Password strength (at least 8 chars, uppercase, lowercase, and a number)
+            if (strlen($password) < 8 || !preg_match("/[A-Z]/", $password) || !preg_match("/[a-z]/", $password) || !preg_match("/[0-9]/", $password)) {
+                $data['error'] = "Password must be at least 8 characters long and contain uppercase, lowercase, and a number.";
                 return $this->view('auth/register', $data);
             }
 

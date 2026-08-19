@@ -15,7 +15,7 @@ $barangay = $data['barangay'] ?? [];
 $brgyName = $barangay['barangay_name'] ?? 'Barangay Dulong Bayan';
 $brgyCity = $barangay['municipality'] ?? 'Quezon City';
 $brgyProv = $barangay['province'] ?? 'Metro Manila';
-$sysLogo = !empty($barangay['system_logo']) ? $barangay['system_logo'] : '/images/logo.png';
+$sysLogo = !empty($barangay['system_logo']) ? format_asset_url($barangay['system_logo']) : format_asset_url('images/logo.png');
 
 // Helper to determine action styling & badges
 function getActionMeta($action) {
@@ -47,7 +47,7 @@ function getActionMeta($action) {
     @media print {
         @page {
             size: landscape;
-            margin: 10mm;
+            margin: 8mm;
         }
         html, body {
             background: #ffffff !important;
@@ -117,8 +117,15 @@ function getActionMeta($action) {
 
                     <!-- Actions -->
                     <div class="flex items-center gap-2.5 shrink-0">
-                        <button onclick="printAuditReport()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-extrabold text-xs sm:text-sm border border-slate-200 shadow-2xs transition active:scale-[0.98] cursor-pointer" title="Print Audit Report">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                        <!-- Export CSV Dropdown / Action -->
+                        <button onclick="exportFilteredLogsCSV()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-extrabold text-xs sm:text-sm border border-slate-200 shadow-2xs transition active:scale-[0.98] cursor-pointer" title="Export CSV">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span>Export CSV</span>
+                        </button>
+
+                        <!-- Print Action with Options Modal -->
+                        <button onclick="openPrintModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#07281E] text-white font-extrabold text-xs sm:text-sm shadow-2xs transition active:scale-[0.98] cursor-pointer" title="Print Audit Report">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                             <span>Print Report</span>
                         </button>
                     </div>
@@ -165,14 +172,15 @@ function getActionMeta($action) {
 
                 <!-- 3. Advanced Filtering & Search Toolstrip -->
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-4">
+                    
+                    <!-- Row 1: Search and Main Selects -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                        
                         <!-- Search Box -->
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                             </div>
-                            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search action, user, target ID, details..." 
+                            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search action, user, entity, IP..." 
                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition">
                         </div>
 
@@ -187,7 +195,7 @@ function getActionMeta($action) {
                                 <option value="Schedule">Collection Schedules</option>
                                 <option value="GIS">GIS &amp; Territorial Boundaries</option>
                                 <option value="Export">Export &amp; Analytics Logs</option>
-                                <option value="Dashboard">Dashboard &amp; System Access</option>
+                                <option value="Login">Login &amp; Session Access</option>
                             </select>
                         </div>
 
@@ -203,21 +211,39 @@ function getActionMeta($action) {
                         </div>
 
                         <!-- Result Status Filter -->
-                        <div class="flex items-center gap-2">
+                        <div>
                             <select id="resultFilter" onchange="applyFilters()" 
                                     class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:border-emerald-500 outline-none transition cursor-pointer">
                                 <option value="all">-- All Results --</option>
-                                <option value="success">Success</option>
-                                <option value="failed">Failed / Error</option>
+                                <option value="success">Success Only</option>
+                                <option value="failed">Failed / Error Only</option>
                             </select>
-
-                            <button onclick="resetFilters()" class="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-xs transition cursor-pointer shrink-0" title="Reset Filters">
-                                Reset
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Filter Counter -->
+                    <!-- Row 2: Date Range & Quick Preset Chips -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-bold text-slate-500">Date Range:</span>
+                            <input type="date" id="dateFrom" onchange="applyFilters()" class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:bg-white focus:border-emerald-500">
+                            <span class="text-xs text-slate-400 font-bold">to</span>
+                            <input type="date" id="dateTo" onchange="applyFilters()" class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:bg-white focus:border-emerald-500">
+
+                            <!-- Quick Preset Buttons -->
+                            <div class="flex items-center gap-1 ml-1">
+                                <button type="button" onclick="setDatePreset('all')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-[11px] transition cursor-pointer">All Time</button>
+                                <button type="button" onclick="setDatePreset('today')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-[11px] transition cursor-pointer">Today</button>
+                                <button type="button" onclick="setDatePreset('7days')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-[11px] transition cursor-pointer">Last 7 Days</button>
+                                <button type="button" onclick="setDatePreset('month')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-[11px] transition cursor-pointer">This Month</button>
+                            </div>
+                        </div>
+
+                        <button onclick="resetFilters()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-xs transition cursor-pointer shrink-0" title="Reset All Filters">
+                            Reset All Filters
+                        </button>
+                    </div>
+
+                    <!-- Row 3: Counter & Page Size Selection -->
                     <div class="flex items-center justify-between text-xs font-bold text-slate-500 pt-2 border-t border-slate-100">
                         <div>
                             Showing <strong id="visibleLogCount" class="text-slate-900"><?php echo count($logs); ?></strong> of <?php echo count($logs); ?> recorded events
@@ -240,6 +266,11 @@ function getActionMeta($action) {
                         <table class="min-w-full divide-y divide-slate-200 text-left" id="auditTable">
                             <thead class="bg-slate-50 text-[11px] font-black text-slate-500 uppercase tracking-wider">
                                 <tr>
+                                    <!-- Checkbox Column -->
+                                    <th class="px-4 py-3.5 w-10 text-center">
+                                        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this.checked)" 
+                                               class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/20 cursor-pointer" title="Select all on this page">
+                                    </th>
                                     <th class="px-5 py-3.5">Timestamp</th>
                                     <th class="px-5 py-3.5">Actor / User</th>
                                     <th class="px-5 py-3.5">Action &amp; Module</th>
@@ -257,23 +288,33 @@ function getActionMeta($action) {
                                         $userDisplay = !empty($log['user_name']) ? $log['user_name'] : 'System / Auto';
                                         $roleDisplay = !empty($log['role_name']) ? ucfirst($log['role_name']) : 'Automated';
                                         $initial = strtoupper(substr($userDisplay, 0, 1));
+                                        $logDateOnly = substr($log['created_at'] ?? '', 0, 10);
                                     ?>
-                                        <tr class="log-row hover:bg-slate-50/80 transition group cursor-pointer" 
-                                            onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)"
+                                        <tr class="log-row hover:bg-slate-50/80 transition group" 
+                                            data-id="<?php echo htmlspecialchars($log['id']); ?>"
+                                            data-date="<?php echo htmlspecialchars($logDateOnly); ?>"
                                             data-user="<?php echo strtolower(htmlspecialchars($userDisplay)); ?>"
                                             data-action="<?php echo strtolower(htmlspecialchars($log['action'])); ?>"
                                             data-details="<?php echo strtolower(htmlspecialchars($log['details'] ?? '')); ?>"
                                             data-record="<?php echo strtolower(htmlspecialchars($log['affected_record'] ?? '')); ?>"
+                                            data-ip="<?php echo strtolower(htmlspecialchars($log['ip_address'] ?? '')); ?>"
                                             data-result="<?php echo strtolower(htmlspecialchars($log['result'] ?? '')); ?>">
                                             
+                                            <!-- Row Checkbox -->
+                                            <td class="px-4 py-3.5 text-center" onclick="event.stopPropagation()">
+                                                <input type="checkbox" value="<?php echo htmlspecialchars($log['id']); ?>" 
+                                                       class="log-row-checkbox w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/20 cursor-pointer"
+                                                       onchange="updateSelectedCount()">
+                                            </td>
+
                                             <!-- Timestamp -->
-                                            <td class="px-5 py-3.5 whitespace-nowrap">
+                                            <td class="px-5 py-3.5 whitespace-nowrap cursor-pointer" onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)">
                                                 <div class="font-extrabold text-slate-900"><?php echo date('M d, Y', strtotime($log['created_at'])); ?></div>
                                                 <div class="text-[10px] text-slate-400 font-mono"><?php echo date('h:i:s A', strtotime($log['created_at'])); ?></div>
                                             </td>
 
                                             <!-- Actor -->
-                                            <td class="px-5 py-3.5 whitespace-nowrap">
+                                            <td class="px-5 py-3.5 whitespace-nowrap cursor-pointer" onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)">
                                                 <div class="flex items-center gap-2.5">
                                                     <div class="w-7 h-7 rounded-full bg-[#0B2E22] text-white flex items-center justify-center text-xs font-extrabold shrink-0">
                                                         <?php echo $initial; ?>
@@ -286,26 +327,26 @@ function getActionMeta($action) {
                                             </td>
 
                                             <!-- Action & Module -->
-                                            <td class="px-5 py-3.5 whitespace-nowrap">
+                                            <td class="px-5 py-3.5 whitespace-nowrap cursor-pointer" onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)">
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-extrabold border <?php echo $meta['badge']; ?>">
                                                     <?php echo htmlspecialchars($log['action']); ?>
                                                 </span>
                                             </td>
 
                                             <!-- Affected Record -->
-                                            <td class="px-5 py-3.5 whitespace-nowrap">
+                                            <td class="px-5 py-3.5 whitespace-nowrap cursor-pointer" onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)">
                                                 <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-[11px] font-bold border border-slate-200">
                                                     <?php echo htmlspecialchars($log['affected_record'] ?? 'N/A'); ?>
                                                 </span>
                                             </td>
 
                                             <!-- Details -->
-                                            <td class="px-5 py-3.5 max-w-xs sm:max-w-sm truncate text-slate-600 font-medium" title="<?php echo htmlspecialchars($log['details'] ?? ''); ?>">
+                                            <td class="px-5 py-3.5 max-w-xs sm:max-w-sm truncate text-slate-600 font-medium cursor-pointer" onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)" title="<?php echo htmlspecialchars($log['details'] ?? ''); ?>">
                                                 <?php echo htmlspecialchars($log['details'] ?? 'No extra remarks'); ?>
                                             </td>
 
                                             <!-- Result -->
-                                            <td class="px-5 py-3.5 whitespace-nowrap">
+                                            <td class="px-5 py-3.5 whitespace-nowrap cursor-pointer" onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)">
                                                 <?php if ($isSuccess): ?>
                                                     <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-50 text-emerald-900 border border-emerald-300">
                                                         SUCCESS
@@ -319,7 +360,7 @@ function getActionMeta($action) {
 
                                             <!-- Inspect Action -->
                                             <td class="px-5 py-3.5 whitespace-nowrap text-right">
-                                                <button type="button" class="p-1.5 rounded-lg text-slate-400 group-hover:text-emerald-700 group-hover:bg-emerald-50 transition" title="Inspect Log Entry">
+                                                <button type="button" onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)" class="p-1.5 rounded-lg text-slate-400 group-hover:text-emerald-700 group-hover:bg-emerald-50 transition cursor-pointer" title="Inspect Log Entry">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                                 </button>
                                             </td>
@@ -327,7 +368,7 @@ function getActionMeta($action) {
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr id="emptyRow">
-                                        <td colspan="7" class="px-6 py-12 text-center text-slate-400 space-y-2">
+                                        <td colspan="8" class="px-6 py-12 text-center text-slate-400 space-y-2">
                                             <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
                                             </div>
@@ -357,10 +398,145 @@ function getActionMeta($action) {
 </div>
 
 <!-- ============================================================ -->
+<!-- STICKY BATCH ACTIONS BAR (Appears when rows are selected)    -->
+<!-- ============================================================ -->
+<div id="batchActionBar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-4 z-40 border border-slate-800 transition-all duration-300 transform translate-y-24 opacity-0 pointer-events-none">
+    <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="selectedCountLabel" class="text-xs font-extrabold">0 logs selected</span>
+    </div>
+
+    <div class="h-4 w-px bg-slate-700"></div>
+
+    <div class="flex items-center gap-2">
+        <button onclick="printScope('selected')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+            <span>Print Selected</span>
+        </button>
+
+        <button onclick="exportSelectedLogsCSV()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold text-xs transition flex items-center gap-1.5 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export Selected</span>
+        </button>
+
+        <button onclick="deselectAll()" class="px-2.5 py-1.5 rounded-xl bg-transparent hover:bg-slate-800 text-slate-400 hover:text-white font-extrabold text-xs transition cursor-pointer">
+            Deselect All
+        </button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PRINT CONFIGURATION MODAL (Supports Selected Page to Print)  -->
+<!-- ============================================================ -->
+<div id="printConfigModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full border border-slate-200 overflow-hidden animate-fadeIn">
+        <!-- Header -->
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-900 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Print Audit Report</h3>
+                    <p class="text-xs font-semibold text-slate-500">Configure page scope and print options</p>
+                </div>
+            </div>
+            <button onclick="closePrintModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-5 text-xs">
+            <!-- Print Scope Selection -->
+            <div>
+                <label class="block text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-2">Print Scope</label>
+                <div class="space-y-2">
+                    <!-- Option 1: Current Page Only -->
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 transition cursor-pointer">
+                        <input type="radio" name="printScopeRadio" value="current_page" checked onchange="toggleCustomPageInput(false)" class="mt-0.5 w-4 h-4 text-emerald-600 focus:ring-emerald-500/20">
+                        <div class="flex-1">
+                            <span class="block font-extrabold text-slate-900 text-xs">Current Page Only (<span id="modalCurrentPageLabel">Page 1</span>)</span>
+                            <span class="block text-slate-500 text-[11px]">Prints only the entries currently visible on this pagination page.</span>
+                        </div>
+                    </label>
+
+                    <!-- Option 2: All Filtered Logs -->
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 transition cursor-pointer">
+                        <input type="radio" name="printScopeRadio" value="all_filtered" onchange="toggleCustomPageInput(false)" class="mt-0.5 w-4 h-4 text-emerald-600 focus:ring-emerald-500/20">
+                        <div class="flex-1">
+                            <span class="block font-extrabold text-slate-900 text-xs">All Filtered Records (<span id="modalFilteredCountLabel">0</span> logs)</span>
+                            <span class="block text-slate-500 text-[11px]">Prints all matching logs across all pages according to current filters.</span>
+                        </div>
+                    </label>
+
+                    <!-- Option 3: Selected Checked Logs -->
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 transition cursor-pointer">
+                        <input type="radio" name="printScopeRadio" value="selected" onchange="toggleCustomPageInput(false)" class="mt-0.5 w-4 h-4 text-emerald-600 focus:ring-emerald-500/20">
+                        <div class="flex-1">
+                            <span class="block font-extrabold text-slate-900 text-xs">Selected / Checked Rows (<span id="modalSelectedCountLabel">0</span> logs)</span>
+                            <span class="block text-slate-500 text-[11px]">Prints only rows that you checked with checkboxes.</span>
+                        </div>
+                    </label>
+
+                    <!-- Option 4: Custom Page Range -->
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 transition cursor-pointer">
+                        <input type="radio" name="printScopeRadio" value="page_range" onchange="toggleCustomPageInput(true)" class="mt-0.5 w-4 h-4 text-emerald-600 focus:ring-emerald-500/20">
+                        <div class="flex-1">
+                            <span class="block font-extrabold text-slate-900 text-xs">Specific Page Range</span>
+                            <span class="block text-slate-500 text-[11px]">Select a range of pages to print.</span>
+                            
+                            <!-- Custom Page Inputs -->
+                            <div id="customPageRangeContainer" class="hidden mt-2 pt-2 border-t border-slate-100 flex items-center gap-2">
+                                <span class="font-bold text-slate-600">From Page:</span>
+                                <input type="number" id="rangeFromPage" min="1" value="1" class="w-16 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 outline-none">
+                                <span class="font-bold text-slate-600">To Page:</span>
+                                <input type="number" id="rangeToPage" min="1" value="1" class="w-16 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 outline-none">
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Print Formatting Options -->
+            <div class="pt-3 border-t border-slate-100 space-y-2">
+                <label class="block text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-1">Layout Options</label>
+                
+                <label class="flex items-center gap-2.5 font-semibold text-slate-700 cursor-pointer">
+                    <input type="checkbox" id="optIncludeHeader" checked class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/20">
+                    <span>Include Official Barangay Seal and Header</span>
+                </label>
+
+                <label class="flex items-center gap-2.5 font-semibold text-slate-700 cursor-pointer">
+                    <input type="checkbox" id="optIncludeSignatures" checked class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/20">
+                    <span>Include Prepared By &amp; Approved By Signature Block</span>
+                </label>
+
+                <label class="flex items-center gap-2.5 font-semibold text-slate-700 cursor-pointer">
+                    <input type="checkbox" id="optIncludeIp" checked class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/20">
+                    <span>Include Client IP Address Column</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5">
+            <button onclick="closePrintModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs transition cursor-pointer">
+                Cancel
+            </button>
+            <button onclick="executePrintFromModal()" class="px-5 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#07281E] text-white font-extrabold text-xs transition flex items-center gap-2 shadow-sm cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                <span>Proceed to Print</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
 <!-- LOG INSPECTOR MODAL                                          -->
 <!-- ============================================================ -->
 <div id="logDetailModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full border border-slate-200 overflow-hidden animate-fadeIn">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full border border-slate-200 overflow-hidden animate-fadeIn">
         <!-- Modal Header -->
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -372,7 +548,7 @@ function getActionMeta($action) {
                     <p class="text-[11px] font-semibold text-slate-500" id="modalLogId">Log Entry Details</p>
                 </div>
             </div>
-            <button onclick="closeInspectModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition">
+            <button onclick="closeInspectModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
@@ -420,8 +596,12 @@ function getActionMeta($action) {
             </div>
         </div>
 
-        <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end">
-            <button onclick="closeInspectModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs transition">
+        <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <button onclick="printSingleIncident()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs transition cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                <span>Print Single Log Record</span>
+            </button>
+            <button onclick="closeInspectModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs transition cursor-pointer">
                 Close Inspector
             </button>
         </div>
@@ -434,8 +614,8 @@ function getActionMeta($action) {
 <div id="printArea" class="hidden">
     <div class="p-8 space-y-6">
         <!-- Print Header with Official Barangay Seals -->
-        <div class="flex items-center justify-between border-b-2 border-slate-800 pb-4">
-            <div class="w-16 h-16">
+        <div id="printHeaderBlock" class="flex items-center justify-between border-b-2 border-slate-800 pb-4">
+            <div class="w-16 h-16 flex items-center justify-center">
                 <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="h-16 w-16 object-contain" alt="Seal">
             </div>
             <div class="text-center space-y-0.5">
@@ -451,7 +631,7 @@ function getActionMeta($action) {
 
         <div class="flex items-center justify-between text-xs text-slate-600 border-b pb-2">
             <span>Generated on: <strong><?php echo date('F j, Y - h:i A'); ?></strong></span>
-            <span id="printFilterMetadata">All System Records</span>
+            <span id="printFilterMetadata" class="font-bold text-slate-800">All System Records</span>
             <span>Generated by: <strong><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></strong></span>
         </div>
 
@@ -464,6 +644,7 @@ function getActionMeta($action) {
                     <th class="border border-slate-300 p-2">Action</th>
                     <th class="border border-slate-300 p-2">Target Entity</th>
                     <th class="border border-slate-300 p-2">Details / Remarks</th>
+                    <th class="border border-slate-300 p-2 print-ip-col">Client IP</th>
                     <th class="border border-slate-300 p-2">Result</th>
                 </tr>
             </thead>
@@ -473,7 +654,7 @@ function getActionMeta($action) {
         </table>
 
         <!-- Signatures strip -->
-        <div class="pt-8 flex justify-between items-end text-xs text-slate-700">
+        <div id="printSignaturesBlock" class="pt-8 flex justify-between items-end text-xs text-slate-700">
             <div>
                 <p class="text-[10px] text-slate-400 uppercase font-bold">Prepared By:</p>
                 <div class="mt-6 border-t border-slate-400 pt-1 font-bold">
@@ -491,16 +672,19 @@ function getActionMeta($action) {
 </div>
 
 <script>
-    // Client side filter and pagination logic
+    // State management
     let currentPage = 1;
     let pageSize = 25;
     let filteredRows = [];
+    let currentInspectedLog = null;
 
     function applyFilters() {
         const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
         const action = (document.getElementById('actionFilter').value || 'all').toLowerCase();
         const user = (document.getElementById('userFilter').value || 'all').toLowerCase();
         const result = (document.getElementById('resultFilter').value || 'all').toLowerCase();
+        const dateFrom = document.getElementById('dateFrom').value || '';
+        const dateTo = document.getElementById('dateTo').value || '';
 
         const allRows = Array.from(document.querySelectorAll('tbody tr.log-row'));
         filteredRows = [];
@@ -511,13 +695,19 @@ function getActionMeta($action) {
             const rowDetails = row.getAttribute('data-details') || '';
             const rowRecord = row.getAttribute('data-record') || '';
             const rowResult = row.getAttribute('data-result') || '';
+            const rowIp = row.getAttribute('data-ip') || '';
+            const rowDate = row.getAttribute('data-date') || '';
 
-            const matchesQuery = !query || rowUser.includes(query) || rowAction.includes(query) || rowDetails.includes(query) || rowRecord.includes(query);
+            const matchesQuery = !query || rowUser.includes(query) || rowAction.includes(query) || rowDetails.includes(query) || rowRecord.includes(query) || rowIp.includes(query);
             const matchesAction = (action === 'all') || rowAction.includes(action);
             const matchesUser = (user === 'all') || (rowUser === user);
             const matchesResult = (result === 'all') || (rowResult === result);
+            
+            let matchesDate = true;
+            if (dateFrom && rowDate < dateFrom) matchesDate = false;
+            if (dateTo && rowDate > dateTo) matchesDate = false;
 
-            if (matchesQuery && matchesAction && matchesUser && matchesResult) {
+            if (matchesQuery && matchesAction && matchesUser && matchesResult && matchesDate) {
                 filteredRows.push(row);
             }
         });
@@ -525,6 +715,34 @@ function getActionMeta($action) {
         document.getElementById('visibleLogCount').textContent = filteredRows.length;
         currentPage = 1;
         renderPaginatedRows();
+        updateSelectedCount();
+    }
+
+    function setDatePreset(preset) {
+        const now = new Date();
+        const dFrom = document.getElementById('dateFrom');
+        const dTo = document.getElementById('dateTo');
+
+        const formatDate = (d) => d.toISOString().split('T')[0];
+
+        if (preset === 'all') {
+            dFrom.value = '';
+            dTo.value = '';
+        } else if (preset === 'today') {
+            const todayStr = formatDate(now);
+            dFrom.value = todayStr;
+            dTo.value = todayStr;
+        } else if (preset === '7days') {
+            const past7 = new Date();
+            past7.setDate(now.getDate() - 7);
+            dFrom.value = formatDate(past7);
+            dTo.value = formatDate(now);
+        } else if (preset === 'month') {
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            dFrom.value = formatDate(firstDay);
+            dTo.value = formatDate(now);
+        }
+        applyFilters();
     }
 
     function resetFilters() {
@@ -532,6 +750,8 @@ function getActionMeta($action) {
         document.getElementById('actionFilter').value = 'all';
         document.getElementById('userFilter').value = 'all';
         document.getElementById('resultFilter').value = 'all';
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
         applyFilters();
     }
 
@@ -572,7 +792,7 @@ function getActionMeta($action) {
             prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; renderPaginatedRows(); } };
             controls.appendChild(prevBtn);
 
-            // Pages
+            // Page numbers with smart ellipsis
             for (let p = 1; p <= totalPages; p++) {
                 if (totalPages > 7 && Math.abs(p - currentPage) > 2 && p !== 1 && p !== totalPages) {
                     continue;
@@ -592,10 +812,179 @@ function getActionMeta($action) {
             nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; renderPaginatedRows(); } };
             controls.appendChild(nextBtn);
         }
+
+        // Sync header select all checkbox for visible page
+        const selectAllCb = document.getElementById('selectAllCheckbox');
+        if (selectAllCb) {
+            const visibleCheckboxes = Array.from(document.querySelectorAll('tbody tr.log-row:not([style*="display: none"]) .log-row-checkbox'));
+            selectAllCb.checked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+        }
+    }
+
+    // Checkbox and Batch Actions
+    function toggleSelectAll(checked) {
+        const visibleCheckboxes = Array.from(document.querySelectorAll('tbody tr.log-row:not([style*="display: none"]) .log-row-checkbox'));
+        visibleCheckboxes.forEach(cb => cb.checked = checked);
+        updateSelectedCount();
+    }
+
+    function deselectAll() {
+        document.querySelectorAll('.log-row-checkbox').forEach(cb => cb.checked = false);
+        const masterCb = document.getElementById('selectAllCheckbox');
+        if (masterCb) masterCb.checked = false;
+        updateSelectedCount();
+    }
+
+    function getSelectedRows() {
+        const selectedCbs = Array.from(document.querySelectorAll('.log-row-checkbox:checked'));
+        return selectedCbs.map(cb => cb.closest('tr.log-row')).filter(Boolean);
+    }
+
+    function updateSelectedCount() {
+        const selectedCount = document.querySelectorAll('.log-row-checkbox:checked').length;
+        const batchBar = document.getElementById('batchActionBar');
+        const countLabel = document.getElementById('selectedCountLabel');
+        
+        if (countLabel) countLabel.textContent = `${selectedCount} log${selectedCount === 1 ? '' : 's'} selected`;
+
+        if (selectedCount > 0) {
+            batchBar.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            batchBar.classList.add('translate-y-0', 'opacity-100');
+        } else {
+            batchBar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+            batchBar.classList.remove('translate-y-0', 'opacity-100');
+        }
+    }
+
+    // Modal Print Configuration
+    function openPrintModal() {
+        const total = filteredRows.length;
+        const totalPages = Math.ceil(total / pageSize) || 1;
+        const selectedCount = document.querySelectorAll('.log-row-checkbox:checked').length;
+
+        document.getElementById('modalCurrentPageLabel').textContent = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById('modalFilteredCountLabel').textContent = total;
+        document.getElementById('modalSelectedCountLabel').textContent = selectedCount;
+
+        const rangeTo = document.getElementById('rangeToPage');
+        if (rangeTo) {
+            rangeTo.max = totalPages;
+            rangeTo.value = totalPages;
+        }
+
+        document.getElementById('printConfigModal').classList.remove('hidden');
+    }
+
+    function closePrintModal() {
+        document.getElementById('printConfigModal').classList.add('hidden');
+    }
+
+    function toggleCustomPageInput(show) {
+        const container = document.getElementById('customPageRangeContainer');
+        if (show) {
+            container.classList.remove('hidden');
+        } else {
+            container.classList.add('hidden');
+        }
+    }
+
+    function executePrintFromModal() {
+        const selectedScope = document.querySelector('input[name="printScopeRadio"]:checked')?.value || 'current_page';
+        closePrintModal();
+        printScope(selectedScope);
+    }
+
+    // Core Print Engine Supporting Selected Page, All Filtered, Checked Rows, and Custom Range
+    function printScope(scope) {
+        const printTableBody = document.getElementById('printableAuditTableBody');
+        if (!printTableBody) return;
+        printTableBody.innerHTML = '';
+
+        let targetRows = [];
+        let scopeTitle = '';
+
+        const includeHeader = document.getElementById('optIncludeHeader')?.checked !== false;
+        const includeSignatures = document.getElementById('optIncludeSignatures')?.checked !== false;
+        const includeIp = document.getElementById('optIncludeIp')?.checked !== false;
+
+        document.getElementById('printHeaderBlock').style.display = includeHeader ? 'flex' : 'none';
+        document.getElementById('printSignaturesBlock').style.display = includeSignatures ? 'flex' : 'none';
+
+        // Toggle IP column header & cells
+        document.querySelectorAll('.print-ip-col').forEach(el => {
+            el.style.display = includeIp ? '' : 'none';
+        });
+
+        const total = filteredRows.length;
+        const totalPages = Math.ceil(total / pageSize) || 1;
+
+        if (scope === 'current_page') {
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, total);
+            for (let i = start; i < end; i++) {
+                if (filteredRows[i]) targetRows.push(filteredRows[i]);
+            }
+            scopeTitle = `Current Page Only (Page ${currentPage} of ${totalPages} • ${targetRows.length} entries)`;
+        } else if (scope === 'selected') {
+            targetRows = getSelectedRows();
+            if (targetRows.length === 0) {
+                alert('No log rows selected. Please check at least one row or choose "Current Page".');
+                return;
+            }
+            scopeTitle = `Manually Selected Records (${targetRows.length} checked logs)`;
+        } else if (scope === 'page_range') {
+            const fromP = Math.max(1, parseInt(document.getElementById('rangeFromPage')?.value || 1, 10));
+            const toP = Math.min(totalPages, parseInt(document.getElementById('rangeToPage')?.value || totalPages, 10));
+            
+            const start = (fromP - 1) * pageSize;
+            const end = Math.min(toP * pageSize, total);
+            for (let i = start; i < end; i++) {
+                if (filteredRows[i]) targetRows.push(filteredRows[i]);
+            }
+            scopeTitle = `Custom Page Range (Pages ${fromP} to ${toP} • ${targetRows.length} entries)`;
+        } else {
+            // all_filtered
+            targetRows = filteredRows;
+            scopeTitle = `All Filtered Records (${targetRows.length} total logs across ${totalPages} pages)`;
+        }
+
+        if (targetRows.length === 0) {
+            printTableBody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">No audit log records to display.</td></tr>';
+        } else {
+            targetRows.forEach(row => {
+                const timeCol = row.children[1]?.innerText.replace(/\n/g, ' ').trim() || '';
+                const actorCol = row.children[2]?.innerText.replace(/\n/g, ' - ').trim() || '';
+                const actionCol = row.children[3]?.innerText.trim() || '';
+                const targetCol = row.children[4]?.innerText.trim() || '';
+                const detailsCol = row.children[5]?.innerText.trim() || '';
+                const resultCol = row.children[6]?.innerText.trim() || '';
+                const ipVal = row.getAttribute('data-ip') || '127.0.0.1';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="border border-slate-300 p-2 font-mono whitespace-nowrap text-[11px]">${timeCol}</td>
+                    <td class="border border-slate-300 p-2 font-bold text-[11px]">${actorCol}</td>
+                    <td class="border border-slate-300 p-2 text-[11px]">${actionCol}</td>
+                    <td class="border border-slate-300 p-2 font-mono text-[11px]">${targetCol}</td>
+                    <td class="border border-slate-300 p-2 text-[11px]">${detailsCol}</td>
+                    <td class="border border-slate-300 p-2 font-mono text-[10px] print-ip-col" style="${includeIp ? '' : 'display:none;'}">${ipVal}</td>
+                    <td class="border border-slate-300 p-2 font-bold uppercase text-[11px]">${resultCol}</td>
+                `;
+                printTableBody.appendChild(tr);
+            });
+        }
+
+        const metaLabel = document.getElementById('printFilterMetadata');
+        if (metaLabel) {
+            metaLabel.textContent = scopeTitle;
+        }
+
+        window.print();
     }
 
     // Modal Inspection
     function inspectLog(log) {
+        currentInspectedLog = log;
         document.getElementById('modalLogId').textContent = `Log Record #${log.id} • ${log.created_at}`;
         document.getElementById('modalTime').textContent = log.created_at;
         document.getElementById('modalUser').textContent = log.user_name || 'System / Anonymous';
@@ -618,54 +1007,70 @@ function getActionMeta($action) {
         document.getElementById('logDetailModal').classList.add('hidden');
     }
 
-    // Print Report Generation
-    function printAuditReport() {
+    function printSingleIncident() {
+        if (!currentInspectedLog) return;
+        closeInspectModal();
+
         const printTableBody = document.getElementById('printableAuditTableBody');
         if (!printTableBody) return;
+        printTableBody.innerHTML = `
+            <tr>
+                <td class="border border-slate-300 p-2 font-mono whitespace-nowrap text-[11px]">${currentInspectedLog.created_at}</td>
+                <td class="border border-slate-300 p-2 font-bold text-[11px]">${currentInspectedLog.user_name || 'System'} (${currentInspectedLog.role_name || 'Automated'})</td>
+                <td class="border border-slate-300 p-2 text-[11px]">${currentInspectedLog.action}</td>
+                <td class="border border-slate-300 p-2 font-mono text-[11px]">${currentInspectedLog.affected_record || 'N/A'}</td>
+                <td class="border border-slate-300 p-2 text-[11px]">${currentInspectedLog.details || 'N/A'}</td>
+                <td class="border border-slate-300 p-2 font-mono text-[10px] print-ip-col">${currentInspectedLog.ip_address || '127.0.0.1'}</td>
+                <td class="border border-slate-300 p-2 font-bold uppercase text-[11px]">${(currentInspectedLog.result || 'SUCCESS').toUpperCase()}</td>
+            </tr>
+        `;
 
-        printTableBody.innerHTML = '';
-        const visibleRows = (filteredRows && filteredRows.length > 0) ? filteredRows : Array.from(document.querySelectorAll('tbody tr.log-row'));
-
-        if (visibleRows.length === 0) {
-            printTableBody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">No audit log records to display.</td></tr>';
-        } else {
-            visibleRows.forEach(row => {
-                const timeCol = row.children[0]?.innerText.replace(/\n/g, ' ').trim() || '';
-                const actorCol = row.children[1]?.innerText.replace(/\n/g, ' - ').trim() || '';
-                const actionCol = row.children[2]?.innerText.trim() || '';
-                const targetCol = row.children[3]?.innerText.trim() || '';
-                const detailsCol = row.children[4]?.innerText.trim() || '';
-                const resultCol = row.children[5]?.innerText.trim() || '';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="border border-slate-300 p-2 font-mono whitespace-nowrap text-[11px]">${timeCol}</td>
-                    <td class="border border-slate-300 p-2 font-bold text-[11px]">${actorCol}</td>
-                    <td class="border border-slate-300 p-2 text-[11px]">${actionCol}</td>
-                    <td class="border border-slate-300 p-2 font-mono text-[11px]">${targetCol}</td>
-                    <td class="border border-slate-300 p-2 text-[11px]">${detailsCol}</td>
-                    <td class="border border-slate-300 p-2 font-bold uppercase text-[11px]">${resultCol}</td>
-                `;
-                printTableBody.appendChild(tr);
-            });
-        }
-
-        const filterDesc = [];
-        const q = document.getElementById('searchInput')?.value.trim();
-        const act = document.getElementById('actionFilter')?.value;
-        const usr = document.getElementById('userFilter')?.value;
-        const res = document.getElementById('resultFilter')?.value;
-        if (q) filterDesc.push(`Query: "${q}"`);
-        if (act && act !== 'all') filterDesc.push(`Module: ${act}`);
-        if (usr && usr !== 'all') filterDesc.push(`User: ${usr}`);
-        if (res && res !== 'all') filterDesc.push(`Result: ${res.toUpperCase()}`);
-
-        const metaLabel = document.getElementById('printFilterMetadata');
-        if (metaLabel) {
-            metaLabel.textContent = filterDesc.length > 0 ? `Filtered (${visibleRows.length} logs): ${filterDesc.join(' | ')}` : `All Records (${visibleRows.length} total logs)`;
-        }
-
+        document.getElementById('printFilterMetadata').textContent = `Single Log Forensic Report (#${currentInspectedLog.id})`;
         window.print();
+    }
+
+    // CSV Export Helpers
+    function exportFilteredLogsCSV() {
+        const rowsToExport = (filteredRows && filteredRows.length > 0) ? filteredRows : Array.from(document.querySelectorAll('tbody tr.log-row'));
+        downloadCSVFromRows(rowsToExport, 'Filtered_Audit_Logs');
+    }
+
+    function exportSelectedLogsCSV() {
+        const selected = getSelectedRows();
+        if (selected.length === 0) {
+            alert('Please select at least one log row to export.');
+            return;
+        }
+        downloadCSVFromRows(selected, 'Selected_Audit_Logs');
+    }
+
+    function downloadCSVFromRows(rows, filenamePrefix) {
+        const headers = ['Log ID', 'Timestamp', 'Actor / User', 'Action', 'Target Entity', 'Details / Remarks', 'IP Address', 'Result'];
+        const csvContent = [];
+        csvContent.push(headers.map(h => `"${h}"`).join(','));
+
+        rows.forEach(row => {
+            const logId = row.getAttribute('data-id') || '';
+            const timeCol = row.children[1]?.innerText.replace(/\n/g, ' ').trim() || '';
+            const actorCol = row.children[2]?.innerText.replace(/\n/g, ' - ').trim() || '';
+            const actionCol = row.children[3]?.innerText.trim() || '';
+            const targetCol = row.children[4]?.innerText.trim() || '';
+            const detailsCol = (row.children[5]?.innerText.trim() || '').replace(/"/g, '""');
+            const ipVal = row.getAttribute('data-ip') || '127.0.0.1';
+            const resultCol = row.children[6]?.innerText.trim() || '';
+
+            const line = [logId, timeCol, actorCol, actionCol, targetCol, detailsCol, ipVal, resultCol];
+            csvContent.push(line.map(val => `"${val}"`).join(','));
+        });
+
+        const blob = new Blob(["\uFEFF" + csvContent.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `${filenamePrefix}_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     // Initial setup

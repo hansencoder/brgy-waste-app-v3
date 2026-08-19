@@ -11,11 +11,21 @@ class SupervisorController extends Controller {
             exit;
         }
 
-        // Get user role from database
+        // Get user role and status from database
         $db = new Database();
-        $db->query("SELECT r.role_name FROM users u JOIN roles r ON u.role_id = r.role_id WHERE u.id = :id");
+        $db->query("SELECT u.status, r.role_name FROM users u JOIN roles r ON u.role_id = r.role_id WHERE u.id = :id");
         $db->bind(':id', $_SESSION['user_id']);
         $user = $db->single();
+
+        if ($user && $user['status'] === 'suspended') {
+            session_unset();
+            session_destroy();
+            session_start();
+            $_SESSION['flash_warning'] = 'This account has been suspended by the Barangay Administration. You have been signed out. Please contact the Barangay Hall for assistance.';
+            header('Location: ' . app_url('index.php?url=auth'));
+            exit;
+        }
+
         $roleName = $user ? strtolower($user['role_name']) : '';
 
         // Only allow supervisor access
@@ -731,16 +741,16 @@ public function gis() {
 
     // ---- Get active hotspots (puroks with ≥3 reports in last 30 days) ----
     $db->query("
-        SELECT p.purok_name, COUNT(*) as report_count, wc.category_name as dominant_category
+        SELECT p.purok_name, COUNT(*) as report_count, MAX(wc.category_name) as dominant_category
         FROM reports r
         JOIN puroks p ON r.purok_id = p.purok_id
         LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
         WHERE r.submission_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-        GROUP BY r.purok_id
+        GROUP BY r.purok_id, p.purok_name
         HAVING COUNT(*) >= 3
         ORDER BY report_count DESC
     ");
-    $hotspots = $db->resultSet();
+    $hotspots = $db->resultSet() ?: [];
     $active_hotspots_count = count($hotspots);
 
     // ---- Fetch highest reporting purok ----
@@ -748,7 +758,7 @@ public function gis() {
         SELECT p.purok_name, COUNT(r.id) as count 
         FROM reports r
         JOIN puroks p ON r.purok_id = p.purok_id
-        GROUP BY r.purok_id
+        GROUP BY r.purok_id, p.purok_name
         ORDER BY count DESC
         LIMIT 1
     ");

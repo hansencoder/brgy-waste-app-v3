@@ -21,6 +21,20 @@ class ResidentController extends Controller {
             exit;
         }
 
+        // Live check if user account was suspended
+        $db = new Database();
+        $db->query("SELECT status FROM users WHERE id = :id");
+        $db->bind(':id', $_SESSION['user_id']);
+        $u = $db->single();
+        if ($u && $u['status'] === 'suspended') {
+            session_unset();
+            session_destroy();
+            session_start();
+            $_SESSION['flash_warning'] = 'This account has been suspended by the Barangay Administration. You have been signed out. Please contact the Barangay Hall for assistance.';
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth')));
+            exit;
+        }
+
         $this->reportModel = $this->model('Report');
         $this->auditModel = $this->model('AuditLog');
     }

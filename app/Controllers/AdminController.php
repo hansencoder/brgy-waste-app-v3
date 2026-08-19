@@ -13,9 +13,19 @@ class AdminController extends Controller {
 
         // Get user role from database using role_id
         $db = new Database();
-        $db->query("SELECT r.role_name FROM users u JOIN roles r ON u.role_id = r.role_id WHERE u.id = :id");
+        $db->query("SELECT u.status, r.role_name FROM users u JOIN roles r ON u.role_id = r.role_id WHERE u.id = :id");
         $db->bind(':id', $_SESSION['user_id']);
         $user = $db->single();
+
+        if ($user && $user['status'] === 'suspended') {
+            session_unset();
+            session_destroy();
+            session_start();
+            $_SESSION['flash_warning'] = 'This account has been suspended by the Barangay Administration. You have been signed out. Please contact the Barangay Hall for assistance.';
+            header('Location: ' . app_url('index.php?url=auth'));
+            exit;
+        }
+
         $roleName = $user ? strtolower($user['role_name']) : '';
 
         if (!in_array($roleName, ['administrator', 'secretary', 'captain'])) {
@@ -487,33 +497,48 @@ class AdminController extends Controller {
             die("Unauthorized Access: Only Barangay Secretary can manage accounts.");
         }
 
-        // Handle POST actions (suspend, reactivate, deactivate, remove)
+        // Handle POST actions (suspend, reactivate, deactivate, remove, delete)
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
             $targetUserId = filter_var($_POST['user_id'] ?? 0, FILTER_VALIDATE_INT);
             $action = $_POST['action'] ?? '';
 
-            if ($targetUserId && in_array($action, ['suspend', 'reactivate', 'deactivate', 'remove'])) {
+            if ($targetUserId && in_array($action, ['suspend', 'reactivate', 'deactivate', 'remove', 'delete'])) {
                 $db = new Database();
                 if ($action === 'suspend') {
                     $db->query("UPDATE users SET status = 'suspended' WHERE id = :id");
                     $db->bind(':id', $targetUserId);
                     $db->execute();
                     $this->auditModel->logAction($_SESSION['user_id'], 'Account Suspended', 'User Management', "Suspended user ID $targetUserId", 'success');
+                    $_SESSION['success_message'] = "Account has been suspended.";
                 } elseif ($action === 'reactivate') {
                     $db->query("UPDATE users SET status = 'active' WHERE id = :id");
                     $db->bind(':id', $targetUserId);
                     $db->execute();
                     $this->auditModel->logAction($_SESSION['user_id'], 'Account Reactivated', 'User Management', "Reactivated user ID $targetUserId", 'success');
+                    $_SESSION['success_message'] = "Account has been reactivated.";
                 } elseif ($action === 'deactivate') {
                     $db->query("UPDATE users SET status = 'deactivated' WHERE id = :id");
                     $db->bind(':id', $targetUserId);
                     $db->execute();
                     $this->auditModel->logAction($_SESSION['user_id'], 'Account Deactivated', 'User Management', "Deactivated user ID $targetUserId", 'success');
-                } elseif ($action === 'remove') {
-                    $db->query("DELETE FROM users WHERE id = :id");
-                    $db->bind(':id', $targetUserId);
-                    $db->execute();
-                    $this->auditModel->logAction($_SESSION['user_id'], 'Account Removed', 'User Management', "Removed user ID $targetUserId", 'success');
+                    $_SESSION['success_message'] = "Account has been deactivated.";
+                } elseif ($action === 'remove' || $action === 'delete') {
+                    if ($targetUserId === (int)($_SESSION['user_id'] ?? 0)) {
+                        $_SESSION['error_message'] = "You cannot delete your own active administrator account.";
+                    } else {
+                        // Fetch user name for audit log before delete
+                        $db->query("SELECT name, email FROM users WHERE id = :id");
+                        $db->bind(':id', $targetUserId);
+                        $deletedUser = $db->single();
+                        $deletedName = $deletedUser['name'] ?? "ID $targetUserId";
+
+                        $db->query("DELETE FROM users WHERE id = :id");
+                        $db->bind(':id', $targetUserId);
+                        $db->execute();
+
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Account Deleted', 'User Management', "Permanently deleted user account '$deletedName' (ID $targetUserId)", 'success');
+                        $_SESSION['success_message'] = "Account '$deletedName' has been permanently deleted from the database.";
+                    }
                 }
             }
             $currentTab = $_GET['tab'] ?? 'resident';
@@ -1238,10 +1263,18 @@ class AdminController extends Controller {
     // STATISTICS & ANALYTICS (Report Summaries)
     // ============================================================
     public function report_summaries() {
+        if (!in_array($_SESSION['user_role'] ?? '', ['administrator', 'captain', 'secretary'])) {
+            header('Location: ' . app_url('index.php?url=auth'));
+            exit;
+        }
         $filters = $this->parseAnalyticsFilters($_GET);
         $data = $this->buildAnalyticsData($filters);
         $data['exports'] = $this->getRecentExports();
-        $this->auditModel->logAction($_SESSION['user_id'], 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', 'success');
+        if (!empty($_SESSION['user_id'])) {
+            try {
+                $this->auditModel->logAction($_SESSION['user_id'], 'Analytics View', 'Analytics', 'Admin viewed statistics & analytics', 'success');
+            } catch (Exception $e) {}
+        }
         $this->view('admin/report_summaries', $data);
     }
 
@@ -2453,11 +2486,11 @@ private function generateCalendarData($month, $year, $schedules) {
                 FROM reports r
                 JOIN report_statuses rs ON r.status_id = rs.status_id
                 $where
-                GROUP BY period
-                ORDER BY period
+                GROUP BY DATE_FORMAT(r.submission_date, '$format')
+                ORDER BY period ASC
             ");
             $this->bindAnalyticsParams($db, $params);
-            $trendDataByGranularity[$key] = $db->resultSet();
+            $trendDataByGranularity[$key] = $db->resultSet() ?: [];
         }
 
         // Category distribution
@@ -2467,11 +2500,11 @@ private function generateCalendarData($month, $year, $schedules) {
             JOIN waste_categories wc ON r.category_id = wc.category_id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             $where
-            GROUP BY r.category_id
+            GROUP BY wc.category_id, wc.category_name
             ORDER BY count DESC
         ");
         $this->bindAnalyticsParams($db, $params);
-        $categoryData = $db->resultSet();
+        $categoryData = $db->resultSet() ?: [];
 
         // Status distribution
         $db->query("
@@ -2479,10 +2512,10 @@ private function generateCalendarData($month, $year, $schedules) {
             FROM reports r
             JOIN report_statuses rs ON r.status_id = rs.status_id
             $where
-            GROUP BY r.status_id
+            GROUP BY rs.status_id, rs.status_name, rs.color_code
         ");
         $this->bindAnalyticsParams($db, $params);
-        $statusData = $db->resultSet();
+        $statusData = $db->resultSet() ?: [];
 
         // Condition distribution
         $db->query("
@@ -2491,11 +2524,11 @@ private function generateCalendarData($month, $year, $schedules) {
             JOIN waste_conditions wcnd ON r.condition_id = wcnd.condition_id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             $where
-            GROUP BY r.condition_id
+            GROUP BY wcnd.condition_id, wcnd.condition_name
             ORDER BY count DESC
         ");
         $this->bindAnalyticsParams($db, $params);
-        $conditionData = $db->resultSet();
+        $conditionData = $db->resultSet() ?: [];
 
         // Purok analysis
         $db->query("
@@ -2505,7 +2538,7 @@ private function generateCalendarData($month, $year, $schedules) {
                     JOIN report_statuses rs2 ON r2.status_id = rs2.status_id
                     WHERE r2.purok_id = r.purok_id
                     AND DATE(r2.submission_date) BETWEEN :date_from AND :date_to
-                    GROUP BY r2.category_id ORDER BY COUNT(*) DESC LIMIT 1) as dominant_category
+                    GROUP BY wc2.category_id, wc2.category_name ORDER BY COUNT(*) DESC LIMIT 1) as dominant_category
             FROM reports r
             JOIN puroks p ON r.purok_id = p.purok_id
             JOIN report_statuses rs ON r.status_id = rs.status_id
@@ -2514,7 +2547,7 @@ private function generateCalendarData($month, $year, $schedules) {
             ORDER BY total_reports DESC
         ");
         $this->bindAnalyticsParams($db, $params);
-        $purokData = $db->resultSet();
+        $purokData = $db->resultSet() ?: [];
 
         // Purok category breakdown for stacked chart
         $db->query("
@@ -2528,7 +2561,7 @@ private function generateCalendarData($month, $year, $schedules) {
             ORDER BY p.purok_name, count DESC
         ");
         $this->bindAnalyticsParams($db, $params);
-        $purokCategoryRows = $db->resultSet();
+        $purokCategoryRows = $db->resultSet() ?: [];
 
         $purokStacked = ['labels' => [], 'datasets' => []];
         $categorySet = [];
@@ -2557,7 +2590,7 @@ private function generateCalendarData($month, $year, $schedules) {
                    (SELECT wc2.category_name FROM reports r2
                     JOIN waste_categories wc2 ON r2.category_id = wc2.category_id
                     WHERE r2.purok_id = r.purok_id
-                    GROUP BY r2.category_id ORDER BY COUNT(*) DESC LIMIT 1) as dominant_category,
+                    GROUP BY wc2.category_id, wc2.category_name ORDER BY COUNT(*) DESC LIMIT 1) as dominant_category,
                    MAX(r.submission_date) as latest_report,
                    SUM(CASE WHEN rs.status_name NOT IN ('Resolved', 'Rejected') THEN 1 ELSE 0 END) as unresolved_count
             FROM reports r
@@ -2570,7 +2603,7 @@ private function generateCalendarData($month, $year, $schedules) {
             LIMIT 5
         ");
         $this->bindAnalyticsParams($db, $params);
-        $hotspotIntelligence = $db->resultSet();
+        $hotspotIntelligence = $db->resultSet() ?: [];
 
         // Community & operational performance
         $db->query("
@@ -2634,12 +2667,12 @@ private function generateCalendarData($month, $year, $schedules) {
             $decisionSupport['highest_hotspot'] = $hotspotIntelligence[0];
             $decisionSupport['emerging_hotspot'] = end($hotspotIntelligence);
         }
-        $monthlyTrend = $trendDataByGranularity['monthly'];
+        $monthlyTrend = $trendDataByGranularity['monthly'] ?? [];
         $trendIncrease = false;
         if (count($monthlyTrend) >= 2) {
             $last = end($monthlyTrend);
             $prev = prev($monthlyTrend);
-            if ($last && $prev && $last['count'] > $prev['count']) {
+            if ($last && $prev && ($last['count'] ?? 0) > ($prev['count'] ?? 0)) {
                 $trendIncrease = true;
             }
         }
@@ -2661,11 +2694,12 @@ private function generateCalendarData($month, $year, $schedules) {
             ORDER BY r.submission_date DESC
         ");
         $this->bindAnalyticsParams($db, $params);
-        $filteredReports = $db->resultSet();
+        $filteredReports = $db->resultSet() ?: [];
 
-        require_once __DIR__ . '/../Core/Geocoding.php';
         foreach ($filteredReports as $key => $report) {
-            $filteredReports[$key]['location'] = Geocoding::getLocationName($report['latitude'], $report['longitude']);
+            $filteredReports[$key]['location'] = !empty($report['purok']) 
+                ? $report['purok'] . ', Barangay Dulong Bayan' 
+                : ((!empty($report['latitude']) && !empty($report['longitude'])) ? 'Lat: ' . round($report['latitude'], 4) . ', Lng: ' . round($report['longitude'], 4) : 'Barangay Dulong Bayan');
         }
 
         // Filter dropdown options

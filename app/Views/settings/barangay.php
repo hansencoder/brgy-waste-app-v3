@@ -200,12 +200,12 @@ $brgyLogoUrl = format_asset_url($data['barangay']['barangay_logo'] ?? '');
                                     </div>
                                     <div class="flex items-center justify-between bg-slate-950 p-4 rounded-xl border border-slate-800">
                                         <div class="flex items-center gap-3">
-                                            <div class="h-11 w-11 rounded-full bg-[#083528] text-white flex items-center justify-center font-extrabold text-lg overflow-hidden border-2 border-emerald-500/40 shrink-0">
+                                            <div class="h-11 w-11 rounded-full flex items-center justify-center font-extrabold text-lg overflow-hidden shrink-0">
                                                 <?php if (!empty($sysLogoUrl)): ?>
-                                                    <img id="previewSysLogoImg" src="<?php echo htmlspecialchars($sysLogoUrl); ?>" class="h-full w-full object-cover">
+                                                    <img id="previewSysLogoImg" src="<?php echo htmlspecialchars($sysLogoUrl); ?>" class="h-full w-full rounded-full object-cover">
                                                 <?php else: ?>
                                                     <span id="previewSysLogoIcon" class="flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/></svg></span>
-                                                    <img id="previewSysLogoImg" src="" class="h-full w-full object-cover hidden">
+                                                    <img id="previewSysLogoImg" src="" class="h-full w-full rounded-full object-cover hidden">
                                                 <?php endif; ?>
                                             </div>
                                             <div>

@@ -111,9 +111,9 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
     <!-- Brand Header -->
     <div class="flex h-16 shrink-0 items-center gap-3 px-4 border-b border-emerald-900/40">
         <a href="<?php echo app_url('resident'); ?>" class="flex items-center gap-3 min-w-0 flex-1 group">
-            <div class="h-9 w-9 rounded-full bg-[#083528] flex items-center justify-center overflow-hidden border border-emerald-500/40 shrink-0 shadow-sm group-hover:scale-105 transition">
+            <div class="h-9 w-9 rounded-full flex items-center justify-center overflow-hidden shrink-0 group-hover:scale-105 transition">
                 <?php if (!empty($sysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="h-full w-full object-cover">
+                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="h-full w-full rounded-full object-cover" alt="Logo">
                 <?php else: ?>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <?php endif; ?>

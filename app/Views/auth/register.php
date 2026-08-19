@@ -34,9 +34,11 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
         <div class="flex flex-col items-center text-center mb-5">
             <a href="<?php echo app_url(''); ?>" class="inline-block transition hover:opacity-90" title="Home">
                 <?php if (!empty($sysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-14 h-14 object-contain" alt="Logo">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden">
+                        <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="w-full h-full rounded-full object-cover" alt="Logo">
+                    </div>
                 <?php else: ?>
-                    <div class="w-14 h-14 flex items-center justify-center text-emerald-600">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-emerald-600">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                 <?php endif; ?>
@@ -206,21 +208,21 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
             <!-- Password Rules Indicator -->
             <div id="password-rules-container" class="hidden p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
                 <ul class="text-[11px] font-medium space-y-0.5">
-                    <li id="rule-upper" class="password-rule flex items-center gap-1.5 text-slate-400">
-                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-                        One uppercase letter
-                    </li>
-                    <li id="rule-lower" class="password-rule flex items-center gap-1.5 text-slate-400">
-                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-                        One lowercase letter
-                    </li>
-                    <li id="rule-number" class="password-rule flex items-center gap-1.5 text-slate-400">
-                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-                        One number &amp; special character
-                    </li>
                     <li id="rule-length" class="password-rule flex items-center gap-1.5 text-slate-400">
                         <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
                         At least 8 characters
+                    </li>
+                    <li id="rule-upper" class="password-rule flex items-center gap-1.5 text-slate-400">
+                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        One uppercase letter (A-Z)
+                    </li>
+                    <li id="rule-lower" class="password-rule flex items-center gap-1.5 text-slate-400">
+                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        One lowercase letter (a-z)
+                    </li>
+                    <li id="rule-number" class="password-rule flex items-center gap-1.5 text-slate-400">
+                        <svg class="w-3.5 h-3.5 shrink-0 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        One number (0-9)
                     </li>
                 </ul>
             </div>
@@ -279,12 +281,12 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
 
         const hasUpper = /[A-Z]/.test(val);
         const hasLower = /[a-z]/.test(val);
-        const hasNumAndSpec = /[0-9]/.test(val) && /[\W_]/.test(val);
+        const hasNumber = /[0-9]/.test(val);
         const hasLength = val.length >= 8;
 
         updateRule('rule-upper', hasUpper);
         updateRule('rule-lower', hasLower);
-        updateRule('rule-number', hasNumAndSpec);
+        updateRule('rule-number', hasNumber);
         updateRule('rule-length', hasLength);
     }
 

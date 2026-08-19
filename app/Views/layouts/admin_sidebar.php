@@ -122,9 +122,9 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
     <!-- Brand Header & Collapse Toggle Button -->
     <div class="flex items-center justify-between px-2 py-1 flex-shrink-0">
         <a href="<?php echo app_url('admin'); ?>" class="flex items-center gap-3 min-w-0">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#083528] border-2 border-emerald-500/40 shadow-[0_0_18px_rgba(16,185,129,0.35)] overflow-hidden">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden">
                 <?php if (!empty($sysLogo)): ?>
-                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="h-full w-full object-cover">
+                    <img src="<?php echo htmlspecialchars($sysLogo); ?>" class="h-full w-full rounded-full object-cover" alt="Logo">
                 <?php else: ?>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <?php endif; ?>

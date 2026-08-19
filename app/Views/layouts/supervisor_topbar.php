@@ -42,9 +42,9 @@ if (isset($_SESSION['user_id'])) {
             </button>
             <!-- Mini branding in mobile topbar -->
             <div class="flex items-center gap-2">
-                <div class="h-7 w-7 rounded-full bg-[#07281E] flex items-center justify-center overflow-hidden border border-emerald-500/40 shrink-0">
+                <div class="h-7 w-7 rounded-full flex items-center justify-center overflow-hidden shrink-0">
                     <?php if (!empty($topSysLogo)): ?>
-                        <img src="<?php echo htmlspecialchars($topSysLogo); ?>" class="h-full w-full object-cover">
+                        <img src="<?php echo htmlspecialchars($topSysLogo); ?>" class="h-full w-full rounded-full object-cover" alt="Logo">
                     <?php else: ?>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <?php endif; ?>

@@ -21,8 +21,8 @@ try {
 }
 $pBrgyName = $pBranding['barangay_name'] ?? 'Dulong Bayan';
 $pSysShortName = $pBranding['system_short_name'] ?? 'WasteWatch';
-$pSysLogo = $pBranding['system_logo'] ?? '';
-$pBrgyLogo = $pBranding['barangay_logo'] ?? '';
+$pSysLogo = format_asset_url($pBranding['system_logo'] ?? '');
+$pBrgyLogo = format_asset_url($pBranding['barangay_logo'] ?? '');
 ?>
 <!DOCTYPE html>
 <html lang="en">

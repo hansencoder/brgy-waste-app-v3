@@ -39,7 +39,18 @@ $mapStats = [
 
 foreach ($publicReports as $pr) {
     $st = strtolower(trim($pr['status'] ?? ''));
-    if ($st === 'resolved') {
+    $isResolved = ($st === 'resolved');
+    
+    $resolvedDaysAgo = 0;
+    $remainingDays = 15;
+    if ($isResolved && !empty($pr['resolved_at'])) {
+        $resolvedTime = strtotime($pr['resolved_at']);
+        $diffSeconds = time() - $resolvedTime;
+        $resolvedDaysAgo = max(0, (int)floor($diffSeconds / 86400));
+        $remainingDays = max(1, 15 - $resolvedDaysAgo);
+    }
+
+    if ($isResolved) {
         $mapStats['resolved']++;
     } elseif ($st === 'verified') {
         $mapStats['verified']++;
@@ -61,6 +72,9 @@ foreach ($publicReports as $pr) {
         'purok' => $pr['purok'] ?? 'Barangay Area',
         'desc' => !empty($pr['description']) ? mb_strimwidth($pr['description'], 0, 75, '...') : 'Community waste incident reported.',
         'date' => date('M d, Y', strtotime($pr['submission_date'])),
+        'is_resolved' => $isResolved,
+        'resolved_days_ago' => $resolvedDaysAgo,
+        'remaining_days' => $remainingDays,
         'photo' => $photoUrl
     ];
 }
@@ -97,9 +111,84 @@ foreach ($publicReports as $pr) {
             outline-offset: 2px;
             border-radius: 6px;
         }
+
+        /* ====== Modern GPU-Accelerated Scroll Animation Classes ====== */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .scroll-reveal.is-revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .scroll-reveal-left.is-revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scroll-reveal-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .scroll-reveal-right.is-revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scroll-reveal-scale {
+            opacity: 0;
+            transform: scale(0.94) translateY(16px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .scroll-reveal-scale.is-revealed {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Stagger Delay Utilities */
+        .delay-75  { transition-delay: 75ms; }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-150 { transition-delay: 150ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-250 { transition-delay: 250ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-350 { transition-delay: 350ms; }
+        .delay-400 { transition-delay: 400ms; }
+        .delay-500 { transition-delay: 500ms; }
+
+        /* Top Reading Scroll Indicator Bar */
+        #scrollProgressBar {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10B981, #34D399, #059669);
+            width: 0%;
+            transition: width 0.1s ease-out;
+            z-index: 60;
+            pointer-events: none;
+        }
         
         @media (prefers-reduced-motion: reduce) {
-            .pulse-dot, .hover-lift, .hero-slide, .mobile-menu, .faq-answer { animation: none !important; transition: none !important; }
+            .pulse-dot, .hover-lift, .hero-slide, .mobile-menu, .faq-answer,
+            .scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale { 
+                animation: none !important; 
+                transition: none !important; 
+                opacity: 1 !important;
+                transform: none !important;
+            }
         }
     </style>
 </head>
@@ -108,7 +197,9 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- NAVIGATION – Sticky Header                                   -->
 <!-- ============================================================ -->
-<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 relative">
+    <!-- Top Scroll Reading Bar -->
+    <div id="scrollProgressBar"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
@@ -215,16 +306,16 @@ foreach ($publicReports as $pr) {
 
     <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center">
         <div class="max-w-4xl mx-auto space-y-4">
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-white">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-white scroll-reveal">
                 Tungo sa Mas Malinis at
                 <span class="block text-emerald-400">Mas Maayos na Barangay.</span>
             </h1>
             
-            <p class="text-xs sm:text-base text-emerald-100/90 max-w-2xl mx-auto leading-relaxed font-normal">
+            <p class="text-xs sm:text-base text-emerald-100/90 max-w-2xl mx-auto leading-relaxed font-normal scroll-reveal delay-100">
                 I-report ang mga problema sa basura, illegal na pagtatapon, at hazardous na basura gamit ang ating Waste Management System.
             </p>
             
-            <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-3 scroll-reveal delay-200">
                 <a href="<?php echo app_url('index.php?url=' . ($isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register')); ?>" class="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition active:scale-[0.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     <span>Report Waste (Resident)</span>
@@ -241,11 +332,11 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- SMART REPORTING / FEATURES SECTION                          -->
 <!-- ============================================================ -->
-<section id="features" class="py-16 sm:py-20 bg-white relative z-20">
+<section id="features" class="py-16 sm:py-20 bg-white relative z-20 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-2">
+        <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-2 scroll-reveal">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
                 A Smarter Way for Residents to Help
             </h2>
@@ -258,7 +349,7 @@ foreach ($publicReports as $pr) {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
             
             <!-- Feature 01: GPS Pinning & Map -->
-            <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:border-emerald-400 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:border-emerald-400 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden scroll-reveal delay-100">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
                 <div class="space-y-4">
@@ -293,7 +384,7 @@ foreach ($publicReports as $pr) {
             </div>
 
             <!-- Feature 02: Photo Proof & Forensics -->
-            <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:border-blue-400 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:border-blue-400 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden scroll-reveal delay-200">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 <div class="space-y-4">
@@ -330,7 +421,7 @@ foreach ($publicReports as $pr) {
             </div>
 
             <!-- Feature 03: 50m Proximity Scanner -->
-            <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:border-purple-400 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:border-purple-400 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden scroll-reveal delay-300">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 <div class="space-y-4">
@@ -365,7 +456,7 @@ foreach ($publicReports as $pr) {
             </div>
 
             <!-- Feature 04: Live Status Stepper -->
-            <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:border-amber-400 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-xl hover:border-amber-400 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden scroll-reveal delay-400">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 <div class="space-y-4">
@@ -409,11 +500,11 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- INTERACTIVE COMMUNITY MAP SECTION                           -->
 <!-- ============================================================ -->
-<section id="community-map" class="py-16 sm:py-20 bg-slate-50 border-t border-slate-200 relative">
+<section id="community-map" class="py-16 sm:py-20 bg-slate-50 border-t border-slate-200 relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         <!-- Section Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 scroll-reveal">
             <div class="space-y-2 max-w-2xl">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold">
                     <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
@@ -437,7 +528,7 @@ foreach ($publicReports as $pr) {
         </div>
 
         <!-- Filter & Control Bar -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+        <div class="bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-2xs flex flex-wrap items-center justify-between gap-3 scroll-reveal delay-100">
             
             <!-- Filter Pills -->
             <div class="flex flex-wrap items-center gap-1.5 text-xs font-medium">
@@ -448,8 +539,8 @@ foreach ($publicReports as $pr) {
                 <button type="button" onclick="filterLandingMap('active')" id="filter-btn-active" class="landing-map-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer">
                     Active / Dispatched (<?php echo $mapStats['pending'] + $mapStats['verified'] + $mapStats['in_progress']; ?>)
                 </button>
-                <button type="button" onclick="filterLandingMap('resolved')" id="filter-btn-resolved" class="landing-map-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer">
-                    Resolved (<?php echo $mapStats['resolved']; ?>)
+                <button type="button" onclick="filterLandingMap('resolved')" id="filter-btn-resolved" class="landing-map-filter-btn px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer" title="Resolved reports remain visible for 15 days before automatic public archival">
+                    Resolved (<15d) (<?php echo $mapStats['resolved']; ?>)
                 </button>
             </div>
 
@@ -467,7 +558,7 @@ foreach ($publicReports as $pr) {
         </div>
 
         <!-- Map Canvas Card -->
-        <div class="relative bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
+        <div class="relative bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs scroll-reveal-scale delay-150">
             <div id="landingMap" class="w-full h-[500px] sm:h-[580px] z-10"></div>
 
             <!-- Floating Map Legend -->
@@ -497,25 +588,25 @@ foreach ($publicReports as $pr) {
         <!-- Real-Time Metrics Strip beneath Map -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs scroll-reveal delay-100">
                 <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Total Mapped</span>
                 <div class="text-2xl font-bold text-slate-900 mt-1"><?php echo count($reportPoints); ?></div>
                 <span class="text-xs text-slate-500 font-normal">Geo-tagged submissions</span>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs scroll-reveal delay-200">
                 <span class="text-[11px] font-semibold text-amber-800 uppercase tracking-wider block">Active Cleanups</span>
                 <div class="text-2xl font-bold text-amber-900 mt-1"><?php echo $mapStats['pending'] + $mapStats['verified'] + $mapStats['in_progress']; ?></div>
                 <span class="text-xs text-slate-500 font-normal">Ongoing operations</span>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs scroll-reveal delay-300">
                 <span class="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider block">Resolved Sites</span>
                 <div class="text-2xl font-bold text-emerald-900 mt-1"><?php echo $mapStats['resolved']; ?></div>
                 <span class="text-xs text-slate-500 font-normal">Successfully cleared</span>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs scroll-reveal delay-400">
                 <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Jurisdiction</span>
                 <div class="text-2xl font-bold text-slate-900 mt-1"><?php echo count($mapConfig['puroks'] ?? []); ?> Puroks</div>
                 <span class="text-xs text-slate-500 font-normal">Full community coverage</span>
@@ -529,10 +620,10 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- 1. COMMUNITY GUIDE & WASTE MANAGEMENT TIPS                   -->
 <!-- ============================================================ -->
-<section id="community-guide" class="py-14 bg-slate-100/70 border-y border-slate-200">
+<section id="community-guide" class="py-14 bg-slate-100/70 border-y border-slate-200 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
-        <div class="text-center max-w-3xl mx-auto space-y-1.5">
+        <div class="text-center max-w-3xl mx-auto space-y-1.5 scroll-reveal">
             <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Community Waste Management Guide</h2>
             <p class="text-xs sm:text-sm text-slate-500">Practical segregation standards and ecological waste management practices for all households in Barangay <?php echo htmlspecialchars($barangayName); ?>.</p>
         </div>
@@ -541,7 +632,7 @@ foreach ($publicReports as $pr) {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             
             <!-- Category 1: Biodegradable -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4 scroll-reveal delay-100">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
                         <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-100 flex items-center gap-1.5">
@@ -569,7 +660,7 @@ foreach ($publicReports as $pr) {
             </div>
 
             <!-- Category 2: Recyclable -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4 scroll-reveal delay-200">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
                         <span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-100 flex items-center gap-1.5">
@@ -597,7 +688,7 @@ foreach ($publicReports as $pr) {
             </div>
 
             <!-- Category 3: Residual -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4 scroll-reveal delay-300">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
                         <span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-100 flex items-center gap-1.5">
@@ -625,7 +716,7 @@ foreach ($publicReports as $pr) {
             </div>
 
             <!-- Category 4: Special & Hazardous -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between space-y-4 scroll-reveal delay-400">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-3">
                         <span class="px-2 py-0.5 rounded text-xs font-semibold bg-purple-50 text-purple-900 border border-purple-100 flex items-center gap-1.5">
@@ -655,7 +746,7 @@ foreach ($publicReports as $pr) {
         </div>
 
         <!-- 4 Practical Community Tips Cards -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-2xs">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-2xs scroll-reveal-scale delay-150">
             <h3 class="text-base font-bold text-slate-900 mb-5 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
                 <span>Best Practices for Barangay <?php echo htmlspecialchars($barangayName); ?> Households</span>
@@ -702,16 +793,16 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- 2. PROHIBITED ACTIONS AND PENALTIES                          -->
 <!-- ============================================================ -->
-<section id="penalties" class="py-14 bg-white">
+<section id="penalties" class="py-14 bg-white overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
-        <div class="text-center max-w-3xl mx-auto space-y-1.5">
+        <div class="text-center max-w-3xl mx-auto space-y-1.5 scroll-reveal">
             <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Prohibited Actions &amp; Penalties</h2>
             <p class="text-xs sm:text-sm text-slate-500">In strict compliance with <strong>Republic Act No. 9003</strong> (Ecological Solid Waste Management Act of 2000) and Municipal / Barangay Ordinances.</p>
         </div>
 
         <!-- Law Summary Alert -->
-        <div class="bg-red-50/60 rounded-2xl border border-red-200 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="bg-red-50/60 rounded-2xl border border-red-200 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 scroll-reveal-scale delay-100">
             <div class="flex items-start gap-3">
                 <div class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
@@ -732,8 +823,8 @@ foreach ($publicReports as $pr) {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
             <?php if (!empty($penaltyRules)): ?>
-                <?php foreach ($penaltyRules as $rule): ?>
-                <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition">
+                <?php foreach ($penaltyRules as $ruleIndex => $rule): ?>
+                <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition scroll-reveal delay-<?php echo min(500, ($ruleIndex % 3 + 1) * 100); ?>">
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold uppercase tracking-wider text-red-600">
@@ -787,10 +878,10 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- 3. GARBAGE COLLECTION SCHEDULE & IMPORTANT NOTES             -->
 <!-- ============================================================ -->
-<section id="schedule" class="py-14 bg-slate-100/70 border-t border-slate-200">
+<section id="schedule" class="py-14 bg-slate-100/70 border-t border-slate-200 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 scroll-reveal">
             <div>
                 <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Garbage Collection Schedule</h2>
                 <p class="text-xs sm:text-sm text-slate-500 mt-1">Official route schedule for all Puroks in Barangay <?php echo htmlspecialchars($barangayName); ?>.</p>
@@ -804,7 +895,7 @@ foreach ($publicReports as $pr) {
         <!-- Schedule Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <?php if (!empty($schedules)): ?>
-                <?php foreach ($schedules as $schedule):
+                <?php foreach ($schedules as $schedIdx => $schedule):
                     $day = $schedule['collection_day'];
                     $wasteType = $schedule['waste_type'] ?? 'General';
                     $start = date('g:i A', strtotime($schedule['start_time']));
@@ -835,7 +926,7 @@ foreach ($publicReports as $pr) {
                         $dotColor = 'bg-slate-500';
                     }
                 ?>
-                <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                <div class="group relative bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden scroll-reveal delay-<?php echo min(500, ($schedIdx % 4 + 1) * 100); ?>">
                     
                     <!-- Top Gradient Accent Line -->
                     <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r <?php echo $topGrad; ?> opacity-80 group-hover:opacity-100 transition-opacity"></div>
@@ -919,12 +1010,12 @@ foreach ($publicReports as $pr) {
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <div class="col-span-full text-center text-slate-400 py-10 bg-white rounded-3xl border border-slate-200 text-xs shadow-xs">Schedule not published yet — check back soon.</div>
+                <div class="col-span-full text-center text-slate-400 py-10 bg-white rounded-3xl border border-slate-200 text-xs shadow-xs scroll-reveal">Schedule not published yet — check back soon.</div>
             <?php endif; ?>
         </div>
 
         <!-- CRITICAL NOTES ON GARBAGE COLLECTION -->
-        <div class="bg-[#0B2E22] rounded-2xl p-5 sm:p-7 text-white shadow-sm space-y-5">
+        <div class="bg-[#0B2E22] rounded-2xl p-5 sm:p-7 text-white shadow-sm space-y-5 scroll-reveal-scale delay-150">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center border border-emerald-500/30">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg>
@@ -960,16 +1051,16 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- ANNOUNCEMENTS SECTION                                       -->
 <!-- ============================================================ -->
-<section id="announcements" class="py-14 bg-white">
+<section id="announcements" class="py-14 bg-white overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div>
+        <div class="scroll-reveal">
             <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Latest Bulletins &amp; Advisories</h2>
             <p class="text-xs sm:text-sm text-slate-500 mt-1">Official announcements regarding community cleanups, schedule changes, and notices.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Left: List -->
-            <div class="lg:col-span-5 space-y-2.5">
+            <div class="lg:col-span-5 space-y-2.5 scroll-reveal-left delay-100">
                 <?php if (!empty($announcements)): ?>
                     <?php
                     $types = ['Urgent' => 'bg-red-100 text-red-700', 'Notice' => 'bg-cyan-50 text-cyan-700', 'Event' => 'bg-emerald-50 text-emerald-700', 'Update' => 'bg-amber-50 text-amber-700'];
@@ -998,7 +1089,7 @@ foreach ($publicReports as $pr) {
             </div>
 
             <!-- Right: Featured Card -->
-            <div class="lg:col-span-7">
+            <div class="lg:col-span-7 scroll-reveal-right delay-200">
                 <?php
                 $featured = !empty($announcements) ? $announcements[0] : null;
                 if ($featured):
@@ -1048,21 +1139,21 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- HOW IT WORKS – 3 Steps                                      -->
 <!-- ============================================================ -->
-<section class="py-14 bg-slate-50 border-t border-slate-200">
+<section class="py-14 bg-slate-50 border-t border-slate-200 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8">
+        <div class="text-center mb-8 scroll-reveal">
             <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Three Steps to Report Waste</h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover-lift text-center relative shadow-2xs">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover-lift text-center relative shadow-2xs scroll-reveal delay-100">
                 <span class="inline-flex items-center justify-center w-9 h-9 bg-[#10B981] text-white font-bold text-xs rounded-xl mb-3 shadow-sm">01</span>
                 <h4 class="font-bold text-slate-900 text-sm">Register &amp; Log In</h4>
                 <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Create a free resident account using your email or mobile number to track all your barangay incident reports in one place.</p>
                 <a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="inline-flex items-center gap-1 text-xs font-semibold text-[#10B981] mt-3 hover:underline">Get started →</a>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover-lift text-center relative shadow-2xs">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover-lift text-center relative shadow-2xs scroll-reveal delay-200">
                 <span class="inline-flex items-center justify-center w-9 h-9 bg-[#10B981] text-white font-bold text-xs rounded-xl mb-3 shadow-sm">02</span>
                 <h4 class="font-bold text-slate-900 text-sm">Snap &amp; Pin Report</h4>
                 <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Take a photo of the waste issue, describe it briefly, and pin the exact location on the interactive map.</p>
@@ -1071,7 +1162,7 @@ foreach ($publicReports as $pr) {
                 <?php endif; ?>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover-lift text-center relative shadow-2xs">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover-lift text-center relative shadow-2xs scroll-reveal delay-300">
                 <span class="inline-flex items-center justify-center w-9 h-9 bg-[#10B981] text-white font-bold text-xs rounded-xl mb-3 shadow-sm">03</span>
                 <h4 class="font-bold text-slate-900 text-sm">Track Resolution</h4>
                 <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Receive real-time progress updates as barangay officers inspect, dispatch collection crews, and resolve the report.</p>
@@ -1086,9 +1177,9 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- FAQ SECTION – Clean Accordions                              -->
 <!-- ============================================================ -->
-<section id="faq" class="py-14 bg-white border-t border-slate-200">
+<section id="faq" class="py-14 bg-white border-t border-slate-200 overflow-hidden">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8">
+        <div class="text-center mb-8 scroll-reveal">
             <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Frequently Asked Questions</h2>
             <p class="text-slate-500 mt-1 text-xs sm:text-sm">Common questions about waste reporting and barangay collection operations.</p>
         </div>
@@ -1105,7 +1196,7 @@ foreach ($publicReports as $pr) {
             ];
             ?>
             <?php foreach ($faqs as $index => $faq): ?>
-            <div class="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden shadow-2xs hover:border-emerald-300 transition">
+            <div class="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden shadow-2xs hover:border-emerald-300 transition scroll-reveal delay-<?php echo min(500, ($index + 1) * 75); ?>">
                 <button class="faq-question w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-slate-100/60 transition cursor-pointer" data-target="faq-<?php echo $index; ?>" aria-expanded="false">
                     <span class="font-semibold text-slate-800 text-xs sm:text-sm"><?php echo htmlspecialchars($faq['q']); ?></span>
                     <svg class="w-4 h-4 text-slate-400 transition-transform duration-300 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1120,11 +1211,11 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- CONTACT & FINAL CTA                                          -->
 <!-- ============================================================ -->
-<section id="contact" class="py-14 bg-slate-50 border-t border-slate-200">
+<section id="contact" class="py-14 bg-slate-50 border-t border-slate-200 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
             <!-- Contact Info -->
-            <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-2xs">
+            <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-2xs scroll-reveal-left delay-100">
                 <h3 class="text-lg sm:text-xl font-bold text-slate-900">Reach the Barangay Office</h3>
                 <p class="text-slate-500 mt-1 text-xs sm:text-sm leading-relaxed">For inquiries regarding waste management, bulk garbage collection, or emergency concerns.</p>
 
@@ -1160,7 +1251,7 @@ foreach ($publicReports as $pr) {
             </div>
 
             <!-- CTA Card -->
-            <div class="lg:col-span-6 bg-[#07281E] rounded-2xl p-6 sm:p-7 text-white shadow-sm flex flex-col justify-center space-y-3.5">
+            <div class="lg:col-span-6 bg-[#07281E] rounded-2xl p-6 sm:p-7 text-white shadow-sm flex flex-col justify-center space-y-3.5 scroll-reveal-right delay-200">
                 <span class="text-emerald-400 text-xs font-semibold uppercase tracking-wider">JOIN THE COMMUNITY</span>
                 <h3 class="text-xl sm:text-2xl font-bold tracking-tight">Keep Barangay <?php echo htmlspecialchars($barangayName); ?> Clean &amp; Safe</h3>
                 <p class="text-emerald-100/80 text-xs sm:text-sm leading-relaxed">Register your resident account to submit reports, track collection status, and stay updated on local ordinances.</p>
@@ -1186,7 +1277,7 @@ foreach ($publicReports as $pr) {
 <!-- ============================================================ -->
 <!-- FOOTER                                                       -->
 <!-- ============================================================ -->
-<footer class="bg-[#051E17] text-slate-300 py-10 px-4 border-t border-emerald-950">
+<footer class="bg-[#051E17] text-slate-300 py-10 px-4 border-t border-emerald-950 scroll-reveal">
     <div class="max-w-7xl mx-auto">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <!-- Brand -->
@@ -1252,6 +1343,41 @@ foreach ($publicReports as $pr) {
 <!-- JAVASCRIPT                                                   -->
 <!-- ============================================================ -->
 <script>
+    // ====== Scroll Animations (Intersection Observer Engine) ======
+    (function() {
+        const animatedElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale');
+        
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.08,
+                rootMargin: '0px 0px -40px 0px'
+            });
+
+            animatedElements.forEach(el => observer.observe(el));
+        } else {
+            // Fallback for older browsers
+            animatedElements.forEach(el => el.classList.add('is-revealed'));
+        }
+
+        // Top Reading Scroll Progress Indicator
+        const progressBar = document.getElementById('scrollProgressBar');
+        if (progressBar) {
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (height > 0) ? (winScroll / height) * 100 : 0;
+                progressBar.style.width = scrolled + '%';
+            }, { passive: true });
+        }
+    })();
+
     // ====== Hero Background Slider ======
     document.addEventListener('DOMContentLoaded', function() {
         const slides = document.querySelectorAll('.hero-slide');
@@ -1491,15 +1617,25 @@ foreach ($publicReports as $pr) {
                     iconAnchor: [7, 7]
                 });
 
-                const popupContent = `
-                    <div style="font-family: 'Miranda Sans', sans-serif; min-width: 180px; max-width: 220px; padding: 2px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-size: 10px; font-weight: 700; color: ${markerColor}; text-transform: uppercase; letter-spacing: 0.5px;">${r.status}</span>
-                            <span style="font-size: 10px; color: #94A3B8;">${r.date}</span>
+                let resolvedBadge = '';
+                if (r.is_resolved) {
+                    resolvedBadge = `
+                        <div style="margin-top: 6px; padding: 4px 6px; background-color: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 6px; font-size: 10px; color: #065F46; line-height: 1.3;">
+                            <strong>✓ Cleared ${r.resolved_days_ago}d ago</strong> · Visible for ${r.remaining_days} more days
                         </div>
-                        <h4 style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0 0 2px 0; line-height: 1.3;">${r.category}</h4>
-                        <p style="font-size: 11px; color: #64748B; margin: 0 0 6px 0; display: flex; align-items: center; gap: 4px;"><svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill="none" stroke='#64748B' stroke-width='2.5' fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> ${r.purok}</p>
-                        <p style="font-size: 11px; color: #475569; margin: 0 0 4px 0; line-height: 1.4;">${r.desc}</p>
+                    `;
+                }
+
+                const popupContent = `
+                    <div style="font-family: 'Miranda Sans', sans-serif; min-width: 190px; max-width: 230px; padding: 4px 2px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 10px; font-weight: 800; color: ${markerColor}; text-transform: uppercase; letter-spacing: 0.5px;">${r.status}</span>
+                            <span style="font-size: 10px; font-weight: 600; color: #94A3B8;">${r.date}</span>
+                        </div>
+                        <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; margin: 0 0 2px 0; line-height: 1.3;">${r.category}</h4>
+                        <p style="font-size: 11px; font-weight: 600; color: #64748B; margin: 0 0 4px 0; display: flex; align-items: center; gap: 4px;"><svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill="none" stroke='#64748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z'/><circle cx='12' cy='10' r='3'/></svg> ${r.purok}</p>
+                        <p style="font-size: 11px; color: #475569; margin: 0; line-height: 1.4;">${r.desc}</p>
+                        ${resolvedBadge}
                     </div>
                 `;
 

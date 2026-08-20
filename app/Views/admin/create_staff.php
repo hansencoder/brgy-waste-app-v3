@@ -20,7 +20,7 @@ if (!isset($data) || !is_array($data)) {
     .mobile-sidebar-open #mobileSidebarOverlay { opacity: 1; visibility: visible; }
 </style>
 
-<div class="min-h-screen bg-white text-slate-800 w-full flex font-sans antialiased">
+<div class="min-h-screen bg-[#F8FAFC] text-slate-800 w-full flex font-sans antialiased">
     
     <!-- Mobile Sidebar Overlay -->
     <div id="mobileSidebarOverlay" class="fixed inset-0 bg-slate-950/40 z-40 lg:hidden"></div>

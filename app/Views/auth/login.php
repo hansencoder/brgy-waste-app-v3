@@ -78,15 +78,23 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
             </div>
         <?php endif; ?>
 
-        <!-- Server Warning Alert (e.g. Suspended Account) -->
+        <!-- Server Warning Alert (e.g. Suspended Account or Maintenance Mode) -->
         <?php if (!empty($data['warning'])): ?>
-            <div class="mb-5 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs flex items-start gap-3 shadow-xs">
-                <div class="w-8 h-8 rounded-xl bg-amber-200/80 flex items-center justify-center shrink-0 mt-0.5 text-amber-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            <?php
+                $isMaintNotice = (stripos($data['warning'], 'maintenance') !== false);
+                $noticeTitle = $isMaintNotice ? 'System Under Maintenance' : 'Account Notice';
+            ?>
+            <div class="mb-5 p-4 rounded-2xl <?php echo $isMaintNotice ? 'bg-orange-50 border-2 border-orange-300 text-orange-950' : 'bg-amber-50 border-2 border-amber-300 text-amber-950'; ?> text-xs flex items-start gap-3 shadow-xs">
+                <div class="w-8 h-8 rounded-xl <?php echo $isMaintNotice ? 'bg-orange-200/80 text-orange-900' : 'bg-amber-200/80 text-amber-900'; ?> flex items-center justify-center shrink-0 mt-0.5">
+                    <?php if ($isMaintNotice): ?>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    <?php else: ?>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                    <?php endif; ?>
                 </div>
                 <div class="flex-1 space-y-1">
-                    <p class="font-extrabold text-amber-950 text-xs sm:text-sm">Account Suspended</p>
-                    <p class="font-medium text-amber-800 text-xs leading-relaxed"><?php echo htmlspecialchars($data['warning'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <p class="font-extrabold <?php echo $isMaintNotice ? 'text-orange-950' : 'text-amber-950'; ?> text-xs sm:text-sm"><?php echo $noticeTitle; ?></p>
+                    <p class="font-medium <?php echo $isMaintNotice ? 'text-orange-900' : 'text-amber-900'; ?> text-xs leading-relaxed"><?php echo htmlspecialchars($data['warning'], ENT_QUOTES, 'UTF-8'); ?></p>
                 </div>
             </div>
         <?php endif; ?>

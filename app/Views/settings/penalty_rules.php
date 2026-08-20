@@ -9,7 +9,7 @@
     .modal-box { transition: transform 0.25s cubic-bezier(0.34,1.3,0.64,1), opacity 0.2s ease; }
 </style>
 
-<div class="min-h-screen bg-white text-slate-900 w-full flex font-sans antialiased">
+<div class="min-h-screen bg-[#F8FAFC] text-slate-900 w-full flex font-sans antialiased">
 
     <!-- Mobile Sidebar Overlay -->
     <div id="mobileSidebarOverlay" class="fixed inset-0 bg-slate-950/40 z-40 lg:hidden"></div>
@@ -59,7 +59,7 @@
                     <?php endif; ?>
 
                     <!-- Content Layout -->
-                    <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex flex-col lg:flex-row gap-6 items-start">
                         <?php $activeTab = 'penalty_rules'; include __DIR__ . '/../layouts/settings_sidebar.php'; ?>
 
                         <div class="flex-1 min-w-0 space-y-6">

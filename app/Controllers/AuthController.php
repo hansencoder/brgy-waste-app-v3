@@ -36,7 +36,41 @@ class AuthController extends Controller {
             exit;
         }
         $data = ['error' => '', 'success' => ''];
+        if (!empty($_SESSION['reset_success_msg'])) {
+            $data['success'] = $_SESSION['reset_success_msg'];
+            unset($_SESSION['reset_success_msg']);
+        }
         $this->view('auth/reset_password', $data);
+    }
+
+    public function resendResetOtp() {
+        $email = $_SESSION['reset_email'] ?? null;
+        $userId = $_SESSION['reset_user_id'] ?? null;
+
+        if (!$email || !$userId) {
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/forgotPassword')));
+            exit;
+        }
+
+        $user = $this->userModel->getUserByEmail($email);
+        if (!$user) {
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/forgotPassword')));
+            exit;
+        }
+
+        // Generate and save new OTP
+        $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $this->userModel->savePasswordResetToken($user['id'], $email, $token);
+
+        require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
+        try {
+            OtpMailer::sendPasswordResetEmail($email, $token, $user['name']);
+            $_SESSION['reset_success_msg'] = 'A new 6-digit verification code has been sent to your email.';
+            header('Location: ' . app_url('index.php?url=' . urlencode('auth/resetPassword')));
+            exit;
+        } catch (Exception $e) {
+            $this->view('auth/reset_password', ['error' => 'Could not resend email. Please try again later.']);
+        }
     }
 
     public function verifyResetOtp() {
@@ -245,6 +279,30 @@ class AuthController extends Controller {
                 }
                 if ($user['status'] == 'deactivated') {
                     return $this->view('auth/login', ['error' => 'Account is deactivated.']);
+                }
+
+                // Maintenance Mode Check: Prevent non-admin accounts from receiving OTP/logging in during maintenance
+                require_once dirname(__DIR__) . '/Models/SystemMaintenance.php';
+                $maintenanceModel = new SystemMaintenance();
+                if ($maintenanceModel->isMaintenanceActive()) {
+                    $authRoleDb = new Database();
+                    $authRoleDb->query("SELECT role_name FROM roles WHERE role_id = :role_id LIMIT 1");
+                    $authRoleDb->bind(':role_id', $user['role_id']);
+                    $roleRow = $authRoleDb->single();
+                    $userRoleName = strtolower($roleRow['role_name'] ?? 'resident');
+
+                    if (!in_array($userRoleName, SystemMaintenance::ADMIN_ROLES)) {
+                        $mStatus = $maintenanceModel->getStatus();
+                        $customMsg = !empty($mStatus['maintenance_message'])
+                            ? $mStatus['maintenance_message']
+                            : 'The system is currently undergoing scheduled maintenance. Non-administrative access is temporarily unavailable. Please try again later.';
+                        
+                        $this->auditModel->logAction($user['id'], 'Login Blocked (Maintenance)', 'User', 'Blocked non-admin login during active maintenance mode', 'failed');
+
+                        return $this->view('auth/login', [
+                            'warning' => 'System Under Maintenance: ' . $customMsg
+                        ]);
+                    }
                 }
 
                 // Handle OTP verification: Match login input type (Phone vs Email)

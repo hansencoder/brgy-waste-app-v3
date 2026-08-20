@@ -42,20 +42,27 @@ class HomeController extends Controller {
         $mapConfig = $barangayModel->getMapConfig();
 
         // Fetch geo-tagged reports for community map
+        // RULE: Resolved reports remain visible for 15 days before automatic public cleanup.
         $db->query("
             SELECT r.id, r.latitude, r.longitude, r.description,
                    rs.status_name as status, rs.color_code as status_color,
                    wc.category_name as waste_category,
                    p.purok_name as purok,
                    r.submission_date,
+                   COALESCE(r.updated_at, r.submission_date) as resolved_at,
                    (SELECT photo_path FROM report_photos WHERE report_id = r.id AND is_primary = 1 LIMIT 1) as photo_path
             FROM reports r
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN puroks p ON r.purok_id = p.purok_id
             WHERE r.latitude IS NOT NULL AND r.longitude IS NOT NULL AND r.latitude != 0 AND r.longitude != 0
+              AND LOWER(rs.status_name) != 'rejected'
+              AND (
+                  LOWER(rs.status_name) != 'resolved'
+                  OR (LOWER(rs.status_name) = 'resolved' AND COALESCE(r.updated_at, r.submission_date) >= DATE_SUB(NOW(), INTERVAL 15 DAY))
+              )
             ORDER BY r.submission_date DESC
-            LIMIT 120
+            LIMIT 150
         ");
         $publicReports = $db->resultSet();
 

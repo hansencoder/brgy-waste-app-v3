@@ -14,7 +14,7 @@ $systemRoles      = $data['systemRoles'] ?? ['administrator','supervisor','resid
 $permissionGroups = $data['permissionGroups'] ?? [];
 ?>
 
-<div class="min-h-screen bg-white text-slate-900 w-full flex font-sans antialiased">
+<div class="min-h-screen bg-[#F8FAFC] text-slate-900 w-full flex font-sans antialiased">
     <div id="mobileSidebarOverlay" class="fixed inset-0 bg-slate-950/40 z-40 lg:hidden"></div>
 
     <div class="lg:flex lg:min-h-screen w-full">
@@ -60,7 +60,7 @@ $permissionGroups = $data['permissionGroups'] ?? [];
                     <?php endif; ?>
 
                     <!-- Content Layout -->
-                    <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex flex-col lg:flex-row gap-6 items-start">
                         <?php $activeTab = 'role_management'; include __DIR__ . '/../layouts/settings_sidebar.php'; ?>
 
                         <div class="flex-1 min-w-0 space-y-6">

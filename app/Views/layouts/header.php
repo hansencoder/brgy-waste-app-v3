@@ -25,8 +25,11 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        body {
+            background-color: #F8FAFC !important;
+        }
     </style>
 </head>
-<body class="bg-background text-foreground min-h-screen font-sans antialiased flex flex-col">
+<body class="bg-[#F8FAFC] text-slate-900 min-h-screen font-sans antialiased flex flex-col">
 <?php include __DIR__ . '/loader.php'; ?>
 

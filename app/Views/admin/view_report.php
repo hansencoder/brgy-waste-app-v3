@@ -32,7 +32,7 @@ $reporterName = $isGuest ? ($report['guest_name'] ?: 'Guest Citizen') : ($report
 $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resident_phone'] ?: ($report['resident_email'] ?: 'N/A'));
 ?>
 
-<div class="min-h-screen bg-[#F4F6F8]">
+<div class="min-h-screen bg-[#F8FAFC]">
     <div class="lg:flex lg:min-h-screen">
         <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
@@ -157,25 +157,65 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
                             </div>
 
                             <!-- Timeline Stepper Card -->
-                            <?php if (!empty($report['timeline'])): ?>
+                            <?php
+                            $timeline = $report['timeline'] ?? [];
+                            // Ensure initial report submission is always represented
+                            if (empty($timeline)) {
+                                $timeline = [
+                                    [
+                                        'status_name' => 'Report Submitted',
+                                        'changed_at' => $report['submission_date'],
+                                        'changed_by_name' => $reporterName,
+                                        'remark' => 'Initial submission received with status: ' . ($report['status'] ?? 'Pending')
+                                    ]
+                                ];
+                            } else {
+                                $hasInitial = false;
+                                foreach ($timeline as $t) {
+                                    $st = strtolower($t['new_status'] ?? ($t['status_name'] ?? ''));
+                                    if ($st === 'pending' || $st === 'report submitted') {
+                                        $hasInitial = true;
+                                        break;
+                                    }
+                                }
+                                if (!$hasInitial) {
+                                    array_unshift($timeline, [
+                                        'status_name' => 'Report Submitted',
+                                        'changed_at' => $report['submission_date'],
+                                        'changed_by_name' => $reporterName,
+                                        'remark' => 'Initial report submitted with status: Pending'
+                                    ]);
+                                }
+                            }
+                            ?>
                             <div class="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
-                                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Activity &amp; Status Timeline</h2>
+                                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Activity &amp; Status Timeline</h2>
+                                    <span class="text-xs text-slate-500 font-semibold font-mono"><?php echo count($timeline); ?> Event<?php echo count($timeline) !== 1 ? 's' : ''; ?></span>
+                                </div>
                                 <div class="space-y-4 pl-2 border-l-2 border-slate-100">
-                                    <?php foreach ($report['timeline'] as $tItem): ?>
+                                    <?php foreach ($timeline as $tItem): 
+                                        $statusTitle = $tItem['new_status_name'] ?? $tItem['status_name'] ?? (!empty($tItem['new_status']) ? ucfirst(str_replace('_', ' ', $tItem['new_status'])) : 'Status Update');
+                                        $timeStr = !empty($tItem['changed_at']) ? $tItem['changed_at'] : (!empty($tItem['created_at']) ? $tItem['created_at'] : (!empty($tItem['timestamp']) ? $tItem['timestamp'] : $report['submission_date']));
+                                        $remarkText = $tItem['remark'] ?? $tItem['remarks'] ?? $tItem['comment'] ?? '';
+                                        $actor = $tItem['changed_by_name'] ?? '';
+                                    ?>
                                     <div class="relative pl-4 space-y-1">
                                         <div class="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-white"></div>
-                                        <div class="flex items-center justify-between text-xs">
-                                            <span class="font-bold text-slate-900"><?php echo htmlspecialchars($tItem['status_name'] ?? 'Status Update'); ?></span>
-                                            <span class="text-slate-400 font-mono"><?php echo date('M d, Y · g:i A', strtotime($tItem['created_at'])); ?></span>
+                                        <div class="flex flex-wrap items-center justify-between gap-1 text-xs">
+                                            <span class="font-bold text-slate-900"><?php echo htmlspecialchars($statusTitle); ?></span>
+                                            <span class="text-slate-400 font-mono text-[11px]"><?php echo date('M d, Y · g:i A', strtotime($timeStr)); ?></span>
                                         </div>
-                                        <?php if (!empty($tItem['remarks'])): ?>
-                                        <p class="text-xs text-slate-600 bg-slate-50 rounded-lg p-2 border border-slate-100"><?php echo htmlspecialchars($tItem['remarks']); ?></p>
+                                        <?php if (!empty($actor)): ?>
+                                            <p class="text-[11px] text-slate-500 font-medium">By: <strong class="text-slate-700"><?php echo htmlspecialchars($actor); ?></strong></p>
+                                        <?php endif; ?>
+                                        <?php if (!empty($remarkText)): ?>
+                                        <p class="text-xs text-slate-600 bg-slate-50 rounded-lg p-2.5 border border-slate-100 leading-relaxed"><?php echo htmlspecialchars($remarkText); ?></p>
                                         <?php endif; ?>
                                     </div>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
-                            <?php endif; ?>
 
                         </div>
 
@@ -198,12 +238,13 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
 
                                 <?php if (!empty($reportPhotos)): ?>
                                     <!-- Primary Compact Photo Display -->
-                                    <div class="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-900 group cursor-pointer aspect-4/3 max-h-60" 
+                                    <div class="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 group cursor-pointer aspect-4/3 max-h-60" 
                                          onclick="openLightbox(0)">
                                         <img id="mainEvidenceImg" 
                                              src="<?php echo htmlspecialchars(format_asset_url($reportPhotos[0]['photo_path'])); ?>" 
                                              alt="Primary Evidence Photo" 
-                                             class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                             class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/f1f5f9/94a3b8?text=Image+Unavailable';">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-3">
                                             <span class="text-white text-xs font-bold flex items-center gap-1.5">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
@@ -224,7 +265,8 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
                                                  onclick="switchPrimaryImage('<?php echo htmlspecialchars($thumbUrl); ?>', <?php echo $idx; ?>)">
                                                 <img src="<?php echo htmlspecialchars($thumbUrl); ?>" 
                                                      alt="Evidence #<?php echo $idx + 1; ?>" 
-                                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-200">
+                                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-200"
+                                                     onerror="this.onerror=null; this.src='https://placehold.co/200x200/f1f5f9/94a3b8?text=N/A';">
                                                 <div class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-white text-[9px] font-mono">
                                                     #<?php echo $idx + 1; ?>
                                                 </div>

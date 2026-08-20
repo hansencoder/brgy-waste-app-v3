@@ -49,7 +49,7 @@ if (!function_exists('format_asset_url')) {
             $cleaned = 'uploads/' . $cleaned;
         }
 
-        return '/' . $cleaned;
+        return app_url($cleaned);
     }
 }
 

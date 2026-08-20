@@ -148,7 +148,7 @@ class AdminController extends Controller {
         ");
         $statusResults = $db->resultSet();
         
-        $stats = ['total' => 0, 'Pending' => 0, 'Verified' => 0, 'Resolved' => 0, 'Rejected' => 0];
+        $stats = ['total' => 0, 'Pending' => 0, 'Verified' => 0, 'In Progress' => 0, 'Resolved' => 0, 'Rejected' => 0];
         foreach ($statusResults as $row) {
             $stats[$row['status_name']] = (int)$row['count'];
             $stats['total'] += (int)$row['count'];
@@ -309,7 +309,13 @@ class AdminController extends Controller {
         ");
         $data['category_chart_data'] = $db->resultSet();
 
-        // ---- Chart Data 3: Monthly Submission Trends ----
+        // ---- Chart Data 3: Monthly Submission Trends (Continuous 6 Months) ----
+        $trendMap = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $monthKey = date('M Y', strtotime("-$i months"));
+            $trendMap[$monthKey] = 0;
+        }
+
         $db->query("
             SELECT DATE_FORMAT(submission_date, '%b %Y') as period, COUNT(*) as count
             FROM reports
@@ -317,7 +323,18 @@ class AdminController extends Controller {
             GROUP BY YEAR(submission_date), MONTH(submission_date)
             ORDER BY submission_date ASC
         ");
-        $data['monthly_trend_data'] = $db->resultSet();
+        $rawTrends = $db->resultSet();
+        foreach ($rawTrends as $rt) {
+            if (isset($trendMap[$rt['period']])) {
+                $trendMap[$rt['period']] = (int)$rt['count'];
+            }
+        }
+
+        $monthlyTrendData = [];
+        foreach ($trendMap as $period => $count) {
+            $monthlyTrendData[] = ['period' => $period, 'count' => $count];
+        }
+        $data['monthly_trend_data'] = $monthlyTrendData;
 
         // Log access
         $this->auditModel->logAction($_SESSION['user_id'], 'Dashboard Access', 'Dashboard', 'Admin accessed dashboard', 'success');
@@ -742,17 +759,55 @@ class AdminController extends Controller {
         // Get search and status filters from GET parameters
         $search = isset($_GET['search']) ? htmlspecialchars(strip_tags($_GET['search']), ENT_QUOTES, 'UTF-8') : '';
         $status = isset($_GET['status']) ? htmlspecialchars(strip_tags($_GET['status']), ENT_QUOTES, 'UTF-8') : '';
+        $date_from = isset($_GET['date_from']) ? trim($_GET['date_from']) : '';
+        $date_to = isset($_GET['date_to']) ? trim($_GET['date_to']) : '';
+        $purok_filter = isset($_GET['purok']) ? trim($_GET['purok']) : '';
+        $reporter_type = isset($_GET['reporter_type']) ? trim($_GET['reporter_type']) : '';
 
         $db = new Database();
 
+        // ---- Fetch all Puroks for filter dropdown and grouping ----
+        $db->query("SELECT * FROM puroks ORDER BY purok_name ASC");
+        $allPuroks = $db->resultSet() ?: [];
+        $data['puroks'] = $allPuroks;
+
         // ---- Status Counts for Metrics ----
-        $db->query("
+        $countQuery = "
             SELECT rs.status_name, COUNT(*) as count
             FROM reports r
             JOIN report_statuses rs ON r.status_id = rs.status_id
-            GROUP BY r.status_id
-        ");
-        $statusCounts = $db->resultSet();
+            LEFT JOIN puroks p ON r.purok_id = p.purok_id
+            WHERE 1=1
+        ";
+        if (!empty($date_from)) {
+            $countQuery .= " AND DATE(r.submission_date) >= :c_date_from";
+        }
+        if (!empty($date_to)) {
+            $countQuery .= " AND DATE(r.submission_date) <= :c_date_to";
+        }
+        if (!empty($purok_filter)) {
+            $countQuery .= " AND (p.purok_name = :c_purok_filter OR r.purok_id = :c_purok_id)";
+        }
+        if ($reporter_type === 'guest') {
+            $countQuery .= " AND r.reporter_type = 'guest'";
+        } elseif ($reporter_type === 'resident') {
+            $countQuery .= " AND (r.reporter_type = 'resident' OR r.reporter_type IS NULL OR r.reporter_type = '')";
+        }
+        $countQuery .= " GROUP BY r.status_id";
+
+        $db->query($countQuery);
+        if (!empty($date_from)) {
+            $db->bind(':c_date_from', $date_from);
+        }
+        if (!empty($date_to)) {
+            $db->bind(':c_date_to', $date_to);
+        }
+        if (!empty($purok_filter)) {
+            $db->bind(':c_purok_filter', $purok_filter);
+            $db->bind(':c_purok_id', is_numeric($purok_filter) ? (int)$purok_filter : 0);
+        }
+
+        $statusCounts = $db->resultSet() ?: [];
         $statusMap = ['Total' => 0, 'Pending' => 0, 'Verified' => 0, 'Rejected' => 0, 'In Progress' => 0, 'Resolved' => 0];
         foreach ($statusCounts as $row) {
             $statusMap[$row['status_name']] = (int)$row['count'];
@@ -793,6 +848,24 @@ class AdminController extends Controller {
             $query .= " AND rs.status_name = :status";
         }
 
+        if (!empty($date_from)) {
+            $query .= " AND DATE(r.submission_date) >= :date_from";
+        }
+
+        if (!empty($date_to)) {
+            $query .= " AND DATE(r.submission_date) <= :date_to";
+        }
+
+        if (!empty($purok_filter)) {
+            $query .= " AND (p.purok_name = :purok_filter OR r.purok_id = :purok_id)";
+        }
+
+        if ($reporter_type === 'guest') {
+            $query .= " AND r.reporter_type = 'guest'";
+        } elseif ($reporter_type === 'resident') {
+            $query .= " AND (r.reporter_type = 'resident' OR r.reporter_type IS NULL OR r.reporter_type = '')";
+        }
+
         $query .= " ORDER BY r.submission_date DESC";
 
         $db->query($query);
@@ -806,7 +879,84 @@ class AdminController extends Controller {
             $db->bind(':status', $status);
         }
 
-        $data['reports'] = $db->resultSet();
+        if (!empty($date_from)) {
+            $db->bind(':date_from', $date_from);
+        }
+
+        if (!empty($date_to)) {
+            $db->bind(':date_to', $date_to);
+        }
+
+        if (!empty($purok_filter)) {
+            $db->bind(':purok_filter', $purok_filter);
+            $db->bind(':purok_id', is_numeric($purok_filter) ? (int)$purok_filter : 0);
+        }
+
+        $reportsList = $db->resultSet() ?: [];
+        $data['reports'] = $reportsList;
+
+        // ---- Compute Grouped Reports by Purok / Zone ----
+        $reportsByPurok = [];
+        foreach ($allPuroks as $pk) {
+            $pkName = $pk['purok_name'];
+            $reportsByPurok[$pkName] = [
+                'purok_id' => (int)$pk['purok_id'],
+                'purok_name' => $pkName,
+                'total' => 0,
+                'pending' => 0,
+                'verified' => 0,
+                'in_progress' => 0,
+                'resolved' => 0,
+                'rejected' => 0,
+                'reports' => []
+            ];
+        }
+        $otherPurokKey = 'Unassigned / Other';
+        $reportsByPurok[$otherPurokKey] = [
+            'purok_id' => 0,
+            'purok_name' => $otherPurokKey,
+            'total' => 0,
+            'pending' => 0,
+            'verified' => 0,
+            'in_progress' => 0,
+            'resolved' => 0,
+            'rejected' => 0,
+            'reports' => []
+        ];
+
+        foreach ($reportsList as $rep) {
+            $repPurok = !empty($rep['purok']) ? trim($rep['purok']) : $otherPurokKey;
+            if (!isset($reportsByPurok[$repPurok])) {
+                $reportsByPurok[$repPurok] = [
+                    'purok_id' => (int)($rep['purok_id'] ?? 0),
+                    'purok_name' => $repPurok,
+                    'total' => 0,
+                    'pending' => 0,
+                    'verified' => 0,
+                    'in_progress' => 0,
+                    'resolved' => 0,
+                    'rejected' => 0,
+                    'reports' => []
+                ];
+            }
+            $reportsByPurok[$repPurok]['total']++;
+            $stKey = strtolower(str_replace(' ', '_', $rep['status'] ?? 'pending'));
+            if (isset($reportsByPurok[$repPurok][$stKey])) {
+                $reportsByPurok[$repPurok][$stKey]++;
+            }
+            $reportsByPurok[$repPurok]['reports'][] = $rep;
+        }
+
+        if ($reportsByPurok[$otherPurokKey]['total'] === 0) {
+            unset($reportsByPurok[$otherPurokKey]);
+        }
+
+        $data['reports_by_purok'] = $reportsByPurok;
+        $data['date_from'] = $date_from;
+        $data['date_to'] = $date_to;
+        $data['selected_purok'] = $purok_filter;
+        $data['selected_reporter_type'] = $reporter_type;
+        $data['active_status'] = $status;
 
         $db->query("SELECT * FROM report_generation_settings LIMIT 1");
         $data['report_settings'] = $db->single() ?: [];
@@ -1288,16 +1438,47 @@ class AdminController extends Controller {
 
         $db = new Database();
 
+        $isArchiveView = isset($_GET['view']) && $_GET['view'] === 'archive';
+        $targetTable = $isArchiveView ? 'audit_logs_archive' : 'audit_logs';
+
+        // Ensure archive table exists
+        try {
+            $db->query("CREATE TABLE IF NOT EXISTS `audit_logs_archive` (
+              `id` int(11) NOT NULL,
+              `user_id` int(11) DEFAULT NULL,
+              `action` varchar(255) NOT NULL,
+              `affected_record` varchar(255) DEFAULT NULL,
+              `details` text DEFAULT NULL,
+              `result` varchar(50) DEFAULT 'success',
+              `ip_address` varchar(45) DEFAULT NULL,
+              `user_agent` text DEFAULT NULL,
+              `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+              `archived_at` timestamp NOT NULL DEFAULT current_timestamp(),
+              PRIMARY KEY (`id`),
+              KEY `user_id` (`user_id`),
+              KEY `created_at` (`created_at`),
+              KEY `archived_at` (`archived_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
+            $db->execute();
+        } catch (Exception $e) {}
+
         // Fetch logs with user and role details
         $db->query("
             SELECT a.*, u.name as user_name, u.email as user_email, r.role_name
-            FROM audit_logs a 
+            FROM {$targetTable} a 
             LEFT JOIN users u ON a.user_id = u.id 
             LEFT JOIN roles r ON u.role_id = r.role_id
             ORDER BY a.created_at DESC
             LIMIT 2000
         ");
         $logs = $db->resultSet();
+
+        // Get count of active and archived logs
+        $db->query("SELECT COUNT(*) as cnt FROM audit_logs");
+        $activeCount = (int)($db->single()['cnt'] ?? 0);
+
+        $db->query("SELECT COUNT(*) as cnt FROM audit_logs_archive");
+        $archivedCount = (int)($db->single()['cnt'] ?? 0);
 
         // Calculate KPI Metrics
         $totalLogs = count($logs);
@@ -1331,6 +1512,9 @@ class AdminController extends Controller {
 
         $data = [
             'logs' => $logs,
+            'is_archive_view' => $isArchiveView,
+            'active_count' => $activeCount,
+            'archived_count' => $archivedCount,
             'stats' => [
                 'total' => $totalLogs,
                 'today' => $todayLogs,
@@ -1340,15 +1524,147 @@ class AdminController extends Controller {
             ],
             'unique_users' => array_keys($uniqueUsers),
             'unique_actions' => array_keys($uniqueActions),
-            'barangay' => $barangay
+            'barangay' => $barangay,
+            'flash_success' => $_SESSION['flash_success'] ?? null,
+            'flash_error' => $_SESSION['flash_error'] ?? null
         ];
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 
-        $this->auditModel->logAction($_SESSION['user_id'], 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', 'success');
+        $this->auditModel->logAction($_SESSION['user_id'], $isArchiveView ? 'Audit Archive Access' : 'Audit Trail Access', 'Audit Logs', 'Admin accessed system audit trail', 'success');
         $this->view('admin/audit_logs', $data);
     }
 
     public function audit_logs() {
         return $this->auditLogs();
+    }
+
+    /**
+     * Archive old or selected audit logs to audit_logs_archive table to keep active table fast
+     */
+    public function archiveAuditLogs() {
+        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+            die("Unauthorized Access");
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . app_url('index.php?url=admin/audit_logs'));
+            exit;
+        }
+
+        $db = new Database();
+        $scope = $_POST['archive_scope'] ?? 'days';
+        $archivedCount = 0;
+
+        if ($scope === 'selected' && !empty($_POST['selected_ids'])) {
+            $ids = is_array($_POST['selected_ids']) ? $_POST['selected_ids'] : explode(',', $_POST['selected_ids']);
+            $sanitizedIds = array_filter(array_map('intval', $ids));
+
+            if (!empty($sanitizedIds)) {
+                $placeholders = implode(',', array_fill(0, count($sanitizedIds), '?'));
+                
+                // Copy to archive
+                $db->query("INSERT IGNORE INTO audit_logs_archive (id, user_id, action, affected_record, details, result, ip_address, user_agent, created_at, archived_at)
+                            SELECT id, user_id, action, affected_record, details, result, ip_address, user_agent, created_at, NOW()
+                            FROM audit_logs WHERE id IN ($placeholders)");
+                foreach ($sanitizedIds as $i => $idVal) {
+                    $db->bind($i + 1, $idVal);
+                }
+                $db->execute();
+
+                // Delete from active
+                $db->query("DELETE FROM audit_logs WHERE id IN ($placeholders)");
+                foreach ($sanitizedIds as $i => $idVal) {
+                    $db->bind($i + 1, $idVal);
+                }
+                $db->execute();
+                $archivedCount = count($sanitizedIds);
+            }
+        } else {
+            // Days preset: 30, 60, 90, 180, 365
+            $days = max(1, (int)($_POST['days'] ?? 60));
+
+            // Copy to archive
+            $db->query("INSERT IGNORE INTO audit_logs_archive (id, user_id, action, affected_record, details, result, ip_address, user_agent, created_at, archived_at)
+                        SELECT id, user_id, action, affected_record, details, result, ip_address, user_agent, created_at, NOW()
+                        FROM audit_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL :days DAY)");
+            $db->bind(':days', $days);
+            $db->execute();
+
+            // Count how many deleted
+            $db->query("DELETE FROM audit_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL :days DAY)");
+            $db->bind(':days', $days);
+            $db->execute();
+            $archivedCount = $db->rowCount();
+        }
+
+        $this->auditModel->logAction($_SESSION['user_id'], 'Archive Audit Logs', 'Audit Logs', "Admin moved {$archivedCount} audit records to archive storage", 'success');
+        $_SESSION['flash_success'] = "Successfully archived {$archivedCount} log records to the Archive Vault.";
+        header('Location: ' . app_url('index.php?url=admin/audit_logs'));
+        exit;
+    }
+
+    public function archive_audit_logs() {
+        return $this->archiveAuditLogs();
+    }
+
+    /**
+     * Restore archived audit logs back to active table
+     */
+    public function restoreArchivedLogs() {
+        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+            die("Unauthorized Access");
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . app_url('index.php?url=admin/audit_logs&view=archive'));
+            exit;
+        }
+
+        $db = new Database();
+        $scope = $_POST['restore_scope'] ?? 'selected';
+        $restoredCount = 0;
+
+        if ($scope === 'all') {
+            $db->query("INSERT IGNORE INTO audit_logs (id, user_id, action, affected_record, details, result, ip_address, user_agent, created_at)
+                        SELECT id, user_id, action, affected_record, details, result, ip_address, user_agent, created_at
+                        FROM audit_logs_archive");
+            $db->execute();
+
+            $db->query("DELETE FROM audit_logs_archive");
+            $db->execute();
+            $restoredCount = $db->rowCount();
+        } else {
+            $ids = is_array($_POST['selected_ids'] ?? null) ? $_POST['selected_ids'] : explode(',', $_POST['selected_ids'] ?? '');
+            $sanitizedIds = array_filter(array_map('intval', $ids));
+
+            if (!empty($sanitizedIds)) {
+                $placeholders = implode(',', array_fill(0, count($sanitizedIds), '?'));
+
+                $db->query("INSERT IGNORE INTO audit_logs (id, user_id, action, affected_record, details, result, ip_address, user_agent, created_at)
+                            SELECT id, user_id, action, affected_record, details, result, ip_address, user_agent, created_at
+                            FROM audit_logs_archive WHERE id IN ($placeholders)");
+                foreach ($sanitizedIds as $i => $idVal) {
+                    $db->bind($i + 1, $idVal);
+                }
+                $db->execute();
+
+                $db->query("DELETE FROM audit_logs_archive WHERE id IN ($placeholders)");
+                foreach ($sanitizedIds as $i => $idVal) {
+                    $db->bind($i + 1, $idVal);
+                }
+                $db->execute();
+                $restoredCount = count($sanitizedIds);
+            }
+        }
+
+        $this->auditModel->logAction($_SESSION['user_id'], 'Restore Audit Logs', 'Audit Logs', "Admin restored {$restoredCount} audit records from archive", 'success');
+        $_SESSION['flash_success'] = "Successfully restored {$restoredCount} log records back to the Active Audit Trail.";
+        header('Location: ' . app_url('index.php?url=admin/audit_logs&view=archive'));
+        exit;
+    }
+
+    public function restore_audit_logs() {
+        return $this->restoreArchivedLogs();
     }
 
     /**
@@ -1359,24 +1675,27 @@ class AdminController extends Controller {
             die("Unauthorized Access");
         }
 
+        $isArchiveView = isset($_GET['view']) && $_GET['view'] === 'archive';
+        $targetTable = $isArchiveView ? 'audit_logs_archive' : 'audit_logs';
+
         $db = new Database();
         $db->query("
             SELECT a.*, u.name as user_name, u.email as user_email, r.role_name
-            FROM audit_logs a 
+            FROM {$targetTable} a 
             LEFT JOIN users u ON a.user_id = u.id 
             LEFT JOIN roles r ON u.role_id = r.role_id
             ORDER BY a.created_at DESC
         ");
         $logs = $db->resultSet();
 
-        $this->auditModel->logAction($_SESSION['user_id'], 'Export Audit Logs', 'Audit Logs', 'Admin exported system audit trail to CSV', 'success');
+        $this->auditModel->logAction($_SESSION['user_id'], 'Export Audit Logs', 'Audit Logs', "Admin exported {$targetTable} trail to CSV", 'success');
 
         if (ob_get_level()) {
             ob_end_clean();
         }
 
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=System_Audit_Logs_' . date('Y-m-d_His') . '.csv');
+        header('Content-Disposition: attachment; filename=System_' . ($isArchiveView ? 'Archived' : 'Active') . '_Audit_Logs_' . date('Y-m-d_His') . '.csv');
         header('Pragma: no-cache');
         header('Expires: 0');
 

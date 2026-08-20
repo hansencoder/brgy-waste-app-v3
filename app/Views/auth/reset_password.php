@@ -74,7 +74,8 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
         <div class="mt-5 text-center space-y-2">
             <p class="text-xs text-slate-500 font-normal">
                 Didn't receive the code? 
-                <a href="<?php echo app_url('index.php?url=auth/forgotPassword'); ?>" class="font-semibold text-emerald-700 hover:underline">Resend code</a>
+                <a id="resendLink" href="<?php echo app_url('index.php?url=auth/resendResetOtp'); ?>" class="font-semibold text-emerald-700 hover:underline">Resend code</a>
+                <span id="resendCountdown" class="ml-1 text-xs text-slate-400 font-mono font-medium"></span>
             </p>
             <div>
                 <a href="<?php echo app_url('index.php?url=auth'); ?>" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
@@ -140,6 +141,54 @@ document.addEventListener('DOMContentLoaded', function() {
         if (otpVal.length < 6) {
             e.preventDefault();
             alert('Please enter the full 6-digit verification code.');
+        }
+    });
+
+    // 60-Second Resend Cooldown Timer
+    const resendLink = document.getElementById('resendLink');
+    const resendCountdown = document.getElementById('resendCountdown');
+    const STORAGE_KEY = 'waste_reset_otp_expiry';
+
+    function startCooldown(durationSecs) {
+        let expiry = Date.now() + durationSecs * 1000;
+        sessionStorage.setItem(STORAGE_KEY, expiry.toString());
+        tick();
+    }
+
+    function tick() {
+        let expiry = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10);
+        let remaining = Math.ceil((expiry - Date.now()) / 1000);
+
+        if (remaining > 0) {
+            resendLink.style.pointerEvents = 'none';
+            resendLink.classList.add('opacity-50', 'cursor-not-allowed', 'text-slate-400');
+            resendLink.classList.remove('text-emerald-700', 'hover:underline');
+            resendCountdown.textContent = `in (${remaining}s)`;
+            setTimeout(tick, 1000);
+        } else {
+            sessionStorage.removeItem(STORAGE_KEY);
+            resendLink.style.pointerEvents = '';
+            resendLink.classList.remove('opacity-50', 'cursor-not-allowed', 'text-slate-400');
+            resendLink.classList.add('text-emerald-700', 'hover:underline');
+            resendCountdown.textContent = '';
+        }
+    }
+
+    // Check if there is an active timer or start initial 60s cooldown if just loaded from send
+    let existingExpiry = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10);
+    if (existingExpiry > Date.now()) {
+        tick();
+    } else {
+        startCooldown(60);
+    }
+
+    resendLink.addEventListener('click', function(e) {
+        let expiry = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10);
+        if (expiry > Date.now()) {
+            e.preventDefault();
+        } else {
+            // Set cooldown for next load
+            sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
         }
     });
 });

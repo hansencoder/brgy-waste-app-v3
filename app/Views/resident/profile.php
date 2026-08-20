@@ -129,14 +129,14 @@ $initial = strtoupper(substr($firstName, 0, 1));
                         
                         <!-- Avatar with upload -->
                         <div class="relative shrink-0">
-                            <div id="avatarContainer" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-[#0B2E22] ring-4 ring-slate-100 shadow-md flex items-center justify-center text-white text-4xl font-extrabold overflow-hidden border border-emerald-800">
+                            <div id="avatarContainer" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#0B2E22] ring-4 ring-white shadow-xl flex items-center justify-center text-white text-4xl font-extrabold overflow-hidden">
                                 <?php if (!empty($profilePic)): ?>
                                     <img src="<?php echo htmlspecialchars($profilePic, ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Picture" class="w-full h-full object-cover">
                                 <?php else: ?>
                                     <span><?php echo $initial; ?></span>
                                 <?php endif; ?>
                             </div>
-                            <label for="profilePicInput" class="absolute -bottom-2 -right-2 w-9 h-9 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg border-2 border-white cursor-pointer transition transform hover:scale-105" title="Change Profile Picture">
+                            <label for="profilePicInput" class="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-md border-2 border-white cursor-pointer transition transform hover:scale-105" title="Change Profile Picture">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
                             </label>
                         </div>
@@ -627,15 +627,27 @@ $initial = strtoupper(substr($firstName, 0, 1));
         });
     }
 
+    let residentOtpCooldownTimer = null;
     function resendOTP() {
         const btn = document.getElementById('resendOTPBtn');
         btn.disabled = true;
         btn.textContent = 'Sending...';
         requestOTP();
-        setTimeout(() => {
-            btn.disabled = false;
-            btn.textContent = 'Resend Code';
-        }, 30000);
+        
+        let remaining = 60;
+        if (residentOtpCooldownTimer) clearInterval(residentOtpCooldownTimer);
+
+        residentOtpCooldownTimer = setInterval(() => {
+            remaining--;
+            if (remaining > 0) {
+                btn.disabled = true;
+                btn.textContent = `Resend Code in (${remaining}s)`;
+            } else {
+                clearInterval(residentOtpCooldownTimer);
+                btn.disabled = false;
+                btn.textContent = 'Resend Code';
+            }
+        }, 1000);
     }
 
     // Live Clock

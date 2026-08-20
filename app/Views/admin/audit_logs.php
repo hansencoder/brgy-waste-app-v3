@@ -1,6 +1,12 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
 <?php
 $logs = $data['logs'] ?? [];
+$isArchiveView = !empty($data['is_archive_view']);
+$activeCount = (int)($data['active_count'] ?? count($logs));
+$archivedCount = (int)($data['archived_count'] ?? 0);
+$flashSuccess = $data['flash_success'] ?? null;
+$flashError = $data['flash_error'] ?? null;
+
 $stats = $data['stats'] ?? [
     'total' => count($logs),
     'today' => 0,
@@ -30,7 +36,7 @@ function getActionMeta($action) {
         return ['badge' => 'bg-purple-50 text-purple-900 border-purple-200'];
     } elseif (strpos($act, 'schedule') !== false) {
         return ['badge' => 'bg-amber-50 text-amber-900 border-amber-200'];
-    } elseif (strpos($act, 'export') !== false) {
+    } elseif (strpos($act, 'export') !== false || strpos($act, 'archive') !== false || strpos($act, 'restore') !== false) {
         return ['badge' => 'bg-teal-50 text-teal-900 border-teal-200'];
     } else {
         return ['badge' => 'bg-slate-100 text-slate-800 border-slate-200'];
@@ -93,6 +99,27 @@ function getActionMeta($action) {
         <main class="flex-1 overflow-y-auto bg-slate-50 focus:outline-none">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
+                <!-- Flash Alert Messages -->
+                <?php if (!empty($flashSuccess)): ?>
+                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between shadow-xs">
+                        <div class="flex items-center gap-2.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span><?php echo htmlspecialchars($flashSuccess); ?></span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-emerald-700 hover:text-emerald-950 font-bold text-xs cursor-pointer">✕</button>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($flashError)): ?>
+                    <div class="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between shadow-xs">
+                        <div class="flex items-center gap-2.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <span><?php echo htmlspecialchars($flashError); ?></span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-red-700 hover:text-red-950 font-bold text-xs cursor-pointer">✕</button>
+                    </div>
+                <?php endif; ?>
+
                 <!-- 1. Header & Quick Actions Toolbar -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -102,26 +129,45 @@ function getActionMeta($action) {
                             <span>/</span>
                             <span>Security &amp; Compliance</span>
                             <span>/</span>
-                            <span class="text-slate-900">Audit Trail</span>
+                            <span class="text-slate-900"><?php echo $isArchiveView ? 'Archive Vault' : 'Audit Trail'; ?></span>
                         </nav>
                         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-                            <span>System Audit &amp; Activity Trail</span>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
-                                Live Forensic Logs
+                            <span><?php echo $isArchiveView ? 'Archived Audit Vault' : 'System Audit &amp; Activity Trail'; ?></span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold <?php echo $isArchiveView ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-100 text-emerald-900 border border-emerald-300'; ?>">
+                                <?php echo $isArchiveView ? 'Archived Storage' : 'Live Forensic Logs'; ?>
                             </span>
                         </h1>
                         <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-1">
-                            Immutable audit trail of administrative modifications, report reviews, staff actions, and access events.
+                            <?php echo $isArchiveView 
+                                ? 'Historical archived audit logs preserved off the active table to maintain fast system speed.' 
+                                : 'Immutable audit trail of administrative modifications, report reviews, staff actions, and access events.'; ?>
                         </p>
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex items-center gap-2.5 shrink-0">
+                    <div class="flex items-center gap-2.5 shrink-0 flex-wrap sm:flex-nowrap">
+                        <?php if (!$isArchiveView): ?>
+                            <!-- Archive Old Logs Modal Trigger -->
+                            <button onclick="openArchiveModal()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 font-extrabold text-xs sm:text-sm border border-amber-200 shadow-2xs transition active:scale-[0.98] cursor-pointer" title="Archive Old Logs">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+                                <span>Archive Old Logs</span>
+                            </button>
+                        <?php else: ?>
+                            <!-- Restore All Trigger -->
+                            <form action="<?php echo app_url('index.php?url=admin/restore_audit_logs'); ?>" method="POST" onsubmit="return confirm('Restore all archived logs back to the active audit trail?');">
+                                <input type="hidden" name="restore_scope" value="all">
+                                <button type="submit" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-extrabold text-xs sm:text-sm border border-emerald-200 shadow-2xs transition active:scale-[0.98] cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                                    <span>Restore All to Active</span>
+                                </button>
+                            </form>
+                        <?php endif; ?>
+
                         <!-- Export CSV Dropdown / Action -->
-                        <button onclick="exportFilteredLogsCSV()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-extrabold text-xs sm:text-sm border border-slate-200 shadow-2xs transition active:scale-[0.98] cursor-pointer" title="Export CSV">
+                        <a href="<?php echo app_url('index.php?url=admin/export_audit_logs' . ($isArchiveView ? '&view=archive' : '')); ?>" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-extrabold text-xs sm:text-sm border border-slate-200 shadow-2xs transition active:scale-[0.98] cursor-pointer" title="Export CSV">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             <span>Export CSV</span>
-                        </button>
+                        </a>
 
                         <!-- Print Action with Options Modal -->
                         <button onclick="openPrintModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#07281E] text-white font-extrabold text-xs sm:text-sm shadow-2xs transition active:scale-[0.98] cursor-pointer" title="Print Audit Report">
@@ -131,14 +177,31 @@ function getActionMeta($action) {
                     </div>
                 </div>
 
+                <!-- 1.5 Active vs Archive View Navigation Tabs -->
+                <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+                    <a href="<?php echo app_url('index.php?url=admin/audit_logs'); ?>" 
+                       class="px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 <?php echo !$isArchiveView ? 'bg-[#0B2E22] text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'; ?>">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 <?php echo !$isArchiveView ? 'text-emerald-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>Active Audit Trail</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold <?php echo !$isArchiveView ? 'bg-emerald-800 text-emerald-100' : 'bg-slate-100 text-slate-600'; ?>"><?php echo number_format($activeCount); ?></span>
+                    </a>
+
+                    <a href="<?php echo app_url('index.php?url=admin/audit_logs&view=archive'); ?>" 
+                       class="px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 <?php echo $isArchiveView ? 'bg-[#0B2E22] text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'; ?>">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 <?php echo $isArchiveView ? 'text-amber-400' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+                        <span>Archive Vault</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold <?php echo $isArchiveView ? 'bg-emerald-800 text-emerald-100' : 'bg-slate-100 text-slate-600'; ?>"><?php echo number_format($archivedCount); ?></span>
+                    </a>
+                </div>
+
                 <!-- 2. KPI Metric Summary Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Total Logs -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center justify-between">
                         <div class="space-y-1">
-                            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Total Recorded Logs</p>
+                            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400"><?php echo $isArchiveView ? 'Archived Records' : 'Active Recorded Logs'; ?></p>
                             <p class="text-2xl font-black text-slate-900"><?php echo number_format($stats['total']); ?></p>
-                            <p class="text-[11px] font-semibold text-slate-500">Full audit history retention</p>
+                            <p class="text-[11px] font-semibold text-slate-500"><?php echo $isArchiveView ? 'Preserved in archive vault' : 'Live active table records'; ?></p>
                         </div>
                     </div>
 
@@ -147,7 +210,7 @@ function getActionMeta($action) {
                         <div class="space-y-1">
                             <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Today's Activity</p>
                             <p class="text-2xl font-black text-slate-900"><?php echo number_format($stats['today']); ?></p>
-                            <p class="text-[11px] font-semibold text-slate-700">Events logged <?php echo date('M d, Y'); ?></p>
+                            <p class="text-[11px] font-semibold text-slate-700">Events dated <?php echo date('M d, Y'); ?></p>
                         </div>
                     </div>
 
@@ -163,7 +226,7 @@ function getActionMeta($action) {
                     <!-- Active Admin Staff Actors -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center justify-between">
                         <div class="space-y-1">
-                            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Active Actors</p>
+                            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Unique Actors</p>
                             <p class="text-2xl font-black text-slate-900"><?php echo number_format($stats['unique_users_count']); ?></p>
                             <p class="text-[11px] font-semibold text-slate-700">Staff &amp; admin accounts logged</p>
                         </div>
@@ -196,6 +259,7 @@ function getActionMeta($action) {
                                 <option value="GIS">GIS &amp; Territorial Boundaries</option>
                                 <option value="Export">Export &amp; Analytics Logs</option>
                                 <option value="Login">Login &amp; Session Access</option>
+                                <option value="Archive">Archival &amp; Storage</option>
                             </select>
                         </div>
 
@@ -246,7 +310,7 @@ function getActionMeta($action) {
                     <!-- Row 3: Counter & Page Size Selection -->
                     <div class="flex items-center justify-between text-xs font-bold text-slate-500 pt-2 border-t border-slate-100">
                         <div>
-                            Showing <strong id="visibleLogCount" class="text-slate-900"><?php echo count($logs); ?></strong> of <?php echo count($logs); ?> recorded events
+                            Showing <strong id="visibleLogCount" class="text-slate-900"><?php echo count($logs); ?></strong> of <?php echo count($logs); ?> <?php echo $isArchiveView ? 'archived' : 'recorded'; ?> events
                         </div>
                         <div class="flex items-center gap-2">
                             <span>Per page:</span>
@@ -372,8 +436,8 @@ function getActionMeta($action) {
                                             <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
                                             </div>
-                                            <div class="text-sm font-extrabold text-slate-700">No system audit logs found</div>
-                                            <div class="text-xs">Any future actions performed by administrators or system scripts will be logged here.</div>
+                                            <div class="text-sm font-extrabold text-slate-700"><?php echo $isArchiveView ? 'No archived logs found in vault' : 'No active audit logs found'; ?></div>
+                                            <div class="text-xs"><?php echo $isArchiveView ? 'Archived log records will appear here after running the archive operation.' : 'Any future actions performed by administrators or system scripts will be logged here.'; ?></div>
                                         </td>
                                     </tr>
                                 <?php endif; ?>
@@ -409,8 +473,22 @@ function getActionMeta($action) {
     <div class="h-4 w-px bg-slate-700"></div>
 
     <div class="flex items-center gap-2">
-        <button onclick="printScope('selected')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+        <?php if (!$isArchiveView): ?>
+            <!-- Archive Selected Button -->
+            <button onclick="archiveSelectedLogs()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+                <span>Archive Selected</span>
+            </button>
+        <?php else: ?>
+            <!-- Restore Selected Button -->
+            <button onclick="restoreSelectedLogs()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                <span>Restore Selected</span>
+            </button>
+        <?php endif; ?>
+
+        <button onclick="printScope('selected')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs transition flex items-center gap-1.5 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
             <span>Print Selected</span>
         </button>
 
@@ -422,6 +500,63 @@ function getActionMeta($action) {
         <button onclick="deselectAll()" class="px-2.5 py-1.5 rounded-xl bg-transparent hover:bg-slate-800 text-slate-400 hover:text-white font-extrabold text-xs transition cursor-pointer">
             Deselect All
         </button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ARCHIVE LOGS CONFIGURATION MODAL                             -->
+<!-- ============================================================ -->
+<div id="archiveConfigModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full border border-slate-200 overflow-hidden animate-fadeIn">
+        <form action="<?php echo app_url('index.php?url=admin/archive_audit_logs'); ?>" method="POST">
+            <!-- Header -->
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Archive Audit Logs</h3>
+                        <p class="text-xs font-semibold text-slate-500">Speed up active table by archiving older entries</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeArchiveModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-4 text-xs">
+                <input type="hidden" name="archive_scope" id="archiveScopeInput" value="days">
+                <input type="hidden" name="selected_ids" id="archiveSelectedIdsInput" value="">
+
+                <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
+                    <strong>💡 Performance Tip:</strong> Archiving moves old logs to the <code>audit_logs_archive</code> table. This significantly speeds up database queries, report filtering, and overall portal responsiveness. You can review or restore archived records at any time from the <strong>Archive Vault</strong> tab.
+                </div>
+
+                <div id="archiveDaysContainer">
+                    <label class="block text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-2">Select Archival Age</label>
+                    <select name="days" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:border-amber-500 outline-none transition cursor-pointer">
+                        <option value="30">Logs older than 30 Days (1 Month)</option>
+                        <option value="60" selected>Logs older than 60 Days (2 Months) - Recommended</option>
+                        <option value="90">Logs older than 90 Days (3 Months)</option>
+                        <option value="180">Logs older than 180 Days (6 Months)</option>
+                        <option value="365">Logs older than 365 Days (1 Year)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5">
+                <button type="button" onclick="closeArchiveModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs transition cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-xs transition flex items-center gap-2 shadow-sm cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+                    <span>Proceed to Archive</span>
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -856,6 +991,79 @@ function getActionMeta($action) {
         }
     }
 
+    // Archival Modal Controls
+    function openArchiveModal() {
+        document.getElementById('archiveConfigModal').classList.remove('hidden');
+    }
+
+    function closeArchiveModal() {
+        document.getElementById('archiveConfigModal').classList.add('hidden');
+    }
+
+    function archiveSelectedLogs() {
+        const selectedCbs = Array.from(document.querySelectorAll('.log-row-checkbox:checked'));
+        if (selectedCbs.length === 0) {
+            alert('Please select at least one log row to archive.');
+            return;
+        }
+
+        if (!confirm(`Are you sure you want to move ${selectedCbs.length} selected log(s) to the Archive Vault?`)) {
+            return;
+        }
+
+        const ids = selectedCbs.map(cb => cb.value).join(',');
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<?php echo app_url('index.php?url=admin/archive_audit_logs'); ?>';
+
+        const inputScope = document.createElement('input');
+        inputScope.type = 'hidden';
+        inputScope.name = 'archive_scope';
+        inputScope.value = 'selected';
+        form.appendChild(inputScope);
+
+        const inputIds = document.createElement('input');
+        inputIds.type = 'hidden';
+        inputIds.name = 'selected_ids';
+        inputIds.value = ids;
+        form.appendChild(inputIds);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function restoreSelectedLogs() {
+        const selectedCbs = Array.from(document.querySelectorAll('.log-row-checkbox:checked'));
+        if (selectedCbs.length === 0) {
+            alert('Please select at least one log row to restore.');
+            return;
+        }
+
+        if (!confirm(`Restore ${selectedCbs.length} selected log(s) back to the Active Audit Trail?`)) {
+            return;
+        }
+
+        const ids = selectedCbs.map(cb => cb.value).join(',');
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<?php echo app_url('index.php?url=admin/restore_audit_logs'); ?>';
+
+        const inputScope = document.createElement('input');
+        inputScope.type = 'hidden';
+        inputScope.name = 'restore_scope';
+        inputScope.value = 'selected';
+        form.appendChild(inputScope);
+
+        const inputIds = document.createElement('input');
+        inputIds.type = 'hidden';
+        inputIds.name = 'selected_ids';
+        inputIds.value = ids;
+        form.appendChild(inputIds);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
     // Modal Print Configuration
     function openPrintModal() {
         const total = filteredRows.length;
@@ -1032,7 +1240,7 @@ function getActionMeta($action) {
     // CSV Export Helpers
     function exportFilteredLogsCSV() {
         const rowsToExport = (filteredRows && filteredRows.length > 0) ? filteredRows : Array.from(document.querySelectorAll('tbody tr.log-row'));
-        downloadCSVFromRows(rowsToExport, 'Filtered_Audit_Logs');
+        downloadCSVFromRows(rowsToExport, '<?php echo $isArchiveView ? "Archived_Audit_Logs" : "Active_Audit_Logs"; ?>');
     }
 
     function exportSelectedLogsCSV() {
@@ -1041,7 +1249,7 @@ function getActionMeta($action) {
             alert('Please select at least one log row to export.');
             return;
         }
-        downloadCSVFromRows(selected, 'Selected_Audit_Logs');
+        downloadCSVFromRows(selected, '<?php echo $isArchiveView ? "Selected_Archived_Logs" : "Selected_Audit_Logs"; ?>');
     }
 
     function downloadCSVFromRows(rows, filenamePrefix) {

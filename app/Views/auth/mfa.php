@@ -52,20 +52,32 @@
         </div>
     </div>
 </div>
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
-<?php if (!empty($data['retry_after_seconds']) && (int)$data['retry_after_seconds'] > 0): ?>
 <script>
     (function(){
-        var endTime = Date.now() + (<?php echo (int)$data['retry_after_seconds']; ?> * 1000);
+        var STORAGE_KEY = 'waste_mfa_resend_expiry';
+        var serverCooldown = <?php echo (int)($data['retry_after_seconds'] ?? 0); ?>;
         var resendLink = document.getElementById('resendLink');
         var countdown = document.getElementById('resendCountdown');
         if (!resendLink || !countdown) return;
 
+        var stored = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10);
+        var endTime;
+
+        if (serverCooldown > 0) {
+            endTime = Date.now() + (serverCooldown * 1000);
+            sessionStorage.setItem(STORAGE_KEY, endTime.toString());
+        } else if (stored > Date.now()) {
+            endTime = stored;
+        } else {
+            endTime = Date.now() + 60000;
+            sessionStorage.setItem(STORAGE_KEY, endTime.toString());
+        }
+
         function formatTime(s){
             var m = Math.floor(s/60);
             var sec = s % 60;
-            if (m > 0) return sec > 0 ? m + ':' + String(sec).padStart(2,'0') : m + ' minutes';
-            return sec + ' seconds';
+            if (m > 0) return sec > 0 ? m + ':' + String(sec).padStart(2,'0') : m + 'm';
+            return sec + 's';
         }
 
         function update(){
@@ -75,14 +87,25 @@
                 countdown.textContent = '';
                 resendLink.style.pointerEvents = '';
                 resendLink.style.opacity = '';
+                sessionStorage.removeItem(STORAGE_KEY);
                 return;
             }
-            countdown.textContent = '(' + formatTime(diff) + ')';
+            countdown.textContent = 'in (' + formatTime(diff) + ')';
             resendLink.style.pointerEvents = 'none';
-            resendLink.style.opacity = '0.6';
+            resendLink.style.opacity = '0.5';
             setTimeout(update, 1000);
         }
+
+        resendLink.addEventListener('click', function(e) {
+            var diff = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+            if (diff > 0) {
+                e.preventDefault();
+            } else {
+                sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
+            }
+        });
+
         update();
     })();
 </script>
-<?php endif; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

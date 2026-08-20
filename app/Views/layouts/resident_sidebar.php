@@ -85,15 +85,15 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
         display: none;
         position: fixed;
         left: 5.5rem;
-        background: #0B2E22;
+        background: #0F172A;
         color: #ffffff;
         padding: 0.35rem 0.75rem;
         border-radius: 0.5rem;
         font-size: 0.75rem;
         font-weight: 700;
         white-space: nowrap;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(16, 185, 129, 0.2);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         z-index: 9999;
         pointer-events: none;
     }
@@ -106,10 +106,10 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 <div id="mobileSidebarBackdrop" onclick="toggleMobileSidebar()"></div>
 
 <!-- Main Resident Sidebar Component -->
-<aside id="residentSidebarDrawer" class="<?php echo $initialCollapsedClass; ?> fixed inset-y-0 left-0 z-50 flex h-full w-64 -translate-x-full transform flex-col bg-[#0B2E22] text-slate-300 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 border-r border-emerald-950/60 shadow-xl lg:shadow-none">
+<aside id="residentSidebarDrawer" class="<?php echo $initialCollapsedClass; ?> fixed inset-y-0 left-0 z-50 flex h-full w-64 -translate-x-full transform flex-col bg-[#FFFFFF] text-slate-800 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 border-r border-slate-200 shadow-xl lg:shadow-none">
     
     <!-- Brand Header -->
-    <div class="flex h-16 shrink-0 items-center gap-3 px-4 border-b border-emerald-900/40">
+    <div class="flex h-16 shrink-0 items-center gap-3 px-4 border-b border-slate-100">
         <a href="<?php echo app_url('resident'); ?>" class="flex items-center gap-3 min-w-0 flex-1 group">
             <div class="h-9 w-9 rounded-full flex items-center justify-center overflow-hidden shrink-0 group-hover:scale-105 transition">
                 <?php if (!empty($sysLogo)): ?>
@@ -119,13 +119,13 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                 <?php endif; ?>
             </div>
             <div class="sidebar-brand-text min-w-0">
-                <p class="text-sm font-extrabold text-white leading-tight tracking-tight truncate"><?php echo htmlspecialchars($sysShortName); ?></p>
-                <p class="text-[11px] font-semibold text-emerald-400/80 leading-none truncate mt-0.5">Resident Portal</p>
+                <p class="text-sm font-extrabold text-slate-900 leading-tight tracking-tight truncate"><?php echo htmlspecialchars($sysShortName); ?></p>
+                <p class="text-[11px] font-semibold text-emerald-700 leading-none truncate mt-0.5">Resident Portal</p>
             </div>
         </a>
 
         <!-- Mobile Close Button -->
-        <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden p-1.5 rounded-lg text-emerald-400 hover:text-white hover:bg-emerald-900/50">
+        <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
     </div>
@@ -135,16 +135,16 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
         
         <!-- SECTION: CORE -->
         <div class="space-y-1">
-            <p class="sidebar-section-title px-3 text-[10px] font-black uppercase tracking-wider text-emerald-400/50">Core</p>
+            <p class="sidebar-section-title px-3 text-[10px] font-black uppercase tracking-wider text-slate-400">Core</p>
 
             <!-- Dashboard Link -->
             <?php $activeDash = $isActive('/resident') && !$isActive('/resident/submit') && !$isActive('/resident/my_report') && !$isActive('/resident/profile') && !$isActive('/resident/announcements') && !$isActive('/resident/collection_schedule') && !$isActive('/resident/notification'); ?>
-            <a href="<?php echo app_url('resident'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeDash ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeDash ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                 <?php if ($activeDash): ?>
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
                 <?php endif; ?>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeDash ? 'text-[#10B981]' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeDash ? 'text-emerald-600' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 13h6c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1zm0 8h6c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1zm10 0h6c.55 0 1-.45 1-1v-8c0-.55-.45-1-1-1h-6c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1zm0-18v4c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1h-6c-.55 0-1 .45-1 1z"/>
                 </svg>
                 <span class="sidebar-text">Dashboard</span>
                 <span class="sidebar-tooltip">Dashboard</span>
@@ -152,22 +152,26 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
             <!-- Submit Report Link -->
             <?php $activeSubmit = $isActive('/resident/submit'); ?>
-            <a href="<?php echo app_url('resident/submit'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeSubmit ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/submit'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeSubmit ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                 <?php if ($activeSubmit): ?>
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
                 <?php endif; ?>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeSubmit ? 'text-[#10B981]' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeSubmit ? 'text-emerald-600' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                </svg>
                 <span class="sidebar-text">Submit Report</span>
                 <span class="sidebar-tooltip">Submit Report</span>
             </a>
 
             <!-- My Reports Link -->
             <?php $activeMyReports = $isActive('/resident/my_report') || strpos($currentUri, '/resident/viewReport') !== false; ?>
-            <a href="<?php echo app_url('resident/my_report'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeMyReports ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/my_report'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeMyReports ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                 <?php if ($activeMyReports): ?>
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
                 <?php endif; ?>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeMyReports ? 'text-[#10B981]' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeMyReports ? 'text-emerald-600' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
                 <span class="sidebar-text">My Reports</span>
                 <span class="sidebar-tooltip">My Reports</span>
             </a>
@@ -175,27 +179,29 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
         <!-- SECTION: SERVICES -->
         <div class="space-y-1">
-            <p class="sidebar-section-title px-3 text-[10px] font-black uppercase tracking-wider text-emerald-400/50">Services</p>
+            <p class="sidebar-section-title px-3 text-[10px] font-black uppercase tracking-wider text-slate-400">Services</p>
 
             <!-- Collection Schedule Link -->
             <?php $activeSched = $isActive('/resident/collection_schedule'); ?>
-            <a href="<?php echo app_url('resident/collection_schedule'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeSched ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/collection_schedule'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeSched ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                 <?php if ($activeSched): ?>
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
                 <?php endif; ?>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeSched ? 'text-[#10B981]' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeSched ? 'text-emerald-600' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+                </svg>
                 <span class="sidebar-text">Collection Schedule</span>
                 <span class="sidebar-tooltip">Collection Schedule</span>
             </a>
 
             <!-- Announcements Link -->
             <?php $activeAnnounce = $isActive('/resident/announcements'); ?>
-            <a href="<?php echo app_url('resident/announcements'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeAnnounce ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/announcements'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeAnnounce ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                 <?php if ($activeAnnounce): ?>
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
                 <?php endif; ?>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeAnnounce ? 'text-[#10B981]' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeAnnounce ? 'text-emerald-600' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 9v6h4l5 5V4L8 9H4zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM15 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                 </svg>
                 <span class="sidebar-text">Announcements</span>
                 <span class="sidebar-tooltip">Announcements</span>
@@ -204,27 +210,29 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
 
         <!-- SECTION: ACCOUNT -->
         <div class="space-y-1">
-            <p class="sidebar-section-title px-3 text-[10px] font-black uppercase tracking-wider text-emerald-400/50">Account</p>
+            <p class="sidebar-section-title px-3 text-[10px] font-black uppercase tracking-wider text-slate-400">Account</p>
 
             <!-- Profile Link -->
             <?php $activeProfile = $isActive('/resident/profile'); ?>
-            <a href="<?php echo app_url('resident/profile'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeProfile ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/profile'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeProfile ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                 <?php if ($activeProfile): ?>
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
                 <?php endif; ?>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeProfile ? 'text-[#10B981]' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeProfile ? 'text-emerald-600' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
                 <span class="sidebar-text">Resident Profile</span>
                 <span class="sidebar-tooltip">Resident Profile</span>
             </a>
 
             <!-- Notifications Link -->
             <?php $activeNotif = $isActive('/resident/notification'); ?>
-            <a href="<?php echo app_url('resident/notification'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeNotif ? 'bg-[#083528] text-white border border-emerald-500/30 shadow-xs' : 'text-slate-300 hover:text-white hover:bg-white/5'; ?>">
+            <a href="<?php echo app_url('resident/notification'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeNotif ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                 <?php if ($activeNotif): ?>
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full"></span>
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
                 <?php endif; ?>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeNotif ? 'text-[#10B981]' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeNotif ? 'text-emerald-600' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
                 </svg>
                 <span class="sidebar-text">Notifications</span>
                 <span class="sidebar-tooltip">Notifications</span>
@@ -234,18 +242,18 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
     </div>
 
     <!-- Bottom User Profile Card & Logout -->
-    <div class="shrink-0 p-3 border-t border-emerald-900/40">
-        <div class="flex items-center justify-between p-2 rounded-xl bg-white/5 hover:bg-white/10 transition">
+    <div class="shrink-0 p-3 border-t border-slate-100">
+        <div class="flex items-center justify-between p-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
             <a href="<?php echo app_url('resident/profile'); ?>" class="flex items-center gap-2.5 min-w-0 flex-1 group">
-                <div class="h-8 w-8 rounded-full bg-[#083528] text-white flex items-center justify-center text-xs font-bold border border-emerald-500/30 shrink-0">
+                <div class="h-8 w-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-bold border border-emerald-200 shrink-0">
                     <?php echo strtoupper(substr($firstName, 0, 1)); ?>
                 </div>
                 <div class="sidebar-user-details min-w-0">
-                    <p class="text-xs font-extrabold text-white truncate"><?php echo htmlspecialchars($fullName); ?></p>
-                    <p class="text-[10px] font-semibold text-emerald-400/80 truncate"><?php echo htmlspecialchars($purok); ?></p>
+                    <p class="text-xs font-extrabold text-slate-900 truncate"><?php echo htmlspecialchars($fullName); ?></p>
+                    <p class="text-[10px] font-semibold text-emerald-700 truncate"><?php echo htmlspecialchars($purok); ?></p>
                 </div>
             </a>
-            <a href="<?php echo app_url('auth/logout'); ?>" class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition" title="Sign Out">
+            <a href="<?php echo app_url('auth/logout'); ?>" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Sign Out">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </a>
         </div>

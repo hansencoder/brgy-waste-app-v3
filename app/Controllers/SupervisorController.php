@@ -1470,7 +1470,29 @@ private function generateCalendarData($month, $year, $schedules) {
                 return $this->view('supervisor/profile', $data);
             }
 
-            $db->query("UPDATE users SET name = :name, address = :address, phone_number = :phone WHERE id = :id");
+            $profilePic = null;
+            if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['profile_pic'];
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (in_array($file['type'], $allowedTypes) && $file['size'] <= 5 * 1024 * 1024) {
+                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                    $filename = 'profile_' . $_SESSION['user_id'] . '_' . time() . '.' . $ext;
+                    $uploadDir = dirname(dirname(__DIR__)) . '/public/uploads/profiles/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0755, true);
+                    }
+                    if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+                        $profilePic = 'uploads/profiles/' . $filename;
+                    }
+                }
+            }
+
+            if ($profilePic) {
+                $db->query("UPDATE users SET name = :name, address = :address, phone_number = :phone, profile_pic = :profile_pic WHERE id = :id");
+                $db->bind(':profile_pic', $profilePic);
+            } else {
+                $db->query("UPDATE users SET name = :name, address = :address, phone_number = :phone WHERE id = :id");
+            }
             $db->bind(':name', $name);
             $db->bind(':address', $address);
             $db->bind(':phone', $phone);

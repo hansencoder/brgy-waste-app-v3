@@ -3,16 +3,17 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Loader Component – Brgy. Waste Management System
  *
- * Usage: Already included via layouts/header.php – works across all pages.
- *
- * Behavior:
- *  • Appears immediately on every page load (blocks FOUC)
- *  • Fades out once window "load" event fires
- *  • Safety auto-hide after 8 s
- *  • Respects prefers-reduced-motion
- *  • Zero external dependencies, full ARIA support
+ * Appears ONLY on the public landing page (home/index).
+ * Disabled across all authenticated user accounts and internal portals.
  * ─────────────────────────────────────────────────────────────────────────────
  */
+
+$_reqUrl = isset($_GET['url']) ? trim(strtolower($_GET['url']), '/') : '';
+$_isLandingPage = empty($_reqUrl) || $_reqUrl === 'home' || $_reqUrl === 'home/index';
+
+if (!$_isLandingPage) {
+    return;
+}
 ?>
 
 <!-- ═══════════════════════════════════════════════════════════

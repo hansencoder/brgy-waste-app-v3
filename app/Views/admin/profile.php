@@ -129,7 +129,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                         <!-- Avatar -->
                         <div class="relative flex-shrink-0">
                             <div id="avatarContainer"
-                                 class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#0B2E22] ring-4 ring-white shadow-xl flex items-center justify-center text-white text-4xl font-extrabold overflow-hidden border-2 border-emerald-800">
+                                 class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#0B2E22] ring-4 ring-white shadow-xl flex items-center justify-center text-white text-4xl font-extrabold overflow-hidden">
                                 <?php if (!empty($profilePic)): ?>
                                     <img src="<?php echo htmlspecialchars($profilePic, ENT_QUOTES, 'UTF-8'); ?>" alt="Profile" class="w-full h-full object-cover">
                                 <?php else: ?>
@@ -138,7 +138,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                             </div>
                             <!-- Upload trigger -->
                             <label for="profilePicInput"
-                                   class="absolute -bottom-2 -right-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl bg-[#10B981] text-white shadow-lg hover:bg-emerald-500 transition-transform hover:scale-110 border-2 border-white"
+                                   class="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-[#10B981] text-white shadow-md hover:bg-emerald-500 transition-transform hover:scale-110 border-2 border-white"
                                    title="Upload profile picture">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                             </label>
@@ -978,14 +978,27 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
         });
     }
 
+    let adminOtpCooldownTimer = null;
     function resendOTP() {
-        document.getElementById('resendOTPBtn').disabled = true;
-        document.getElementById('resendOTPBtn').textContent = 'Sending...';
+        const btn = document.getElementById('resendOTPBtn');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
         requestOTP();
-        setTimeout(() => {
-            document.getElementById('resendOTPBtn').disabled = false;
-            document.getElementById('resendOTPBtn').textContent = 'Resend OTP Code';
-        }, 30000);
+        
+        let remaining = 60;
+        if (adminOtpCooldownTimer) clearInterval(adminOtpCooldownTimer);
+
+        adminOtpCooldownTimer = setInterval(() => {
+            remaining--;
+            if (remaining > 0) {
+                btn.disabled = true;
+                btn.textContent = `Resend Code in (${remaining}s)`;
+            } else {
+                clearInterval(adminOtpCooldownTimer);
+                btn.disabled = false;
+                btn.textContent = 'Resend OTP Code';
+            }
+        }, 1000);
     }
 
     // ---- Live Clock ----

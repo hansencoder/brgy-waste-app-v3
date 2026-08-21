@@ -216,8 +216,11 @@ class AuthController extends Controller {
     // ============================================================
     public function index() {
         if (isset($_SESSION['user_id'])) {
-            if ($_SESSION['user_role'] == 'resident') {
+            $role = strtolower($_SESSION['user_role'] ?? '');
+            if ($role === 'resident') {
                 header('Location: ' . app_url('index.php?url=resident'));
+            } elseif ($role === 'supervisor') {
+                header('Location: ' . app_url('index.php?url=supervisor'));
             } else {
                 header('Location: ' . app_url('index.php?url=admin'));
             }
@@ -437,6 +440,7 @@ class AuthController extends Controller {
                 $db->query("
                     SELECT u.*, 
                         r.role_name, 
+                        r.permissions,
                         p.position_name, 
                         pk.purok_name
                     FROM users u
@@ -460,10 +464,23 @@ class AuthController extends Controller {
 
                 $role_name = strtolower($user['role_name'] ?? 'resident');
                 $_SESSION['user_role'] = $role_name;
+                $_SESSION['user_role_id'] = $user['role_id'] ?? null;
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_purok'] = $user['purok_name'] ?? 'Purok 1';
                 $_SESSION['user_position'] = $user['position_name'] ?? 'Resident';
                 $_SESSION['last_activity'] = time();
+
+                // Decode role permissions into session
+                $permissions = [];
+                if ($role_name === 'administrator') {
+                    $permissions = ['all'];
+                } elseif (!empty($user['permissions'])) {
+                    $permissions = json_decode($user['permissions'], true) ?: [];
+                }
+                if (in_array($role_name, ['secretary', 'captain']) && empty($permissions)) {
+                    $permissions = ['all'];
+                }
+                $_SESSION['user_permissions'] = $permissions;
 
                 $this->auditModel->logAction($user_id, 'Login successful', 'User', 'Successfully completed 2FA', 'success');
                 unset($_SESSION['mfa_user_id']);

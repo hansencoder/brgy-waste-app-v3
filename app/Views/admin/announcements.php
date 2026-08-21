@@ -103,12 +103,14 @@ function getVisibilityBadge($visName) {
                         </div>
 
                         <!-- Main Action Buttons -->
+                        <?php if (has_permission('manage_announcements')): ?>
                         <div class="flex flex-wrap items-center gap-2.5">
                             <button onclick="toggleCreatePanel()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#084232] text-white text-xs sm:text-sm font-extrabold transition shadow-xs border border-emerald-900 cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                                 <span>Create Announcement</span>
                             </button>
                         </div>
+                        <?php endif; ?>
                     </div>
 
                     <!-- KPI Statistics Row -->
@@ -341,15 +343,17 @@ function getVisibilityBadge($visName) {
                                             Preview
                                         </button>
 
-                                        <?php if ($_SESSION['user_role'] == 'secretary' || $_SESSION['user_role'] == 'administrator'): ?>
+                                        <?php if (has_permission('manage_announcements')): ?>
                                             <a href="<?php echo app_url('admin/edit_announcement/' . ($item['id'])); ?>" 
                                                class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-xs font-extrabold transition border border-emerald-200 flex items-center gap-1.5">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                                                 Edit
                                             </a>
+                                        <?php endif; ?>
 
+                                        <?php if (has_permission('delete_announcements')): ?>
                                             <button onclick="showDeleteConfirm(<?php echo $item['id']; ?>, '<?php echo addslashes(htmlspecialchars($item['title'])); ?>')" 
-                                                    class="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition border border-transparent hover:border-red-200 cursor-pointer" title="Delete Announcement">
+                                                    class="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition border border-transparent hover:red-200 cursor-pointer" title="Delete Announcement">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                             </button>
                                         <?php endif; ?>

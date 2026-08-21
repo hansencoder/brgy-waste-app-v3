@@ -206,10 +206,10 @@ class SystemMaintenance {
     // ============================================================
 
     /**
-     * Check if current session user is an admin role that bypasses maintenance.
+     * Check if current session user is an admin or staff role that bypasses maintenance.
      */
     public static function isAdminSession() {
         $role = strtolower($_SESSION['user_role'] ?? '');
-        return in_array($role, self::ADMIN_ROLES);
+        return (!empty($role) && $role !== 'resident');
     }
 }

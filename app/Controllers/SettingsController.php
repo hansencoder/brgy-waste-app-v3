@@ -5,9 +5,9 @@ class SettingsController extends Controller {
     private $auditModel;
 
     public function __construct() {
-        // Check if user is logged in and is administrator
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'administrator') {
-            header('Location: ' . app_url('index.php?url=auth'));
+        // Check if user is logged in and has settings permission or is administrator
+        if (!isset($_SESSION['user_id']) || (!has_permission('view_settings') && !has_permission('manage_settings') && ($_SESSION['user_role'] ?? '') !== 'administrator')) {
+            header('Location: ' . app_url('index.php?url=admin'));
             exit;
         }
         $this->userModel = $this->model('User');
@@ -843,6 +843,10 @@ class SettingsController extends Controller {
     // ============================================================
 
     public function role_management() {
+        if (strtolower($_SESSION['user_role'] ?? '') !== 'administrator') {
+            header('Location: ' . app_url('settings/barangay'));
+            exit;
+        }
         $db   = new Database();
         $data = ['error' => '', 'success' => ''];
 

@@ -66,6 +66,29 @@ if (!function_exists('get_client_ip')) {
     }
 }
 
+if (!function_exists('has_permission')) {
+    function has_permission($permission) {
+        $role = strtolower($_SESSION['user_role'] ?? '');
+        if (empty($role) || $role === 'resident') {
+            return false;
+        }
+        if ($role === 'administrator') {
+            return true;
+        }
+        $perms = $_SESSION['user_permissions'] ?? [];
+        if (!is_array($perms)) {
+            $perms = json_decode($perms, true) ?: [];
+        }
+        if (in_array('all', $perms)) {
+            return true;
+        }
+        if (in_array($role, ['secretary', 'captain']) && empty($perms)) {
+            return true;
+        }
+        return in_array($permission, $perms);
+    }
+}
+
 // Session Timeout Handler 
 if (isset($_SESSION['user_id'])) {
     if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) { // 30 mins

@@ -5,15 +5,15 @@ class AdminController extends Controller {
     private $auditModel;
 
     public function __construct() {
-        // Check if user is logged in and has admin role (secretary or captain)
+        // Check if user is logged in
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . app_url('index.php?url=auth'));
             exit;
         }
 
-        // Get user role from database using role_id
+        // Get user role and status from database using role_id
         $db = new Database();
-        $db->query("SELECT u.status, r.role_name FROM users u JOIN roles r ON u.role_id = r.role_id WHERE u.id = :id");
+        $db->query("SELECT u.status, u.role_id, r.role_name, r.permissions FROM users u LEFT JOIN roles r ON u.role_id = r.role_id WHERE u.id = :id");
         $db->bind(':id', $_SESSION['user_id']);
         $user = $db->single();
 
@@ -26,15 +26,37 @@ class AdminController extends Controller {
             exit;
         }
 
-        $roleName = $user ? strtolower($user['role_name']) : '';
+        $roleName = $user ? strtolower($user['role_name'] ?? '') : '';
 
-        if (!in_array($roleName, ['administrator', 'secretary', 'captain'])) {
+        // Role routing guards
+        if ($roleName === 'resident') {
+            header('Location: ' . app_url('index.php?url=resident'));
+            exit;
+        }
+        if ($roleName === 'supervisor') {
+            header('Location: ' . app_url('index.php?url=supervisor'));
+            exit;
+        }
+
+        if (empty($roleName)) {
             header('Location: ' . app_url('index.php?url=auth'));
             exit;
         }
 
-        // Store role in session for easy access
+        // Store role & permissions in session
         $_SESSION['user_role'] = $roleName;
+        $_SESSION['user_role_id'] = $user['role_id'] ?? null;
+
+        $permissions = [];
+        if ($roleName === 'administrator') {
+            $permissions = ['all'];
+        } elseif (!empty($user['permissions'])) {
+            $permissions = json_decode($user['permissions'], true) ?: [];
+        }
+        if (in_array($roleName, ['secretary', 'captain']) && empty($permissions)) {
+            $permissions = ['all'];
+        }
+        $_SESSION['user_permissions'] = $permissions;
 
         $this->userModel = $this->model('User');
         $this->auditModel = $this->model('AuditLog');
@@ -345,7 +367,7 @@ class AdminController extends Controller {
     // GIS MONITORING
     // ============================================================
     public function gis() {
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('view_reports')) {
             die("Unauthorized Access");
         }
 
@@ -510,8 +532,8 @@ class AdminController extends Controller {
     // ACCOUNT MANAGEMENT
     // ============================================================
     public function accounts() {
-        if ($_SESSION['user_role'] != 'secretary' && $_SESSION['user_role'] != 'administrator') {
-            die("Unauthorized Access: Only Barangay Secretary can manage accounts.");
+        if (!has_permission('view_residents') && !has_permission('manage_residents')) {
+            die("Unauthorized Access: You do not have permission to manage accounts.");
         }
 
         // Handle POST actions (suspend, reactivate, deactivate, remove, delete)
@@ -661,8 +683,8 @@ class AdminController extends Controller {
         $reportModel = $this->model('Report');
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
-            if ($_SESSION['user_role'] != 'secretary' && $_SESSION['user_role'] != 'administrator') {
-                die("Unauthorized Access: Only Barangay Secretary can perform report actions.");
+            if (!has_permission('manage_report_status')) {
+                die("Unauthorized Access: You do not have permission to perform report actions.");
             }
 
             $report_id = filter_var($_POST['report_id'] ?? 0, FILTER_VALIDATE_INT);
@@ -975,7 +997,7 @@ class AdminController extends Controller {
 
     public function viewReport($id) {
         // Check permission
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('view_reports')) {
             die("Unauthorized Access");
         }
 
@@ -1078,7 +1100,7 @@ class AdminController extends Controller {
             exit;
         }
 
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('manage_report_status')) {
             die("Unauthorized Access");
         }
 
@@ -1187,8 +1209,8 @@ class AdminController extends Controller {
     // FLAGGED REPORTS
     // ============================================================
     public function flaggedReports() {
-        if ($_SESSION['user_role'] != 'secretary' && $_SESSION['user_role'] != 'administrator') {
-            die("Unauthorized Access: Only Barangay Secretary can view flagged reports.");
+        if (!has_permission('view_reports')) {
+            die("Unauthorized Access: You do not have permission to view flagged reports.");
         }
 
         $db = new Database();
@@ -1220,8 +1242,8 @@ class AdminController extends Controller {
  */
     public function createStaff()
     {
-        if ($_SESSION['user_role'] != 'administrator') {
-            die("Unauthorized: Only administrators can create staff accounts.");
+        if (!has_permission('manage_residents')) {
+            die("Unauthorized: Only administrators and designated staff can create staff accounts.");
         }
 
         $data = ['error' => '', 'success' => '', 'positions' => [], 'roles' => [], 'puroks' => []];
@@ -1312,7 +1334,7 @@ class AdminController extends Controller {
     // EXPORT
     // ============================================================
     public function export() {
-        if (!in_array($_SESSION['user_role'] ?? '', ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('export_reports')) {
             die("Unauthorized Access");
         }
 
@@ -1413,8 +1435,8 @@ class AdminController extends Controller {
     // STATISTICS & ANALYTICS (Report Summaries)
     // ============================================================
     public function report_summaries() {
-        if (!in_array($_SESSION['user_role'] ?? '', ['administrator', 'captain', 'secretary'])) {
-            header('Location: ' . app_url('index.php?url=auth'));
+        if (!has_permission('view_analytics')) {
+            header('Location: ' . app_url('index.php?url=admin'));
             exit;
         }
         $filters = $this->parseAnalyticsFilters($_GET);
@@ -1432,7 +1454,7 @@ class AdminController extends Controller {
     // AUDIT LOGS
     // ============================================================
     public function auditLogs() {
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('view_audit_logs')) {
             die("Unauthorized Access");
         }
 
@@ -1462,13 +1484,24 @@ class AdminController extends Controller {
             $db->execute();
         } catch (Exception $e) {}
 
-        // Fetch logs with user and role details
+        // Auto-purge archived logs older than 30 days (unless restored)
+        try {
+            $db->query("DELETE FROM `audit_logs_archive` WHERE `archived_at` < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $db->execute();
+        } catch (Exception $e) {}
+
+        // Fetch logs with user and role details (plus retention countdown for archive)
+        $selectFields = "a.*, u.name as user_name, u.email as user_email, r.role_name";
+        if ($isArchiveView) {
+            $selectFields .= ", DATEDIFF(DATE_ADD(a.archived_at, INTERVAL 30 DAY), NOW()) as days_until_purge, DATE_ADD(a.archived_at, INTERVAL 30 DAY) as purge_date";
+        }
+
         $db->query("
-            SELECT a.*, u.name as user_name, u.email as user_email, r.role_name
+            SELECT {$selectFields}
             FROM {$targetTable} a 
             LEFT JOIN users u ON a.user_id = u.id 
             LEFT JOIN roles r ON u.role_id = r.role_id
-            ORDER BY a.created_at DESC
+            ORDER BY " . ($isArchiveView ? "a.archived_at DESC, a.created_at DESC" : "a.created_at DESC") . "
             LIMIT 2000
         ");
         $logs = $db->resultSet();
@@ -1542,7 +1575,7 @@ class AdminController extends Controller {
      * Archive old or selected audit logs to audit_logs_archive table to keep active table fast
      */
     public function archiveAuditLogs() {
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('view_audit_logs')) {
             die("Unauthorized Access");
         }
 
@@ -1611,7 +1644,7 @@ class AdminController extends Controller {
      * Restore archived audit logs back to active table
      */
     public function restoreArchivedLogs() {
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('view_audit_logs')) {
             die("Unauthorized Access");
         }
 
@@ -1671,7 +1704,7 @@ class AdminController extends Controller {
      * Export Audit Logs as CSV
      */
     public function exportAuditLogs() {
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('view_audit_logs')) {
             die("Unauthorized Access");
         }
 
@@ -1734,7 +1767,7 @@ class AdminController extends Controller {
     public function announcements() {
         $db = new Database();
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && ($_SESSION['user_role'] == 'secretary' || $_SESSION['user_role'] == 'administrator')) {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && has_permission('manage_announcements')) {
             if (!empty($_POST['title']) && !empty($_POST['content'])) {
                 $visibility_id = isset($_POST['visibility_id']) ? (int)$_POST['visibility_id'] : 1;
                 $publish_date = !empty($_POST['publish_date']) ? $_POST['publish_date'] : date('Y-m-d H:i:s');
@@ -1800,8 +1833,8 @@ class AdminController extends Controller {
     // DELETE ANNOUNCEMENT
     // ============================================================
     public function delete_announcement() {
-        if ($_SESSION['user_role'] != 'secretary' && $_SESSION['user_role'] != 'administrator') {
-            die("Unauthorized Access: Only Barangay Secretary can delete announcements.");
+        if (!has_permission('delete_announcements')) {
+            die("Unauthorized Access: You do not have permission to delete announcements.");
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['announcement_id'])) {
@@ -1823,7 +1856,7 @@ class AdminController extends Controller {
      * Edit announcement
      */
     public function edit_announcement($id) {
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator'])) {
+        if (!has_permission('manage_announcements')) {
             die("Unauthorized Access");
         }
 
@@ -1897,7 +1930,7 @@ class AdminController extends Controller {
 // SCHEDULE MANAGEMENT
 // ============================================================
 public function schedule() {
-    if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+    if (!has_permission('view_schedules')) {
         die("Unauthorized Access");
     }
 
@@ -1999,7 +2032,7 @@ private function generateCalendarData($month, $year, $schedules) {
     // ADD SCHEDULE
     // ============================================================
     public function addSchedule() {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !has_permission('manage_schedules')) {
             header('Location: ' . app_url('admin/schedule'));
             exit;
         }
@@ -2051,7 +2084,7 @@ private function generateCalendarData($month, $year, $schedules) {
     // EDIT SCHEDULE (Show Form)
     // ============================================================
     public function editSchedule($id) {
-        if (!in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if (!has_permission('manage_schedules')) {
             die("Unauthorized Access");
         }
 
@@ -2087,7 +2120,7 @@ private function generateCalendarData($month, $year, $schedules) {
     // UPDATE SCHEDULE
     // ============================================================
     public function updateSchedule() {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !has_permission('manage_schedules')) {
             header('Location: ' . app_url('admin/schedule'));
             exit;
         }
@@ -2149,7 +2182,7 @@ private function generateCalendarData($month, $year, $schedules) {
     // DELETE SCHEDULE
     // ============================================================
     public function deleteSchedule() {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator', 'captain'])) {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !has_permission('delete_schedules')) {
             header('Location: ' . app_url('admin/schedule'));
             exit;
         }
@@ -2179,7 +2212,7 @@ private function generateCalendarData($month, $year, $schedules) {
      * Postpone/Reschedule collection schedule
      */
     public function postpone_schedule() {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !in_array($_SESSION['user_role'], ['secretary', 'administrator'])) {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !has_permission('manage_schedules')) {
             header('Location: ' . app_url('admin/schedule'));
             exit;
         }

@@ -156,6 +156,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                 </a>
 
                 <!-- Reports -->
+                <?php if (has_permission('view_reports')): ?>
                 <?php $activeReports = $isReportsPage; ?>
                 <a href="<?php echo app_url('admin/reports'); ?>" title="Reports" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeReports ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeReports): ?>
@@ -169,9 +170,10 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                         <span class="sidebar-badge ml-auto rounded-full bg-[#FF4D4D] text-white text-[10px] font-black px-2 py-0.5 shadow-sm"><?php echo $pendingCount; ?></span>
                     <?php endif; ?>
                 </a>
+                <?php endif; ?>
 
                 <!-- User Mgmt -->
-                <?php if (in_array($_SESSION['user_role'] ?? 'administrator', ['secretary', 'administrator'])): ?>
+                <?php if (has_permission('view_residents') || has_permission('manage_residents')): ?>
                 <?php $activeUsers = $isActive('/admin/accounts'); ?>
                 <a href="<?php echo app_url('admin/accounts'); ?>" title="User Management" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeUsers ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeUsers): ?>
@@ -185,6 +187,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                 <?php endif; ?>
 
                 <!-- Settings -->
+                <?php if (has_permission('view_settings') || has_permission('manage_settings')): ?>
                 <?php $activeSettings = $isActive('/settings'); ?>
                 <a href="<?php echo app_url('settings/barangay'); ?>" title="Settings" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeSettings ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeSettings): ?>
@@ -195,6 +198,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                     </svg>
                     <span class="sidebar-text">Settings</span>
                 </a>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -203,6 +207,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
             <p class="sidebar-section-title text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2 px-3">MANAGEMENT</p>
             <div class="space-y-1">
                 <!-- Create Staff -->
+                <?php if (has_permission('manage_residents')): ?>
                 <?php $activeStaff = $isActive('/admin/createStaff'); ?>
                 <a href="<?php echo app_url('admin/createStaff'); ?>" title="Create Staff" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeStaff ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeStaff): ?>
@@ -213,8 +218,10 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                     </svg>
                     <span class="sidebar-text">Create Staff</span>
                 </a>
+                <?php endif; ?>
 
                 <!-- GIS Monitor -->
+                <?php if (has_permission('view_reports')): ?>
                 <?php $activeGis = $isActive('/admin/gis'); ?>
                 <a href="<?php echo app_url('admin/gis'); ?>" title="GIS Monitor" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeGis ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeGis): ?>
@@ -225,8 +232,10 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                     </svg>
                     <span class="sidebar-text">GIS Monitor</span>
                 </a>
+                <?php endif; ?>
 
                 <!-- Schedule -->
+                <?php if (has_permission('view_schedules')): ?>
                 <?php $activeSched = $isActive('/admin/schedule') || strpos($currentUri, '/admin/editSchedule') !== false; ?>
                 <a href="<?php echo app_url('admin/schedule'); ?>" title="Schedule" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeSched ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeSched): ?>
@@ -237,8 +246,10 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                     </svg>
                     <span class="sidebar-text">Schedule</span>
                 </a>
+                <?php endif; ?>
 
                 <!-- Announcements -->
+                <?php if (has_permission('view_announcements')): ?>
                 <?php $activeAnnounce = $isActive('/admin/announcements'); ?>
                 <a href="<?php echo app_url('admin/announcements'); ?>" title="Announcements" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeAnnounce ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeAnnounce): ?>
@@ -249,6 +260,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                     </svg>
                     <span class="sidebar-text">Announcements</span>
                 </a>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -257,6 +269,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
             <p class="sidebar-section-title text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2 px-3">SYSTEM</p>
             <div class="space-y-1">
                 <!-- Analytics -->
+                <?php if (has_permission('view_analytics')): ?>
                 <?php $activeAnalytics = $isActive('/admin/report_summaries'); ?>
                 <a href="<?php echo app_url('admin/report_summaries'); ?>" title="Analytics" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeAnalytics ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeAnalytics): ?>
@@ -267,8 +280,10 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                     </svg>
                     <span class="sidebar-text">Analytics</span>
                 </a>
+                <?php endif; ?>
 
                 <!-- Audit Logs -->
+                <?php if (has_permission('view_audit_logs')): ?>
                 <?php $activeAudit = $isActive('/admin/auditLogs'); ?>
                 <a href="<?php echo app_url('admin/auditLogs'); ?>" title="Audit Logs" class="sidebar-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all <?php echo $activeAudit ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                     <?php if ($activeAudit): ?>
@@ -279,6 +294,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                     </svg>
                     <span class="sidebar-text">Audit Logs</span>
                 </a>
+                <?php endif; ?>
 
                 <!-- Profile -->
                 <?php $activeProfile = $isActive('/admin/profile'); ?>

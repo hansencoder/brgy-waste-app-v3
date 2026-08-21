@@ -85,7 +85,7 @@ function getActionMeta($action) {
     }
 </style>
 
-<div class="flex h-screen bg-slate-50 overflow-hidden w-full">
+<div class="flex h-screen bg-[#F8FAFC] overflow-hidden w-full">
     <!-- Desktop & Mobile Sidebar Navigation -->
     <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
@@ -96,7 +96,7 @@ function getActionMeta($action) {
         <?php include __DIR__ . '/../layouts/admin_topbar.php'; ?>
         
         <!-- Scrollable Main Container -->
-        <main class="flex-1 overflow-y-auto bg-slate-50 focus:outline-none">
+        <main class="flex-1 overflow-y-auto bg-[#F8FAFC] focus:outline-none">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
                 <!-- Flash Alert Messages -->
@@ -193,6 +193,21 @@ function getActionMeta($action) {
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold <?php echo $isArchiveView ? 'bg-emerald-800 text-emerald-100' : 'bg-slate-100 text-slate-600'; ?>"><?php echo number_format($archivedCount); ?></span>
                     </a>
                 </div>
+
+                <?php if ($isArchiveView): ?>
+                    <!-- 30-Day Auto-Purge Policy Notice Banner -->
+                    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs font-semibold flex items-center justify-between shadow-2xs">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-amber-100 border border-amber-300 text-amber-900 flex items-center justify-center shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <div>
+                                <p class="font-black text-amber-950 text-xs sm:text-sm">30-Day Auto-Delete Policy Active</p>
+                                <p class="text-[11px] text-amber-800 mt-0.5">Archived logs are retained safely in this vault for <strong>30 days</strong>. If not restored back to the Active Audit Trail within 30 days, they are automatically purged from the database to maintain performance.</p>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <!-- 2. KPI Metric Summary Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -375,6 +390,26 @@ function getActionMeta($action) {
                                             <td class="px-5 py-3.5 whitespace-nowrap cursor-pointer" onclick="inspectLog(<?php echo htmlspecialchars(json_encode($log)); ?>)">
                                                 <div class="font-extrabold text-slate-900"><?php echo date('M d, Y', strtotime($log['created_at'])); ?></div>
                                                 <div class="text-[10px] text-slate-400 font-mono"><?php echo date('h:i:s A', strtotime($log['created_at'])); ?></div>
+                                                <?php if ($isArchiveView && !empty($log['archived_at'])): 
+                                                    $archivedTime = strtotime($log['archived_at']);
+                                                    $daysPassed = max(0, floor((time() - $archivedTime) / 86400));
+                                                    $daysLeft = max(0, 30 - $daysPassed);
+                                                    $purgeDate = date('M d, Y', strtotime('+30 days', $archivedTime));
+                                                ?>
+                                                    <div class="mt-1 flex items-center gap-1">
+                                                        <?php if ($daysLeft <= 5): ?>
+                                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-rose-100 text-rose-800 border border-rose-300 animate-pulse" title="Auto-deletes on <?php echo $purgeDate; ?> if not restored">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 text-rose-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                                Expires in <?php echo $daysLeft; ?>d
+                                                            </span>
+                                                        <?php else: ?>
+                                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200" title="Auto-deletes on <?php echo $purgeDate; ?> if not restored">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                                <?php echo $daysLeft; ?> days left
+                                                            </span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
                                             </td>
 
                                             <!-- Actor -->
@@ -530,8 +565,8 @@ function getActionMeta($action) {
                 <input type="hidden" name="archive_scope" id="archiveScopeInput" value="days">
                 <input type="hidden" name="selected_ids" id="archiveSelectedIdsInput" value="">
 
-                <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
-                    <strong>💡 Performance Tip:</strong> Archiving moves old logs to the <code>audit_logs_archive</code> table. This significantly speeds up database queries, report filtering, and overall portal responsiveness. You can review or restore archived records at any time from the <strong>Archive Vault</strong> tab.
+                <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-[11px] leading-relaxed">
+                    <strong>💡 30-Day Auto-Purge Policy:</strong> Archiving moves old logs to the <code>audit_logs_archive</code> table. Archived logs are retained for <strong>30 days</strong>. If not restored back to the Active Audit Trail within 30 days, they will be automatically deleted from the database.
                 </div>
 
                 <div id="archiveDaysContainer">
@@ -722,6 +757,24 @@ function getActionMeta($action) {
                 <div>
                     <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">User Agent / Client</span>
                     <span class="text-[11px] font-mono text-slate-500 truncate block" id="modalAgent"></span>
+                </div>
+            </div>
+
+            <!-- Archive Retention Info Block (Shown for archived records) -->
+            <div id="modalArchiveInfoBlock" style="display: none;" class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 space-y-1.5">
+                <div class="flex items-center gap-1.5 text-amber-900 font-extrabold text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>30-Day Archival Retention</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[11px] text-amber-950 pt-1">
+                    <div>
+                        <span class="text-amber-800 font-bold block">Archived Date:</span>
+                        <span id="modalArchivedAt" class="font-mono font-bold"></span>
+                    </div>
+                    <div>
+                        <span class="text-amber-800 font-bold block">Auto-Purge Expiration:</span>
+                        <span id="modalPurgeDate" class="font-bold"></span>
+                    </div>
                 </div>
             </div>
 
@@ -1207,6 +1260,23 @@ function getActionMeta($action) {
         document.getElementById('modalResult').innerHTML = isSuccess 
             ? '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-900 border border-emerald-300">SUCCESS</span>'
             : '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-red-50 text-red-900 border border-red-300">FAILED</span>';
+
+        // Display Archive Retention details if archived
+        const archiveBlock = document.getElementById('modalArchiveInfoBlock');
+        if (archiveBlock) {
+            if (log.archived_at) {
+                const archTime = new Date(log.archived_at.replace(/-/g, '/')).getTime();
+                const daysPassed = isNaN(archTime) ? 0 : Math.max(0, Math.floor((Date.now() - archTime) / (1000 * 60 * 60 * 24)));
+                const daysLeft = Math.max(0, 30 - daysPassed);
+                const purgeDate = new Date((isNaN(archTime) ? Date.now() : archTime) + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                archiveBlock.style.display = '';
+                document.getElementById('modalArchivedAt').textContent = log.archived_at;
+                document.getElementById('modalPurgeDate').innerHTML = `<span class="${daysLeft <= 5 ? 'text-rose-700 font-extrabold' : 'text-amber-900 font-bold'}">${purgeDate} (${daysLeft} day${daysLeft === 1 ? '' : 's'} left)</span>`;
+            } else {
+                archiveBlock.style.display = 'none';
+            }
+        }
 
         document.getElementById('logDetailModal').classList.remove('hidden');
     }

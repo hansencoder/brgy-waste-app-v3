@@ -142,7 +142,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                    title="Upload profile picture">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                             </label>
-                            <input id="profilePicInput" type="file" name="profile_pic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
+                            <input id="profilePicInput" form="profileForm" type="file" name="profile_pic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
                         </div>
 
                         <!-- Identity Info -->
@@ -390,8 +390,6 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                 </div>
 
                                 <form id="profileForm" action="<?php echo app_url('admin/profile'); ?>" method="POST" enctype="multipart/form-data" class="space-y-5">
-                                    <input id="profilePicInput2" type="file" name="profile_pic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
-
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <!-- Full Name -->
                                         <div>
@@ -845,6 +843,21 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
         } else {
             error.classList.add('hidden');
             ok.classList.add('hidden');
+        }
+    }
+
+    // ---- Profile Picture Preview ----
+    function previewProfilePic(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const container = document.getElementById('avatarContainer');
+                if (container) {
+                    container.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="w-full h-full object-cover">`;
+                }
+            };
+            reader.readAsDataURL(file);
         }
     }
 

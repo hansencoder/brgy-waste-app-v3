@@ -1342,6 +1342,14 @@ public function schedule() {
     // Generate calendar data
     $data['calendar_days'] = $this->generateCalendarData($month, $year, $schedules);
 
+    // Fetch active collection notes
+    try {
+        $db->query("SELECT * FROM collection_notes WHERE is_active = 1 ORDER BY sort_order ASC, note_id ASC");
+        $data['collection_notes'] = $db->resultSet();
+    } catch (Exception $e) {
+        $data['collection_notes'] = [];
+    }
+
     $this->auditModel->logAction($_SESSION['user_id'], 'Collection Schedule View', 'Schedule', 'Supervisor viewed collection schedule', 'success');
 
     $this->view('supervisor/schedule', $data);

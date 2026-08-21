@@ -820,22 +820,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 markersLayerGroup.addLayer(marker);
                 markerIdMap[r.id] = { marker, lat, lng };
 
-                // Heat Density Weighting:
-                // <= 3 reports: Low Density (weight 0.35)
-                // 4 - 8 reports: Medium Density (weight 0.70)
-                // >= 9 reports: High Density (weight 1.00)
-                const pCount = r.purok ? (purokCountMap[r.purok.toLowerCase()] || 1) : 1;
-                let weight = 0.35;
-                if (pCount >= 9) {
-                    weight = 1.0;
-                } else if (pCount >= 4) {
-                    weight = 0.70;
-                }
-                if (r.status === 'Pending') {
-                    weight = Math.min(weight, 0.45);
-                }
+                // Heat Density Weighting based on configured thresholds:
+                // If local report count is below low_min threshold, suppress heatmap blob to prevent false alarms
+                const heatmapLowMin = <?php echo (int)($heatmap_settings['low_min'] ?? $heatmap_settings['minimum_reports'] ?? 3); ?>;
+                const heatmapModMin = <?php echo (int)($heatmap_settings['moderate_min'] ?? 6); ?>;
+                const heatmapSevMin = <?php echo (int)($heatmap_settings['severe_min'] ?? 11); ?>;
 
-                heatData.push([lat, lng, weight]);
+                const pCount = r.purok ? (purokCountMap[r.purok.toLowerCase()] || 1) : 1;
+                if (pCount >= heatmapLowMin) {
+                    let weight = 0.35;
+                    if (pCount >= heatmapSevMin) {
+                        weight = 1.0;
+                    } else if (pCount >= heatmapModMin) {
+                        weight = 0.70;
+                    }
+                    if (r.status === 'Pending') {
+                        weight = Math.min(weight, 0.45);
+                    }
+                    heatData.push([lat, lng, weight]);
+                }
 
                 // Stream List Item
                 if (streamContainer) {

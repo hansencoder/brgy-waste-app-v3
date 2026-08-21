@@ -143,13 +143,12 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                         ?>
 
                         <div class="flex-1 min-w-0 space-y-6">
-                            <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                            <!-- Top Control Cards Grid (3 Columns) -->
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 
-                                <!-- Left Control Panel (4 Cols) -->
-                                <div class="xl:col-span-4 space-y-6">
-                                    
-                                    <!-- 1. Center Location & Coordinates Card -->
-                                    <div class="bg-white rounded-2xl border-2 border-slate-250 p-6 shadow-xs space-y-5">
+                                <!-- 1. Center Location & Coordinates Card -->
+                                <div class="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-xs space-y-5 flex flex-col justify-between">
+                                    <div class="space-y-4">
                                         <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                                             <h3 class="text-base font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
@@ -168,12 +167,12 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                                             <div>
                                                 <label class="block text-xs font-extrabold text-slate-700 mb-1">Center Latitude</label>
                                                 <input type="number" step="0.000001" id="inputCenterLat" value="<?php echo htmlspecialchars($centerLat); ?>" 
-                                                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono font-bold text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" onchange="updateCenterInputs()">
+                                                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono font-bold text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" onchange="updateCenterInputs()">
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-extrabold text-slate-700 mb-1">Center Longitude</label>
                                                 <input type="number" step="0.000001" id="inputCenterLng" value="<?php echo htmlspecialchars($centerLng); ?>" 
-                                                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono font-bold text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" onchange="updateCenterInputs()">
+                                                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono font-bold text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition" onchange="updateCenterInputs()">
                                             </div>
                                         </div>
 
@@ -187,26 +186,28 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                                             <input type="range" id="inputZoom" min="11" max="18" value="<?php echo $defaultZoom; ?>" 
                                                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600" oninput="updateZoomDisplay(this.value)">
                                             <div class="flex justify-between text-[10px] text-slate-400 font-extrabold pt-1">
-                                                <span>11 (Town Level)</span>
+                                                <span>11 (Town)</span>
                                                 <span>15 (Barangay Default)</span>
-                                                <span>18 (Street Level)</span>
+                                                <span>18 (Street)</span>
                                             </div>
-                                        </div>
-
-                                        <div class="pt-2 flex flex-col gap-2">
-                                            <button type="button" onclick="captureCurrentMapView()" class="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-extrabold rounded-xl transition border border-slate-300 flex items-center justify-center gap-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                                                <span>Capture Current Map View as Center</span>
-                                            </button>
-                                            <button type="button" onclick="toggleCenterPinMarker()" id="btnCenterPin" class="w-full py-2.5 px-3 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-extrabold rounded-xl transition border border-amber-200 flex items-center justify-center gap-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                                                <span id="centerPinBtnText">Show Draggable Center Pin</span>
-                                            </button>
                                         </div>
                                     </div>
 
-                                    <!-- 2. Spatial Analytics & Geometry Info Card -->
-                                    <div class="bg-white rounded-2xl border-2 border-slate-250 p-6 shadow-xs space-y-4">
+                                    <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
+                                        <button type="button" onclick="captureCurrentMapView()" class="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-extrabold rounded-xl transition border border-slate-200 flex items-center justify-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                            <span>Capture Map View</span>
+                                        </button>
+                                        <button type="button" onclick="toggleCenterPinMarker()" id="btnCenterPin" class="w-full py-2.5 px-3 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-extrabold rounded-xl transition border border-amber-200 flex items-center justify-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <span id="centerPinBtnText">Show Draggable Center Pin</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 2. Spatial Analytics & Geometry Info Card -->
+                                <div class="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-xs space-y-4 flex flex-col justify-between">
+                                    <div class="space-y-4">
                                         <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                                             <h3 class="text-base font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
@@ -238,9 +239,14 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 font-semibold">
+                                        Perimeter metrics auto-recalculate in real-time as you edit the boundary points on the map.
+                                    </div>
+                                </div>
 
-                                    <!-- 3. Purok Sub-Zones Overview Toggle Card -->
-                                    <div class="bg-white rounded-2xl border-2 border-slate-250 p-6 shadow-xs space-y-4">
+                                <!-- 3. Purok Sub-Zones Overview Toggle Card -->
+                                <div class="bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-xs space-y-4 flex flex-col justify-between">
+                                    <div class="space-y-3">
                                         <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                                             <h3 class="text-base font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
@@ -253,10 +259,10 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                                         </div>
 
                                         <p class="text-xs text-slate-600 font-semibold">
-                                            Overlays all internal Purok polygons inside the master boundary to ensure sub-zone alignment.
+                                            Overlays all internal Purok polygons inside master boundary.
                                         </p>
 
-                                        <div class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                                        <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                                             <?php foreach ($data['puroks'] as $p): ?>
                                                 <div class="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-200">
                                                     <span class="font-extrabold text-slate-800"><?php echo htmlspecialchars($p['purok_name']); ?></span>
@@ -269,77 +275,79 @@ $defaultZoom = (int)($data['map_center']['zoom'] ?? 15);
                                             <?php endforeach; ?>
                                         </div>
                                     </div>
-
+                                    <a href="<?php echo app_url('settings/purok_boundaries'); ?>" class="text-xs font-bold text-teal-700 hover:text-teal-800 text-center block pt-2 border-t border-slate-100">
+                                        Manage Purok Polygons →
+                                    </a>
                                 </div>
 
-                                <!-- Right Map Editor Canvas (8 Cols) -->
-                                <div class="xl:col-span-8 bg-white rounded-2xl border-2 border-slate-250 p-5 sm:p-6 shadow-xs flex flex-col justify-between space-y-4">
-                                    <div>
-                                        <!-- Editor Header & Actions -->
-                                        <div class="flex flex-col  lg:items-center justify-between gap-3 mb-4 border-b border-slate-200 pb-4">
-                                            <div class="min-w-0">
-                                                <h2 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2 tracking-tight">
-                                                    <span class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200/60 inline-flex items-center justify-center shrink-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
-                                                    </span>
-                                                    <span>Interactive Perimeter &amp; Polygon Editor</span>
-                                                </h2>
-                                                <p class="text-xs text-slate-500 font-semibold mt-1">
-                                                    Use drawing tools on the map to redraw or drag vertices to modify boundaries.
-                                                </p>
-                                            </div>
+                            </div>
 
-                                            <!-- Action Buttons Group -->
-                                            <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
-                                                <button id="btnSaveMasterBoundary" type="button" onclick="submitMasterBoundary()" 
-                                                        class="px-4 py-2.5 bg-[#0B2E22] hover:bg-[#07241a] text-white text-xs sm:text-sm font-black rounded-xl transition shadow-xs hover:shadow-md flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                                                    <span>Save Master Boundary</span>
-                                                </button>
-                                                <button type="button" onclick="fitMapToBoundary()" 
-                                                        class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-xs sm:text-sm font-bold rounded-xl transition border border-slate-250 flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                                    <span>Fit View</span>
-                                                </button>
-                                                <button type="button" onclick="clearDrawnBoundary()" 
-                                                        class="px-3 py-2.5 bg-slate-100 hover:bg-rose-50 hover:border-rose-200 text-slate-700 hover:text-rose-600 text-xs sm:text-sm font-bold rounded-xl transition border border-slate-250 cursor-pointer whitespace-nowrap">
-                                                    Clear
-                                                </button>
-                                            </div>
+                            <!-- Bottom Full-Width Map Editor Canvas -->
+                            <div class="w-full bg-white rounded-2xl border-2 border-slate-200 p-5 sm:p-6 shadow-xs flex flex-col justify-between space-y-4">
+                                <div>
+                                    <!-- Editor Header & Actions -->
+                                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 border-b border-slate-200 pb-4">
+                                        <div class="min-w-0">
+                                            <h2 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2 tracking-tight">
+                                                <span class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 inline-flex items-center justify-center shrink-0">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                                                </span>
+                                                <span>Interactive Perimeter &amp; Polygon Editor</span>
+                                            </h2>
+                                            <p class="text-xs text-slate-500 font-semibold mt-1">
+                                                Use drawing tools on the map to redraw or drag vertices to modify boundaries.
+                                            </p>
                                         </div>
 
-                                        <!-- Map Canvas -->
-                                        <div id="masterBoundaryMap" class="h-[560px] sm:h-[620px] w-full rounded-2xl border-2 border-slate-250 relative overflow-hidden shadow-inner">
-                                            <!-- Coordinates HUD tracker at bottom right -->
-                                            <div id="mouseCoordHUD" class="absolute bottom-3 right-3 z-[1000] bg-slate-900/85 backdrop-blur-xs text-white text-[11px] font-mono font-bold px-3 py-1.5 rounded-lg border border-slate-700 shadow-md pointer-events-none">
-                                                Lat: -- | Lng: --
-                                            </div>
+                                        <!-- Action Buttons Group -->
+                                        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
+                                            <button id="btnSaveMasterBoundary" type="button" onclick="submitMasterBoundary()" 
+                                                    class="px-4 py-2.5 bg-[#0B2E22] hover:bg-[#07241a] text-white text-xs sm:text-sm font-black rounded-xl transition shadow-xs hover:shadow-md flex items-center gap-2 cursor-pointer active:scale-95 whitespace-nowrap">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                                <span>Save Master Boundary</span>
+                                            </button>
+                                            <button type="button" onclick="fitMapToBoundary()" 
+                                                    class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-xs sm:text-sm font-bold rounded-xl transition border border-slate-200 flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                                <span>Fit View</span>
+                                            </button>
+                                            <button type="button" onclick="clearDrawnBoundary()" 
+                                                    class="px-3 py-2.5 bg-slate-100 hover:bg-rose-50 hover:border-rose-200 text-slate-700 hover:text-rose-600 text-xs sm:text-sm font-bold rounded-xl transition border border-slate-200 cursor-pointer whitespace-nowrap">
+                                                Clear
+                                            </button>
                                         </div>
+                                    </div>
 
-                                        <!-- Legend & Reference Info -->
-                                        <div class="mt-4 pt-3.5 border-t border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
-                                            <div class="flex items-center gap-2.5 flex-wrap">
-                                                <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-emerald-50/80 border border-emerald-200/80 text-slate-700 font-bold text-[11px] sm:text-xs">
-                                                    <span class="w-3.5 h-3.5 rounded-sm border-2 border-emerald-600 bg-emerald-500/25 shrink-0"></span>
-                                                    <span>Official Boundary</span>
-                                                </span>
-                                                <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-teal-50/80 border border-teal-200/80 text-slate-700 font-bold text-[11px] sm:text-xs">
-                                                    <span class="w-3.5 h-3.5 rounded-sm border-2 border-dashed border-teal-500 bg-teal-500/15 shrink-0"></span>
-                                                    <span>Purok Sub-Zones</span>
-                                                </span>
-                                                <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-amber-50/80 border border-amber-200/80 text-slate-700 font-bold text-[11px] sm:text-xs">
-                                                    <span class="w-3 h-3 rounded-full bg-amber-500 border-2 border-white shadow-xs shrink-0"></span>
-                                                    <span>Map Center Pin</span>
-                                                </span>
-                                            </div>
-                                            <div class="flex items-center gap-1.5 text-slate-400 font-mono text-[11px] shrink-0 self-end md:self-auto">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                <span>Spatial Ref: WGS 84 (EPSG:4326)</span>
-                                            </div>
+                                    <!-- Map Canvas -->
+                                    <div id="masterBoundaryMap" class="h-[560px] sm:h-[620px] w-full rounded-2xl border-2 border-slate-200 relative overflow-hidden shadow-inner">
+                                        <!-- Coordinates HUD tracker at bottom right -->
+                                        <div id="mouseCoordHUD" class="absolute bottom-3 right-3 z-[1000] bg-slate-900/85 backdrop-blur-xs text-white text-[11px] font-mono font-bold px-3 py-1.5 rounded-lg border border-slate-700 shadow-md pointer-events-none">
+                                            Lat: -- | Lng: --
+                                        </div>
+                                    </div>
+
+                                    <!-- Legend & Reference Info -->
+                                    <div class="mt-4 pt-3.5 border-t border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                                        <div class="flex items-center gap-2.5 flex-wrap">
+                                            <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-slate-700 font-bold text-[11px] sm:text-xs">
+                                                <span class="w-3.5 h-3.5 rounded-sm border-2 border-emerald-600 bg-emerald-500/25 shrink-0"></span>
+                                                <span>Official Boundary</span>
+                                            </span>
+                                            <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200 text-slate-700 font-bold text-[11px] sm:text-xs">
+                                                <span class="w-3.5 h-3.5 rounded-sm border-2 border-dashed border-teal-500 bg-teal-500/15 shrink-0"></span>
+                                                <span>Purok Sub-Zones</span>
+                                            </span>
+                                            <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-slate-700 font-bold text-[11px] sm:text-xs">
+                                                <span class="w-3 h-3 rounded-full bg-amber-500 border-2 border-white shadow-xs shrink-0"></span>
+                                                <span>Map Center Pin</span>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-slate-400 font-mono text-[11px] shrink-0 self-end md:self-auto">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            <span>Spatial Ref: WGS 84 (EPSG:4326)</span>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

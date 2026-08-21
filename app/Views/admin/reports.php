@@ -458,7 +458,6 @@ $metrics = [
                                             <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAllRows(this)" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
                                         </th>
                                         <th class="py-3.5 px-4">Report ID</th>
-                                        <th class="py-3.5 px-3">Evidence</th>
                                         <th class="py-3.5 px-4">Submission Date</th>
                                         <th class="py-3.5 px-4">Reporter Info</th>
                                         <th class="py-3.5 px-4">Waste Category</th>
@@ -502,21 +501,7 @@ $metrics = [
                                                 </a>
                                             </td>
 
-                                            <!-- Evidence Photo Preview -->
-                                            <td class="py-3.5 px-3">
-                                                <?php if (!empty($report['photo_path'])): ?>
-                                                    <a href="<?php echo app_url('admin/viewReport/' . ($report['id'])); ?>" class="relative block w-10 h-10 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 group shadow-2xs" title="View <?php echo $photoCount; ?> attached photo(s)">
-                                                        <img src="<?php echo htmlspecialchars(format_asset_url($report['photo_path'])); ?>" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-110 transition duration-200">
-                                                        <?php if ($photoCount > 1): ?>
-                                                            <span class="absolute bottom-0 right-0 px-1 py-0.2 rounded-tl-md bg-black/80 text-white font-mono text-[8px] font-bold">+<?php echo ($photoCount - 1); ?></span>
-                                                        <?php endif; ?>
-                                                    </a>
-                                                <?php else: ?>
-                                                    <div class="w-10 h-10 rounded-lg border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                                                    </div>
-                                                <?php endif; ?>
-                                            </td>
+
 
                                             <!-- Submission Date -->
                                             <td class="py-3.5 px-4 text-slate-600 font-mono">
@@ -526,12 +511,12 @@ $metrics = [
 
                                             <!-- Reporter Info -->
                                             <td class="py-3.5 px-4">
-                                                <div class="font-bold text-slate-800 flex items-center gap-1.5">
+                                                <div class="font-bold text-slate-800 inline-flex items-center gap-1.5">
                                                     <span><?php echo $reporterName; ?></span>
                                                     <?php if ($isGuest): ?>
-                                                        <span class="px-1.5 py-0.2 rounded-md bg-amber-100 text-amber-800 text-[9px] font-black uppercase tracking-wider border border-amber-200">Guest</span>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[9px] font-black uppercase tracking-wider border border-amber-200 leading-none">Guest</span>
                                                     <?php else: ?>
-                                                        <span class="px-1.5 py-0.2 rounded-md bg-emerald-50 text-emerald-700 text-[9px] font-extrabold uppercase tracking-wider border border-emerald-200">Resident</span>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[9px] font-extrabold uppercase tracking-wider border border-emerald-200 leading-none">Resident</span>
                                                     <?php endif; ?>
                                                 </div>
                                             </td>

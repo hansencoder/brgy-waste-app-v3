@@ -39,11 +39,11 @@ $brgyLogoUrl = format_asset_url($data['barangay']['barangay_logo'] ?? '');
                                 <a href="<?php echo app_url('settings'); ?>" class="text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
                                 <span class="text-sm text-slate-300">/</span>
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
-                                    Branding &amp; Barangay Profile
+                                    Barangay Information
                                 </span>
                             </div>
                             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                                System Branding &amp; Barangay Profile
+                                Barangay Information
                             </h1>
                             <p class="text-base sm:text-lg text-slate-600 font-semibold mt-1">
                                 Customize the system application logo, brand name, tagline, official barangay seal, and LGU contact details.
@@ -335,6 +335,23 @@ function updateBrandingPreview() {
         document.getElementById('previewLocationSubtitleInline').textContent = locationText;
     }
 }
+
+// Auto sentence-case: capitalises first letter of every sentence
+function toSentenceCase(str) {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+function applySentenceCase(input) {
+    const pos = input.selectionStart;
+    input.value = toSentenceCase(input.value);
+    input.setSelectionRange(pos, pos);
+}
+// Attach to all relevant text inputs
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('input[type="text"], textarea').forEach(function(el) {
+        el.addEventListener('blur', function() { el.value = toSentenceCase(el.value); });
+    });
+});
 
 function previewImage(input, imgId, placeholderId, livePreviewImgId, livePreviewIconId) {
     if (input.files && input.files[0]) {

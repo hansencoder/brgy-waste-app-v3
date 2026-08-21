@@ -381,6 +381,46 @@ function getCalendarWasteColor($type) {
                         </div>
                     <?php endif; ?>
 
+                    <!-- Collection Notes & Guidelines Section -->
+                    <div class="bg-white rounded-2xl border-2 border-slate-200 shadow-xs overflow-hidden">
+                        <div class="p-5 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-extrabold shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Important Collection Guidelines &amp; Notes</h3>
+                                    <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">Instructions and policies displayed to residents under the collection calendar.</p>
+                                </div>
+                            </div>
+                            <a href="<?php echo app_url('settings/collection_notes'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-extrabold transition border border-slate-200 shrink-0 self-start sm:self-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                <span>Manage in Settings</span>
+                            </a>
+                        </div>
+                        <div class="p-5 sm:p-6">
+                            <?php if (!empty($data['collection_notes'])): ?>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <?php foreach ($data['collection_notes'] as $note): ?>
+                                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 hover:border-emerald-300 transition">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-200">#<?php echo (int)$note['sort_order']; ?></span>
+                                                <span class="text-[10px] font-bold text-slate-400">Sort: <?php echo (int)$note['sort_order']; ?></span>
+                                            </div>
+                                            <h4 class="text-sm font-extrabold text-slate-900"><?php echo htmlspecialchars($note['title']); ?></h4>
+                                            <p class="text-xs text-slate-600 font-medium leading-relaxed"><?php echo htmlspecialchars($note['content'] ?? ''); ?></p>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <div class="text-center py-6">
+                                    <p class="text-xs text-slate-500 font-semibold">No active collection notes configured yet.</p>
+                                    <a href="<?php echo app_url('settings/collection_notes'); ?>" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 mt-1 inline-block">Configure Collection Notes →</a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                     <!-- Special Collection Notice CTA Banner -->
                     <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent rounded-2xl border-2 border-amber-200 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-xs">
                         <div class="flex items-center gap-4">

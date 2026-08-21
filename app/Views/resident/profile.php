@@ -468,6 +468,21 @@ $initial = strtoupper(substr($firstName, 0, 1));
         reader.readAsDataURL(file);
     }
 
+    // Profile Picture Live Preview
+    function previewProfilePic(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const container = document.getElementById('avatarContainer');
+                if (container) {
+                    container.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="w-full h-full object-cover">`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
     // Password strength check
     function checkPasswordStrength(val) {
         const hasLength = val.length >= 8;

@@ -1789,10 +1789,13 @@ class AdminController extends Controller {
                     }
                 }
 
+                $title = trim($_POST['title'] ?? '');
+                $content = trim($_POST['content'] ?? '');
+
                 $db->query("INSERT INTO announcements (title, content, cover_image, created_by, visibility_id, publish_date, expiration_date, is_published) 
                             VALUES (:title, :content, :cover_image, :created_by, :visibility_id, :publish_date, :expiration_date, :is_published)");
-                $db->bind(':title', htmlspecialchars($_POST['title'], ENT_QUOTES, 'UTF-8'));
-                $db->bind(':content', htmlspecialchars($_POST['content'], ENT_QUOTES, 'UTF-8'));
+                $db->bind(':title', $title);
+                $db->bind(':content', $content);
                 $db->bind(':cover_image', $cover_image);
                 $db->bind(':created_by', $_SESSION['user_id']);
                 $db->bind(':visibility_id', $visibility_id);
@@ -1807,8 +1810,9 @@ class AdminController extends Controller {
                 $notificationModel = new Notification();
                 $notificationModel->createAnnouncementNotification($announcementId, $_SESSION['user_id']);
 
-                $this->auditModel->logAction($_SESSION['user_id'], 'Post Announcement', 'Announcements', "Posted '{$_POST['title']}'", 'success');
-                header('Location: ' . app_url('index.php?url=' . urlencode('admin/announcements')));
+                $this->auditModel->logAction($_SESSION['user_id'], 'Post Announcement', 'Announcements', "Posted '{$title}'", 'success');
+                $_SESSION['flash_success'] = 'Announcement created and published successfully.';
+                header('Location: ' . app_url('admin/announcements'));
                 exit;
             }
         }
@@ -1846,19 +1850,22 @@ class AdminController extends Controller {
             $db->execute();
 
             $this->auditModel->logAction($_SESSION['user_id'], 'Delete Announcement', "Announcement ID $announcementId", "Deleted announcement", 'success');
+            $_SESSION['flash_success'] = 'Announcement deleted successfully.';
         }
 
-        header('Location: ' . app_url('index.php?url=' . urlencode('admin/announcements')));
+        header('Location: ' . app_url('admin/announcements'));
         exit;
     }
 
     /**
      * Edit announcement
      */
-    public function edit_announcement($id) {
+    public function edit_announcement($id = null) {
         if (!has_permission('manage_announcements')) {
             die("Unauthorized Access");
         }
+
+        $id = $id ? (int)$id : (int)($_POST['announcement_id'] ?? 0);
 
         $db = new Database();
         $db->query("SELECT * FROM announcements WHERE id = :id");
@@ -1866,6 +1873,7 @@ class AdminController extends Controller {
         $announcement = $db->single();
 
         if (!$announcement) {
+            $_SESSION['flash_error'] = 'Announcement not found.';
             header('Location: ' . app_url('admin/announcements'));
             exit;
         }
@@ -1875,17 +1883,19 @@ class AdminController extends Controller {
         $data['visibilities'] = $db->resultSet();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $title = htmlspecialchars($_POST['title'], ENT_QUOTES, 'UTF-8');
-            $content = htmlspecialchars($_POST['content'], ENT_QUOTES, 'UTF-8');
-            $visibility_id = (int)$_POST['visibility_id'];
+            $title = trim($_POST['title'] ?? '');
+            $content = trim($_POST['content'] ?? '');
+            $visibility_id = (int)($_POST['visibility_id'] ?? 1);
             $is_published = isset($_POST['is_published']) ? 1 : 0;
+            $publish_date = !empty($_POST['publish_date']) ? $_POST['publish_date'] : ($announcement['publish_date'] ?? date('Y-m-d H:i:s'));
+            $expiration_date = !empty($_POST['expiration_date']) ? $_POST['expiration_date'] : null;
 
             // Handle cover image upload
             $cover_image = null;
             if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
                 $file = $_FILES['cover_image'];
                 $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-                if (in_array($file['type'], $allowedTypes) && $file['size'] <= 2 * 1024 * 1024) {
+                if (in_array($file['type'], $allowedTypes) && $file['size'] <= 5 * 1024 * 1024) {
                     $uploadDir = '../public/uploads/announcements/';
                     if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                     $fileName = 'announce_' . time() . '_' . basename($file['name']);
@@ -1899,6 +1909,8 @@ class AdminController extends Controller {
                 title = :title,
                 content = :content,
                 visibility_id = :visibility_id,
+                publish_date = :publish_date,
+                expiration_date = :expiration_date,
                 is_published = :is_published";
             if ($cover_image) {
                 $query .= ", cover_image = :cover_image";
@@ -1909,6 +1921,8 @@ class AdminController extends Controller {
             $db->bind(':title', $title);
             $db->bind(':content', $content);
             $db->bind(':visibility_id', $visibility_id);
+            $db->bind(':publish_date', $publish_date);
+            $db->bind(':expiration_date', $expiration_date);
             $db->bind(':is_published', $is_published);
             if ($cover_image) {
                 $db->bind(':cover_image', $cover_image);
@@ -1917,7 +1931,7 @@ class AdminController extends Controller {
 
             $db->execute();
 
-            $this->auditModel->logAction($_SESSION['user_id'], 'Edit Announcement', "Announcement ID $id", "Updated announcement", 'success');
+            $this->auditModel->logAction($_SESSION['user_id'], 'Edit Announcement', "Announcement ID $id", "Updated announcement '{$title}'", 'success');
             $_SESSION['flash_success'] = 'Announcement updated successfully.';
             header('Location: ' . app_url('admin/announcements'));
             exit;
@@ -1966,6 +1980,14 @@ public function schedule() {
 
     // Generate calendar data
     $data['calendar_days'] = $this->generateCalendarData($month, $year, $schedules);
+
+    // Fetch active collection notes for display
+    try {
+        $db->query("SELECT * FROM collection_notes WHERE is_active = 1 ORDER BY sort_order ASC, note_id ASC");
+        $data['collection_notes'] = $db->resultSet();
+    } catch (Exception $e) {
+        $data['collection_notes'] = [];
+    }
 
     $this->auditModel->logAction($_SESSION['user_id'], 'Schedule Management', 'Schedule', 'Admin viewed schedule management', 'success');
     $this->view('admin/schedule', $data);
@@ -2604,6 +2626,10 @@ private function generateCalendarData($month, $year, $schedules) {
 
             if ($db->execute()) {
                 $_SESSION['user_name'] = $name;
+                if ($profilePic !== null) {
+                    $_SESSION['user_pic'] = $profilePic;
+                    $_SESSION['profile_pic'] = $profilePic;
+                }
                 $data['success'] = 'Profile updated successfully.';
 
                 // Refresh user data
@@ -2979,7 +3005,32 @@ private function generateCalendarData($month, $year, $schedules) {
         ");
         $db->bind(':date_from', $filters['date_from']);
         $db->bind(':date_to', $filters['date_to']);
-        $resolutionTimes = $db->single();
+        // Resident vs Guest Participation Breakdown
+        $db->query("
+            SELECT
+                SUM(CASE WHEN r.user_id IS NOT NULL AND r.user_id > 0 THEN 1 ELSE 0 END) as resident_reports,
+                SUM(CASE WHEN r.user_id IS NULL OR r.user_id = 0 THEN 1 ELSE 0 END) as guest_reports,
+                COUNT(*) as total_reports
+            FROM reports r
+            JOIN report_statuses rs ON r.status_id = rs.status_id
+            $where
+        ");
+        $this->bindAnalyticsParams($db, $params);
+        $participationRow = $db->single() ?: ['resident_reports' => 0, 'guest_reports' => 0, 'total_reports' => 0];
+
+        $residentCount = (int)($participationRow['resident_reports'] ?? 0);
+        $guestCount = (int)($participationRow['guest_reports'] ?? 0);
+        $partTotal = $residentCount + $guestCount;
+        $residentPct = $partTotal > 0 ? round(($residentCount / $partTotal) * 100, 1) : 0;
+        $guestPct = $partTotal > 0 ? round(($guestCount / $partTotal) * 100, 1) : 0;
+
+        $participationData = [
+            'resident_count' => $residentCount,
+            'guest_count' => $guestCount,
+            'total_count' => $partTotal,
+            'resident_pct' => $residentPct,
+            'guest_pct' => $guestPct,
+        ];
 
         // Trend comparison vs previous period
         $periodDays = max(1, (strtotime($filters['date_to']) - strtotime($filters['date_from'])) / 86400 + 1);
@@ -3079,6 +3130,7 @@ private function generateCalendarData($month, $year, $schedules) {
             'category_data' => $categoryData,
             'status_data' => $statusData,
             'condition_data' => $conditionData,
+            'participation_data' => $participationData,
             'purok_data' => $purokData,
             'purok_stacked' => $purokStacked,
             'hotspot_intelligence' => $hotspotIntelligence,

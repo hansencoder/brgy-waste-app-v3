@@ -413,7 +413,7 @@ function getStatusBadgeProps($status) {
                                         <span class="text-xs font-extrabold uppercase tracking-wider text-sky-900"><?php echo htmlspecialchars($next_schedule['collection_day']); ?></span>
                                         <span class="text-xs font-bold font-mono text-sky-800 bg-sky-100 px-2 py-0.5 rounded-lg"><?php echo date('g:i A', strtotime($next_schedule['start_time'])); ?></span>
                                     </div>
-                                    <p class="text-xs font-bold text-slate-900 line-clamp-2"><?php echo htmlspecialchars($next_schedule['puroks'] ?? 'All Puroks'); ?></p>
+                                    <p class="text-xs font-bold text-slate-900 line-clamp-2"><?php echo htmlspecialchars($next_schedule['puroks'] ?: 'All Puroks'); ?></p>
                                     <div class="flex items-center gap-1.5 text-xs text-slate-600">
                                         <span class="text-slate-400">Waste Type:</span>
                                         <span class="font-bold text-sky-900"><?php echo htmlspecialchars($next_schedule['waste_type'] ?? 'General Waste'); ?></span>

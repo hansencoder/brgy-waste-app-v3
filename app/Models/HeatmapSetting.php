@@ -53,15 +53,25 @@ class HeatmapSetting {
                 low_density_color = :low_density_color,
                 medium_density_color = :medium_density_color,
                 high_density_color = :high_density_color,
+                low_min = :low_min,
+                low_max = :low_max,
+                moderate_min = :moderate_min,
+                moderate_max = :moderate_max,
+                severe_min = :severe_min,
                 updated_by = :updated_by,
                 updated_at = NOW()
             WHERE setting_id = :setting_id
         ");
         $this->db->bind(':radius_meters', $data['radius_meters']);
-        $this->db->bind(':minimum_reports', $data['minimum_reports']);
+        $this->db->bind(':minimum_reports', $data['minimum_reports'] ?? $data['low_min'] ?? 3);
         $this->db->bind(':low_density_color', $data['low_density_color']);
         $this->db->bind(':medium_density_color', $data['medium_density_color']);
         $this->db->bind(':high_density_color', $data['high_density_color']);
+        $this->db->bind(':low_min', $data['low_min'] ?? 3);
+        $this->db->bind(':low_max', $data['low_max'] ?? 5);
+        $this->db->bind(':moderate_min', $data['moderate_min'] ?? 6);
+        $this->db->bind(':moderate_max', $data['moderate_max'] ?? 10);
+        $this->db->bind(':severe_min', $data['severe_min'] ?? 11);
         $this->db->bind(':updated_by', $data['updated_by']);
         $this->db->bind(':setting_id', $setting_id);
 
@@ -80,7 +90,12 @@ class HeatmapSetting {
             'minimum_reports' => 3,
             'low_density_color' => '#FDE68A',    // Yellow
             'medium_density_color' => '#F97316',  // Orange
-            'high_density_color' => '#EF4444'     // Red
+            'high_density_color' => '#EF4444',    // Red
+            'low_min' => 3,
+            'low_max' => 5,
+            'moderate_min' => 6,
+            'moderate_max' => 10,
+            'severe_min' => 11
         ];
     }
 
@@ -100,6 +115,11 @@ class HeatmapSetting {
                 low_density_color, 
                 medium_density_color, 
                 high_density_color, 
+                low_min,
+                low_max,
+                moderate_min,
+                moderate_max,
+                severe_min,
                 updated_by
             ) VALUES (
                 :radius_meters,
@@ -107,6 +127,11 @@ class HeatmapSetting {
                 :low_density_color,
                 :medium_density_color,
                 :high_density_color,
+                :low_min,
+                :low_max,
+                :moderate_min,
+                :moderate_max,
+                :severe_min,
                 :updated_by
             )
         ");
@@ -115,6 +140,11 @@ class HeatmapSetting {
         $this->db->bind(':low_density_color', $defaults['low_density_color']);
         $this->db->bind(':medium_density_color', $defaults['medium_density_color']);
         $this->db->bind(':high_density_color', $defaults['high_density_color']);
+        $this->db->bind(':low_min', $defaults['low_min']);
+        $this->db->bind(':low_max', $defaults['low_max']);
+        $this->db->bind(':moderate_min', $defaults['moderate_min']);
+        $this->db->bind(':moderate_max', $defaults['moderate_max']);
+        $this->db->bind(':severe_min', $defaults['severe_min']);
         $this->db->bind(':updated_by', $createdBy);
 
         return $this->db->execute();

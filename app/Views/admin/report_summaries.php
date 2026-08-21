@@ -32,6 +32,11 @@ $selectedQuantity = $data['selected_quantity'] ?? 0;
 $selectedCondition = $data['selected_condition'] ?? 0;
 $trendGranularity = $data['trend_granularity'] ?? 'monthly';
 $exports = $data['exports'] ?? [];
+$participationData = $data['participation_data'] ?? ['resident_count' => 0, 'guest_count' => 0, 'total_count' => 0, 'resident_pct' => 0, 'guest_pct' => 0];
+$residentCount = (int)($participationData['resident_count'] ?? 0);
+$guestCount = (int)($participationData['guest_count'] ?? 0);
+$residentPct = (float)($participationData['resident_pct'] ?? 0);
+$guestPct = (float)($participationData['guest_pct'] ?? 0);
 
 $trendLabels = array_column($trendData, 'month');
 $trendValues = array_column($trendData, 'count');
@@ -445,9 +450,9 @@ if (!function_exists('statusBadgeConfig')) {
                     </div>
 
                     <!-- ============================================================== -->
-                    <!-- 5. THREE DISTRIBUTION CHARTS GRID                              -->
+                    <!-- 5. FOUR DISTRIBUTION CHARTS GRID                               -->
                     <!-- ============================================================== -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- Waste Classification -->
                         <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
                             <div class="pb-3 border-b border-slate-100">
@@ -479,6 +484,36 @@ if (!function_exists('statusBadgeConfig')) {
                                         <div class="label">Reports</div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Resident vs Guest Participation -->
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div class="pb-3 border-b border-slate-100">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-base font-bold text-slate-900">Participation</h3>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">Demographics</span>
+                                </div>
+                                <p class="text-xs font-medium text-slate-500 mt-0.5">Verified Residents vs Guests</p>
+                            </div>
+                            <div class="flex justify-center items-center py-3">
+                                <div class="donut-container">
+                                    <canvas id="participationChart"></canvas>
+                                    <div class="donut-center-text">
+                                        <div class="number text-emerald-700"><?php echo $residentPct; ?>%</div>
+                                        <div class="label">Residents</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                                <span class="flex items-center gap-1.5 text-emerald-800">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                    Resident: <?php echo $residentCount; ?> (<?php echo $residentPct; ?>%)
+                                </span>
+                                <span class="flex items-center gap-1.5 text-slate-600">
+                                    <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                    Guest: <?php echo $guestCount; ?> (<?php echo $guestPct; ?>%)
+                                </span>
                             </div>
                         </div>
 
@@ -1151,6 +1186,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     data: <?php echo json_encode(array_map('intval', $statusValues)); ?>,
                     backgroundColor: <?php echo json_encode($statusColors); ?>,
+                    borderWidth: 3,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '72%',
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // 3.5 Resident vs Guest Participation Doughnut Chart
+    const participationCtx = document.getElementById('participationChart');
+    if (participationCtx) {
+        new Chart(participationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Registered Residents', 'Anonymous Guests'],
+                datasets: [{
+                    data: [<?php echo (int)$residentCount; ?>, <?php echo (int)$guestCount; ?>],
+                    backgroundColor: ['#10b981', '#94a3b8'],
                     borderWidth: 3,
                     borderColor: '#ffffff'
                 }]

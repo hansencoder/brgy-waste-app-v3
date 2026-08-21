@@ -1,54 +1,92 @@
 <?php include __DIR__ . '/../layouts/header.php'; ?>
-<div class="flex-grow flex items-center justify-center p-6">
-    <div class="glassmorphism rounded-2xl p-8 max-w-sm w-full shadow-2xl fade-in text-center relative overflow-hidden">
+<?php 
+$isPhone = ($_SESSION['reg_type'] ?? '') === 'phone';
+$contact = $_SESSION['reg_email'] ?? '';
+?>
+
+<style>
+    body, * { font-family: 'Miranda Sans', sans-serif !important; }
+    .otp-letter-spacing {
+        letter-spacing: 0.4em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    }
+</style>
+
+<div class="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md px-4">
         
-        <div class="relative z-10">
-            <div class="mx-auto w-12 h-12 flex items-center justify-center mb-3 text-emerald-700">
-                <svg class="w-10 h-10" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+        <!-- Logo / Icon -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0B2E22] text-emerald-400 shadow-lg ring-4 ring-emerald-500/10 mb-4">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"></path>
+                </svg>
             </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Verify Your Account</h1>
+            <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-2 max-w-xs mx-auto">
+                We sent a 6-digit activation code to:
+            </p>
+            <?php if (!empty($contact)): ?>
+                <p class="text-xs font-mono font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 inline-block px-3 py-1 rounded-full mt-2">
+                    <?php echo htmlspecialchars($contact, ENT_QUOTES, 'UTF-8'); ?>
+                </p>
+            <?php endif; ?>
+        </div>
 
-            <?php 
-            $isPhone = ($_SESSION['reg_type'] ?? '') === 'phone';
-            $contact = $_SESSION['reg_email'] ?? '';
-            ?>
-            <h2 class="text-2xl font-bold text-foreground mb-2">Verify your <?php echo $isPhone ? 'mobile number' : 'email'; ?></h2>
-            <p class="text-muted-foreground text-sm mb-2">We sent a 6-digit code to <strong><?php echo htmlspecialchars($contact, ENT_QUOTES, 'UTF-8'); ?></strong></p>
-            <p class="text-muted-foreground text-sm mb-6">Enter it below to activate your account.</p>
-
+        <!-- Card -->
+        <div class="bg-white py-8 px-6 sm:px-10 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+            
             <?php if (!empty($data['error'])): ?>
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 mb-6 rounded-md text-sm text-left">
-                    <p><?php echo $data['error']; ?></p>
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span><?php echo htmlspecialchars($data['error']); ?></span>
                 </div>
             <?php endif; ?>
             
             <?php if (!empty($data['success'])): ?>
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-3 mb-6 rounded-md text-sm text-left">
-                    <p><?php echo $data['success']; ?></p>
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-900 p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                    <span><?php echo htmlspecialchars($data['success']); ?></span>
                 </div>
             <?php endif; ?>
 
-            <form action="<?php echo app_url('index.php?url=auth/verifyRegistration'); ?>" method="POST" class="space-y-6">
+            <form action="<?php echo app_url('index.php?url=auth/verifyRegistration'); ?>" method="POST" id="verifyRegForm" class="space-y-6">
                 <input type="hidden" id="cooldownEnd" value="<?php echo isset($data['retry_after_seconds']) ? (time() + $data['retry_after_seconds']) : 0; ?>">
+                
                 <div>
-                    <input type="text" id="otp" name="otp" required maxlength="6" placeholder="000000" autocomplete="off"
-                        class="w-full px-4 py-3 text-center tracking-widest text-2xl font-mono rounded-lg border border-border focus:ring-2 focus:ring-primary outline-none bg-background">
+                    <label for="otp" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider text-center mb-2">
+                        6-Digit Verification Code
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="otp" name="otp" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" placeholder="••••••" autocomplete="one-time-code" autofocus
+                            class="w-full px-4 py-3.5 text-center text-3xl font-black rounded-2xl border-2 border-slate-200 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10 outline-none bg-slate-50 focus:bg-white text-slate-900 otp-letter-spacing transition">
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-semibold text-center mt-2">Enter code to complete your registration.</p>
                 </div>
                 
-                <button type="submit" class="w-full bg-[#15281f] hover:bg-[#0f1a17] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition">
-                    Verify email
+                <button type="submit" id="submitBtn" class="w-full bg-[#0B2E22] hover:bg-[#084232] text-white font-extrabold py-3.5 px-4 rounded-xl shadow-xs transition duration-150 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span>Activate Account</span>
                 </button>
             </form>
 
-            <div class="mt-6 text-center">
-                <p class="text-sm text-slate-500">Didn't receive the code? 
-                    <a id="resendLink" href="<?php echo app_url('index.php?url=auth/verifyRegistration&action=resend'); ?>" class="text-[#15281f] font-semibold hover:underline">Resend</a>
-                    <span id="resendCountdown" class="ml-2 text-sm text-slate-400"></span>
+            <div class="pt-4 border-t border-slate-100 text-center space-y-3">
+                <p class="text-xs font-semibold text-slate-500">
+                    Didn't receive the code? 
+                    <a id="resendLink" href="<?php echo app_url('index.php?url=auth/verifyRegistration&action=resend'); ?>" class="text-emerald-700 font-extrabold hover:text-emerald-800 transition underline underline-offset-2">
+                        Resend code
+                    </a>
+                    <span id="resendCountdown" class="ml-1 text-xs font-bold text-slate-400"></span>
                 </p>
-                <div class="mt-2">
-                    <a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="text-xs text-slate-500 hover:text-slate-700">Go back to registration</a>
+                <div>
+                    <a href="<?php echo app_url('index.php?url=auth/register'); ?>" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition">
+                        ← Back to registration form
+                    </a>
                 </div>
             </div>
+
         </div>
+
     </div>
 </div>
 
@@ -58,6 +96,18 @@
         var serverCooldown = <?php echo (int)($data['retry_after_seconds'] ?? 0); ?>;
         var resendLink = document.getElementById('resendLink');
         var countdown = document.getElementById('resendCountdown');
+        var otpInput = document.getElementById('otp');
+        var form = document.getElementById('verifyRegForm');
+
+        if (otpInput && form) {
+            otpInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length === 6) {
+                    form.submit();
+                }
+            });
+        }
+
         if (!resendLink || !countdown) return;
 
         var stored = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10);
@@ -90,7 +140,7 @@
                 sessionStorage.removeItem(STORAGE_KEY);
                 return;
             }
-            countdown.textContent = 'in (' + formatTime(diff) + ')';
+            countdown.textContent = '(' + formatTime(diff) + ')';
             resendLink.style.pointerEvents = 'none';
             resendLink.style.opacity = '0.5';
             setTimeout(update, 1000);
@@ -108,4 +158,5 @@
         update();
     })();
 </script>
+
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

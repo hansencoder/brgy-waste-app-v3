@@ -84,6 +84,10 @@ if (!isset($data) || !is_array($data)) {
                                 Draw, edit, and save spatial GeoJSON polygon boundaries for automated Purok detection.
                             </p>
                         </div>
+                        <button type="button" onclick="openAddPurokModal()" class="px-5 py-3 bg-[#0B2E22] hover:bg-[#093024] text-white text-sm font-extrabold rounded-xl transition shadow-xs flex items-center gap-2 shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>Add New Purok</span>
+                        </button>
                     </div>
 
                     <!-- Alerts -->
@@ -111,16 +115,21 @@ if (!isset($data) || !is_array($data)) {
                             <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
                                 
                                 <!-- Left: Purok Selector List -->
-                                <div class="xl:col-span-4 bg-white rounded-2xl border-2 border-slate-250 p-6 shadow-xs flex flex-col justify-between space-y-4">
+                                <div class="xl:col-span-4 bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
                                     <div>
                                         <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
                                             <h3 class="text-base font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
                                                 Select Purok Zone
                                             </h3>
-                                            <span class="text-xs font-mono font-extrabold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-250">
-                                                <?php echo count($data['puroks']); ?> Zones
-                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs font-mono font-extrabold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                                                    <?php echo count($data['puroks']); ?> Zones
+                                                </span>
+                                                <button type="button" onclick="openAddPurokModal()" class="p-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 transition" title="Add New Purok">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div class="space-y-2.5 max-h-[480px] overflow-y-auto pr-1">
@@ -128,7 +137,7 @@ if (!isset($data) || !is_array($data)) {
                                                 <?php foreach ($data['puroks'] as $p): ?>
                                                     <button type="button" 
                                                             onclick="selectPurok(<?php echo $p['purok_id']; ?>, '<?php echo addslashes($p['purok_name']); ?>', <?php echo htmlspecialchars(json_encode($p['polygon_geometry'] ?? null)); ?>)" 
-                                                            class="purok-btn w-full text-left px-4 py-3.5 rounded-xl border-2 border-slate-250 hover:bg-slate-50 transition flex items-center justify-between text-sm font-bold"
+                                                            class="purok-btn w-full text-left px-4 py-3.5 rounded-xl border-2 border-slate-200 hover:bg-slate-50 transition flex items-center justify-between text-sm font-bold"
                                                             data-purok-id="<?php echo $p['purok_id']; ?>">
                                                         <span class="font-extrabold text-slate-900 text-base"><?php echo htmlspecialchars($p['purok_name']); ?></span>
                                                         <?php if (!empty($p['polygon_geometry'])): ?>
@@ -154,7 +163,7 @@ if (!isset($data) || !is_array($data)) {
                                 </div>
 
                                 <!-- Right: Map Editor Canvas -->
-                                <div class="xl:col-span-8 bg-white rounded-2xl border-2 border-slate-250 p-6 shadow-xs flex flex-col justify-between space-y-4">
+                                <div class="xl:col-span-8 bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
                                     <div>
                                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-slate-200 pb-4">
                                             <div>
@@ -169,14 +178,14 @@ if (!isset($data) || !is_array($data)) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                                     Save Boundary
                                                 </button>
-                                                <button type="button" onclick="clearDrawing()" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-base font-extrabold rounded-xl transition border border-slate-250">
+                                                <button type="button" onclick="clearDrawing()" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-base font-extrabold rounded-xl transition border border-slate-200">
                                                     Clear
                                                 </button>
                                             </div>
                                         </div>
 
                                         <!-- Map Container -->
-                                        <div id="purokMap" class="h-[540px] w-full rounded-2xl border-2 border-slate-250 relative overflow-hidden"></div>
+                                        <div id="purokMap" class="h-[540px] w-full rounded-2xl border-2 border-slate-200 relative overflow-hidden"></div>
                                     </div>
                                 </div>
 
@@ -389,6 +398,62 @@ function saveBoundary() {
     document.getElementById('postGeoJson').value = currentGeoJson;
     document.getElementById('boundarySaveForm').submit();
 }
+
+function openAddPurokModal() {
+    const modal = document.getElementById('addPurokModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('inputPurokName')?.focus();
+    }
+}
+
+function closeAddPurokModal() {
+    const modal = document.getElementById('addPurokModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
 </script>
+
+<!-- Add Purok Modal -->
+<div id="addPurokModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-5 animate-fadeIn">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-extrabold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                </span>
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-900 tracking-tight">Add New Purok</h3>
+                    <p class="text-xs font-semibold text-slate-500">Create a new Purok zone in this barangay</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeAddPurokModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <form action="<?php echo app_url('settings/purok_boundaries'); ?>" method="POST" class="space-y-4">
+            <input type="hidden" name="add_purok" value="1">
+            <div>
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Purok Name <span class="text-red-500">*</span></label>
+                <input type="text" id="inputPurokName" name="purok_name" required placeholder="e.g. Purok 7, Purok Santol..." 
+                       class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm font-bold text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition bg-slate-50 focus:bg-white">
+            </div>
+            <div>
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Description (Optional)</label>
+                <textarea name="description" rows="2" placeholder="Brief note or landmark reference..." 
+                          class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition bg-slate-50 focus:bg-white"></textarea>
+            </div>
+            <div class="p-3.5 bg-teal-50 rounded-xl border border-teal-200 text-xs text-teal-900 font-semibold flex items-start gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-teal-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>After creating, select the new Purok from the list to draw and save its spatial polygon boundary on the map.</span>
+            </div>
+            <div class="flex items-center gap-3 pt-2">
+                <button type="button" onclick="closeAddPurokModal()" class="flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-sm transition">Cancel</button>
+                <button type="submit" class="flex-1 py-3 rounded-xl bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm transition shadow-xs">Create Purok</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

@@ -29,19 +29,25 @@
                             <div class="flex items-center gap-2 mb-2">
                                 <a href="<?php echo app_url('settings'); ?>" class="text-sm font-extrabold text-slate-500 hover:text-emerald-700 transition">Settings Hub</a>
                                 <span class="text-sm text-slate-300">/</span>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-extrabold bg-red-100 text-red-900 border border-red-300">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-extrabold bg-rose-100 text-rose-900 border border-rose-300">
                                     Rules &amp; Penalties
                                 </span>
                             </div>
                             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Barangay Rules &amp; Penalties</h1>
                             <p class="text-base sm:text-lg text-slate-600 font-semibold mt-1">
-                                Manage prohibited actions and penalty tiers displayed on the public portal.
+                                Manage prohibited environmental actions and corresponding penalty schedules.
                             </p>
                         </div>
-                        <button onclick="openAddModal()" class="inline-flex items-center gap-2 px-5 py-3 bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm rounded-xl shadow-xs transition shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                            Add New Rule
-                        </button>
+                        <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+                            <button onclick="openAddModal('prohibited_action')" class="inline-flex items-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-sm rounded-xl transition border border-slate-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                                Add Prohibited Action
+                            </button>
+                            <button onclick="openAddModal('penalty')" class="inline-flex items-center gap-2 px-5 py-3 bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm rounded-xl shadow-xs transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Add Penalty Tier
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Alerts -->
@@ -62,67 +68,72 @@
                     <div class="flex flex-col lg:flex-row gap-6 items-start">
                         <?php $activeTab = 'penalty_rules'; include __DIR__ . '/../layouts/settings_sidebar.php'; ?>
 
-                        <div class="flex-1 min-w-0 space-y-6">
+                        <div class="flex-1 min-w-0 space-y-8">
 
-                            <!-- Rules Table Card -->
+                            <!-- ============================================================ -->
+                            <!-- SECTION 1: PROHIBITED ACTIONS                                -->
+                            <!-- ============================================================ -->
                             <div class="bg-white rounded-2xl border-2 border-slate-200 shadow-xs overflow-hidden">
-                                <div class="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                    <div>
-                                        <h2 class="text-xl font-extrabold text-slate-900">Prohibited Actions &amp; Penalty Tiers</h2>
-                                        <p class="text-sm text-slate-600 font-semibold mt-0.5">
-                                            These rules are displayed publicly on the Barangay portal under <em>Penalties &amp; Laws</em>.
-                                        </p>
+                                <div class="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-extrabold shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                                        </div>
+                                        <div>
+                                            <h2 class="text-xl font-extrabold text-slate-900">1. Prohibited Actions (Ordinances &amp; Laws)</h2>
+                                            <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
+                                                Forbidden environmental violations and their legal ordinance references.
+                                            </p>
+                                        </div>
                                     </div>
-                                    <span class="px-4 py-1.5 rounded-full bg-slate-100 text-slate-900 font-mono font-extrabold text-sm border border-slate-200 self-start sm:self-auto shrink-0">
-                                        <?php echo count($data['rules']); ?> Rules
-                                    </span>
+                                    <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                                        <span class="px-3.5 py-1 rounded-full bg-rose-50 text-rose-800 font-mono font-extrabold text-xs border border-rose-200">
+                                            <?php echo count($data['prohibited_actions'] ?? []); ?> Prohibitions
+                                        </span>
+                                        <button onclick="openAddModal('prohibited_action')" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-800 text-xs font-extrabold rounded-lg border border-slate-200 transition shadow-2xs">
+                                            + Add Action
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <?php if (empty($data['rules'])): ?>
-                                    <div class="p-12 text-center">
-                                        <div class="w-16 h-16 rounded-2xl bg-red-50 border-2 border-red-100 flex items-center justify-center mx-auto mb-4">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                <?php if (empty($data['prohibited_actions'])): ?>
+                                    <div class="p-10 text-center">
+                                        <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center mx-auto mb-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                                         </div>
-                                        <p class="text-base font-extrabold text-slate-700">No rules added yet</p>
-                                        <p class="text-sm text-slate-500 mt-1">Click <strong>Add New Rule</strong> above to get started.</p>
+                                        <p class="text-sm font-extrabold text-slate-700">No prohibited actions listed yet</p>
+                                        <p class="text-xs text-slate-500 mt-1">Click <strong>Add Prohibited Action</strong> to define official illegal waste practices.</p>
                                     </div>
                                 <?php else: ?>
                                     <div class="overflow-x-auto">
                                         <table class="w-full text-left border-collapse text-sm">
-                                            <thead class="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider text-xs border-b-2 border-slate-200">
+                                            <thead class="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider text-xs border-b border-slate-200">
                                                 <tr>
-                                                    <th class="px-5 py-4 w-16">#</th>
-                                                    <th class="px-5 py-4">Offense Title</th>
-                                                    <th class="px-5 py-4 hidden md:table-cell">Legal Reference</th>
-                                                    <th class="px-5 py-4 hidden lg:table-cell">Fine / Penalty</th>
-                                                    <th class="px-5 py-4 text-center">Status</th>
-                                                    <th class="px-5 py-4 text-right">Actions</th>
+                                                    <th class="px-5 py-3.5 w-16">#</th>
+                                                    <th class="px-5 py-3.5">Prohibited Action Title</th>
+                                                    <th class="px-5 py-3.5 hidden md:table-cell">Legal Reference</th>
+                                                    <th class="px-5 py-3.5 text-center">Status</th>
+                                                    <th class="px-5 py-3.5 text-right">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-slate-100 bg-white">
-                                                <?php foreach ($data['rules'] as $rule): ?>
+                                                <?php foreach ($data['prohibited_actions'] as $rule): ?>
                                                 <tr class="hover:bg-slate-50/70 transition group">
                                                     <td class="px-5 py-4">
-                                                        <span class="font-mono text-xs font-extrabold text-red-600 bg-red-50 border border-red-100 px-2 py-1 rounded-lg">
+                                                        <span class="font-mono text-xs font-extrabold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-1 rounded-lg">
                                                             <?php echo str_pad((int)$rule['offense_no'], 2, '0', STR_PAD_LEFT); ?>
                                                         </span>
                                                     </td>
                                                     <td class="px-5 py-4">
                                                         <p class="font-extrabold text-slate-900 text-sm"><?php echo htmlspecialchars($rule['title']); ?></p>
                                                         <?php if (!empty($rule['description'])): ?>
-                                                            <p class="text-xs text-slate-500 mt-0.5 font-medium leading-snug max-w-sm truncate"><?php echo htmlspecialchars($rule['description']); ?></p>
+                                                            <p class="text-xs text-slate-500 mt-0.5 font-medium leading-snug max-w-md"><?php echo htmlspecialchars($rule['description']); ?></p>
                                                         <?php endif; ?>
                                                     </td>
                                                     <td class="px-5 py-4 hidden md:table-cell">
-                                                        <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-md">
+                                                        <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
                                                             <?php echo htmlspecialchars($rule['legal_ref'] ?: '—'); ?>
                                                         </span>
-                                                    </td>
-                                                    <td class="px-5 py-4 hidden lg:table-cell">
-                                                        <span class="text-xs font-extrabold text-red-700"><?php echo htmlspecialchars($rule['fine_range'] ?: '—'); ?></span>
-                                                        <?php if (!empty($rule['alt_penalty'])): ?>
-                                                            <p class="text-xs text-slate-500 mt-0.5"><?php echo htmlspecialchars($rule['alt_penalty']); ?></p>
-                                                        <?php endif; ?>
                                                     </td>
                                                     <td class="px-5 py-4 text-center">
                                                         <?php if ($rule['is_active']): ?>
@@ -135,13 +146,113 @@
                                                         <div class="flex items-center justify-end gap-2">
                                                             <button type="button"
                                                                 onclick='openEditModal(<?php echo json_encode($rule); ?>)'
-                                                                class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-extrabold transition border border-slate-200">
+                                                                class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-extrabold transition border border-slate-200">
                                                                 Edit
                                                             </button>
-                                                            <form method="POST" onsubmit="return confirm('Delete this rule?');" class="inline-block">
+                                                            <form method="POST" onsubmit="return confirm('Delete this prohibited action?');" class="inline-block">
                                                                 <input type="hidden" name="delete_rule" value="1">
                                                                 <input type="hidden" name="rule_id" value="<?php echo $rule['rule_id']; ?>">
-                                                                <button type="submit" class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl text-xs font-extrabold transition border border-red-200">
+                                                                <button type="submit" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-extrabold transition border border-rose-200">
+                                                                    Delete
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- ============================================================ -->
+                            <!-- SECTION 2: PENALTY TIERS & FINES                             -->
+                            <!-- ============================================================ -->
+                            <div class="bg-white rounded-2xl border-2 border-slate-200 shadow-xs overflow-hidden">
+                                <div class="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-extrabold shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                        </div>
+                                        <div>
+                                            <h2 class="text-xl font-extrabold text-slate-900">2. Penalties &amp; Fines Schedule</h2>
+                                            <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
+                                                Financial fines and alternative community service consequences per offense tier.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                                        <span class="px-3.5 py-1 rounded-full bg-amber-50 text-amber-800 font-mono font-extrabold text-xs border border-amber-200">
+                                            <?php echo count($data['penalties'] ?? []); ?> Penalties
+                                        </span>
+                                        <button onclick="openAddModal('penalty')" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-800 text-xs font-extrabold rounded-lg border border-slate-200 transition shadow-2xs">
+                                            + Add Penalty
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <?php if (empty($data['penalties'])): ?>
+                                    <div class="p-10 text-center">
+                                        <div class="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mx-auto mb-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                        </div>
+                                        <p class="text-sm font-extrabold text-slate-700">No penalties listed yet</p>
+                                        <p class="text-xs text-slate-500 mt-1">Click <strong>Add Penalty Tier</strong> to configure fine ranges and community service.</p>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left border-collapse text-sm">
+                                            <thead class="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider text-xs border-b border-slate-200">
+                                                <tr>
+                                                    <th class="px-5 py-3.5 w-16">#</th>
+                                                    <th class="px-5 py-3.5">Offense / Tier</th>
+                                                    <th class="px-5 py-3.5">Fine Range</th>
+                                                    <th class="px-5 py-3.5 hidden md:table-cell">Alternative Consequence</th>
+                                                    <th class="px-5 py-3.5 text-center">Status</th>
+                                                    <th class="px-5 py-3.5 text-right">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100 bg-white">
+                                                <?php foreach ($data['penalties'] as $rule): ?>
+                                                <tr class="hover:bg-slate-50/70 transition group">
+                                                    <td class="px-5 py-4">
+                                                        <span class="font-mono text-xs font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1 rounded-lg">
+                                                            <?php echo str_pad((int)$rule['offense_no'], 2, '0', STR_PAD_LEFT); ?>
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-5 py-4">
+                                                        <p class="font-extrabold text-slate-900 text-sm"><?php echo htmlspecialchars($rule['title']); ?></p>
+                                                        <?php if (!empty($rule['legal_ref'])): ?>
+                                                            <span class="text-[11px] text-slate-500 font-semibold"><?php echo htmlspecialchars($rule['legal_ref']); ?></span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td class="px-5 py-4">
+                                                        <span class="text-xs font-extrabold text-red-700 bg-red-50 px-2.5 py-1 rounded-lg border border-red-200 inline-block font-mono">
+                                                            <?php echo htmlspecialchars($rule['fine_range'] ?: '—'); ?>
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-5 py-4 hidden md:table-cell">
+                                                        <span class="text-xs font-semibold text-slate-600"><?php echo htmlspecialchars($rule['alt_penalty'] ?: '—'); ?></span>
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center">
+                                                        <?php if ($rule['is_active']): ?>
+                                                            <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs font-extrabold border border-emerald-200">Active</span>
+                                                        <?php else: ?>
+                                                            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-extrabold">Inactive</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td class="px-5 py-4 text-right">
+                                                        <div class="flex items-center justify-end gap-2">
+                                                            <button type="button"
+                                                                onclick='openEditModal(<?php echo json_encode($rule); ?>)'
+                                                                class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-extrabold transition border border-slate-200">
+                                                                Edit
+                                                            </button>
+                                                            <form method="POST" onsubmit="return confirm('Delete this penalty rule?');" class="inline-block">
+                                                                <input type="hidden" name="delete_rule" value="1">
+                                                                <input type="hidden" name="rule_id" value="<?php echo $rule['rule_id']; ?>">
+                                                                <button type="submit" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-extrabold transition border border-rose-200">
                                                                     Delete
                                                                 </button>
                                                             </form>
@@ -164,63 +275,85 @@
 </div>
 
 <!-- ═══════════════════════════════════════ ADD MODAL ═══════════════════════════════════════ -->
-<div id="addModal" class="modal-backdrop fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm opacity-0 invisible p-4">
-    <div class="modal-box w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden scale-95 opacity-0">
+<div id="addModal" class="modal-backdrop fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/60 backdrop-blur-xs opacity-0 invisible p-4">
+    <div class="modal-box w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden scale-95 opacity-0">
         <div class="p-6 border-b border-slate-200 flex items-center justify-between">
-            <h3 class="text-xl font-extrabold text-slate-900">Add New Rule</h3>
+            <h3 class="text-xl font-extrabold text-slate-900" id="addModalTitle">Add New Entry</h3>
             <button onclick="closeAddModal()" class="p-2 hover:bg-slate-100 rounded-xl transition text-slate-400 hover:text-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
         <form method="POST" class="p-6 space-y-4">
             <input type="hidden" name="add_rule" value="1">
+            
+            <!-- Type Selector -->
+            <div>
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">Rule Category <span class="text-red-500">*</span></label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50/60 border-slate-200">
+                        <input type="radio" name="rule_type" value="prohibited_action" id="addTypeProhibited" class="accent-rose-600">
+                        <div>
+                            <span class="block text-xs font-extrabold text-slate-900">Prohibited Action</span>
+                            <span class="block text-[11px] text-slate-500 font-medium">Illegal practice/ordinance</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50/60 border-slate-200">
+                        <input type="radio" name="rule_type" value="penalty" id="addTypePenalty" class="accent-amber-600">
+                        <div>
+                            <span class="block text-xs font-extrabold text-slate-900">Penalty Tier</span>
+                            <span class="block text-[11px] text-slate-500 font-medium">Fines &amp; Consequences</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Offense # <span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Offense / Order #</label>
                     <input type="number" name="offense_no" min="1" max="999" placeholder="01"
-                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold font-mono text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold font-mono text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
                 </div>
                 <div>
-                    <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Legal Reference</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Legal Reference</label>
                     <input type="text" name="legal_ref" placeholder="e.g. RA 9003 Sec. 48"
-                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Offense Title <span class="text-red-500">*</span></label>
-                <input type="text" name="title" required placeholder="e.g. Littering & Illegal Dumping"
-                       class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Title / Offense Name <span class="text-red-500">*</span></label>
+                <input type="text" name="title" required placeholder="e.g. Littering, Open Burning, 1st Offense"
+                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
             </div>
             <div>
-                <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Description</label>
-                <textarea name="description" rows="3" placeholder="Describe the prohibited action..."
-                          class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-medium text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition resize-none"></textarea>
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Description (Optional)</label>
+                <textarea name="description" rows="2" placeholder="Specific prohibited behavior or details..."
+                          class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition resize-none"></textarea>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Fine Range</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Fine Range (Optional)</label>
                     <input type="text" name="fine_range" placeholder="e.g. ₱300 – ₱1,000"
-                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
                 </div>
                 <div>
-                    <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Alternative Penalty</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Alternative Penalty (Optional)</label>
                     <input type="text" name="alt_penalty" placeholder="e.g. 1–15 days Community Service"
-                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
                 </div>
             </div>
             <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
-                <button type="button" onclick="closeAddModal()" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-extrabold rounded-xl transition">Cancel</button>
-                <button type="submit" class="px-6 py-3 bg-[#0B2E22] hover:bg-[#093024] text-white text-sm font-extrabold rounded-xl shadow-xs transition">Save Rule</button>
+                <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-extrabold rounded-xl transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 bg-[#0B2E22] hover:bg-[#093024] text-white text-sm font-extrabold rounded-xl shadow-xs transition">Save Entry</button>
             </div>
         </form>
     </div>
 </div>
 
 <!-- ═══════════════════════════════════════ EDIT MODAL ═══════════════════════════════════════ -->
-<div id="editModal" class="modal-backdrop fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm opacity-0 invisible p-4">
-    <div class="modal-box w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden scale-95 opacity-0">
+<div id="editModal" class="modal-backdrop fixed inset-0 z-[999] flex items-center justify-center bg-slate-950/60 backdrop-blur-xs opacity-0 invisible p-4">
+    <div class="modal-box w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden scale-95 opacity-0">
         <div class="p-6 border-b border-slate-200 flex items-center justify-between">
-            <h3 class="text-xl font-extrabold text-slate-900">Edit Rule</h3>
+            <h3 class="text-xl font-extrabold text-slate-900">Edit Rule / Penalty</h3>
             <button onclick="closeEditModal()" class="p-2 hover:bg-slate-100 rounded-xl transition text-slate-400 hover:text-slate-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
@@ -228,54 +361,83 @@
         <form method="POST" class="p-6 space-y-4">
             <input type="hidden" name="edit_rule" value="1">
             <input type="hidden" name="rule_id" id="editRuleId">
+
+            <!-- Type Selector -->
+            <div>
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">Rule Category</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50/60 border-slate-200">
+                        <input type="radio" name="rule_type" value="prohibited_action" id="editTypeProhibited" class="accent-rose-600">
+                        <div>
+                            <span class="block text-xs font-extrabold text-slate-900">Prohibited Action</span>
+                            <span class="block text-[11px] text-slate-500 font-medium">Illegal practice/ordinance</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50/60 border-slate-200">
+                        <input type="radio" name="rule_type" value="penalty" id="editTypePenalty" class="accent-amber-600">
+                        <div>
+                            <span class="block text-xs font-extrabold text-slate-900">Penalty Tier</span>
+                            <span class="block text-[11px] text-slate-500 font-medium">Fines &amp; Consequences</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Offense #</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Offense / Order #</label>
                     <input type="number" name="offense_no" id="editOffenseNo" min="1" max="999"
-                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold font-mono text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold font-mono text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
                 </div>
                 <div>
-                    <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Legal Reference</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Legal Reference</label>
                     <input type="text" name="legal_ref" id="editLegalRef"
-                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Offense Title <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Title / Offense Name <span class="text-red-500">*</span></label>
                 <input type="text" name="title" id="editTitle" required
-                       class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
             </div>
             <div>
-                <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Description</label>
-                <textarea name="description" id="editDescription" rows="3"
-                          class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-medium text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition resize-none"></textarea>
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Description</label>
+                <textarea name="description" id="editDescription" rows="2"
+                          class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition resize-none"></textarea>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Fine Range</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Fine Range</label>
                     <input type="text" name="fine_range" id="editFineRange"
-                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
                 </div>
                 <div>
-                    <label class="block text-sm font-extrabold text-slate-900 mb-1.5">Alternative Penalty</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">Alternative Penalty</label>
                     <input type="text" name="alt_penalty" id="editAltPenalty"
-                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-emerald-500 focus:bg-white transition">
                 </div>
             </div>
             <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <input type="checkbox" name="is_active" id="editIsActive" value="1" class="w-4 h-4 accent-emerald-600">
-                <label for="editIsActive" class="text-sm font-extrabold text-slate-900 cursor-pointer">Active (visible on public portal)</label>
+                <label for="editIsActive" class="text-xs font-extrabold text-slate-900 cursor-pointer">Active (visible on public portal)</label>
             </div>
             <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
-                <button type="button" onclick="closeEditModal()" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-extrabold rounded-xl transition">Cancel</button>
-                <button type="submit" class="px-6 py-3 bg-[#0B2E22] hover:bg-[#093024] text-white text-sm font-extrabold rounded-xl shadow-xs transition">Update Rule</button>
+                <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-extrabold rounded-xl transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 bg-[#0B2E22] hover:bg-[#093024] text-white text-sm font-extrabold rounded-xl shadow-xs transition">Update Entry</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-function openAddModal() {
+function openAddModal(preferredType = 'penalty') {
+    if (preferredType === 'prohibited_action') {
+        document.getElementById('addTypeProhibited').checked = true;
+        document.getElementById('addModalTitle').textContent = 'Add Prohibited Action';
+    } else {
+        document.getElementById('addTypePenalty').checked = true;
+        document.getElementById('addModalTitle').textContent = 'Add Penalty Tier';
+    }
     const m = document.getElementById('addModal');
     m.classList.remove('opacity-0','invisible');
     setTimeout(() => { m.querySelector('.modal-box').classList.remove('scale-95','opacity-0'); }, 10);
@@ -294,6 +456,13 @@ function openEditModal(rule) {
     document.getElementById('editFineRange').value = rule.fine_range || '';
     document.getElementById('editAltPenalty').value= rule.alt_penalty|| '';
     document.getElementById('editIsActive').checked= rule.is_active == 1;
+
+    if (rule.rule_type === 'prohibited_action') {
+        document.getElementById('editTypeProhibited').checked = true;
+    } else {
+        document.getElementById('editTypePenalty').checked = true;
+    }
+
     const m = document.getElementById('editModal');
     m.classList.remove('opacity-0','invisible');
     setTimeout(() => { m.querySelector('.modal-box').classList.remove('scale-95','opacity-0'); }, 10);

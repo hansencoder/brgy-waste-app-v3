@@ -180,25 +180,63 @@
                                             </p>
                                         </div>
 
-                                        <!-- 2. Minimum Reports Threshold -->
-                                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3">
+                                        <!-- 2. Configurable Hotspot Intensity Intervals -->
+                                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4">
                                             <div class="flex items-center justify-between">
-                                                <label class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Hotspot Minimum Reports</label>
+                                                <label class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Hotspot Density &amp; Intensity Intervals</label>
                                                 <span class="text-xs font-mono font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
-                                                    &ge; <span id="thresholdValueBadge"><?php echo (int)($data['settings']['minimum_reports'] ?? 3); ?></span> reports
+                                                    Cluster Thresholds
                                                 </span>
                                             </div>
-                                            <input type="range" id="thresholdSlider" min="1" max="10" step="1" 
-                                                   value="<?php echo (int)($data['settings']['minimum_reports'] ?? 3); ?>" 
-                                                   class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer transition">
-                                            <input type="hidden" name="minimum_reports" id="thresholdInput" value="<?php echo (int)($data['settings']['minimum_reports'] ?? 3); ?>">
-                                            <div class="flex justify-between text-[11px] font-bold text-slate-400">
-                                                <span>1 (Sensitive)</span>
-                                                <span>3 (Balanced)</span>
-                                                <span>10 (Strict)</span>
+                                            <input type="hidden" name="minimum_reports" id="thresholdInput" value="<?php echo (int)($data['settings']['low_min'] ?? $data['settings']['minimum_reports'] ?? 3); ?>">
+
+                                            <div class="grid grid-cols-3 gap-2.5 text-xs">
+                                                <!-- Low Interval -->
+                                                <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
+                                                    <span class="font-extrabold text-amber-700 block text-[11px]">Low Density</span>
+                                                    <div class="flex items-center gap-1 font-mono font-bold text-slate-800">
+                                                        <input type="number" min="1" max="50" name="low_min" id="inputLowMin" 
+                                                               value="<?php echo (int)($data['settings']['low_min'] ?? 3); ?>" 
+                                                               class="w-12 px-1.5 py-1 text-center border border-slate-300 rounded-lg text-xs font-bold outline-none focus:border-amber-500">
+                                                        <span class="text-slate-400 font-normal">to</span>
+                                                        <input type="number" min="1" max="50" name="low_max" id="inputLowMax" 
+                                                               value="<?php echo (int)($data['settings']['low_max'] ?? 5); ?>" 
+                                                               class="w-12 px-1.5 py-1 text-center border border-slate-300 rounded-lg text-xs font-bold outline-none focus:border-amber-500">
+                                                    </div>
+                                                    <span class="text-[10px] text-slate-400 block">reports</span>
+                                                </div>
+
+                                                <!-- Moderate Interval -->
+                                                <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
+                                                    <span class="font-extrabold text-orange-700 block text-[11px]">Moderate</span>
+                                                    <div class="flex items-center gap-1 font-mono font-bold text-slate-800">
+                                                        <input type="number" min="2" max="100" name="moderate_min" id="inputModMin" 
+                                                               value="<?php echo (int)($data['settings']['moderate_min'] ?? 6); ?>" 
+                                                               class="w-12 px-1.5 py-1 text-center border border-slate-300 rounded-lg text-xs font-bold outline-none focus:border-orange-500">
+                                                        <span class="text-slate-400 font-normal">to</span>
+                                                        <input type="number" min="2" max="100" name="moderate_max" id="inputModMax" 
+                                                               value="<?php echo (int)($data['settings']['moderate_max'] ?? 10); ?>" 
+                                                               class="w-12 px-1.5 py-1 text-center border border-slate-300 rounded-lg text-xs font-bold outline-none focus:border-orange-500">
+                                                    </div>
+                                                    <span class="text-[10px] text-slate-400 block">reports</span>
+                                                </div>
+
+                                                <!-- Severe Interval -->
+                                                <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
+                                                    <span class="font-extrabold text-red-700 block text-[11px]">Severe Hotspot</span>
+                                                    <div class="flex items-center gap-1 font-mono font-bold text-slate-800">
+                                                        <span class="text-slate-400">&ge;</span>
+                                                        <input type="number" min="3" max="200" name="severe_min" id="inputSevMin" 
+                                                               value="<?php echo (int)($data['settings']['severe_min'] ?? 11); ?>" 
+                                                               class="w-14 px-1.5 py-1 text-center border border-slate-300 rounded-lg text-xs font-bold outline-none focus:border-red-500">
+                                                        <span class="text-slate-400">+</span>
+                                                    </div>
+                                                    <span class="text-[10px] text-slate-400 block">reports</span>
+                                                </div>
                                             </div>
+
                                             <p class="text-xs text-slate-500 font-semibold pt-1 border-t border-slate-200">
-                                                Minimum incident reports inside cluster radius required before marking a zone as an Active Hotspot.
+                                                Reports below <strong class="text-slate-700">Low Min</strong> will not produce heatmap blobs, preventing single isolated incidents from creating false alarms.
                                             </p>
                                         </div>
 
@@ -454,28 +492,39 @@ document.addEventListener('DOMContentLoaded', function() {
     window.applyPreset = function(presetName) {
         if (presetName === 'default') {
             radiusSlider.value = 50;
-            thresholdSlider.value = 3;
             lowColor.value = '#FDE68A';
             mediumColor.value = '#F97316';
             highColor.value = '#EF4444';
+            if (document.getElementById('inputLowMin')) document.getElementById('inputLowMin').value = 3;
+            if (document.getElementById('inputLowMax')) document.getElementById('inputLowMax').value = 5;
+            if (document.getElementById('inputModMin')) document.getElementById('inputModMin').value = 6;
+            if (document.getElementById('inputModMax')) document.getElementById('inputModMax').value = 10;
+            if (document.getElementById('inputSevMin')) document.getElementById('inputSevMin').value = 11;
         } else if (presetName === 'dense') {
             radiusSlider.value = 30;
-            thresholdSlider.value = 2;
             lowColor.value = '#FEF08A';
             mediumColor.value = '#EA580C';
             highColor.value = '#DC2626';
+            if (document.getElementById('inputLowMin')) document.getElementById('inputLowMin').value = 2;
+            if (document.getElementById('inputLowMax')) document.getElementById('inputLowMax').value = 4;
+            if (document.getElementById('inputModMin')) document.getElementById('inputModMin').value = 5;
+            if (document.getElementById('inputModMax')) document.getElementById('inputModMax').value = 8;
+            if (document.getElementById('inputSevMin')) document.getElementById('inputSevMin').value = 9;
         } else if (presetName === 'wide') {
             radiusSlider.value = 85;
-            thresholdSlider.value = 5;
             lowColor.value = '#BAE6FD';
             mediumColor.value = '#F59E0B';
             highColor.value = '#B91C1C';
+            if (document.getElementById('inputLowMin')) document.getElementById('inputLowMin').value = 5;
+            if (document.getElementById('inputLowMax')) document.getElementById('inputLowMax').value = 8;
+            if (document.getElementById('inputModMin')) document.getElementById('inputModMin').value = 9;
+            if (document.getElementById('inputModMax')) document.getElementById('inputModMax').value = 15;
+            if (document.getElementById('inputSevMin')) document.getElementById('inputSevMin').value = 16;
         }
 
         radiusInput.value = radiusSlider.value;
         radiusBadge.textContent = radiusSlider.value;
-        thresholdInput.value = thresholdSlider.value;
-        thresholdBadge.textContent = thresholdSlider.value;
+        if (thresholdInput) thresholdInput.value = document.getElementById('inputLowMin')?.value || 3;
         
         lowHex.value = lowColor.value.toUpperCase();
         mediumHex.value = mediumColor.value.toUpperCase();

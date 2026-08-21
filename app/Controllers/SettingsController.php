@@ -313,6 +313,11 @@ class SettingsController extends Controller {
             $low = trim($_POST['low_density_color'] ?? '#FDE68A');
             $medium = trim($_POST['medium_density_color'] ?? '#F97316');
             $high = trim($_POST['high_density_color'] ?? '#EF4444');
+            $low_min = (int)($_POST['low_min'] ?? 3);
+            $low_max = (int)($_POST['low_max'] ?? 5);
+            $moderate_min = (int)($_POST['moderate_min'] ?? 6);
+            $moderate_max = (int)($_POST['moderate_max'] ?? 10);
+            $severe_min = (int)($_POST['severe_min'] ?? 11);
 
             $db->query("UPDATE heatmap_settings SET 
                 radius_meters = :radius,
@@ -320,20 +325,30 @@ class SettingsController extends Controller {
                 low_density_color = :low,
                 medium_density_color = :medium,
                 high_density_color = :high,
+                low_min = :low_min,
+                low_max = :low_max,
+                moderate_min = :moderate_min,
+                moderate_max = :moderate_max,
+                severe_min = :severe_min,
                 updated_by = :updated_by,
                 updated_at = NOW()
                 WHERE setting_id = :id
             ");
             $db->bind(':radius', $radius);
-            $db->bind(':min_reports', $min_reports);
+            $db->bind(':min_reports', $low_min);
             $db->bind(':low', $low);
             $db->bind(':medium', $medium);
             $db->bind(':high', $high);
+            $db->bind(':low_min', $low_min);
+            $db->bind(':low_max', $low_max);
+            $db->bind(':moderate_min', $moderate_min);
+            $db->bind(':moderate_max', $moderate_max);
+            $db->bind(':severe_min', $severe_min);
             $db->bind(':updated_by', $_SESSION['user_id']);
             $db->bind(':id', $settings['setting_id']);
             if ($db->execute()) {
-                $data['success'] = 'Heatmap settings updated.';
-                $this->auditModel->logAction($_SESSION['user_id'], 'Update Heatmap Settings', 'Settings', 'Updated heatmap settings', 'success');
+                $data['success'] = 'Heatmap settings updated successfully.';
+                $this->auditModel->logAction($_SESSION['user_id'], 'Update Heatmap Settings', 'Settings', 'Updated heatmap settings & intervals', 'success');
                 $db->query("SELECT * FROM heatmap_settings LIMIT 1");
                 $data['settings'] = $db->single();
             } else {
@@ -677,7 +692,45 @@ class SettingsController extends Controller {
         $data = ['error' => '', 'success' => ''];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (isset($_POST['save_boundary'])) {
+            if (isset($_POST['add_purok'])) {
+                $purok_name = trim($_POST['purok_name'] ?? '');
+                $description = trim($_POST['description'] ?? '');
+                if (!empty($purok_name)) {
+                    $db->query("SELECT purok_id FROM puroks WHERE LOWER(purok_name) = LOWER(:name) LIMIT 1");
+                    $db->bind(':name', $purok_name);
+                    if ($db->single()) {
+                        $data['error'] = "A Purok named '" . htmlspecialchars($purok_name) . "' already exists.";
+                    } else {
+                        // Get next sort order
+                        $db->query("SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_order FROM puroks");
+                        $nextOrder = $db->single()['next_order'] ?? 1;
+
+                        $db->query("INSERT INTO puroks (barangay_id, purok_name, description, sort_order, is_active) 
+                                    VALUES (1, :name, :description, :sort_order, 1)");
+                        $db->bind(':name', $purok_name);
+                        $db->bind(':description', $description);
+                        $db->bind(':sort_order', $nextOrder);
+                        if ($db->execute()) {
+                            $newPurokId = $db->lastInsertId();
+                            $polygon_geojson = trim($_POST['polygon_geojson'] ?? '');
+                            if (!empty($polygon_geojson)) {
+                                $db->query("INSERT INTO purok_boundaries (purok_id, polygon_geometry, updated_by) 
+                                            VALUES (:purok_id, ST_GeomFromGeoJSON(:geojson), :updated_by)");
+                                $db->bind(':purok_id', $newPurokId);
+                                $db->bind(':geojson', $polygon_geojson);
+                                $db->bind(':updated_by', $_SESSION['user_id']);
+                                $db->execute();
+                            }
+                            $data['success'] = "Purok '" . htmlspecialchars($purok_name) . "' added successfully!";
+                            $this->auditModel->logAction($_SESSION['user_id'], 'Add Purok', 'Settings', "Added new purok: $purok_name", 'success');
+                        } else {
+                            $data['error'] = 'Failed to add Purok to database.';
+                        }
+                    }
+                } else {
+                    $data['error'] = 'Purok name is required.';
+                }
+            } elseif (isset($_POST['save_boundary'])) {
                 $purok_id = (int)($_POST['purok_id'] ?? 0);
                 $polygon_geojson = $_POST['polygon_geojson'] ?? '';
                 if ($purok_id && !empty($polygon_geojson)) {
@@ -743,11 +796,12 @@ class SettingsController extends Controller {
         $db   = new Database();
         $data = ['error' => '', 'success' => ''];
 
-        // Auto-migrate: create table if not exists
+        // Auto-migrate: create table if not exists, ensure rule_type column exists
         $db->query("CREATE TABLE IF NOT EXISTS penalty_rules (
             rule_id     INT AUTO_INCREMENT PRIMARY KEY,
             offense_no  INT NOT NULL DEFAULT 0,
             title       VARCHAR(255) NOT NULL,
+            rule_type   ENUM('prohibited_action', 'penalty') DEFAULT 'penalty',
             description TEXT,
             legal_ref   VARCHAR(150),
             fine_range  VARCHAR(150),
@@ -759,32 +813,41 @@ class SettingsController extends Controller {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         $db->execute();
 
+        try {
+            $db->query("ALTER TABLE penalty_rules ADD COLUMN IF NOT EXISTS rule_type ENUM('prohibited_action', 'penalty') DEFAULT 'penalty' AFTER title");
+            $db->execute();
+        } catch (Exception $e) {}
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // ── Add Rule ────────────────────────────────────────
             if (isset($_POST['add_rule'])) {
                 $offense_no  = (int)($_POST['offense_no']  ?? 0);
                 $title       = trim($_POST['title']       ?? '');
+                $rule_type   = in_array($_POST['rule_type'] ?? '', ['prohibited_action', 'penalty']) ? $_POST['rule_type'] : 'penalty';
                 $description = trim($_POST['description'] ?? '');
                 $legal_ref   = trim($_POST['legal_ref']   ?? '');
                 $fine_range  = trim($_POST['fine_range']  ?? '');
                 $alt_penalty = trim($_POST['alt_penalty'] ?? '');
                 if (!empty($title)) {
-                    $db->query("INSERT INTO penalty_rules (offense_no, title, description, legal_ref, fine_range, alt_penalty) VALUES (:offense_no, :title, :desc, :legal_ref, :fine_range, :alt_penalty)");
+                    $db->query("INSERT INTO penalty_rules (offense_no, title, rule_type, description, legal_ref, fine_range, alt_penalty) 
+                                VALUES (:offense_no, :title, :rule_type, :desc, :legal_ref, :fine_range, :alt_penalty)");
                     $db->bind(':offense_no',  $offense_no);
                     $db->bind(':title',       $title);
+                    $db->bind(':rule_type',   $rule_type);
                     $db->bind(':desc',        $description);
                     $db->bind(':legal_ref',   $legal_ref);
                     $db->bind(':fine_range',  $fine_range);
                     $db->bind(':alt_penalty', $alt_penalty);
                     if ($db->execute()) {
-                        $data['success'] = "Rule '{$title}' added successfully.";
-                        $this->auditModel->logAction($_SESSION['user_id'], 'Add Penalty Rule', 'Settings', "Added rule: $title", 'success');
+                        $label = $rule_type === 'prohibited_action' ? 'Prohibited action' : 'Penalty';
+                        $data['success'] = "{$label} '{$title}' added successfully.";
+                        $this->auditModel->logAction($_SESSION['user_id'], 'Add Penalty Rule', 'Settings', "Added {$rule_type}: $title", 'success');
                     } else {
                         $data['error'] = 'Failed to add rule.';
                     }
                 } else {
-                    $data['error'] = 'Rule title is required.';
+                    $data['error'] = 'Title is required.';
                 }
             }
 
@@ -793,15 +856,20 @@ class SettingsController extends Controller {
                 $rule_id     = (int)($_POST['rule_id']    ?? 0);
                 $offense_no  = (int)($_POST['offense_no'] ?? 0);
                 $title       = trim($_POST['title']       ?? '');
+                $rule_type   = in_array($_POST['rule_type'] ?? '', ['prohibited_action', 'penalty']) ? $_POST['rule_type'] : 'penalty';
                 $description = trim($_POST['description'] ?? '');
                 $legal_ref   = trim($_POST['legal_ref']   ?? '');
                 $fine_range  = trim($_POST['fine_range']  ?? '');
                 $alt_penalty = trim($_POST['alt_penalty'] ?? '');
                 $is_active   = isset($_POST['is_active']) ? 1 : 0;
                 if ($rule_id && !empty($title)) {
-                    $db->query("UPDATE penalty_rules SET offense_no=:offense_no, title=:title, description=:desc, legal_ref=:legal_ref, fine_range=:fine_range, alt_penalty=:alt_penalty, is_active=:is_active WHERE rule_id=:rule_id");
+                    $db->query("UPDATE penalty_rules 
+                                SET offense_no=:offense_no, title=:title, rule_type=:rule_type, description=:desc, 
+                                    legal_ref=:legal_ref, fine_range=:fine_range, alt_penalty=:alt_penalty, is_active=:is_active 
+                                WHERE rule_id=:rule_id");
                     $db->bind(':offense_no',  $offense_no);
                     $db->bind(':title',       $title);
+                    $db->bind(':rule_type',   $rule_type);
                     $db->bind(':desc',        $description);
                     $db->bind(':legal_ref',   $legal_ref);
                     $db->bind(':fine_range',  $fine_range);
@@ -809,7 +877,7 @@ class SettingsController extends Controller {
                     $db->bind(':is_active',   $is_active);
                     $db->bind(':rule_id',     $rule_id);
                     if ($db->execute()) {
-                        $data['success'] = "Rule updated.";
+                        $data['success'] = "Rule updated successfully.";
                         $this->auditModel->logAction($_SESSION['user_id'], 'Edit Penalty Rule', 'Settings', "Edited rule ID $rule_id", 'success');
                     } else {
                         $data['error'] = 'Failed to update rule.';
@@ -824,7 +892,7 @@ class SettingsController extends Controller {
                     $db->query("DELETE FROM penalty_rules WHERE rule_id = :rule_id");
                     $db->bind(':rule_id', $rule_id);
                     if ($db->execute()) {
-                        $data['success'] = 'Rule deleted.';
+                        $data['success'] = 'Rule deleted successfully.';
                         $this->auditModel->logAction($_SESSION['user_id'], 'Delete Penalty Rule', 'Settings', "Deleted rule ID $rule_id", 'success');
                     } else {
                         $data['error'] = 'Failed to delete rule.';
@@ -832,6 +900,12 @@ class SettingsController extends Controller {
                 }
             }
         }
+
+        $db->query("SELECT * FROM penalty_rules WHERE rule_type = 'prohibited_action' ORDER BY offense_no ASC, sort_order ASC, rule_id ASC");
+        $data['prohibited_actions'] = $db->resultSet();
+
+        $db->query("SELECT * FROM penalty_rules WHERE (rule_type = 'penalty' OR rule_type IS NULL OR rule_type = '') ORDER BY offense_no ASC, sort_order ASC, rule_id ASC");
+        $data['penalties'] = $db->resultSet();
 
         $db->query("SELECT * FROM penalty_rules ORDER BY offense_no ASC, sort_order ASC, rule_id ASC");
         $data['rules'] = $db->resultSet();

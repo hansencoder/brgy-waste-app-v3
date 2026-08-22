@@ -1025,7 +1025,7 @@ $metrics = [
         const scopeLabel = document.getElementById('printScopeLabel');
 
         if (onlySelected && selectedBoxes.length === 0) {
-            alert('Please select at least one report using the checkboxes to print selected reports.');
+            showModalAlert('Please select at least one report using the checkboxes to print selected reports.', 'Print Selection Required', 'warning');
             return;
         }
 

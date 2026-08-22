@@ -747,7 +747,7 @@ function fitMapToBoundary() {
     if (drawnItems && drawnItems.getLayers().length > 0) {
         map.fitBounds(drawnItems.getBounds(), { padding: [40, 40] });
     } else {
-        alert('No boundary drawn yet to fit view.');
+        showToast('No boundary drawn yet to fit view.', 'info');
     }
 }
 
@@ -831,7 +831,7 @@ function calculateSpatialMetrics() {
 function submitMasterBoundary() {
     const layers = drawnItems.getLayers();
     if (layers.length === 0) {
-        alert('Please draw or import a polygon boundary first before saving.');
+        showModalAlert('Please draw or import a polygon boundary first before saving.', 'Boundary Required', 'warning');
         return;
     }
 
@@ -878,14 +878,14 @@ function closeGeoJsonModal() {
 function copyGeoJsonToClipboard() {
     const txt = document.getElementById('modalGeoJsonText').value;
     navigator.clipboard.writeText(txt).then(() => {
-        alert('GeoJSON copied to clipboard!');
+        showToast('GeoJSON copied to clipboard!', 'success');
     });
 }
 
 function downloadGeoJsonFile() {
     const txt = document.getElementById('modalGeoJsonText').value;
     if (!txt) {
-        alert('No GeoJSON to download.');
+        showModalAlert('No GeoJSON data available to download.', 'Empty GeoJSON', 'warning');
         return;
     }
     const blob = new Blob([txt], { type: 'application/json' });
@@ -901,7 +901,7 @@ function downloadGeoJsonFile() {
 function applyImportedGeoJson() {
     const txt = document.getElementById('modalGeoJsonText').value.trim();
     if (!txt) {
-        alert('Please paste valid GeoJSON or choose a file.');
+        showModalAlert('Please paste valid GeoJSON or choose a file.', 'Import Required', 'warning');
         return;
     }
     try {
@@ -918,7 +918,7 @@ function applyImportedGeoJson() {
             }
         });
     } catch(e) {
-        alert('Error parsing JSON payload: ' + e.message);
+        showModalAlert('Error parsing JSON payload: ' + e.message, 'JSON Parse Error', 'error');
     }
 }
 

@@ -249,6 +249,69 @@ class Report {
     }
 
     // ============================================================
+    // GET COMMUNITY REPORTS FOR RESIDENT DASHBOARD MAP
+    // ============================================================
+    public function getCommunityReportsForMap() {
+        $this->db->query("
+            SELECT
+                r.id,
+                r.latitude,
+                r.longitude,
+                r.status_id,
+                r.description,
+                r.submission_date,
+                r.support_count,
+                rs.status_name,
+                wc.category_name,
+                p.purok_name,
+                (SELECT photo_path FROM report_photos WHERE report_id = r.id AND is_primary = 1 LIMIT 1) AS photo_path
+            FROM reports r
+            LEFT JOIN report_statuses rs ON r.status_id = rs.status_id
+            LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+            LEFT JOIN puroks p ON r.purok_id = p.purok_id
+            WHERE r.latitude IS NOT NULL AND r.longitude IS NOT NULL AND r.latitude != 0 AND r.longitude != 0
+              AND LOWER(rs.status_name) != 'rejected'
+              AND (
+                  LOWER(rs.status_name) != 'resolved'
+                  OR (LOWER(rs.status_name) = 'resolved' AND COALESCE(r.updated_at, r.submission_date) >= DATE_SUB(NOW(), INTERVAL 15 DAY))
+              )
+            ORDER BY r.submission_date DESC
+            LIMIT 200
+        ");
+        return $this->db->resultSet();
+    }
+
+    // ============================================================
+    // UPDATE REPORT DETAILS (FOR RESIDENTS WHILE STATUS IS PENDING)
+    // ============================================================
+    public function updateReportDetails($id, $resident_id, $data) {
+        $this->db->query("
+            UPDATE reports SET
+                category_id = :category_id,
+                quantity_id = :quantity_id,
+                condition_id = :condition_id,
+                description = :description,
+                purok_id = :purok_id,
+                latitude = :latitude,
+                longitude = :longitude,
+                location = :location,
+                updated_at = NOW()
+            WHERE id = :id AND resident_id = :resident_id AND status_id = 1
+        ");
+        $this->db->bind(':id', $id);
+        $this->db->bind(':resident_id', $resident_id);
+        $this->db->bind(':category_id', $data['category_id']);
+        $this->db->bind(':quantity_id', $data['quantity_id']);
+        $this->db->bind(':condition_id', $data['condition_id']);
+        $this->db->bind(':description', $data['description']);
+        $this->db->bind(':purok_id', $data['purok_id']);
+        $this->db->bind(':latitude', $data['latitude']);
+        $this->db->bind(':longitude', $data['longitude']);
+        $this->db->bind(':location', $data['location'] ?? '');
+        return $this->db->execute();
+    }
+
+    // ============================================================
     // GET STATUS TIMELINE
     // ============================================================
     public function getReportTimeline($id) {
@@ -354,12 +417,18 @@ class Report {
         // Generate unique tracking number: WRS-YYYY-NNNNN
         $trackingNumber = $this->generateTrackingNumber();
 
+        $guestEmail = !empty($data['guest_email']) ? trim($data['guest_email']) : null;
+        if (empty($guestEmail) && !empty($data['guest_phone']) && filter_var($data['guest_phone'], FILTER_VALIDATE_EMAIL)) {
+            $guestEmail = strtolower(trim($data['guest_phone']));
+        }
+
         $this->db->query('INSERT INTO reports (
             resident_id,
             reporter_type,
             tracking_number,
             guest_name,
             guest_phone,
+            guest_email,
             description,
             latitude,
             longitude,
@@ -380,6 +449,7 @@ class Report {
             :tracking_number,
             :guest_name,
             :guest_phone,
+            :guest_email,
             :description,
             :latitude,
             :longitude,
@@ -399,6 +469,7 @@ class Report {
         $this->db->bind(':tracking_number',      $trackingNumber);
         $this->db->bind(':guest_name',           $data['guest_name'] ?? '');
         $this->db->bind(':guest_phone',          $data['guest_phone']);
+        $this->db->bind(':guest_email',          $guestEmail);
         $this->db->bind(':description',          $data['description']);
         $this->db->bind(':latitude',             $data['latitude']);
         $this->db->bind(':longitude',            $data['longitude']);

@@ -600,10 +600,16 @@ class GuestController extends Controller {
         $reporterLng   = !empty($post['reporter_longitude']) ? (float)$post['reporter_longitude'] : null;
         $plausibility  = $this->calcPlausibility($wasteLat, $wasteLng, $reporterLat, $reporterLng);
 
+        $guestEmail = trim($post['guest_email'] ?? '');
+        if (empty($guestEmail) && filter_var($contact, FILTER_VALIDATE_EMAIL)) {
+            $guestEmail = $contact;
+        }
+
         // Store pending report in session for review step
         $_SESSION['guest_pending_report'] = [
             'guest_name'          => $name,
             'guest_phone'         => $contact,
+            'guest_email'         => $guestEmail,
             'description'         => $post['description'] ?? '',
             'latitude'            => $wasteLat,
             'longitude'           => $wasteLng,
@@ -731,10 +737,38 @@ class GuestController extends Controller {
 
         $trackingNumber = $result['tracking_number'];
 
-        // Dispatch status update via appropriate channel
-        if (!empty($_SESSION['guest_channel']) && $_SESSION['guest_channel'] === 'email') {
-            // Note: Guest will receive status updates
-        } else {
+        // 1. Dispatch Email confirmation if guest has email address
+        $dropdowns = $this->getFormDropdowns();
+        $catMap    = array_column($dropdowns['categories'], 'category_name', 'category_id');
+        $purokMap  = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
+
+        $guestEmail = !empty($report['guest_email']) ? trim($report['guest_email']) : '';
+        if (empty($guestEmail) && filter_var($contact, FILTER_VALIDATE_EMAIL)) {
+            $guestEmail = trim($contact);
+        }
+
+        if (!empty($guestEmail) && filter_var($guestEmail, FILTER_VALIDATE_EMAIL)) {
+            require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
+            try {
+                OtpMailer::sendReportStatusEmail(
+                    $guestEmail,
+                    $trackingNumber,
+                    'pending',
+                    $report['guest_name'] ?? 'Citizen',
+                    '',
+                    [
+                        'category_name' => $catMap[$report['category_id']] ?? 'Waste Incident',
+                        'purok_name'    => $purokMap[$report['purok_id'] ?? 0] ?? '',
+                        'location'      => $report['location'] ?? ''
+                    ]
+                );
+            } catch (Exception $e) {
+                error_log('[GuestController] Email confirmation failed: ' . $e->getMessage());
+            }
+        }
+
+        // 2. Dispatch SMS confirmation if contact is a mobile number
+        if (preg_match('/^09\d{9}$/', $contact)) {
             require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
             try {
                 SmsHelper::sendStatusUpdate($contact, $trackingNumber, 'pending', $report['guest_name']);

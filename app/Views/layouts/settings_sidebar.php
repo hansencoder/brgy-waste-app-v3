@@ -72,32 +72,30 @@ $categories = [
 ];
 ?>
 
-<!-- Settings Categories Sidebar / Sub-Navigation Panel (Fixed Sticky Scrolling with Real Sidebar) -->
-<div class="w-full lg:w-72 shrink-0 lg:sticky lg:top-6 lg:self-start space-y-4 font-sans z-20">
+<!-- Settings Categories Sidebar / Sub-Navigation Panel -->
+<div class="w-full lg:w-64 shrink-0 lg:sticky lg:top-6 lg:self-start space-y-4 font-sans z-20">
     
-    <!-- Clean Panel Container matching Screenshot with fixed/sticky viewport containment -->
-    <div class="bg-[#FFFFFF] rounded-2xl border border-slate-200 p-5 shadow-xs lg:max-h-[calc(100vh-3.5rem)] lg:overflow-y-auto overflow-x-hidden">
+    <!-- Clean Panel Container -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
         
         <!-- Header Title & Section Subhead -->
-        <div class="px-2 mb-4">
-            <h2 class="text-2xl font-extrabold text-[#059669] tracking-tight leading-tight">Settings</h2>
-            <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mt-1">CONFIGURATION CATEGORIES</p>
+        <div class="px-2 mb-3">
+            <h2 class="text-lg font-black text-[#059669] tracking-tight">Settings</h2>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Configuration Categories</p>
         </div>
 
         <!-- Desktop Vertical List & Mobile Responsive Swiper -->
-        <nav class="flex overflow-x-auto gap-2 pb-2 lg:flex-col lg:overflow-x-visible lg:pb-0 scrollbar-none">
+        <nav class="flex overflow-x-auto gap-1 pb-2 lg:flex-col lg:overflow-x-visible lg:pb-0 scrollbar-none">
             <?php foreach ($categories as $cat): ?>
                 <?php $isSel = ($currentTab === $cat['key']); ?>
                 <a href="<?php echo $cat['url']; ?>" 
-                   class="relative whitespace-nowrap lg:whitespace-normal shrink-0 lg:shrink flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-extrabold transition-all duration-150 border-l-4 <?php echo $isSel ? 'bg-[#d1fae5] text-[#065f46] border-[#059669] shadow-xs' : 'bg-transparent text-slate-700 hover:bg-slate-200/60 hover:text-[#059669] border-transparent'; ?>">
-                    <span class="<?php echo $isSel ? 'text-[#059669]' : 'text-slate-500'; ?>">
+                   class="relative whitespace-nowrap lg:whitespace-normal shrink-0 lg:shrink flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 border-l-3 <?php echo $isSel ? 'bg-emerald-50 text-emerald-900 border-[#059669] shadow-2xs font-extrabold' : 'bg-transparent text-slate-600 hover:bg-slate-100/80 hover:text-emerald-700 border-transparent'; ?>">
+                    <span class="<?php echo $isSel ? 'text-[#059669]' : 'text-slate-400'; ?> scale-90">
                         <?php echo $cat['icon']; ?>
                     </span>
                     <span class="truncate"><?php echo htmlspecialchars($cat['title']); ?></span>
                 </a>
             <?php endforeach; ?>
         </nav>
-
     </div>
-
 </div>

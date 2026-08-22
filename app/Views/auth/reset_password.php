@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hiddenOtp.value = otpVal;
         if (otpVal.length < 6) {
             e.preventDefault();
-            alert('Please enter the full 6-digit verification code.');
+            showModalAlert('Please enter the full 6-digit verification code.', 'Verification Code Required', 'warning');
         }
     });
 

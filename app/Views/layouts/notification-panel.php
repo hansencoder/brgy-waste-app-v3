@@ -399,8 +399,9 @@ if ($userId) {
     }
 
     // Clear all read notifications
-    function clearReadNotifications() {
-        if (!confirm('Clear all read notifications?')) return;
+    async function clearReadNotifications() {
+        const confirmed = await showModalConfirm('Are you sure you want to clear all read notifications from this panel?', 'Clear Read Notifications', { confirmText: 'Clear Read', isDanger: true });
+        if (!confirmed) return;
         fetch('<?php echo app_url('api/notifications.php'); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -410,6 +411,7 @@ if ($userId) {
                 rawNotifications = rawNotifications.filter(n => n.is_read == 0);
                 syncUnreadBadge(res.unread_count ?? rawNotifications.length);
                 renderNotifications();
+                showToast('Read notifications cleared successfully.', 'success');
             }
         }).catch(console.error);
     }
@@ -417,7 +419,7 @@ if ($userId) {
     // Export notifications logs as CSV
     function exportNotificationsCSV() {
         if (rawNotifications.length === 0) {
-            alert('No notification logs available to export.');
+            showModalAlert('No notification logs available to export.', 'Empty Log', 'warning');
             return;
         }
         let csv = 'ID,Type,Title,Content,Read_Status,Timestamp\n';
@@ -464,7 +466,7 @@ if ($userId) {
             btn.textContent = 'Send to All Residents';
             if (res.success) {
                 closeBroadcastModal();
-                alert('Broadcast alert dispatched successfully!');
+                showToast('Broadcast alert dispatched successfully!', 'success');
                 // Reload list
                 fetch('<?php echo app_url('api/notifications.php'); ?>', {
                     method: 'POST',
@@ -478,7 +480,7 @@ if ($userId) {
                     }
                 });
             } else {
-                alert(res.message || 'Failed to dispatch broadcast');
+                showModalAlert(res.message || 'Failed to dispatch broadcast alert.', 'Broadcast Error', 'error');
             }
         }).catch(err => {
             btn.disabled = false;

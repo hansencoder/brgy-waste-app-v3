@@ -90,8 +90,11 @@ function getStatusBadgeProps($status) {
                                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                                         Live Operations Command
                                     </span>
-                                    <span class="text-xs text-emerald-200/70 font-medium">
-                                        <?php echo $today_date; ?>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-emerald-200 border border-white/15 backdrop-blur-xs font-mono">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        <span id="liveClockAdmin"><?php echo date('h:i:s A'); ?></span>
+                                        <span class="text-white/40">•</span>
+                                        <span><?php echo $today_date; ?></span>
                                     </span>
                                 </div>
                                 
@@ -848,6 +851,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    // Live Digital Clock Updater
+    function updateLiveClockAdmin() {
+        const el = document.getElementById('liveClockAdmin');
+        if (el) {
+            const now = new Date();
+            el.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+    }
+    setInterval(updateLiveClockAdmin, 1000);
 });
 
 // 4. Client-side Filter for Recent Reports Table

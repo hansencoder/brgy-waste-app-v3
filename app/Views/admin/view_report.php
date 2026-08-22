@@ -30,7 +30,23 @@ $primaryPhoto = !empty($reportPhotos[0]['photo_path']) ? format_asset_url($repor
 $isGuest = !empty($report['reporter_type']) && $report['reporter_type'] === 'guest';
 $reporterName = $isGuest ? ($report['guest_name'] ?: 'Guest Citizen') : ($report['resident_name'] ?: 'Barangay Resident');
 $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resident_phone'] ?: ($report['resident_email'] ?: 'N/A'));
+$reporterEmail = $isGuest ? ($report['guest_email'] ?: (filter_var($report['guest_phone'] ?? '', FILTER_VALIDATE_EMAIL) ? $report['guest_phone'] : '')) : ($report['resident_email'] ?? '');
 ?>
+
+<style>
+    body, * { font-family: 'Inter', sans-serif !important; font-optical-sizing: auto; }
+    #reportLocationMap {
+        position: relative !important;
+        z-index: 1 !important;
+        isolation: isolate !important;
+    }
+    .leaflet-pane {
+        z-index: 2 !important;
+    }
+    .leaflet-top, .leaflet-bottom {
+        z-index: 5 !important;
+    }
+</style>
 
 <div class="min-h-screen bg-[#F8FAFC]">
     <div class="lg:flex lg:min-h-screen">
@@ -51,8 +67,9 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
                             </a>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="font-mono text-xs font-bold text-slate-500"><?php echo htmlspecialchars($reportId); ?></span>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border <?php echo $badge['bg']; ?>">
+                                    <span class="font-mono text-xs font-black text-slate-400"><?php echo htmlspecialchars($reportId); ?></span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border <?php echo $badge['bg']; ?>">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
                                         <?php echo $badge['label']; ?>
                                     </span>
                                     <?php if ($isGuest): ?>
@@ -144,14 +161,40 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
                                     </span>
                                 </div>
 
+                                <?php 
+                                $gisPurok = $data['gis_detected_purok'] ?? null;
+                                $gisPurokName = '';
+                                if (is_array($gisPurok)) {
+                                    $gisPurokName = $gisPurok['purok_name'] ?? ('Purok ' . ($gisPurok['purok_id'] ?? ''));
+                                } elseif (is_numeric($gisPurok) && (int)$gisPurok > 0) {
+                                    $gisPurokName = 'Purok ' . (int)$gisPurok;
+                                } elseif (is_string($gisPurok)) {
+                                    $gisPurokName = $gisPurok;
+                                }
+
+                                $assignedPurok = trim($report['purok'] ?? '');
+                                $isMismatch = (!empty($gisPurokName) && !empty($assignedPurok) && strcasecmp($assignedPurok, $gisPurokName) !== 0);
+                                ?>
+                                <?php if ($isMismatch): ?>
+                                <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-start gap-3 shadow-2xs">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                    <div>
+                                        <p class="font-bold text-amber-900">Spatial Mismatch Alert</p>
+                                        <p class="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                                            Reporter specified <span class="font-bold underline"><?php echo htmlspecialchars($assignedPurok); ?></span>, but GIS boundary detection confirms this pin is inside <span class="font-bold text-emerald-800 underline"><?php echo htmlspecialchars($gisPurokName); ?></span>.
+                                        </p>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
                                 <div class="rounded-xl overflow-hidden border border-slate-200 relative">
                                     <div id="reportLocationMap" class="h-64 sm:h-72 w-full"></div>
                                 </div>
                                 <div class="flex items-center justify-between text-xs text-slate-500">
-                                    <span>Purok: <strong class="text-slate-800"><?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></strong></span>
+                                    <span>Purok: <strong class="text-slate-800"><?php echo htmlspecialchars($report['purok'] ?? 'N/A'); ?></strong><?php if (!empty($gisPurokName)): ?> <span class="text-slate-400 font-mono">(GIS: <?php echo htmlspecialchars($gisPurokName); ?>)</span><?php endif; ?></span>
                                     <span class="text-emerald-700 font-semibold flex items-center gap-1">
                                         <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-                                        Inside Official Barangay Dulong Bayan Perimeter
+                                        Inside Barangay Dulong Bayan
                                     </span>
                                 </div>
                             </div>
@@ -183,35 +226,52 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
                                         'status_name' => 'Report Submitted',
                                         'changed_at' => $report['submission_date'],
                                         'changed_by_name' => $reporterName,
-                                        'remark' => 'Initial report submitted with status: Pending'
+                                        'remark' => 'Initial submission received with status: ' . ($report['status'] ?? 'Pending')
                                     ]);
                                 }
                             }
                             ?>
                             <div class="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
                                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Activity &amp; Status Timeline</h2>
-                                    <span class="text-xs text-slate-500 font-semibold font-mono"><?php echo count($timeline); ?> Event<?php echo count($timeline) !== 1 ? 's' : ''; ?></span>
+                                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Activity & Status Timeline</h2>
+                                    <span class="text-xs text-slate-500 font-medium"><?php echo count($timeline); ?> Event<?php echo count($timeline) !== 1 ? 's' : ''; ?></span>
                                 </div>
-                                <div class="space-y-4 pl-2 border-l-2 border-slate-100">
-                                    <?php foreach ($timeline as $tItem): 
-                                        $statusTitle = $tItem['new_status_name'] ?? $tItem['status_name'] ?? (!empty($tItem['new_status']) ? ucfirst(str_replace('_', ' ', $tItem['new_status'])) : 'Status Update');
-                                        $timeStr = !empty($tItem['changed_at']) ? $tItem['changed_at'] : (!empty($tItem['created_at']) ? $tItem['created_at'] : (!empty($tItem['timestamp']) ? $tItem['timestamp'] : $report['submission_date']));
-                                        $remarkText = $tItem['remark'] ?? $tItem['remarks'] ?? $tItem['comment'] ?? '';
-                                        $actor = $tItem['changed_by_name'] ?? '';
+
+                                <div class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+                                    <?php foreach ($timeline as $idx => $event): 
+                                        $isLatest = $idx === (count($timeline) - 1);
+                                        $evStatus = $event['new_status'] ?? ($event['status_name'] ?? 'Update');
+                                        $evBadge = getStatusBadge($evStatus);
                                     ?>
-                                    <div class="relative pl-4 space-y-1">
-                                        <div class="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-white"></div>
-                                        <div class="flex flex-wrap items-center justify-between gap-1 text-xs">
-                                            <span class="font-bold text-slate-900"><?php echo htmlspecialchars($statusTitle); ?></span>
-                                            <span class="text-slate-400 font-mono text-[11px]"><?php echo date('M d, Y · g:i A', strtotime($timeStr)); ?></span>
+                                    <div class="relative group">
+                                        <div class="absolute -left-6 top-1 w-4 h-4 rounded-full border-2 bg-white <?php echo $isLatest ? 'border-emerald-600 ring-4 ring-emerald-100' : 'border-slate-300'; ?> flex items-center justify-center">
+                                            <?php if ($isLatest): ?>
+                                                <div class="w-1.5 h-1.5 rounded-full bg-emerald-600"></div>
+                                            <?php endif; ?>
                                         </div>
-                                        <?php if (!empty($actor)): ?>
-                                            <p class="text-[11px] text-slate-500 font-medium">By: <strong class="text-slate-700"><?php echo htmlspecialchars($actor); ?></strong></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($remarkText)): ?>
-                                        <p class="text-xs text-slate-600 bg-slate-50 rounded-lg p-2.5 border border-slate-100 leading-relaxed"><?php echo htmlspecialchars($remarkText); ?></p>
-                                        <?php endif; ?>
+
+                                        <div class="space-y-1">
+                                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                                <span class="font-bold text-slate-900 text-xs sm:text-sm">
+                                                    <?php echo htmlspecialchars($event['status_name'] ?? $evStatus); ?>
+                                                </span>
+                                                <span class="text-[11px] font-mono text-slate-400">
+                                                    <?php echo date('M d, Y · g:i A', strtotime($event['changed_at'])); ?>
+                                                </span>
+                                            </div>
+
+                                            <?php if (!empty($event['changed_by_name'])): ?>
+                                            <p class="text-[11px] text-slate-500 font-medium">
+                                                By: <span class="text-slate-700 font-semibold"><?php echo htmlspecialchars($event['changed_by_name']); ?></span>
+                                            </p>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($event['remark'])): ?>
+                                            <div class="mt-1.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200/60 text-xs text-slate-600 leading-relaxed font-normal">
+                                                <?php echo htmlspecialchars($event['remark']); ?>
+                                            </div>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -219,12 +279,12 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
 
                         </div>
 
-                        <!-- Right Column (5/12): Multi-Photo Evidence Gallery, Reporter Card & Actions -->
+                        <!-- Right Column (5/12): Evidence Photos, Reporter Info, Status Controls -->
                         <div class="lg:col-span-5 space-y-6">
 
-                            <!-- Evidence Photos Gallery (Compact Layout & Multi-Image Visibility) -->
+                            <!-- Evidence Photos Gallery Card -->
                             <div class="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
-                                <div class="flex items-center justify-between">
+                                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                                     <div class="flex items-center gap-2">
                                         <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
@@ -248,39 +308,26 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-3">
                                             <span class="text-white text-xs font-bold flex items-center gap-1.5">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                                                Click to enlarge high-res view
+                                                Click to enlarge
                                             </span>
                                         </div>
                                     </div>
 
-                                    <!-- Multi-Image Thumbnails Grid (Visible thumbnails) -->
+                                    <!-- Multi-Image Thumbnails Grid -->
                                     <?php if (count($reportPhotos) > 1): ?>
-                                    <div class="space-y-1.5 pt-1">
-                                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">All Attached Photos</span>
-                                        <div class="grid grid-cols-3 gap-2">
-                                            <?php foreach ($reportPhotos as $idx => $p): 
-                                                $thumbUrl = format_asset_url($p['photo_path']);
-                                            ?>
-                                            <div class="relative aspect-square rounded-xl overflow-hidden border-2 <?php echo $idx === 0 ? 'border-emerald-500' : 'border-slate-200'; ?> bg-slate-100 cursor-pointer group hover:border-emerald-400 transition"
-                                                 onclick="switchPrimaryImage('<?php echo htmlspecialchars($thumbUrl); ?>', <?php echo $idx; ?>)">
-                                                <img src="<?php echo htmlspecialchars($thumbUrl); ?>" 
-                                                     alt="Evidence #<?php echo $idx + 1; ?>" 
-                                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-200"
-                                                     onerror="this.onerror=null; this.src='https://placehold.co/200x200/f1f5f9/94a3b8?text=N/A';">
-                                                <div class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-white text-[9px] font-mono">
-                                                    #<?php echo $idx + 1; ?>
-                                                </div>
-                                            </div>
-                                            <?php endforeach; ?>
+                                    <div class="grid grid-cols-4 gap-2">
+                                        <?php foreach ($reportPhotos as $idx => $p): 
+                                            $thumbUrl = format_asset_url($p['photo_path']);
+                                        ?>
+                                        <div class="aspect-square rounded-lg overflow-hidden border-2 <?php echo $idx === 0 ? 'border-emerald-500' : 'border-slate-200'; ?> cursor-pointer hover:opacity-80 transition"
+                                             onclick="switchPrimaryImage('<?php echo htmlspecialchars($thumbUrl); ?>', <?php echo $idx; ?>)">
+                                            <img src="<?php echo htmlspecialchars($thumbUrl); ?>" 
+                                                 alt="Evidence #<?php echo $idx + 1; ?>" 
+                                                 class="w-full h-full object-cover">
                                         </div>
+                                        <?php endforeach; ?>
                                     </div>
                                     <?php endif; ?>
-
-                                <?php else: ?>
-                                    <div class="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center space-y-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-slate-300 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                                        <p class="text-xs text-slate-500 font-medium">No photos attached to this report.</p>
-                                    </div>
                                 <?php endif; ?>
                             </div>
 
@@ -289,13 +336,9 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
                                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                                     <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Reporter Information</h2>
                                     <?php if ($isGuest): ?>
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold">
-                                        Guest Reporter
-                                    </span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold">Guest</span>
                                     <?php else: ?>
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
-                                        Official Resident
-                                    </span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">Resident</span>
                                     <?php endif; ?>
                                 </div>
 
@@ -312,87 +355,65 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <p class="text-sm font-bold text-slate-900 truncate"><?php echo htmlspecialchars($reporterName); ?></p>
-                                        <p class="text-xs text-slate-500 truncate"><?php echo htmlspecialchars($report['purok'] ?? 'Barangay Dulong Bayan'); ?></p>
+                                        <p class="text-xs text-slate-500 font-medium"><?php echo htmlspecialchars($report['purok'] ?? 'Barangay Resident'); ?></p>
                                     </div>
                                 </div>
 
                                 <div class="space-y-2 pt-2 border-t border-slate-100 text-xs">
-                                    <div class="flex items-center justify-between text-slate-600">
-                                        <span class="flex items-center gap-1.5 text-slate-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.69-4.69 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    <div class="flex items-center justify-between py-1">
+                                        <span class="text-slate-400 font-medium flex items-center gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                             Contact
                                         </span>
-                                        <span class="font-bold text-slate-900 font-mono"><?php echo htmlspecialchars($reporterContact); ?></span>
+                                        <span class="font-bold text-slate-800 font-mono"><?php echo htmlspecialchars($reporterContact); ?></span>
                                     </div>
 
-                                    <?php if (!$isGuest && !empty($report['resident_email'])): ?>
-                                    <div class="flex items-center justify-between text-slate-600">
-                                        <span class="flex items-center gap-1.5 text-slate-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                    <?php if (!empty($reporterEmail)): ?>
+                                    <div class="flex items-center justify-between py-1">
+                                        <span class="text-slate-400 font-medium flex items-center gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                                             Email
                                         </span>
-                                        <span class="font-medium text-slate-800 truncate max-w-[180px]"><?php echo htmlspecialchars($report['resident_email']); ?></span>
+                                        <span class="font-semibold text-slate-800 truncate max-w-[180px]"><?php echo htmlspecialchars($reporterEmail); ?></span>
                                     </div>
                                     <?php endif; ?>
 
-                                    <div class="flex items-center justify-between text-slate-600">
-                                        <span class="flex items-center gap-1.5 text-slate-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                    <div class="flex items-center justify-between py-1">
+                                        <span class="text-slate-400 font-medium flex items-center gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                             Total Submissions
                                         </span>
-                                        <span class="font-bold text-slate-900 font-mono"><?php echo (int)($report['total_reports'] ?? 1); ?></span>
+                                        <span class="font-bold text-slate-800 font-mono"><?php echo $report['total_reports']; ?></span>
                                     </div>
-
-                                    <?php if ($isGuest && !empty($report['location_plausibility']) && $report['location_plausibility'] !== 'plausible'): ?>
-                                    <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] flex items-start gap-2 mt-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-amber-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                        <div>
-                                            <span class="font-bold block">Plausibility Check</span>
-                                            <span><?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $report['location_plausibility']))); ?></span>
-                                        </div>
-                                    </div>
-                                    <?php endif; ?>
                                 </div>
                             </div>
 
-                            <!-- Take Action Card -->
+                            <!-- Administrative Action Controls Card -->
                             <div class="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-xs space-y-4">
-                                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Take Action</h2>
+                                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Take Action</h2>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border <?php echo $badge['bg']; ?>">
+                                        <?php echo $badge['label']; ?>
+                                    </span>
+                                </div>
 
                                 <div class="space-y-3">
-                                    <!-- CASE 1: PENDING -->
                                     <?php if ($report['status'] === 'Pending'): ?>
-                                        <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
-                                            <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                            <input type="hidden" name="action" value="verify">
-                                            <input type="hidden" name="remark" value="">
-                                            <button type="submit" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-xs transition flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                                Verify &amp; Accept Report
-                                            </button>
-                                        </form>
-
-                                        <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full space-y-2 pt-2 border-t border-slate-100">
-                                            <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                            <input type="hidden" name="action" value="reject">
-                                            <div>
-                                                <label class="block text-[11px] font-semibold text-slate-500 mb-1">Rejection Reason</label>
-                                                <input type="text" name="remark" placeholder="e.g. Duplicate or already cleared" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:border-rose-300 focus:ring-2 focus:ring-rose-100 outline-none">
-                                            </div>
-                                            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition flex items-center justify-center gap-2 cursor-pointer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                    <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="space-y-3">
+                                        <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                        <button type="submit" name="action" value="verify" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                            <span>Verify & Accept Report</span>
+                                        </button>
+                                        <div class="pt-2 space-y-2 border-t border-slate-100">
+                                            <input type="text" name="remark" placeholder="Rejection reason..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-rose-500 outline-none">
+                                            <button type="submit" name="action" value="reject" class="w-full py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs shadow-2xs transition flex items-center justify-center gap-2 cursor-pointer">
                                                 Decline / Reject
                                             </button>
-                                        </form>
+                                        </div>
+                                    </form>
 
-                                    <!-- CASE 2: VERIFIED -->
                                     <?php elseif ($report['status'] === 'Verified'): ?>
-                                        <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
-                                            <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
-                                            <input type="hidden" name="action" value="in_progress">
-                                            <input type="hidden" name="remark" value="">
-                                            <button type="submit" class="w-full py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm shadow-xs transition flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                                 Start Collection Progress
                                             </button>
                                         </form>
@@ -447,7 +468,7 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
 </div>
 
 <!-- High-Resolution Lightbox Modal for Evidence Photos -->
-<div id="photoLightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+<div id="photoLightboxModal" style="z-index: 99999 !important;" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
     <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white hover:text-slate-300 p-2 rounded-full bg-white/10 hover:bg-white/20 transition cursor-pointer z-10">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
@@ -466,10 +487,6 @@ $reporterContact = $isGuest ? ($report['guest_phone'] ?: 'N/A') : ($report['resi
         <div class="text-white text-xs font-mono mt-3" id="lightboxCounter">Photo 1 of <?php echo count($reportPhotos); ?></div>
     </div>
 </div>
-
-<!-- Leaflet for Map -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 const galleryPhotos = <?php echo json_encode(array_map(function($p) { return format_asset_url($p['photo_path']); }, $reportPhotos)); ?>;
@@ -552,6 +569,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const marker = L.marker([lat, lng], { icon: greenIcon })
             .addTo(map)
             .bindPopup('<strong>Report Location</strong><br><?php echo htmlspecialchars($report['purok'] ?? 'Location'); ?>');
+
+        // Reporter GPS vs Waste Pin Comparison
+        const repLat = <?php echo !empty($report['reporter_latitude']) ? (float)$report['reporter_latitude'] : 'null'; ?>;
+        const repLng = <?php echo !empty($report['reporter_longitude']) ? (float)$report['reporter_longitude'] : 'null'; ?>;
+        if (repLat && repLng && (Math.abs(repLat - lat) > 0.0001 || Math.abs(repLng - lng) > 0.0001)) {
+            const blueIcon = L.divIcon({
+                html: `<div style="background-color: #3B82F6; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 4px rgba(59,130,246,0.4);"></div>`,
+                className: '',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+            L.marker([repLat, repLng], { icon: blueIcon }).addTo(map).bindPopup('<strong>Reporter Device GPS Position</strong>');
+            L.polyline([[repLat, repLng], [lat, lng]], { color: '#3B82F6', weight: 2, dashArray: '4,6' }).addTo(map);
+        }
 
         // Dynamic Barangay Boundary
         const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;

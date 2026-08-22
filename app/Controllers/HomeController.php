@@ -83,13 +83,25 @@ class HomeController extends Controller {
             // Table may not exist yet — silently fall back to empty array
         }
 
-        // Fetch active penalty rules for the public portal
+        // Fetch active prohibited actions and penalties for the public portal
+        $prohibitedActions = [];
+        $penalties = [];
         $penaltyRules = [];
         try {
-            $db->query("SELECT offense_no, title, description, legal_ref, fine_range, alt_penalty FROM penalty_rules WHERE is_active = 1 ORDER BY offense_no ASC, sort_order ASC, rule_id ASC");
-            $penaltyRules = $db->resultSet();
+            $db->query("SELECT offense_no, title, description, legal_ref, fine_range, alt_penalty, rule_type FROM penalty_rules WHERE is_active = 1 AND (rule_type = 'prohibited_action' OR rule_type = 'prohibited') ORDER BY sort_order ASC, rule_id ASC");
+            $prohibitedActions = $db->resultSet();
+            
+            $db->query("SELECT offense_no, title, description, legal_ref, fine_range, alt_penalty, rule_type FROM penalty_rules WHERE is_active = 1 AND (rule_type = 'penalty' OR rule_type IS NULL OR rule_type = '' OR rule_type NOT IN ('prohibited_action', 'prohibited')) ORDER BY offense_no ASC, sort_order ASC, rule_id ASC");
+            $penalties = $db->resultSet();
+            
+            // If no prohibited_action labeled rows exist, populate both gracefully
+            if (empty($prohibitedActions) && !empty($penalties)) {
+                $penaltyRules = $penalties;
+            } else {
+                $penaltyRules = array_merge($prohibitedActions, $penalties);
+            }
         } catch (Exception $e) {
-            // Table may not exist yet — silently fall back to empty array
+            $penaltyRules = [];
         }
 
         $this->view('home/index', [
@@ -102,7 +114,9 @@ class HomeController extends Controller {
             'mapConfig' => $mapConfig,
             'publicReports' => $publicReports,
             'collectionNotes' => $collectionNotes,
-            'penaltyRules' => $penaltyRules
+            'penaltyRules' => $penaltyRules,
+            'prohibitedActions' => $prohibitedActions,
+            'penalties' => $penalties
         ]);
     }
 }

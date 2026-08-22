@@ -50,12 +50,18 @@ function getResidentReportBadge($status) {
                 <!-- 1. Hero Welcome Banner -->
                 <div class="relative overflow-hidden rounded-2xl bg-[#0B2E22] p-6 sm:p-8 text-white shadow-sm border border-emerald-950">
                     <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div class="space-y-1.5 max-w-xl">
+                        <div class="space-y-2 max-w-xl">
                             <div class="flex items-center gap-2 flex-wrap mb-1">
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                                     Resident Dashboard
                                 </span>
                                 <span class="text-xs font-medium text-emerald-200/70">• <?php echo htmlspecialchars($purok); ?></span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-emerald-200 border border-white/15 text-xs font-mono">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-emerald-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    <span id="liveClockResident"><?php echo date('h:i:s A'); ?></span>
+                                    <span class="text-white/40">•</span>
+                                    <span><?php echo date('l, M d, Y'); ?></span>
+                                </span>
                             </div>
                             <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
                                 Welcome back, <?php echo htmlspecialchars($fullName); ?>
@@ -82,7 +88,7 @@ function getResidentReportBadge($status) {
                 </div>
 
                 <!-- 2. KPI Metrics Summary Cards -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                     <!-- Total Submitted -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs">
                         <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Reports</p>
@@ -101,28 +107,28 @@ function getResidentReportBadge($status) {
                     <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs">
                         <p class="text-[11px] font-bold uppercase tracking-wider text-blue-700">Verified</p>
                         <p class="text-2xl font-black text-blue-600 mt-1 font-mono"><?php echo $verified; ?></p>
-                        <p class="text-[11px] font-semibold text-blue-700/80 mt-0.5">Confirmed by admin</p>
+                        <p class="text-[11px] font-semibold text-blue-700/80 mt-0.5">Confirmed</p>
                     </div>
 
                     <!-- In Progress -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs">
                         <p class="text-[11px] font-bold uppercase tracking-wider text-purple-700">In Progress</p>
                         <p class="text-2xl font-black text-purple-600 mt-1 font-mono"><?php echo $inProgress; ?></p>
-                        <p class="text-[11px] font-semibold text-purple-700/80 mt-0.5">Collector en route</p>
+                        <p class="text-[11px] font-semibold text-purple-700/80 mt-0.5">Dispatched</p>
                     </div>
 
                     <!-- Resolved -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs">
                         <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Resolved</p>
                         <p class="text-2xl font-black text-emerald-800 mt-1 font-mono"><?php echo $resolved; ?></p>
-                        <p class="text-[11px] font-semibold text-emerald-700 mt-0.5">Cleaned &amp; collected</p>
+                        <p class="text-[11px] font-semibold text-emerald-700 mt-0.5">Cleaned</p>
                     </div>
 
-                    <!-- Resolution Rate -->
+                    <!-- Supported Reports Count -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs">
-                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Resolution Rate</p>
-                        <p class="text-2xl font-black text-emerald-800 mt-1 font-mono"><?php echo $resolutionRate; ?>%</p>
-                        <p class="text-[11px] font-semibold text-slate-500 mt-0.5">Completion score</p>
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-teal-700">Supported (+1)</p>
+                        <p class="text-2xl font-black text-teal-700 mt-1 font-mono"><?php echo $supported_count; ?></p>
+                        <p class="text-[11px] font-semibold text-teal-600 mt-0.5">Community votes</p>
                     </div>
                 </div>
 
@@ -384,13 +390,16 @@ document.addEventListener('DOMContentLoaded', function() {
             html: `<div style="background:${cfg.color};width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>`,
             className: '', iconSize: [14,14], iconAnchor: [7,7]
         });
-        const desc = (pin.description || '').trim();
-        const shortDesc = desc.length > 60 ? desc.substring(0, 60) + '…' : desc;
-        const popup = `<div style="font-family:'Miranda Sans',sans-serif;font-size:12px;width:180px;">
-            <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;background:${cfg.bg};color:${cfg.txt};margin-bottom:4px;">${cfg.label}</span>
+        const viewUrl = '<?php echo app_url('resident/view_report/'); ?>' + pin.id;
+        const supportBadge = (pin.support_count > 0) ? `<span style="display:inline-block;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:700;background:#ccfbf1;color:#0f766e;margin-left:4px;">👍 ${pin.support_count}</span>` : '';
+        const popup = `<div style="font-family:'Miranda Sans',sans-serif;font-size:12px;width:190px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;background:${cfg.bg};color:${cfg.txt};">${cfg.label}</span>
+                ${supportBadge}
+            </div>
             <p style="font-weight:800;color:#0f172a;margin:0 0 2px;">${pin.category_name||'Waste Report'}</p>
             <p style="color:#64748b;font-size:11px;margin:0 0 6px;">${shortDesc}</p>
-            <a href="<?php echo app_url('resident/view_report/${pin.id}'); ?>" style="display:block;text-align:center;background:#0B2E22;color:white;padding:4px 0;border-radius:6px;font-weight:700;text-decoration:none;font-size:11px;">View Details →</a>
+            <a href="${viewUrl}" style="display:block;text-align:center;background:#0B2E22;color:white;padding:5px 0;border-radius:8px;font-weight:700;text-decoration:none;font-size:11px;">View Report →</a>
         </div>`;
         L.marker([pin.latitude, pin.longitude], { icon }).addTo(map).bindPopup(popup);
     });
@@ -401,6 +410,16 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch(e) { map.setView(mapCenter, 15); }
 
     setTimeout(() => map.invalidateSize(), 200);
+
+    // Live Clock Updater
+    function updateLiveClockResident() {
+        const el = document.getElementById('liveClockResident');
+        if (el) {
+            const now = new Date();
+            el.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+    }
+    setInterval(updateLiveClockResident, 1000);
 });
 </script>
 

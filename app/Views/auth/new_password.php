@@ -193,7 +193,7 @@ function validateMatch() {
 function validateForm() {
     const p1 = document.getElementById('password').value;
     if (p1.length < 8) {
-        alert('Password must be at least 8 characters long.');
+        showModalAlert('Password must be at least 8 characters long.', 'Password Too Short', 'warning');
         return false;
     }
     return validateMatch();

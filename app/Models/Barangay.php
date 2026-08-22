@@ -232,4 +232,84 @@ class Barangay {
 
         return $inside;
     }
+
+    /**
+     * Detect containing Purok for a given GPS coordinate using polygon geometry.
+     * Uses MySQL ST_Contains first, followed by raycasting across all active Purok polygons.
+     */
+    public function detectPurok($latitude, $longitude) {
+        $lat = (float)$latitude;
+        $lng = (float)$longitude;
+
+        if ($lat == 0 || $lng == 0) {
+            return 1;
+        }
+
+        try {
+            $this->db->query("
+                SELECT pb.purok_id 
+                FROM purok_boundaries pb
+                WHERE ST_Contains(pb.polygon_geometry, POINT(:lng, :lat))
+                LIMIT 1
+            ");
+            $this->db->bind(':lat', $lat);
+            $this->db->bind(':lng', $lng);
+            $result = $this->db->single();
+            if ($result && !empty($result['purok_id'])) {
+                return (int)$result['purok_id'];
+            }
+        } catch (Exception $e) {
+            // fallback
+        }
+
+        // Raycasting fallback across all Purok polygons
+        $this->db->query("
+            SELECT p.purok_id, ST_AsGeoJSON(pb.polygon_geometry) as polygon_geometry
+            FROM puroks p
+            JOIN purok_boundaries pb ON p.purok_id = pb.purok_id
+            WHERE pb.polygon_geometry IS NOT NULL
+        ");
+        $puroks = $this->db->resultSet();
+
+        foreach ($puroks as $pb) {
+            if (!empty($pb['polygon_geometry'])) {
+                $geo = is_string($pb['polygon_geometry']) ? json_decode($pb['polygon_geometry'], true) : $pb['polygon_geometry'];
+                if (!empty($geo['coordinates'][0])) {
+                    if ($this->pointInPolygon([$lng, $lat], $geo['coordinates'][0])) {
+                        return (int)$pb['purok_id'];
+                    }
+                }
+            }
+        }
+
+        // Default fallback to Purok 1
+        return 1;
+    }
+
+    /**
+     * Detect containing Purok and return full record with purok_id and purok_name.
+     */
+    public function detectPurokDetails($latitude, $longitude) {
+        $purokId = $this->detectPurok($latitude, $longitude);
+        if ($purokId) {
+            try {
+                $this->db->query("SELECT purok_id, purok_name FROM puroks WHERE purok_id = :id LIMIT 1");
+                $this->db->bind(':id', $purokId);
+                $res = $this->db->single();
+                if ($res && !empty($res['purok_name'])) {
+                    return [
+                        'purok_id' => (int)$res['purok_id'],
+                        'purok_name' => $res['purok_name']
+                    ];
+                }
+            } catch (Exception $e) {
+                // fallback
+            }
+        }
+
+        return [
+            'purok_id' => (int)$purokId,
+            'purok_name' => 'Purok ' . (int)$purokId
+        ];
+    }
 }

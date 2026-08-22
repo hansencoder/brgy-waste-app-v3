@@ -26,7 +26,20 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
-        #mapContainer { height: 260px; border-radius: 0.75rem; overflow: hidden; }
+        #mapContainer { 
+            height: 260px; 
+            border-radius: 0.75rem; 
+            overflow: hidden; 
+            position: relative !important;
+            z-index: 1 !important;
+            isolation: isolate !important;
+        }
+        .leaflet-pane {
+            z-index: 2 !important;
+        }
+        .leaflet-top, .leaflet-bottom {
+            z-index: 5 !important;
+        }
         .leaflet-control-zoom { border: none !important; box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important; border-radius: 12px !important; }
         .leaflet-control-zoom a { background: white !important; color: #1e293b !important; font-weight: 600 !important; border: none !important; width: 34px !important; height: 34px !important; line-height: 34px !important; }
         .leaflet-control-zoom a:first-child { border-radius: 12px 12px 0 0 !important; }
@@ -155,6 +168,34 @@
                     <?php endforeach; ?>
                 </select>
             </div>
+
+            <?php 
+            $verifiedContact = $data['phone'] ?? ($data['contact'] ?? '');
+            $isEmailContact = filter_var($verifiedContact, FILTER_VALIDATE_EMAIL);
+            $defaultEmail = $isEmailContact ? $verifiedContact : '';
+            ?>
+            <!-- Notification Email Address -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-semibold text-slate-700">
+                        Email Address for Status Updates <?php if (!$isEmailContact): ?><span class="text-slate-400 font-normal">(Optional)</span><?php endif; ?>
+                    </label>
+                    <?php if ($isEmailContact): ?>
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Verified Email
+                    </span>
+                    <?php endif; ?>
+                </div>
+                <div class="relative">
+                    <input type="email" id="guest_email" name="guest_email" 
+                        value="<?php echo htmlspecialchars($defaultEmail, ENT_QUOTES, 'UTF-8'); ?>"
+                        placeholder="you@example.com"
+                        <?php echo $isEmailContact ? 'readonly' : ''; ?>
+                        class="w-full h-11 px-3.5 rounded-xl border border-slate-200 <?php echo $isEmailContact ? 'bg-slate-50 font-medium text-slate-700' : 'bg-white text-slate-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10'; ?> text-sm outline-none transition">
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1">Receive official email alerts when your report is verified, dispatched, or resolved.</p>
+            </div>
         </div>
 
         <!-- Photo Upload -->
@@ -201,6 +242,23 @@
 
             <div id="mapContainer" class="h-64 w-full rounded-xl border border-slate-200 overflow-hidden relative"></div>
 
+            <!-- Warning Alerts -->
+            <div id="guestJurisdictionWarning" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-start gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <div>
+                    <p class="font-bold">Outside Barangay Dulong Bayan</p>
+                    <p class="text-[11px] text-amber-800 mt-0.5">The selected incident is outside official barangay limits.</p>
+                </div>
+            </div>
+
+            <div id="distanceWarning" class="hidden p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs flex items-start gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <div>
+                    <p class="font-bold">Distance Notice</p>
+                    <p id="distanceWarningText" class="text-[11px] text-blue-800 mt-0.5">You are submitting a report for a location away from your current device GPS position.</p>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Latitude</label>
@@ -220,8 +278,6 @@
             <input type="hidden" id="reporter_latitude" name="reporter_latitude" value="">
             <input type="hidden" id="reporter_longitude" name="reporter_longitude" value="">
         </div>
-
-        
 
         <!-- Submit -->
         <button type="submit" class="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.99]">
@@ -280,6 +336,9 @@
     }
 
     let marker = null;
+    let userGpsMarker = null;
+    let userLat = null;
+    let userLng = null;
 
     const wasteIcon = L.divIcon({
         className: '',
@@ -287,6 +346,26 @@
         iconSize: [30, 30],
         iconAnchor: [15, 30],
     });
+
+    const userGpsIcon = L.divIcon({
+        className: '',
+        html: `<div style="background:#3b82f6;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px rgba(59,130,246,0.35);"></div>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
+    });
+
+    function calcDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // meters
+        const φ1 = lat1 * Math.PI/180;
+        const φ2 = lat2 * Math.PI/180;
+        const Δφ = (lat2-lat1) * Math.PI/180;
+        const Δλ = (lon2-lon1) * Math.PI/180;
+        const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                  Math.cos(φ1) * Math.cos(φ2) *
+                  Math.sin(Δλ/2) * Math.sin(Δλ/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
 
     function isInsideBoundary(lat, lng) {
         if (!rawBrgyBoundary) return true;
@@ -309,16 +388,33 @@
     }
 
     function placeMarker(lat, lng, label) {
-        if (!isInsideBoundary(lat, lng)) {
-            alert('The selected location is outside the official Barangay boundary. Please select a point within the green boundary outline.');
-            return false;
+        const isInside = isInsideBoundary(lat, lng);
+        const jWarn = document.getElementById('guestJurisdictionWarning');
+        if (jWarn) {
+            if (!isInside) jWarn.classList.remove('hidden');
+            else jWarn.classList.add('hidden');
         }
+
         if (marker) map.removeLayer(marker);
         marker = L.marker([lat, lng], { icon: wasteIcon }).addTo(map);
         document.getElementById('latitude').value  = lat.toFixed(8);
         document.getElementById('longitude').value = lng.toFixed(8);
         document.getElementById('location').value  = label || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
         document.getElementById('location-error').classList.add('hidden');
+
+        // Distance check vs User GPS
+        const dWarn = document.getElementById('distanceWarning');
+        const dText = document.getElementById('distanceWarningText');
+        if (userLat && userLng && dWarn && dText) {
+            const dist = calcDistance(userLat, userLng, lat, lng);
+            if (dist > 250) {
+                dWarn.classList.remove('hidden');
+                dText.textContent = `You are submitting a report for a location ~${Math.round(dist)}m away from your current device GPS position.`;
+            } else {
+                dWarn.classList.add('hidden');
+            }
+        }
+
         return true;
     }
 
@@ -335,9 +431,14 @@
             pos => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
+                userLat = lat;
+                userLng = lng;
+
+                if (userGpsMarker) map.removeLayer(userGpsMarker);
+                userGpsMarker = L.marker([lat, lng], { icon: userGpsIcon }).addTo(map).bindPopup('Your Current Device Location');
+
                 map.setView([lat, lng], 17);
                 placeMarker(lat, lng, 'GPS Location');
-                // Store reporter location for plausibility check
                 document.getElementById('reporter_latitude').value  = lat.toFixed(8);
                 document.getElementById('reporter_longitude').value = lng.toFixed(8);
                 btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Location Set';
@@ -346,17 +447,25 @@
             err => {
                 btn.textContent = 'Use My Location';
                 btn.disabled = false;
-                alert('Could not get your location. Please pin the waste location on the map.');
+                showModalAlert('Could not retrieve your GPS location. Please tap or pin the waste location directly on the interactive map.', 'Location Access', 'warning');
             },
             { timeout: 10000 }
         );
     }
 
-    // Also silently capture reporter GPS on page load (for plausibility check)
+    // Capture reporter GPS automatically on page load
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
-            document.getElementById('reporter_latitude').value  = pos.coords.latitude.toFixed(8);
-            document.getElementById('reporter_longitude').value = pos.coords.longitude.toFixed(8);
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            userLat = lat;
+            userLng = lng;
+            document.getElementById('reporter_latitude').value  = lat.toFixed(8);
+            document.getElementById('reporter_longitude').value = lng.toFixed(8);
+
+            if (!userGpsMarker) {
+                userGpsMarker = L.marker([lat, lng], { icon: userGpsIcon }).addTo(map).bindPopup('Your Current Device Location');
+            }
         }, () => {});
     }
 
@@ -374,7 +483,7 @@
         for (let file of newFiles) {
             if (selectedPhotoFiles.length < 3) {
                 if (file.size > 5 * 1024 * 1024) {
-                    alert(`File "${file.name}" exceeds the 5MB size limit.`);
+                    showModalAlert(`File "${file.name}" exceeds the 5MB size limit. Please upload a smaller image file.`, 'File Size Limit', 'warning');
                     continue;
                 }
                 selectedPhotoFiles.push(file);
@@ -528,5 +637,6 @@
     }
 </script>
 
+<?php include __DIR__ . '/../layouts/popup_system.php'; ?>
 </body>
 </html>

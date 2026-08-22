@@ -412,7 +412,7 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
         if (!validatePasswordsMatch()) valid = false;
 
         if (!document.getElementById('terms').checked) {
-            alert('Please agree to the Terms of Service and Privacy Policy to continue.');
+            showModalAlert('Please agree to the Terms of Service and Privacy Policy to continue registration.', 'Terms Required', 'warning');
             valid = false;
         }
 

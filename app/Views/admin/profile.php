@@ -625,7 +625,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                                 </div>
 
                                 <div class="mt-5 flex justify-end">
-                                    <button onclick="alert('Notification preferences saved!')" class="inline-flex items-center gap-2 px-7 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm shadow transition cursor-pointer">
+                                    <button onclick="showToast('Notification preferences saved!', 'success')" class="inline-flex items-center gap-2 px-7 py-2.5 rounded-xl bg-[#0B2E22] hover:bg-[#093024] text-white font-extrabold text-sm shadow transition cursor-pointer">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                         Save Preferences
                                     </button>
@@ -866,11 +866,11 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
         const currentPass = document.getElementById('currentPassword').value;
         const newPass = document.getElementById('newPassword').value;
         const confirmPass = document.getElementById('confirmPassword').value;
-        if (!currentPass) { alert('Please enter your current password.'); return; }
+        if (!currentPass) { showModalAlert('Please enter your current password.', 'Password Required', 'warning'); return; }
         if (newPass.length < 8 || !/[A-Z]/.test(newPass) || !/[0-9]/.test(newPass) || !/[!@#$%^&*]/.test(newPass)) {
-            alert('New password does not meet the security requirements.'); return;
+            showModalAlert('New password does not meet the security requirements. It must contain at least 8 characters, an uppercase letter, a number, and a special character.', 'Password Requirements', 'warning'); return;
         }
-        if (newPass !== confirmPass) { alert('Passwords do not match.'); return; }
+        if (newPass !== confirmPass) { showModalAlert('Passwords do not match. Please re-enter them.', 'Password Mismatch', 'error'); return; }
         document.getElementById('passwordForm').submit();
     }
 
@@ -931,10 +931,10 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
                 document.getElementById('otpModal').classList.remove('hidden');
                 document.getElementById('otpInput').focus();
             } else {
-                alert(data.message || 'Failed to send OTP.');
+                showModalAlert(data.message || 'Failed to send OTP.', 'OTP Error', 'error');
             }
         })
-        .catch(() => alert('An error occurred. Please try again.'));
+        .catch(() => showModalAlert('An error occurred while requesting OTP. Please try again.', 'Connection Error', 'error'));
     }
 
     function closeOTPModal() {
@@ -987,7 +987,7 @@ $roleIconSvg = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx=
             btn.disabled = false;
             spinner.classList.add('hidden');
             text.textContent = 'Verify Identity';
-            alert('An error occurred. Please try again.');
+            showModalAlert('An error occurred during verification. Please try again.', 'Connection Error', 'error');
         });
     }
 

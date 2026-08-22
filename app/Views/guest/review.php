@@ -87,15 +87,21 @@
                     This phone number has reported <?php echo (int)($data['report_count'] ?? 0); ?> time<?php echo ($data['report_count'] ?? 0) == 1 ? '' : 's'; ?>
                 </span>
             </div>
-            <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                 <div>
                     <div class="text-xs text-slate-400 mb-0.5">Name</div>
                     <div class="font-semibold text-slate-800"><?php echo !empty($report['guest_name']) ? htmlspecialchars($report['guest_name'], ENT_QUOTES, 'UTF-8') : '—'; ?></div>
                 </div>
                 <div>
-                    <div class="text-xs text-slate-400 mb-0.5">Mobile</div>
+                    <div class="text-xs text-slate-400 mb-0.5">Contact</div>
                     <div class="font-semibold text-slate-800"><?php echo htmlspecialchars($report['guest_phone'], ENT_QUOTES, 'UTF-8'); ?></div>
                 </div>
+                <?php if (!empty($report['guest_email'])): ?>
+                <div>
+                    <div class="text-xs text-slate-400 mb-0.5">Notification Email</div>
+                    <div class="font-semibold text-emerald-700 truncate"><?php echo htmlspecialchars($report['guest_email'], ENT_QUOTES, 'UTF-8'); ?></div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
 

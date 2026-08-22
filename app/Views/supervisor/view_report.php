@@ -33,6 +33,21 @@ $stepMap = [
 $currentStep = $stepMap[$statusName] ?? 1;
 ?>
 
+<style>
+    body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
+    #reportLocationMap {
+        position: relative !important;
+        z-index: 1 !important;
+        isolation: isolate !important;
+    }
+    .leaflet-pane {
+        z-index: 2 !important;
+    }
+    .leaflet-top, .leaflet-bottom {
+        z-index: 5 !important;
+    }
+</style>
+
 <div class="min-h-screen bg-[#F8FAFC] flex">
     
     <!-- Sidebar -->
@@ -165,6 +180,32 @@ $currentStep = $stepMap[$statusName] ?? 1;
                             </span>
                         </div>
 
+                        <?php 
+                        $gisPurok = $data['gis_detected_purok'] ?? null;
+                        $gisPurokName = '';
+                        if (is_array($gisPurok)) {
+                            $gisPurokName = $gisPurok['purok_name'] ?? ('Purok ' . ($gisPurok['purok_id'] ?? ''));
+                        } elseif (is_numeric($gisPurok) && (int)$gisPurok > 0) {
+                            $gisPurokName = 'Purok ' . (int)$gisPurok;
+                        } elseif (is_string($gisPurok)) {
+                            $gisPurokName = $gisPurok;
+                        }
+
+                        $assignedPurok = trim($report['purok'] ?? '');
+                        $isMismatch = (!empty($gisPurokName) && !empty($assignedPurok) && strcasecmp($assignedPurok, $gisPurokName) !== 0);
+                        ?>
+                        <?php if ($isMismatch): ?>
+                        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-start gap-3 shadow-2xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <div>
+                                <p class="font-bold text-amber-900">Spatial Mismatch Alert</p>
+                                <p class="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                                    Reporter labeled this incident as <span class="font-bold underline"><?php echo htmlspecialchars($assignedPurok); ?></span>, but official GIS spatial polygon detection confirms this pin is inside <span class="font-bold text-emerald-800 underline"><?php echo htmlspecialchars($gisPurokName); ?></span>.
+                                </p>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
                         <div class="rounded-xl overflow-hidden border border-slate-200 relative h-72">
                             <div id="reportLocationMap" class="h-full w-full"></div>
                         </div>
@@ -201,14 +242,27 @@ $currentStep = $stepMap[$statusName] ?? 1;
 
                     <!-- Reporter Profile Card -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-4">
-                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Reporter Profile</span>
+                        <?php
+                        $isGuest = !empty($report['reporter_type']) && $report['reporter_type'] === 'guest';
+                        $repName = $isGuest ? ($report['guest_name'] ?: 'Guest Citizen') : ($report['resident_name'] ?: 'Barangay Resident');
+                        $repPhone = $isGuest ? ($report['guest_phone'] ?: '') : ($report['resident_phone'] ?: '');
+                        $repEmail = $isGuest ? ($report['guest_email'] ?: (filter_var($report['guest_phone'] ?? '', FILTER_VALIDATE_EMAIL) ? $report['guest_phone'] : '')) : ($report['resident_email'] ?? '');
+                        ?>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Reporter Profile</span>
+                            <?php if ($isGuest): ?>
+                                <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-wider">Guest</span>
+                            <?php else: ?>
+                                <span class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">Resident</span>
+                            <?php endif; ?>
+                        </div>
                         
                         <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-full bg-[#0B2E22] text-white flex items-center justify-center font-bold text-sm shadow-xs">
-                                <?php echo strtoupper(substr($report['resident_name'] ?? 'R', 0, 1)); ?>
+                            <div class="w-11 h-11 rounded-full <?php echo $isGuest ? 'bg-amber-600' : 'bg-[#0B2E22]'; ?> text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                                <?php echo strtoupper(substr($repName, 0, 1)); ?>
                             </div>
                             <div class="min-w-0">
-                                <p class="text-sm font-bold text-slate-900 truncate"><?php echo htmlspecialchars($report['resident_name'] ?? 'Guest Reporter'); ?></p>
+                                <p class="text-sm font-bold text-slate-900 truncate"><?php echo htmlspecialchars($repName); ?></p>
                                 <p class="text-xs text-emerald-700 font-medium flex items-center gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                                     <span><?php echo htmlspecialchars($report['purok'] ?? 'Resident'); ?></span>
@@ -217,17 +271,17 @@ $currentStep = $stepMap[$statusName] ?? 1;
                         </div>
 
                         <div class="space-y-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
-                            <?php if (!empty($report['resident_phone'])): ?>
+                            <?php if (!empty($repPhone)): ?>
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-4.69-4.69 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                                <span><?php echo htmlspecialchars($report['resident_phone']); ?></span>
+                                <span><?php echo htmlspecialchars($repPhone); ?></span>
                             </div>
                             <?php endif; ?>
 
-                            <?php if (!empty($report['resident_email'])): ?>
+                            <?php if (!empty($repEmail)): ?>
                             <div class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                                <span class="truncate"><?php echo htmlspecialchars($report['resident_email']); ?></span>
+                                <span class="truncate"><?php echo htmlspecialchars($repEmail); ?></span>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -263,7 +317,7 @@ $currentStep = $stepMap[$statusName] ?? 1;
 </div>
 
 <!-- Photo Modal Lightbox -->
-<div id="photoModal" class="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4" onclick="closePhotoModal()">
+<div id="photoModal" style="z-index: 99999 !important;" class="fixed inset-0 bg-black/80 backdrop-blur-xs hidden flex items-center justify-center p-4" onclick="closePhotoModal()">
     <div class="relative max-w-3xl max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl p-2" onclick="event.stopPropagation()">
         <button onclick="closePhotoModal()" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -272,9 +326,6 @@ $currentStep = $stepMap[$statusName] ?? 1;
     </div>
 </div>
 
-<!-- Leaflet Map Script -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 function openPhotoModal(src) {
     document.getElementById('modalImg').src = src;
@@ -327,6 +378,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const marker = L.marker([lat, lng], { icon: greenIcon })
             .addTo(map)
             .bindPopup('<strong>Report Location</strong><br><?php echo htmlspecialchars($report['purok'] ?? 'Reported Location'); ?>');
+
+        // Reporter Device GPS vs Pin comparison
+        const repLat = <?php echo !empty($report['reporter_latitude']) ? (float)$report['reporter_latitude'] : 'null'; ?>;
+        const repLng = <?php echo !empty($report['reporter_longitude']) ? (float)$report['reporter_longitude'] : 'null'; ?>;
+        if (repLat && repLng && (Math.abs(repLat - lat) > 0.0001 || Math.abs(repLng - lng) > 0.0001)) {
+            const blueIcon = L.divIcon({
+                html: `<div style="background-color: #3B82F6; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 3px rgba(59,130,246,0.4);"></div>`,
+                className: '',
+                iconSize: [14, 14],
+                iconAnchor: [7, 7]
+            });
+            L.marker([repLat, repLng], { icon: blueIcon }).addTo(map).bindPopup('<strong>Reporter Device GPS Position</strong>');
+            L.polyline([[repLat, repLng], [lat, lng]], { color: '#3B82F6', weight: 2, dashArray: '4,6' }).addTo(map);
+        }
 
         // Render Barangay Boundary if exists
         const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;

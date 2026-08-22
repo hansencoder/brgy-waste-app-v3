@@ -694,6 +694,7 @@ public function getHotspots() {
         $mapConfig = $barangayModel->getMapConfig();
         $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
         $data['map_center'] = $mapConfig['center'];
+        $data['gis_detected_purok'] = $barangayModel->detectPurokDetails($data['report']['latitude'], $data['report']['longitude']);
 
         // Log access
         $this->auditModel->logAction($_SESSION['user_id'], 'View Report', "Report ID $id", 'Supervisor viewed report details', 'success');

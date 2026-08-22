@@ -4,14 +4,19 @@ class ResidentController extends Controller {
     private $reportModel;
     private $auditModel;
 
-    private function deleteUploadedPhotoFile($fileName) {
-        if (empty($fileName)) {
+    private function deleteUploadedPhotoFile($fileNames) {
+        if (empty($fileNames)) {
             return;
         }
 
-        $filePath = dirname(__DIR__, 2) . '/public/uploads/' . basename($fileName);
-        if (is_file($filePath)) {
-            unlink($filePath);
+        $files = is_array($fileNames) ? $fileNames : [$fileNames];
+        foreach ($files as $fileName) {
+            if (!empty($fileName)) {
+                $filePath = dirname(__DIR__, 2) . '/public/uploads/' . basename($fileName);
+                if (is_file($filePath)) {
+                    @unlink($filePath);
+                }
+            }
         }
     }
 
@@ -150,7 +155,7 @@ class ResidentController extends Controller {
     public function index() {
         $data['reports'] = $this->reportModel->getReportsByResident($_SESSION['user_id']);
         $data['stats'] = $this->reportModel->getDashboardStatsByResident($_SESSION['user_id']);
-        $data['map_pins'] = $this->reportModel->getHeatmapDataByResident($_SESSION['user_id']);
+        $data['map_pins'] = $this->reportModel->getCommunityReportsForMap();
         
         // Get supported reports count
         $db = new Database();
@@ -211,65 +216,91 @@ class ResidentController extends Controller {
             $quantity_id = (int) ($_POST['quantity_id'] ?? 0);
             $condition_id = (int) ($_POST['condition_id'] ?? 0);
             $remarks = trim($_POST['remarks'] ?? '');
-            $photoPath = null;
-            $targetPath = null;
-            $fileName = null;
+            $uploadedPhotos = [];
 
             if (strlen($description) < 10 || strlen($description) > 500) {
                 $data['error'] = 'Description must be between 10 and 500 characters.';
-                $this->deleteUploadedPhotoFile($fileName);
                 return $this->view('resident/submit_report', $data);
             }
 
             if (empty($category_id) || empty($quantity_id) || empty($condition_id)) {
                 $data['error'] = 'Please select a waste category, quantity, and condition.';
-                $this->deleteUploadedPhotoFile($fileName);
                 return $this->view('resident/submit_report', $data);
             }
 
-            $hasPhoto = isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK;
-            $hasResumePhoto = isset($data['resume_data']['photo']) && !empty($data['resume_data']['photo']);
+            // Handle multiple photo uploads (photos[]) or single photo upload (photo)
+            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+            $uploadDir = '../public/uploads/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
 
-            if (!$hasPhoto && !$hasResumePhoto) {
-                $data['error'] = 'A photo of the waste is required.';
-                $this->deleteUploadedPhotoFile($fileName);
+            $rawFiles = [];
+            if (isset($_FILES['photos']) && is_array($_FILES['photos']['name'])) {
+                $count = count($_FILES['photos']['name']);
+                for ($i = 0; $i < $count; $i++) {
+                    if ($_FILES['photos']['error'][$i] === UPLOAD_ERR_OK && !empty($_FILES['photos']['name'][$i])) {
+                        $rawFiles[] = [
+                            'name'     => $_FILES['photos']['name'][$i],
+                            'type'     => $_FILES['photos']['type'][$i],
+                            'tmp_name' => $_FILES['photos']['tmp_name'][$i],
+                            'error'    => $_FILES['photos']['error'][$i],
+                            'size'     => $_FILES['photos']['size'][$i]
+                        ];
+                    }
+                }
+            } elseif (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK && !empty($_FILES['photo']['name'])) {
+                $rawFiles[] = $_FILES['photo'];
+            }
+
+            $hasResumePhotos = isset($data['resume_data']['photos']) && is_array($data['resume_data']['photos']) && !empty($data['resume_data']['photos']);
+            $hasResumeSinglePhoto = isset($data['resume_data']['photo']) && !empty($data['resume_data']['photo']);
+
+            if (empty($rawFiles) && !$hasResumePhotos && !$hasResumeSinglePhoto) {
+                $data['error'] = 'At least 1 evidence photo (up to 3) of the waste is required.';
                 return $this->view('resident/submit_report', $data);
             }
 
-            if ($hasPhoto) {
-                $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-                $fileType = $_FILES['photo']['type'] ?? '';
-                $fileSize = $_FILES['photo']['size'] ?? 0;
+            if (count($rawFiles) > 3) {
+                $data['error'] = 'You can upload a maximum of 3 evidence photos.';
+                return $this->view('resident/submit_report', $data);
+            }
 
-                if (!in_array($fileType, $allowedTypes, true)) {
-                    $data['error'] = 'Invalid file format. Only JPG, JPEG and PNG are allowed.';
-                    $this->deleteUploadedPhotoFile($fileName);
-                    return $this->view('resident/submit_report', $data);
+            if (!empty($rawFiles)) {
+                foreach ($rawFiles as $file) {
+                    $fileType = $file['type'] ?? '';
+                    $fileSize = $file['size'] ?? 0;
+
+                    if (!in_array($fileType, $allowedTypes, true)) {
+                        $data['error'] = 'Invalid file format for "' . htmlspecialchars($file['name']) . '". Only JPG, PNG, and WEBP are allowed.';
+                        $this->deleteUploadedPhotoFile($uploadedPhotos);
+                        return $this->view('resident/submit_report', $data);
+                    }
+
+                    if ($fileSize > 5 * 1024 * 1024) {
+                        $data['error'] = 'File size for "' . htmlspecialchars($file['name']) . '" exceeds 5MB limit.';
+                        $this->deleteUploadedPhotoFile($uploadedPhotos);
+                        return $this->view('resident/submit_report', $data);
+                    }
+
+                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                    if (empty($ext)) $ext = 'jpg';
+                    $cleanName = preg_replace('/[^a-zA-Z0-9_-]/', '', pathinfo($file['name'], PATHINFO_FILENAME));
+                    $fileName = uniqid('waste_', true) . '_' . substr($cleanName, 0, 20) . '.' . $ext;
+                    $targetPath = $uploadDir . $fileName;
+
+                    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+                        $data['error'] = 'Failed to upload photo: ' . htmlspecialchars($file['name']);
+                        $this->deleteUploadedPhotoFile($uploadedPhotos);
+                        return $this->view('resident/submit_report', $data);
+                    }
+
+                    $uploadedPhotos[] = $fileName;
                 }
-
-                if ($fileSize > 5 * 1024 * 1024) {
-                    $data['error'] = 'File size exceeds 5MB limit.';
-                    $this->deleteUploadedPhotoFile($fileName);
-                    return $this->view('resident/submit_report', $data);
-                }
-
-                $uploadDir = '../public/uploads/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-
-                $fileName = uniqid() . '_' . basename($_FILES['photo']['name']);
-                $targetPath = $uploadDir . $fileName;
-
-                if (!move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
-                    $data['error'] = 'Failed to upload photo.';
-                    $this->deleteUploadedPhotoFile($fileName);
-                    return $this->view('resident/submit_report', $data);
-                }
-
-                $photoPath = $fileName;
-            } elseif ($hasResumePhoto) {
-                $photoPath = $data['resume_data']['photo'];
+            } elseif ($hasResumePhotos) {
+                $uploadedPhotos = $data['resume_data']['photos'];
+            } elseif ($hasResumeSinglePhoto) {
+                $uploadedPhotos = [$data['resume_data']['photo']];
             }
 
             $barangayModel = $this->model('Barangay');
@@ -278,7 +309,7 @@ class ResidentController extends Controller {
 
             if (!$barangayModel->isPointInsideBoundary($lat, $lng)) {
                 $data['error'] = "This location is outside the official boundary of Barangay {$brgyName}. Reports can only be submitted within the barangay boundaries.";
-                $this->deleteUploadedPhotoFile($fileName);
+                $this->deleteUploadedPhotoFile($uploadedPhotos);
                 return $this->view('resident/submit_report', $data);
             }
 
@@ -304,7 +335,8 @@ class ResidentController extends Controller {
                     'lng'           => $lng,
                     'purok_id'      => $purok_id,
                     'remarks'       => $remarks,
-                    'photo'         => $fileName,
+                    'photo'         => $uploadedPhotos[0] ?? '',
+                    'photos'        => $uploadedPhotos,
                     'nearby'        => $nearby
                 ];
                 header('Location: ' . app_url('resident/duplicate_check'));
@@ -323,13 +355,13 @@ class ResidentController extends Controller {
                 'status_id' => $status_id,
                 'purok_id' => $purok_id,
                 'location' => '',
-                'photos' => [$photoPath]
+                'photos' => $uploadedPhotos
             ];
 
             $reportId = $this->reportModel->createReport($reportData);
 
             if ($reportId) {
-                $this->auditModel->logAction($_SESSION['user_id'], 'Report Submitted', 'Waste Report', "User submitted report ID $reportId", 'success');
+                $this->auditModel->logAction($_SESSION['user_id'], 'Report Submitted', 'Waste Report', "User submitted report ID $reportId (" . count($uploadedPhotos) . " photos)", 'success');
 
                 require_once __DIR__ . '/../Models/Notification.php';
                 $notificationModel = new Notification();
@@ -338,7 +370,7 @@ class ResidentController extends Controller {
                 $data['success'] = 'Report submitted successfully.';
             } else {
                 $data['error'] = 'Database error while saving report.';
-                $this->deleteUploadedPhotoFile($fileName);
+                $this->deleteUploadedPhotoFile($uploadedPhotos);
             }
         }
 
@@ -368,6 +400,9 @@ class ResidentController extends Controller {
             exit;
         }
 
+        // Get all attached photos (1 to 3)
+        $data['photos'] = $this->reportModel->getReportPhotos($id);
+
         // Get location name from coordinates
         require_once dirname(__DIR__) . '/Core/Geocoding.php';
         $data['report']['location_name'] = Geocoding::getLocationName(
@@ -387,6 +422,15 @@ class ResidentController extends Controller {
             $data['flag_date'] = $flag ? $flag['flagged_at'] : null;
         }
 
+        // Pass categories, quantities, and conditions for edit mode
+        $categoryModel = $this->model('WasteCategory');
+        $quantityModel = $this->model('EstimatedQuantity');
+        $conditionModel = $this->model('WasteCondition');
+
+        $data['categories'] = $categoryModel->getAll();
+        $data['quantities'] = $quantityModel->getAll();
+        $data['conditions'] = $conditionModel->getAll();
+
         // Dynamic Barangay Boundary & Center
         $barangayModel = $this->model('Barangay');
         $mapConfig = $barangayModel->getMapConfig();
@@ -394,67 +438,6 @@ class ResidentController extends Controller {
         $data['map_center'] = $mapConfig['center'];
 
         $this->view('resident/view_report', $data);
-    }
-
-    /**
-     * Show the duplicate check popup with nearby reports.
-     */
-    public function duplicate_check()
-    {
-        if (!isset($_SESSION['pending_report'])) {
-            header('Location: ' . app_url('resident/submit'));
-            exit;
-        }
-        $data = $_SESSION['pending_report'];
-
-        // Dynamic Barangay Boundary & Center
-        $barangayModel = $this->model('Barangay');
-        $mapConfig = $barangayModel->getMapConfig();
-        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
-        $data['map_center'] = $mapConfig['center'];
-
-        $this->view('resident/duplicate_check', ['data' => $data]);
-    }
-
-    /**
-     * Support an existing report and discard the new one.
-     */
-    public function support_report()
-    {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST['report_id'])) {
-            header('Location: ' . app_url('resident'));
-            exit;
-        }
-        $reportId = (int)$_POST['report_id'];
-        $userId = $_SESSION['user_id'];
-        $this->reportModel->supportReport($reportId, $userId);
-
-        if (isset($_SESSION['pending_report']['photo'])) {
-            $this->deleteUploadedPhotoFile($_SESSION['pending_report']['photo']);
-        }
-
-        unset($_SESSION['pending_report']);
-        $_SESSION['success'] = 'You have supported an existing report. Thank you for your feedback!';
-        header('Location: ' . app_url('resident'));
-        exit;
-    }
-
-    /**
-     * Continue with the new report (ignore duplicates).
-     */
-    public function continue_report()
-    {
-        if (!isset($_SESSION['pending_report'])) {
-            header('Location: ' . app_url('resident/submit'));
-            exit;
-        }
-        $pending = $_SESSION['pending_report'];
-        // Remove nearby data but keep photo
-        unset($pending['nearby']);
-        $_SESSION['pending_report'] = $pending;
-        // Redirect back to submit with resume flag to prefill
-        header('Location: ' . app_url('resident/submit?resume=1'));
-        exit;
     }
 
     // ============================================================
@@ -690,7 +673,7 @@ class ResidentController extends Controller {
 
             $this->view('resident/profile', $data);
         }
-    
+
     /**
      * Request OTP for profile change verification
      */
@@ -910,49 +893,191 @@ class ResidentController extends Controller {
     }
 
     // ============================================================
+    // ANTI-DUPLICATION / SIMILAR REPORT CHECK
+    // ============================================================
+    public function duplicate_check() {
+        if (!isset($_SESSION['pending_report'])) {
+            header('Location: ' . app_url('resident/submit'));
+            exit;
+        }
+
+        $pending = $_SESSION['pending_report'];
+        $data = [
+            'data' => $pending,
+            'nearby' => $pending['nearby'] ?? [],
+            'lat' => $pending['lat'] ?? 15.558,
+            'lng' => $pending['lng'] ?? 120.803
+        ];
+
+        $this->view('resident/duplicate_check', $data);
+    }
+
+    // ============================================================
+    // SUPPORT EXISTING REPORT (+1)
+    // ============================================================
+    public function support_report() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . app_url('resident/dashboard'));
+            exit;
+        }
+
+        $reportId = (int)($_POST['report_id'] ?? 0);
+        if ($reportId <= 0) {
+            header('Location: ' . app_url('resident/dashboard'));
+            exit;
+        }
+
+        $supported = $this->reportModel->supportReport($reportId, $_SESSION['user_id']);
+        if ($supported) {
+            // Clean up any pending report in session
+            if (isset($_SESSION['pending_report'])) {
+                if (!empty($_SESSION['pending_report']['photos'])) {
+                    $this->deleteUploadedPhotoFile($_SESSION['pending_report']['photos']);
+                } elseif (!empty($_SESSION['pending_report']['photo'])) {
+                    $this->deleteUploadedPhotoFile($_SESSION['pending_report']['photo']);
+                }
+                unset($_SESSION['pending_report']);
+            }
+            $this->auditModel->logAction($_SESSION['user_id'], 'Report Supported', 'Waste Report', "User supported existing report ID $reportId", 'success');
+            $_SESSION['flash_success'] = "Thank you! You have successfully supported report WR-" . str_pad($reportId, 6, '0', STR_PAD_LEFT) . ". This alerts the Barangay collection team to prioritize this site.";
+        } else {
+            $_SESSION['flash_warning'] = "You have already supported this report previously.";
+        }
+
+        header('Location: ' . app_url('resident/dashboard'));
+        exit;
+    }
+
+    // ============================================================
+    // CONTINUE SUBMITTING AS NEW REPORT
+    // ============================================================
+    public function continue_report() {
+        if (!isset($_SESSION['pending_report'])) {
+            header('Location: ' . app_url('resident/submit'));
+            exit;
+        }
+
+        $pending = $_SESSION['pending_report'];
+        $statusModel = $this->model('ReportStatus');
+        $pendingStatus = $statusModel->getByName('Pending');
+        $status_id = $pendingStatus ? $pendingStatus['status_id'] : 1;
+
+        $reportPhotos = [];
+        if (!empty($pending['photos']) && is_array($pending['photos'])) {
+            $reportPhotos = $pending['photos'];
+        } elseif (!empty($pending['photo'])) {
+            $reportPhotos = [$pending['photo']];
+        }
+
+        $reportData = [
+            'resident_id' => $_SESSION['user_id'],
+            'description' => $pending['description'],
+            'latitude' => $pending['lat'],
+            'longitude' => $pending['lng'],
+            'location_verified' => true,
+            'category_id' => $pending['category_id'],
+            'quantity_id' => $pending['quantity_id'],
+            'condition_id' => $pending['condition_id'],
+            'status_id' => $status_id,
+            'purok_id' => $pending['purok_id'],
+            'location' => $pending['location'] ?? '',
+            'photos' => $reportPhotos
+        ];
+
+        $reportId = $this->reportModel->createReport($reportData);
+        unset($_SESSION['pending_report']);
+
+        if ($reportId) {
+            $this->auditModel->logAction($_SESSION['user_id'], 'Report Submitted (Continued)', 'Waste Report', "User submitted report ID $reportId after duplicate check", 'success');
+
+            require_once __DIR__ . '/../Models/Notification.php';
+            $notificationModel = new Notification();
+            $notificationModel->createReportSubmittedNotification($reportId);
+
+            $_SESSION['flash_success'] = 'Your separate waste report has been submitted successfully.';
+            header('Location: ' . app_url('resident/view_report/' . $reportId));
+            exit;
+        } else {
+            $_SESSION['flash_error'] = 'Failed to submit report. Please try again.';
+            header('Location: ' . app_url('resident/submit'));
+            exit;
+        }
+    }
+
+    // ============================================================
+    // EDIT PENDING REPORT DETAILS
+    // ============================================================
+    public function edit_report($id) {
+        $id = (int)$id;
+        $report = $this->reportModel->getReportById($id, $_SESSION['user_id']);
+
+        if (!$report) {
+            $_SESSION['flash_error'] = 'Report not found or access denied.';
+            header('Location: ' . app_url('resident/my_report'));
+            exit;
+        }
+
+        // Only allow editing while status is Pending
+        if (strtolower(trim($report['status'])) !== 'pending') {
+            $_SESSION['flash_error'] = 'Only reports in Pending status can be modified.';
+            header('Location: ' . app_url('resident/view_report/' . $id));
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $description = trim($_POST['description'] ?? '');
+            $category_id = (int)($_POST['category_id'] ?? 0);
+            $quantity_id = (int)($_POST['quantity_id'] ?? 0);
+            $condition_id = (int)($_POST['condition_id'] ?? 0);
+            $lat = (float)($_POST['latitude'] ?? $report['latitude']);
+            $lng = (float)($_POST['longitude'] ?? $report['longitude']);
+
+            if (strlen($description) < 10 || strlen($description) > 500) {
+                $_SESSION['flash_error'] = 'Description must be between 10 and 500 characters.';
+                header('Location: ' . app_url('resident/view_report/' . $id));
+                exit;
+            }
+
+            if (empty($category_id) || empty($quantity_id) || empty($condition_id)) {
+                $_SESSION['flash_error'] = 'Please select a valid category, quantity, and condition.';
+                header('Location: ' . app_url('resident/view_report/' . $id));
+                exit;
+            }
+
+            $purok_id = $this->detectPurok($lat, $lng);
+
+            $updateData = [
+                'category_id'  => $category_id,
+                'quantity_id'  => $quantity_id,
+                'condition_id' => $condition_id,
+                'description'  => $description,
+                'purok_id'     => $purok_id,
+                'latitude'     => $lat,
+                'longitude'    => $lng,
+                'location'     => trim($_POST['location'] ?? '')
+            ];
+
+            if ($this->reportModel->updateReportDetails($id, $_SESSION['user_id'], $updateData)) {
+                $this->auditModel->logAction($_SESSION['user_id'], 'Report Edited', 'Waste Report', "User updated details for pending report ID $id", 'success');
+                $_SESSION['flash_success'] = 'Report details updated successfully.';
+            } else {
+                $_SESSION['flash_error'] = 'Failed to update report details.';
+            }
+
+            header('Location: ' . app_url('resident/view_report/' . $id));
+            exit;
+        }
+
+        header('Location: ' . app_url('resident/view_report/' . $id));
+        exit;
+    }
+
+    // ============================================================
     // HELPER: Detect Purok from coordinates
     // ============================================================
-    /**
-     * Detect purok using polygon geometry from purok_boundaries table.
-     * Fallback to nearest centroid or default (1).
-     */
     private function detectPurok($lat, $lng)
     {
-        $db = new Database();
-        // Try ST_Contains with geometry column
-        $db->query("
-            SELECT purok_id 
-            FROM purok_boundaries 
-            WHERE ST_Contains(polygon_geometry, POINT(:lng, :lat))
-            LIMIT 1
-        ");
-        $db->bind(':lat', $lat);
-        $db->bind(':lng', $lng);
-        $result = $db->single();
-
-        if ($result) {
-            return (int)$result['purok_id'];
-        }
-
-        // Fallback: nearest centroid. ST_Distance_Sphere requires points, not a polygon.
-        // Use the centroid of each polygon boundary to avoid MySQL geometry errors.
-        $db->query("
-            SELECT purok_id,
-                ST_Distance_Sphere(ST_Centroid(polygon_geometry), POINT(:lng, :lat)) AS distance
-            FROM purok_boundaries
-            WHERE polygon_geometry IS NOT NULL
-            ORDER BY distance ASC
-            LIMIT 1
-        ");
-        $db->bind(':lat', $lat);
-        $db->bind(':lng', $lng);
-        $fallback = $db->single();
-
-        if ($fallback) {
-            return (int)$fallback['purok_id'];
-        }
-
-        // Ultimate fallback
-        return 1;
+        $barangayModel = $this->model('Barangay');
+        return $barangayModel->detectPurok($lat, $lng);
     }
 }

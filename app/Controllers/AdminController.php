@@ -696,11 +696,16 @@ class AdminController extends Controller {
 
             $db = new Database();
 
-            // Get old status name and guest info for notification
+            // Get old status name, reporter info, and category details for notification
             $db->query("
-                SELECT r.resident_id, r.reporter_type, r.guest_phone, r.guest_name, r.tracking_number, rs.status_name as status 
+                SELECT r.id, r.resident_id, r.reporter_type, r.guest_phone, r.guest_email, r.guest_name, 
+                       r.tracking_number, r.location, rs.status_name as status,
+                       wc.category_name, p.purok_name, u.email as resident_email, u.full_name as resident_name
                 FROM reports r
                 JOIN report_statuses rs ON r.status_id = rs.status_id
+                LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+                LEFT JOIN puroks p ON r.purok_id = p.purok_id
+                LEFT JOIN users u ON r.resident_id = u.user_id
                 WHERE r.id = :id
             ");
             $db->bind(':id', $report_id);
@@ -764,15 +769,8 @@ class AdminController extends Controller {
                 $this->auditModel->logAction($_SESSION['user_id'], 'Report Rejected', "Report ID $report_id", "Rejected report. Reason: $remark. Resident notified.", 'success');
             }
 
-            // Send SMS notification if report is from a guest
-            if (!empty($oldReport['reporter_type']) && $oldReport['reporter_type'] === 'guest' && !empty($oldReport['guest_phone']) && !empty($newStatusKey)) {
-                require_once __DIR__ . '/../Models/Helpers/SmsHelper.php';
-                try {
-                    SmsHelper::sendStatusUpdate($oldReport['guest_phone'], $oldReport['tracking_number'] ?? '', $newStatusKey, $oldReport['guest_name'] ?? '');
-                } catch (Exception $e) {
-                    error_log('[AdminController] Guest status SMS update failed: ' . $e->getMessage());
-                }
-            }
+            // Dispatch Email & SMS notifications to guest / submitter
+            $this->dispatchStatusNotifications($oldReport, $newStatusKey, $remark);
 
             header('Location: ' . app_url('index.php?url=' . urlencode('admin/reports')));
             exit;
@@ -1083,6 +1081,7 @@ class AdminController extends Controller {
         $mapConfig = $barangayModel->getMapConfig();
         $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
         $data['map_center'] = $mapConfig['center'];
+        $data['gis_detected_purok'] = $barangayModel->detectPurokDetails($report['latitude'], $report['longitude']);
 
         $data['report'] = $report;
         $this->view('admin/view_report', $data);
@@ -1119,11 +1118,16 @@ class AdminController extends Controller {
         require_once __DIR__ . '/../Models/Notification.php';
         $notificationModel = new Notification();
 
-        // Get old status and guest info
+        // Get old status, reporter info, and category details
         $db->query("
-            SELECT r.resident_id, r.reporter_type, r.guest_phone, r.guest_name, r.tracking_number, rs.status_name as status 
+            SELECT r.id, r.resident_id, r.reporter_type, r.guest_phone, r.guest_email, r.guest_name, 
+                   r.tracking_number, r.location, rs.status_name as status,
+                   wc.category_name, p.purok_name, u.email as resident_email, u.full_name as resident_name
             FROM reports r
             JOIN report_statuses rs ON r.status_id = rs.status_id
+            LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+            LEFT JOIN puroks p ON r.purok_id = p.purok_id
+            LEFT JOIN users u ON r.resident_id = u.user_id
             WHERE r.id = :id
         ");
         $db->bind(':id', $report_id);
@@ -1190,15 +1194,8 @@ class AdminController extends Controller {
             $this->auditModel->logAction($_SESSION['user_id'], 'Report Resolved', "Report ID $report_id", "Resolved report. Remark: $remark", 'success');
         }
 
-        // Send SMS notification if report is from a guest
-        if (!empty($oldReport['reporter_type']) && $oldReport['reporter_type'] === 'guest' && !empty($oldReport['guest_phone']) && !empty($newStatusKey)) {
-            require_once __DIR__ . '/../Models/Helpers/SmsHelper.php';
-            try {
-                SmsHelper::sendStatusUpdate($oldReport['guest_phone'], $oldReport['tracking_number'] ?? '', $newStatusKey, $oldReport['guest_name'] ?? '');
-            } catch (Exception $e) {
-                error_log('[AdminController] Guest status SMS update failed: ' . $e->getMessage());
-            }
-        }
+        // Dispatch Email & SMS notifications to guest / submitter
+        $this->dispatchStatusNotifications($oldReport, $newStatusKey, $remark);
 
         // Redirect back to the detail page
         header('Location: ' . app_url('admin/viewReport/' . $report_id));
@@ -3005,11 +3002,13 @@ private function generateCalendarData($month, $year, $schedules) {
         ");
         $db->bind(':date_from', $filters['date_from']);
         $db->bind(':date_to', $filters['date_to']);
+        $resolutionTimes = $db->single();
+
         // Resident vs Guest Participation Breakdown
         $db->query("
             SELECT
-                SUM(CASE WHEN r.user_id IS NOT NULL AND r.user_id > 0 THEN 1 ELSE 0 END) as resident_reports,
-                SUM(CASE WHEN r.user_id IS NULL OR r.user_id = 0 THEN 1 ELSE 0 END) as guest_reports,
+                SUM(CASE WHEN r.reporter_type = 'resident' OR (r.resident_id IS NOT NULL AND r.resident_id > 0) THEN 1 ELSE 0 END) as resident_reports,
+                SUM(CASE WHEN r.reporter_type = 'guest' OR (r.resident_id IS NULL OR r.resident_id = 0) THEN 1 ELSE 0 END) as guest_reports,
                 COUNT(*) as total_reports
             FROM reports r
             JOIN report_statuses rs ON r.status_id = rs.status_id
@@ -3168,5 +3167,59 @@ private function generateCalendarData($month, $year, $schedules) {
         $db->bind(':name', $statusName);
         $result = $db->single();
         return $result ? (int)$result['status_id'] : 1; // Default to Pending (1)
+    }
+
+    /**
+     * Dispatch status notifications (Email & SMS) to report submitter (Guest or Resident).
+     */
+    private function dispatchStatusNotifications($reportData, $newStatusKey, $remark = '') {
+        if (empty($reportData) || empty($newStatusKey)) return;
+
+        $trackingNumber = !empty($reportData['tracking_number']) ? $reportData['tracking_number'] : ('WR-' . str_pad($reportData['id'] ?? 0, 6, '0', STR_PAD_LEFT));
+        $recipientName  = !empty($reportData['guest_name']) ? $reportData['guest_name'] : (!empty($reportData['resident_name']) ? $reportData['resident_name'] : 'Citizen');
+        $extraDetails   = [
+            'category_name' => $reportData['category_name'] ?? 'Waste Incident',
+            'purok_name'    => $reportData['purok_name'] ?? '',
+            'location'      => $reportData['location'] ?? ''
+        ];
+
+        // 1. Check for Guest or Resident Email
+        $targetEmail = '';
+        if (!empty($reportData['reporter_type']) && $reportData['reporter_type'] === 'guest') {
+            if (!empty($reportData['guest_email']) && filter_var($reportData['guest_email'], FILTER_VALIDATE_EMAIL)) {
+                $targetEmail = trim($reportData['guest_email']);
+            } elseif (!empty($reportData['guest_phone']) && filter_var($reportData['guest_phone'], FILTER_VALIDATE_EMAIL)) {
+                $targetEmail = trim($reportData['guest_phone']);
+            }
+        } elseif (!empty($reportData['resident_email']) && filter_var($reportData['resident_email'], FILTER_VALIDATE_EMAIL)) {
+            $targetEmail = trim($reportData['resident_email']);
+        }
+
+        if (!empty($targetEmail)) {
+            require_once __DIR__ . '/../Models/Helpers/OtpMailer.php';
+            try {
+                OtpMailer::sendReportStatusEmail(
+                    $targetEmail,
+                    $trackingNumber,
+                    $newStatusKey,
+                    $recipientName,
+                    $remark,
+                    $extraDetails
+                );
+            } catch (Exception $e) {
+                error_log('[AdminController] Status Email dispatch failed: ' . $e->getMessage());
+            }
+        }
+
+        // 2. Check for SMS notification (if guest phone is in PH mobile format 09XXXXXXXXX)
+        $phone = !empty($reportData['guest_phone']) ? trim($reportData['guest_phone']) : '';
+        if (!empty($phone) && preg_match('/^09\d{9}$/', $phone)) {
+            require_once __DIR__ . '/../Models/Helpers/SmsHelper.php';
+            try {
+                SmsHelper::sendStatusUpdate($phone, $trackingNumber, $newStatusKey, $recipientName);
+            } catch (Exception $e) {
+                error_log('[AdminController] Status SMS dispatch failed: ' . $e->getMessage());
+            }
+        }
     }
 }

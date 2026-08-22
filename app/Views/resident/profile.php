@@ -527,9 +527,9 @@ $initial = strtoupper(substr($firstName, 0, 1));
         const newPass = document.getElementById('newPassword').value;
         const confirmPass = document.getElementById('confirmPassword').value;
 
-        if (!currentPass) { alert('Please enter your current password.'); return; }
-        if (newPass.length < 8) { alert('New password must be at least 8 characters long.'); return; }
-        if (newPass !== confirmPass) { alert('New passwords do not match.'); return; }
+        if (!currentPass) { showModalAlert('Please enter your current password.', 'Password Required', 'warning'); return; }
+        if (newPass.length < 8) { showModalAlert('New password must be at least 8 characters long.', 'Password Too Short', 'warning'); return; }
+        if (newPass !== confirmPass) { showModalAlert('New passwords do not match. Please re-enter them.', 'Password Mismatch', 'error'); return; }
 
         document.getElementById('passwordForm').submit();
     }
@@ -587,10 +587,10 @@ $initial = strtoupper(substr($firstName, 0, 1));
                 document.getElementById('otpModal').classList.remove('hidden');
                 document.getElementById('otpInput').focus();
             } else {
-                alert(data.message || 'Failed to send OTP.');
+                showModalAlert(data.message || 'Failed to send OTP.', 'OTP Error', 'error');
             }
         })
-        .catch(() => alert('An error occurred. Please try again.'));
+        .catch(() => showModalAlert('An error occurred. Please try again.', 'Connection Error', 'error'));
     }
 
     function closeOTPModal() {
@@ -638,7 +638,7 @@ $initial = strtoupper(substr($firstName, 0, 1));
         .catch(() => {
             btn.disabled = false;
             btn.textContent = 'Verify & Apply';
-            alert('An error occurred. Please try again.');
+            showModalAlert('An error occurred. Please try again.', 'Connection Error', 'error');
         });
     }
 

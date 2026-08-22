@@ -1053,16 +1053,19 @@ function getActionMeta($action) {
         document.getElementById('archiveConfigModal').classList.add('hidden');
     }
 
-    function archiveSelectedLogs() {
+    async function archiveSelectedLogs() {
         const selectedCbs = Array.from(document.querySelectorAll('.log-row-checkbox:checked'));
         if (selectedCbs.length === 0) {
-            alert('Please select at least one log row to archive.');
+            showModalAlert('Please select at least one audit log entry to archive.', 'No Logs Selected', 'warning');
             return;
         }
 
-        if (!confirm(`Are you sure you want to move ${selectedCbs.length} selected log(s) to the Archive Vault?`)) {
-            return;
-        }
+        const confirmed = await showModalConfirm(
+            `Are you sure you want to move ${selectedCbs.length} selected log(s) to the Archive Vault?`,
+            'Archive Selected Logs',
+            { confirmText: 'Archive Logs', isDanger: true }
+        );
+        if (!confirmed) return;
 
         const ids = selectedCbs.map(cb => cb.value).join(',');
         const form = document.createElement('form');
@@ -1085,16 +1088,19 @@ function getActionMeta($action) {
         form.submit();
     }
 
-    function restoreSelectedLogs() {
+    async function restoreSelectedLogs() {
         const selectedCbs = Array.from(document.querySelectorAll('.log-row-checkbox:checked'));
         if (selectedCbs.length === 0) {
-            alert('Please select at least one log row to restore.');
+            showModalAlert('Please select at least one log row to restore.', 'No Logs Selected', 'warning');
             return;
         }
 
-        if (!confirm(`Restore ${selectedCbs.length} selected log(s) back to the Active Audit Trail?`)) {
-            return;
-        }
+        const confirmed = await showModalConfirm(
+            `Restore ${selectedCbs.length} selected log(s) back to the Active Audit Trail?`,
+            'Restore Audit Logs',
+            { confirmText: 'Restore Logs', isDanger: false }
+        );
+        if (!confirmed) return;
 
         const ids = selectedCbs.map(cb => cb.value).join(',');
         const form = document.createElement('form');
@@ -1189,7 +1195,7 @@ function getActionMeta($action) {
         } else if (scope === 'selected') {
             targetRows = getSelectedRows();
             if (targetRows.length === 0) {
-                alert('No log rows selected. Please check at least one row or choose "Current Page".');
+                showModalAlert('No log rows selected. Please check at least one row or choose "Current Page".', 'Print Selection Required', 'warning');
                 return;
             }
             scopeTitle = `Manually Selected Records (${targetRows.length} checked logs)`;
@@ -1316,7 +1322,7 @@ function getActionMeta($action) {
     function exportSelectedLogsCSV() {
         const selected = getSelectedRows();
         if (selected.length === 0) {
-            alert('Please select at least one log row to export.');
+            showModalAlert('Please select at least one log row to export.', 'Export Selection Required', 'warning');
             return;
         }
         downloadCSVFromRows(selected, '<?php echo $isArchiveView ? "Selected_Archived_Logs" : "Selected_Audit_Logs"; ?>');

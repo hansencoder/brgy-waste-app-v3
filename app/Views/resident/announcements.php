@@ -125,20 +125,27 @@ foreach ($announcements as $item) {
 
                             $author = !empty($item['author']) ? $item['author'] : 'Barangay Council';
                             $date = !empty($item['created_at']) ? date('M d, Y', strtotime($item['created_at'])) : date('M d, Y');
+                            $coverUrl = !empty($item['cover_image']) ? format_asset_url($item['cover_image']) : null;
                         ?>
-                        <article class="announce-card bg-white rounded-2xl border border-slate-200 shadow-xs p-6 hover:shadow-md transition flex flex-col justify-between space-y-4"
+                        <article class="announce-card bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 hover:shadow-md transition flex flex-col justify-between space-y-4"
                                  data-type="<?php echo $typeSlug; ?>"
                                  data-title="<?php echo htmlspecialchars(strtolower($title)); ?>"
                                  data-content="<?php echo htmlspecialchars(strtolower($content)); ?>">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-3">
+                                <?php if ($coverUrl): ?>
+                                    <div class="rounded-xl overflow-hidden mb-3.5 bg-slate-100 border border-slate-200 max-h-48">
+                                        <img src="<?php echo $coverUrl; ?>" class="w-full h-40 object-cover hover:scale-105 transition duration-300" alt="<?php echo htmlspecialchars($title); ?>">
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="flex items-center justify-between gap-2 mb-2.5">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border <?php echo $badgeClass; ?>">
                                         <?php echo $type; ?>
                                     </span>
                                     <span class="text-[11px] font-mono text-slate-400"><?php echo $date; ?></span>
                                 </div>
                                 <h2 class="text-base font-extrabold text-slate-900 leading-snug"><?php echo htmlspecialchars($title); ?></h2>
-                                <p class="text-xs text-slate-600 font-medium leading-relaxed mt-2 line-clamp-4">
+                                <p class="text-xs text-slate-600 font-medium leading-relaxed mt-2 line-clamp-3">
                                     <?php echo nl2br(htmlspecialchars($content)); ?>
                                 </p>
                             </div>
@@ -150,7 +157,8 @@ foreach ($announcements as $item) {
                                     'type' => $type,
                                     'content' => $content,
                                     'author' => $author,
-                                    'date' => $date
+                                    'date' => $date,
+                                    'cover_image' => $coverUrl
                                 ]), ENT_QUOTES, 'UTF-8'); ?>)" class="text-xs font-bold text-emerald-700 hover:text-emerald-900 cursor-pointer">
                                     Read Full →
                                 </button>
@@ -171,19 +179,22 @@ foreach ($announcements as $item) {
 
 <!-- Modal Reader -->
 <div id="announceModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
-        <div class="bg-[#0B2E22] px-6 py-4 flex items-center justify-between text-white">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+        <div class="bg-[#0B2E22] px-6 py-4 flex items-center justify-between text-white border-b border-emerald-900">
             <span id="modalTypeBadge" class="text-xs font-bold uppercase tracking-wider text-emerald-300">Barangay Notice</span>
             <button onclick="closeAnnounceModal()" class="text-emerald-300 hover:text-white cursor-pointer transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
-        <div class="p-6 space-y-4">
+        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+            <div id="modalCoverContainer" class="hidden rounded-xl overflow-hidden border border-slate-200">
+                <img id="modalCoverImg" src="" class="w-full h-48 object-cover" alt="Cover Image">
+            </div>
             <div>
                 <h3 id="modalTitle" class="text-lg font-extrabold text-slate-900 leading-snug"></h3>
                 <p id="modalMeta" class="text-xs text-slate-400 font-mono mt-1"></p>
             </div>
-            <div id="modalContent" class="text-xs sm:text-sm text-slate-700 leading-relaxed max-h-96 overflow-y-auto whitespace-pre-line border-t border-b border-slate-100 py-3"></div>
+            <div id="modalContent" class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line border-t border-b border-slate-100 py-3"></div>
             <div class="flex justify-end">
                 <button type="button" onclick="closeAnnounceModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs cursor-pointer">
                     Close Notice
@@ -231,6 +242,17 @@ foreach ($announcements as $item) {
         document.getElementById('modalTitle').textContent = data.title;
         document.getElementById('modalMeta').textContent = `Posted on ${data.date} • By ${data.author}`;
         document.getElementById('modalContent').textContent = data.content;
+
+        const coverContainer = document.getElementById('modalCoverContainer');
+        const coverImg = document.getElementById('modalCoverImg');
+        if (data.cover_image) {
+            coverImg.src = data.cover_image;
+            coverContainer.classList.remove('hidden');
+        } else {
+            coverImg.src = '';
+            coverContainer.classList.add('hidden');
+        }
+
         document.getElementById('announceModal').classList.remove('hidden');
     }
 

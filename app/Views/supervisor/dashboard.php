@@ -71,10 +71,18 @@ function getSupervisorStatusBadge($status) {
             <!-- Hero Welcome Card -->
             <div class="relative overflow-hidden bg-gradient-to-br from-[#07281E] via-[#0B2E22] to-[#041a14] rounded-2xl p-6 text-white shadow-sm border border-emerald-950">
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="space-y-1">
-                        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 text-[11px] font-medium border border-emerald-500/20">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span>Live Operational Monitoring</span>
+                    <div class="space-y-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 text-[11px] font-medium border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Live Operational Monitoring
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 text-emerald-200 border border-white/15 text-[11px] font-mono">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-emerald-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <span id="liveClockSupervisor"><?php echo date('h:i:s A'); ?></span>
+                                <span class="text-white/40">•</span>
+                                <span><?php echo date('l, M d, Y'); ?></span>
+                            </span>
                         </div>
                         <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
                             Welcome back, <?php echo htmlspecialchars($firstName); ?>
@@ -413,7 +421,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    // Live Clock Updater
+    function updateLiveClockSupervisor() {
+        const el = document.getElementById('liveClockSupervisor');
+        if (el) {
+            const now = new Date();
+            el.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
     }
+    setInterval(updateLiveClockSupervisor, 1000);
 });
 </script>
 

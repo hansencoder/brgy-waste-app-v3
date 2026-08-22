@@ -287,9 +287,9 @@ foreach ($publicReports as $pr) {
 </div>
 
 <!-- ============================================================ -->
-<!-- HERO SECTION                                                 -->
+<!-- HERO SECTION (Full Height)                                  -->
 <!-- ============================================================ -->
-<section class="relative bg-[#07281E] text-white overflow-hidden py-20 lg:py-28 min-h-[540px] flex items-center justify-center">
+<section class="relative bg-[#07281E] text-white overflow-hidden min-h-[calc(100vh-4rem)] min-h-[calc(100dvh-4rem)] flex flex-col justify-between items-center py-10 sm:py-14 md:py-16">
     <!-- Background Carousel Container -->
     <div class="absolute inset-0 z-0">
         <!-- Background Slides -->
@@ -297,35 +297,46 @@ foreach ($publicReports as $pr) {
         <div class="absolute inset-0 hero-slide bg-[url('../assets/images/hero/hero2.jpg')] bg-cover bg-center"></div>
         <!-- Gradient Overlay -->
         <div class="absolute inset-0 bg-gradient-to-br from-[#07281E]/40 via-[#07281E]/80 to-emerald-900/50 pointer-events-none"></div>
-        
-        <div id="heroDots" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-white/30 cursor-pointer transition-colors" data-index="0"></span>
-            <span class="w-2.5 h-2.5 rounded-full bg-white/30 cursor-pointer transition-colors" data-index="1"></span>
-        </div>
     </div>
 
-    <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center">
-        <div class="max-w-4xl mx-auto space-y-4">
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-white scroll-reveal">
+    <!-- Empty Spacer to balance vertical centering with bottom controls -->
+    <div class="hidden sm:block w-full h-4"></div>
+
+    <!-- Centered Content -->
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center my-auto">
+        <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight text-white scroll-reveal">
                 Tungo sa Mas Malinis at
-                <span class="block text-emerald-400">Mas Maayos na Barangay.</span>
+                <span class="block text-emerald-400 mt-1">Mas Maayos na Barangay.</span>
             </h1>
             
-            <p class="text-xs sm:text-base text-emerald-100/90 max-w-2xl mx-auto leading-relaxed font-normal scroll-reveal delay-100">
+            <p class="text-xs sm:text-base md:text-lg text-emerald-100/90 max-w-2xl mx-auto leading-relaxed font-normal scroll-reveal delay-100">
                 I-report ang mga problema sa basura, illegal na pagtatapon, at hazardous na basura gamit ang ating Waste Management System.
             </p>
             
-            <div class="flex flex-wrap items-center justify-center gap-3 pt-3 scroll-reveal delay-200">
-                <a href="<?php echo app_url('index.php?url=' . ($isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register')); ?>" class="inline-flex items-center gap-2 px-6 py-3 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition active:scale-[0.98]">
+            <div class="flex flex-wrap items-center justify-center gap-3.5 pt-3 sm:pt-4 scroll-reveal delay-200">
+                <a href="<?php echo app_url('index.php?url=' . ($isLoggedIn ? urlencode($role == 'resident' ? 'resident/submit' : 'auth') : 'auth/register')); ?>" class="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 bg-[#10B981] hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-950/40 transition active:scale-[0.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     <span>Report Waste (Resident)</span>
                 </a>
-                <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs sm:text-sm rounded-xl backdrop-blur-xs transition">
+                <a href="<?php echo app_url('index.php?url=guest'); ?>" class="inline-flex items-center gap-2 px-5 sm:px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs sm:text-sm rounded-xl backdrop-blur-xs transition active:scale-[0.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <span>Report as Guest</span>
                 </a>
             </div>
         </div>
+    </div>
+
+    <!-- Bottom Controls & Scroll Down Cue -->
+    <div class="relative z-20 w-full flex flex-col items-center gap-3 pt-4 pb-2">
+        <div id="heroDots" class="flex gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-white/30 cursor-pointer transition-colors" data-index="0"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-white/30 cursor-pointer transition-colors" data-index="1"></span>
+        </div>
+        <a href="#features" class="inline-flex flex-col items-center gap-1 text-white/60 hover:text-white transition group py-1" aria-label="Scroll to features">
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-emerald-300/80 group-hover:text-emerald-300 transition">Explore</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 animate-bounce text-emerald-400 group-hover:text-white transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
     </div>
 </section>
 
@@ -789,7 +800,6 @@ foreach ($publicReports as $pr) {
 
     </div>
 </section>
-
 <!-- ============================================================ -->
 <!-- 2. PROHIBITED ACTIONS AND PENALTIES                          -->
 <!-- ============================================================ -->
@@ -797,12 +807,17 @@ foreach ($publicReports as $pr) {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         <div class="text-center max-w-3xl mx-auto space-y-1.5 scroll-reveal">
-            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Prohibited Actions &amp; Penalties</h2>
-            <p class="text-xs sm:text-sm text-slate-500">In strict compliance with <strong>Republic Act No. 9003</strong> (Ecological Solid Waste Management Act of 2000) and Municipal / Barangay Ordinances.</p>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-200 text-xs font-bold uppercase tracking-wider mb-1">
+                <span>Republic Act No. 9003</span>
+                <span>•</span>
+                <span>Barangay Ordinances</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Environmental Compliance &amp; Penalties</h2>
+            <p class="text-xs sm:text-sm text-slate-500">Know the prohibited acts, municipal fines, and sanctions enforced across Barangay <?php echo htmlspecialchars($barangayName); ?>.</p>
         </div>
 
         <!-- Law Summary Alert -->
-        <div class="bg-red-50/60 rounded-2xl border border-red-200 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 scroll-reveal-scale delay-100">
+        <div class="bg-red-50/70 rounded-2xl border border-red-200 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 scroll-reveal-scale delay-100">
             <div class="flex items-start gap-3">
                 <div class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
@@ -810,66 +825,107 @@ foreach ($publicReports as $pr) {
                 <div>
                     <h3 class="text-sm font-bold text-red-950">Strict Enforcement Policy</h3>
                     <p class="text-xs text-red-900/80 mt-0.5 leading-relaxed">
-                        Barangay Tanods and Municipal Environmental Officers are authorized to issue citation tickets to violators. CCTV cameras monitor key streets and waterways 24/7.
+                        Barangay Tanods and Municipal Environmental Officers are authorized to issue citation tickets to violators. CCTV cameras monitor key streets, riverbanks, and collection points 24/7.
                     </p>
                 </div>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-red-100 text-red-800 font-semibold text-[10px] uppercase tracking-wider shrink-0">
+            <span class="px-3 py-1 rounded-full bg-red-100 text-red-800 font-bold text-xs uppercase tracking-wider shrink-0 border border-red-200">
                 Zero Tolerance
             </span>
         </div>
 
-        <!-- Prohibitions Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- SECTION A: PROHIBITED ACTIONS (Violations) -->
+        <div class="space-y-4">
+            <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Prohibited Actions &amp; Violations</h3>
+                <span class="text-xs text-slate-400 font-semibold">(Strictly Banned Acts)</span>
+            </div>
 
-            <?php if (!empty($penaltyRules)): ?>
-                <?php foreach ($penaltyRules as $ruleIndex => $rule): ?>
-                <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-red-300 transition scroll-reveal delay-<?php echo min(500, ($ruleIndex % 3 + 1) * 100); ?>">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <?php 
+                $prohibList = !empty($prohibitedActions) ? $prohibitedActions : [
+                    ['title' => 'Open Burning (Siga)', 'description' => 'Burning of leaves, trash, rubber, plastics, or garden waste in backyards or public roads.', 'legal_ref' => 'RA 9003 Sec. 48(3)'],
+                    ['title' => 'Littering & Throwing in Public', 'description' => 'Discharging or leaving waste on roads, sidewalks, canals, creeks, or public parks.', 'legal_ref' => 'RA 9003 Sec. 48(1)'],
+                    ['title' => 'Open Dumping & Scattering', 'description' => 'Dumping mixed waste in vacant lots, riverbanks, or unaccredited disposal sites.', 'legal_ref' => 'RA 9003 Sec. 48(6)'],
+                    ['title' => 'Non-Segregation of Waste', 'description' => 'Failing to sort biodegradable, recyclable, and residual waste before collection.', 'legal_ref' => 'RA 9003 Sec. 48(2)'],
+                    ['title' => 'Unauthorized Waste Collection', 'description' => 'Collection or transport of solid waste by unlicensed haulers or scavengers.', 'legal_ref' => 'Brgy Ordinance'],
+                    ['title' => 'Disposal of Toxic & Hazardous Waste', 'description' => 'Mixing industrial chemicals, e-waste, or clinical materials with household trash.', 'legal_ref' => 'RA 6969']
+                ];
+                foreach ($prohibList as $pIdx => $pItem): 
+                ?>
+                <div class="bg-rose-50/40 rounded-2xl border border-rose-200/80 p-5 flex flex-col justify-between space-y-3 hover:border-rose-400 transition shadow-2xs">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                                Prohibited
+                            </span>
+                            <?php if (!empty($pItem['legal_ref'])): ?>
+                                <span class="font-mono text-[10px] font-bold text-slate-500"><?php echo htmlspecialchars($pItem['legal_ref']); ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900 leading-snug"><?php echo htmlspecialchars($pItem['title']); ?></h4>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed"><?php echo htmlspecialchars($pItem['description']); ?></p>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- SECTION B: PENALTIES, FINES & SANCTIONS -->
+        <div class="space-y-4 pt-4">
+            <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Fines, Penalties &amp; Sanctions</h3>
+                <span class="text-xs text-slate-400 font-semibold">(Graduated Penalties per Offense)</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <?php 
+                $penList = !empty($penalties) ? $penalties : [
+                    ['offense_no' => 1, 'title' => '1st Offense Warning & Fine', 'fine_range' => '₱300 – ₱1,000', 'alt_penalty' => '1 to 3 days Community Service (Clean-up)', 'legal_ref' => 'Citation Ticket'],
+                    ['offense_no' => 2, 'title' => '2nd Offense Escalated Penalty', 'fine_range' => '₱1,000 – ₱3,000', 'alt_penalty' => '1 to 15 days Community Clean-up / Seminar', 'legal_ref' => 'Barangay Hearing'],
+                    ['offense_no' => 3, 'title' => '3rd Offense & Subsequent Violations', 'fine_range' => '₱3,000 – ₱5,000', 'alt_penalty' => 'Legal Filing & Revocation of Barangay Clearance', 'legal_ref' => 'Court Prosecution']
+                ];
+                foreach ($penList as $penIdx => $penItem): 
+                    $offNo = (int)($penItem['offense_no'] ?? ($penIdx + 1));
+                ?>
+                <div class="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col justify-between space-y-4 hover:border-amber-400 transition shadow-2xs">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-red-600">
-                                Offense <?php echo str_pad((int)$rule['offense_no'], 2, '0', STR_PAD_LEFT); ?>
+                            <span class="text-xs font-black uppercase tracking-wider text-amber-800">
+                                Offense Tier <?php echo $offNo; ?>
                             </span>
-                            <?php if (!empty($rule['legal_ref'])): ?>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800">
-                                    <?php echo htmlspecialchars($rule['legal_ref']); ?>
+                            <?php if (!empty($penItem['legal_ref'])): ?>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200">
+                                    <?php echo htmlspecialchars($penItem['legal_ref']); ?>
                                 </span>
                             <?php endif; ?>
                         </div>
-                        <h4 class="text-sm font-bold text-slate-900"><?php echo htmlspecialchars($rule['title']); ?></h4>
-                        <?php if (!empty($rule['description'])): ?>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed"><?php echo htmlspecialchars($rule['description']); ?></p>
+                        <h4 class="text-sm font-bold text-slate-900"><?php echo htmlspecialchars($penItem['title']); ?></h4>
+                        <?php if (!empty($penItem['description'])): ?>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed"><?php echo htmlspecialchars($penItem['description']); ?></p>
                         <?php endif; ?>
                     </div>
 
-                    <?php if (!empty($rule['fine_range']) || !empty($rule['alt_penalty'])): ?>
-                    <div class="pt-3 border-t border-slate-200 space-y-1 text-xs">
-                        <?php if (!empty($rule['fine_range'])): ?>
+                    <div class="pt-3 border-t border-slate-200 space-y-1.5 text-xs">
+                        <?php if (!empty($penItem['fine_range'])): ?>
                         <div class="flex justify-between items-center">
-                            <span class="text-slate-500">Fine:</span>
-                            <span class="font-semibold text-red-700"><?php echo htmlspecialchars($rule['fine_range']); ?></span>
+                            <span class="text-slate-500 font-medium">Monetary Fine:</span>
+                            <span class="font-bold font-mono text-red-700"><?php echo htmlspecialchars($penItem['fine_range']); ?></span>
                         </div>
                         <?php endif; ?>
-                        <?php if (!empty($rule['alt_penalty'])): ?>
-                        <div class="flex justify-between items-center">
-                            <span class="text-slate-500">Alternative:</span>
-                            <span class="text-slate-700"><?php echo htmlspecialchars($rule['alt_penalty']); ?></span>
+                        <?php if (!empty($penItem['alt_penalty'])): ?>
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-slate-500 font-medium shrink-0">Sanction:</span>
+                            <span class="text-right text-slate-700 font-semibold"><?php echo htmlspecialchars($penItem['alt_penalty']); ?></span>
                         </div>
                         <?php endif; ?>
                     </div>
-                    <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
-
-            <?php else: ?>
-                <div class="col-span-full text-center py-12 bg-slate-50 rounded-2xl border border-slate-200">
-                    <div class="w-12 h-12 rounded-2xl bg-red-50 border-2 border-red-100 flex items-center justify-center mx-auto mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <p class="text-sm font-bold text-slate-600">No penalty rules published yet.</p>
-                </div>
-            <?php endif; ?>
-
+            </div>
         </div>
 
     </div>
@@ -976,7 +1032,7 @@ foreach ($publicReports as $pr) {
                         <!-- Designated Puroks -->
                         <div class="space-y-1.5 pt-0.5">
                             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-rose-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-rose-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 21s-6-5.333-6-10a6 6 0 0 1 12 0c0 4.667-6 10-6 10z"/>
                                     <circle cx="12" cy="11" r="2"/>
                                 </svg>
@@ -1071,11 +1127,16 @@ foreach ($publicReports as $pr) {
                         if (stripos($item['title'], 'collection') !== false || stripos($item['content'], 'collection') !== false) $type = 'Urgent';
                         elseif (stripos($item['title'], 'clean') !== false || stripos($item['title'], 'drive') !== false) $type = 'Event';
                         elseif (stripos($item['title'], 'update') !== false || stripos($item['title'], 'available') !== false) $type = 'Update';
+                        $itemCover = !empty($item['cover_image']) ? format_asset_url($item['cover_image']) : null;
                     ?>
                     <div class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40 transition cursor-pointer group">
                         <div class="flex items-center gap-3 min-w-0">
-                            <span class="w-2 h-2 rounded-full <?php echo $dots[$type] ?? 'bg-slate-400'; ?> flex-shrink-0"></span>
-                            <div>
+                            <?php if ($itemCover): ?>
+                                <img src="<?php echo $itemCover; ?>" class="w-10 h-10 rounded-lg object-cover border border-slate-200 shrink-0" alt="<?php echo htmlspecialchars($item['title']); ?>">
+                            <?php else: ?>
+                                <span class="w-2.5 h-2.5 rounded-full <?php echo $dots[$type] ?? 'bg-slate-400'; ?> flex-shrink-0"></span>
+                            <?php endif; ?>
+                            <div class="min-w-0">
                                 <p class="text-xs font-semibold text-slate-800 truncate"><?php echo htmlspecialchars($item['title']); ?></p>
                                 <p class="text-[11px] text-slate-400 mt-0.5"><?php echo date('M j, Y', strtotime($item['created_at'])); ?></p>
                             </div>
@@ -1096,32 +1157,52 @@ foreach ($publicReports as $pr) {
                     $fTitle = $featured['title'] ?? 'Special collection today';
                     $fContent = $featured['content'] ?? 'Stay updated with barangay announcements.';
                     $fDate = date('M j, Y', strtotime($featured['created_at'] ?? 'now'));
+                    $fCover = !empty($featured['cover_image']) ? format_asset_url($featured['cover_image']) : null;
                 ?>
-                <div class="bg-[#07281E] rounded-2xl p-6 sm:p-7 text-white shadow-sm h-full flex flex-col justify-between space-y-5">
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-500/20 text-red-300 text-[10px] font-semibold rounded-full border border-red-500/30">
-                                <span class="w-1.5 h-1.5 rounded-full bg-red-400 pulse-dot"></span>
+                <div class="bg-[#07281E] rounded-2xl overflow-hidden text-white shadow-sm h-full flex flex-col justify-between">
+                    <?php if ($fCover): ?>
+                        <div class="w-full h-48 sm:h-56 bg-slate-900 overflow-hidden relative">
+                            <img src="<?php echo $fCover; ?>" class="w-full h-full object-cover opacity-90 hover:scale-105 transition duration-500" alt="<?php echo htmlspecialchars($fTitle); ?>">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#07281E] via-transparent to-black/30"></div>
+                            <span class="absolute top-4 left-4 inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-600/90 text-white text-[10px] font-bold rounded-full backdrop-blur-xs">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                                 Featured Bulletin
                             </span>
-                            <span class="text-xs text-emerald-200/70"><?php echo $fDate; ?></span>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-bold mt-3 leading-snug"><?php echo htmlspecialchars($fTitle); ?></h3>
-                        <p class="text-emerald-100/80 text-xs sm:text-sm mt-2 leading-relaxed"><?php echo nl2br(htmlspecialchars(mb_substr($fContent, 0, 200) . (strlen($fContent) > 200 ? '...' : ''))); ?></p>
-                    </div>
+                    <?php endif; ?>
+                    
+                    <div class="p-6 sm:p-7 space-y-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <?php if (!$fCover): ?>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-500/20 text-red-300 text-[10px] font-semibold rounded-full border border-red-500/30">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-400 pulse-dot"></span>
+                                    Featured Bulletin
+                                </span>
+                                <span class="text-xs text-emerald-200/70"><?php echo $fDate; ?></span>
+                            </div>
+                            <?php else: ?>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs text-emerald-300/80 font-mono"><?php echo $fDate; ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <h3 class="text-lg sm:text-xl font-bold leading-snug"><?php echo htmlspecialchars($fTitle); ?></h3>
+                            <p class="text-emerald-100/80 text-xs sm:text-sm mt-2 leading-relaxed"><?php echo nl2br(htmlspecialchars(mb_substr($fContent, 0, 200) . (strlen($fContent) > 200 ? '...' : ''))); ?></p>
+                        </div>
 
-                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-white/10 text-center sm:text-left">
-                        <div>
-                            <p class="text-xl font-bold text-white"><?php echo count($announcements); ?></p>
-                            <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider mt-0.5">Active Notices</p>
-                        </div>
-                        <div>
-                            <p class="text-xl font-bold text-red-400"><?php echo count(array_filter($announcements, fn($a) => stripos($a['title'] ?? '', 'collection') !== false || stripos($a['content'] ?? '', 'collection') !== false)); ?></p>
-                            <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider mt-0.5">Urgent</p>
-                        </div>
-                        <div>
-                            <p class="text-xl font-bold text-emerald-400"><?php echo count(array_filter($announcements, fn($a) => stripos($a['title'] ?? '', 'clean') !== false || stripos($a['title'] ?? '', 'drive') !== false)); ?></p>
-                            <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider mt-0.5">Drives</p>
+                        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-white/10 text-center sm:text-left">
+                            <div>
+                                <p class="text-xl font-bold text-white"><?php echo count($announcements); ?></p>
+                                <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider mt-0.5">Active Notices</p>
+                            </div>
+                            <div>
+                                <p class="text-xl font-bold text-red-400"><?php echo count(array_filter($announcements, fn($a) => stripos($a['title'] ?? '', 'collection') !== false || stripos($a['content'] ?? '', 'collection') !== false)); ?></p>
+                                <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider mt-0.5">Urgent</p>
+                            </div>
+                            <div>
+                                <p class="text-xl font-bold text-emerald-400"><?php echo count(array_filter($announcements, fn($a) => stripos($a['title'] ?? '', 'clean') !== false || stripos($a['title'] ?? '', 'drive') !== false)); ?></p>
+                                <p class="text-[10px] text-emerald-200/60 font-medium uppercase tracking-wider mt-0.5">Drives</p>
+                            </div>
                         </div>
                     </div>
                 </div>

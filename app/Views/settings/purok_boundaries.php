@@ -390,7 +390,7 @@ function clearDrawing() {
 
 function saveBoundary() {
     if (!selectedPurokId || !currentGeoJson) {
-        alert('Please select a purok and draw a polygon first.');
+        showModalAlert('Please select a purok and draw a polygon first on the map.', 'Boundary Drawing Required', 'warning');
         return;
     }
 

@@ -28,8 +28,46 @@
         body {
             background-color: #F8FAFC !important;
         }
+
+        /* Ensure Leaflet Maps Never Bleed Over Modals & Lightboxes */
+        .leaflet-container, #mapContainer, #viewReportMap, #reportLocationMap, .map-box {
+            isolation: isolate !important;
+            z-index: 1 !important;
+            position: relative !important;
+        }
+        .leaflet-pane {
+            z-index: 2 !important;
+        }
+        .leaflet-tile-pane {
+            z-index: 2 !important;
+        }
+        .leaflet-overlay-pane {
+            z-index: 3 !important;
+        }
+        .leaflet-shadow-pane {
+            z-index: 3 !important;
+        }
+        .leaflet-marker-pane {
+            z-index: 4 !important;
+        }
+        .leaflet-tooltip-pane {
+            z-index: 5 !important;
+        }
+        .leaflet-popup-pane {
+            z-index: 6 !important;
+        }
+        .leaflet-top, .leaflet-bottom, .leaflet-control {
+            z-index: 8 !important;
+        }
+
+        /* Lightbox, Modals, Popups */
+        #photoLightboxModal, #imageLightboxModal, #reviewModal, #editModal, #popupSystemContainer, .custom-modal-backdrop {
+            z-index: 99999 !important;
+            position: fixed !important;
+        }
     </style>
 </head>
 <body class="bg-[#F8FAFC] text-slate-900 min-h-screen font-sans antialiased flex flex-col">
 <?php include __DIR__ . '/loader.php'; ?>
+<?php include __DIR__ . '/popup_system.php'; ?>
 

@@ -97,8 +97,8 @@ if (!isset($data) || !is_array($data)) {
                                     <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Account Credentials Created</p>
                                     <p class="text-xs text-slate-200 mt-0.5">Password: <strong class="font-mono text-emerald-300 text-sm px-2 py-0.5 bg-emerald-950/80 rounded border border-emerald-500/30"><?php echo htmlspecialchars($data['generated_password']); ?></strong></p>
                                 </div>
-                                <button type="button" onclick="navigator.clipboard.writeText('<?php echo htmlspecialchars($data['generated_password']); ?>'); alert('Password copied to clipboard!');" 
-                                        class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs shadow-xs transition">
+                                <button type="button" onclick="navigator.clipboard.writeText('<?php echo htmlspecialchars($data['generated_password']); ?>'); showToast('Password copied to clipboard!', 'success');" 
+                                        class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs shadow-xs transition cursor-pointer">
                                     Copy Password
                                 </button>
                             </div>

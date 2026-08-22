@@ -123,8 +123,13 @@
                 </div>
             </div>
             <div class="mb-4">
-                <div class="text-xs text-slate-400 mb-0.5">Purok / Area</div>
-                <div class="font-semibold text-slate-800"><?php echo htmlspecialchars($data['purok_name'], ENT_QUOTES, 'UTF-8'); ?></div>
+                <div class="text-xs text-slate-400 mb-0.5">Assigned Purok / Area</div>
+                <div class="flex items-center gap-2">
+                    <span class="font-extrabold text-slate-900 text-sm"><?php echo htmlspecialchars($data['purok_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        📍 Auto-Detected
+                    </span>
+                </div>
             </div>
             <div>
                 <div class="text-xs text-slate-400 mb-0.5">Description</div>
@@ -177,7 +182,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
             Edit Report
         </a>
-        <form action="<?php echo app_url('guest/submitReport'); ?>" method="POST" class="flex-[2]">
+        <form action="<?php echo app_url('index.php?url=guest/submitReport'); ?>" method="POST" class="flex-[2]">
             <button type="submit" class="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.99]">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                 Submit Report

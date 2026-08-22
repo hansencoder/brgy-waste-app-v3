@@ -235,7 +235,8 @@ class Barangay {
 
     /**
      * Detect containing Purok for a given GPS coordinate using polygon geometry.
-     * Uses MySQL ST_Contains first, followed by raycasting across all active Purok polygons.
+     * Uses MySQL ST_Contains first, followed by raycasting across all active Purok polygons,
+     * with nearest-polygon boundary distance resolution for gap/perimeter points.
      */
     public function detectPurok($latitude, $longitude) {
         $lat = (float)$latitude;
@@ -262,7 +263,7 @@ class Barangay {
             // fallback
         }
 
-        // Raycasting fallback across all Purok polygons
+        // Fetch all active Purok polygons
         $this->db->query("
             SELECT p.purok_id, ST_AsGeoJSON(pb.polygon_geometry) as polygon_geometry
             FROM puroks p
@@ -271,19 +272,62 @@ class Barangay {
         ");
         $puroks = $this->db->resultSet();
 
+        $closestPurokId = null;
+        $minDistance = PHP_FLOAT_MAX;
+
         foreach ($puroks as $pb) {
             if (!empty($pb['polygon_geometry'])) {
                 $geo = is_string($pb['polygon_geometry']) ? json_decode($pb['polygon_geometry'], true) : $pb['polygon_geometry'];
-                if (!empty($geo['coordinates'][0])) {
-                    if ($this->pointInPolygon([$lng, $lat], $geo['coordinates'][0])) {
+                $coords = $geo['coordinates'][0] ?? [];
+                if (!empty($coords)) {
+                    // 1. Strict point-in-polygon check
+                    if ($this->pointInPolygon([$lng, $lat], $coords)) {
                         return (int)$pb['purok_id'];
+                    }
+
+                    // 2. Compute minimum distance to polygon perimeter (for gap/boundary points)
+                    $dist = $this->pointToPolygonDistance($lng, $lat, $coords);
+                    if ($dist < $minDistance) {
+                        $minDistance = $dist;
+                        $closestPurokId = (int)$pb['purok_id'];
                     }
                 }
             }
         }
 
-        // Default fallback to Purok 1
-        return 1;
+        return $closestPurokId ?: 1;
+    }
+
+    /**
+     * Calculate minimum distance from point (px, py) to line segment (x1,y1)-(x2,y2).
+     */
+    private function pointToSegmentDistance($px, $py, $x1, $y1, $x2, $y2) {
+        $dx = $x2 - $x1;
+        $dy = $y2 - $y1;
+        if ($dx == 0 && $dy == 0) {
+            return hypot($px - $x1, $py - $y1);
+        }
+        $t = max(0, min(1, (($px - $x1) * $dx + ($py - $y1) * $dy) / ($dx * $dx + $dy * $dy)));
+        $projX = $x1 + $t * $dx;
+        $projY = $y1 + $t * $dy;
+        return hypot($px - $projX, $py - $projY);
+    }
+
+    /**
+     * Calculate minimum distance from point (lng, lat) to polygon perimeter.
+     */
+    private function pointToPolygonDistance($lng, $lat, $polyCoords) {
+        $minDist = PHP_FLOAT_MAX;
+        $n = count($polyCoords);
+        for ($i = 0, $j = $n - 1; $i < $n; $j = $i++) {
+            $x1 = $polyCoords[$j][0]; $y1 = $polyCoords[$j][1];
+            $x2 = $polyCoords[$i][0]; $y2 = $polyCoords[$i][1];
+            $d = $this->pointToSegmentDistance($lng, $lat, $x1, $y1, $x2, $y2);
+            if ($d < $minDist) {
+                $minDist = $d;
+            }
+        }
+        return $minDist;
     }
 
     /**

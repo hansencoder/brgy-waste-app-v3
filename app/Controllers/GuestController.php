@@ -605,6 +605,13 @@ class GuestController extends Controller {
             $guestEmail = $contact;
         }
 
+        // Auto-detect Purok from coordinates
+        $detectedPurokId = $barangayModel->detectPurok($wasteLat, $wasteLng);
+        $purokId = !empty($post['purok_id']) ? (int)$post['purok_id'] : $detectedPurokId;
+        if (!$purokId) {
+            $purokId = $detectedPurokId ?: 1;
+        }
+
         // Store pending report in session for review step
         $_SESSION['guest_pending_report'] = [
             'guest_name'          => $name,
@@ -619,7 +626,7 @@ class GuestController extends Controller {
             'category_id'         => (int)($post['category_id'] ?? 0),
             'quantity_id'         => (int)($post['quantity_id'] ?? 0),
             'condition_id'        => (int)($post['condition_id'] ?? 0),
-            'purok_id'            => !empty($post['purok_id']) ? (int)$post['purok_id'] : null,
+            'purok_id'            => $purokId,
             'location'            => $post['location'] ?? '',
             'photos'              => $photos,
         ];
@@ -676,13 +683,18 @@ class GuestController extends Controller {
             $qtyMap    = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
             $condMap   = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
             $purokMap  = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
+            $mapConfig = $barangayModel->getMapConfig();
             $data = [
-                'report'         => $report,
-                'category_name'  => $catMap[$report['category_id']] ?? 'Unknown',
-                'quantity_name'  => $qtyMap[$report['quantity_id']] ?? 'Unknown',
-                'condition_name' => $condMap[$report['condition_id']] ?? 'Unknown',
-                'purok_name'     => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
-                'error'          => 'Cannot submit report. The coordinates are outside the official Barangay boundary.',
+                'report'            => $report,
+                'category_name'     => $catMap[$report['category_id']] ?? 'Unknown',
+                'quantity_name'     => $qtyMap[$report['quantity_id']] ?? 'Unknown',
+                'condition_name'    => $condMap[$report['condition_id']] ?? 'Unknown',
+                'purok_name'        => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
+                'report_count'      => $this->reportModel->getGuestReportCount($contact),
+                'hourly_count'      => $this->reportModel->getGuestHourlyReportCount($contact),
+                'error'             => 'Cannot submit report. The coordinates are outside the official Barangay boundary.',
+                'barangay_boundary' => $mapConfig['boundary_geojson'],
+                'map_center'        => $mapConfig['center'],
             ];
             $this->view('guest/review', $data);
             return;
@@ -695,13 +707,18 @@ class GuestController extends Controller {
             $qtyMap    = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
             $condMap   = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
             $purokMap  = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
+            $mapConfig = $barangayModel->getMapConfig();
             $data = [
-                'report'         => $report,
-                'category_name'  => $catMap[$report['category_id']] ?? 'Unknown',
-                'quantity_name'  => $qtyMap[$report['quantity_id']] ?? 'Unknown',
-                'condition_name' => $condMap[$report['condition_id']] ?? 'Unknown',
-                'purok_name'     => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
-                'error'          => 'You have reached the submission limit (3 reports per hour). Please try again later.',
+                'report'            => $report,
+                'category_name'     => $catMap[$report['category_id']] ?? 'Unknown',
+                'quantity_name'     => $qtyMap[$report['quantity_id']] ?? 'Unknown',
+                'condition_name'    => $condMap[$report['condition_id']] ?? 'Unknown',
+                'purok_name'        => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
+                'report_count'      => $this->reportModel->getGuestReportCount($contact),
+                'hourly_count'      => $this->reportModel->getGuestHourlyReportCount($contact),
+                'error'             => 'You have reached the submission limit (3 reports per hour). Please try again later.',
+                'barangay_boundary' => $mapConfig['boundary_geojson'],
+                'map_center'        => $mapConfig['center'],
             ];
             $this->view('guest/review', $data);
             return;
@@ -715,6 +732,11 @@ class GuestController extends Controller {
         ) ? 1 : 0;
         $report['is_duplicate'] = $isDuplicate;
 
+        // Ensure purok_id is auto-detected
+        if (empty($report['purok_id'])) {
+            $report['purok_id'] = $barangayModel->detectPurok($report['latitude'], $report['longitude']) ?: 1;
+        }
+
         // Create guest report
         $result = $this->reportModel->createGuestReport($report);
         if (!$result) {
@@ -723,13 +745,18 @@ class GuestController extends Controller {
             $qtyMap    = array_column($dropdowns['quantities'],  'quantity_name', 'quantity_id');
             $condMap   = array_column($dropdowns['conditions'],  'condition_name', 'condition_id');
             $purokMap  = array_column($dropdowns['puroks'], 'purok_name', 'purok_id');
+            $mapConfig = $barangayModel->getMapConfig();
             $data = [
-                'report'         => $report,
-                'category_name'  => $catMap[$report['category_id']] ?? 'Unknown',
-                'quantity_name'  => $qtyMap[$report['quantity_id']] ?? 'Unknown',
-                'condition_name' => $condMap[$report['condition_id']] ?? 'Unknown',
-                'purok_name'     => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
-                'error'          => 'Failed to submit report. Please try again.',
+                'report'            => $report,
+                'category_name'     => $catMap[$report['category_id']] ?? 'Unknown',
+                'quantity_name'     => $qtyMap[$report['quantity_id']] ?? 'Unknown',
+                'condition_name'    => $condMap[$report['condition_id']] ?? 'Unknown',
+                'purok_name'        => $purokMap[$report['purok_id'] ?? 0] ?? 'N/A',
+                'report_count'      => $this->reportModel->getGuestReportCount($contact),
+                'hourly_count'      => $this->reportModel->getGuestHourlyReportCount($contact),
+                'error'             => 'Failed to submit report. Please try again.',
+                'barangay_boundary' => $mapConfig['boundary_geojson'],
+                'map_center'        => $mapConfig['center'],
             ];
             $this->view('guest/review', $data);
             return;
@@ -762,7 +789,7 @@ class GuestController extends Controller {
                         'location'      => $report['location'] ?? ''
                     ]
                 );
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[GuestController] Email confirmation failed: ' . $e->getMessage());
             }
         }
@@ -772,7 +799,7 @@ class GuestController extends Controller {
             require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
             try {
                 SmsHelper::sendStatusUpdate($contact, $trackingNumber, 'pending', $report['guest_name']);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[GuestController] SMS confirmation failed: ' . $e->getMessage());
             }
         }
@@ -790,7 +817,11 @@ class GuestController extends Controller {
         $_SESSION['guest_confirmed_tracking'] = $trackingNumber;
         $_SESSION['guest_confirmed_contact']  = $contact;
 
-        header('Location: ' . app_url('index.php?url=guest/confirmation'));
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+
+        header('Location: ' . app_url('index.php?url=guest/confirmation&tn=' . urlencode($trackingNumber)));
         exit;
     }
 
@@ -798,20 +829,19 @@ class GuestController extends Controller {
     // STEP 8: Confirmation Screen
     // ============================================================
     public function confirmation() {
-        if (empty($_SESSION['guest_confirmed_tracking'])) {
+        $trackingNumber = $_SESSION['guest_confirmed_tracking'] ?? ($_GET['tn'] ?? '');
+        $contact        = $_SESSION['guest_confirmed_contact'] ?? '';
+
+        if (empty($trackingNumber)) {
             header('Location: ' . app_url('index.php?url=guest'));
             exit;
         }
 
         $data = [
-            'tracking_number' => $_SESSION['guest_confirmed_tracking'],
-            'contact'         => $_SESSION['guest_confirmed_contact'] ?? '',
-            'phone'           => $_SESSION['guest_confirmed_contact'] ?? '',
+            'tracking_number' => $trackingNumber,
+            'contact'         => $contact,
+            'phone'           => $contact,
         ];
-
-        // Clear confirmation session after displaying
-        unset($_SESSION['guest_confirmed_tracking']);
-        unset($_SESSION['guest_confirmed_contact']);
 
         $this->view('guest/confirmation', $data);
     }

@@ -700,12 +700,12 @@ class AdminController extends Controller {
             $db->query("
                 SELECT r.id, r.resident_id, r.reporter_type, r.guest_phone, r.guest_email, r.guest_name, 
                        r.tracking_number, r.location, rs.status_name as status,
-                       wc.category_name, p.purok_name, u.email as resident_email, u.full_name as resident_name
+                       wc.category_name, p.purok_name, u.email as resident_email, u.name as resident_name
                 FROM reports r
                 JOIN report_statuses rs ON r.status_id = rs.status_id
                 LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
                 LEFT JOIN puroks p ON r.purok_id = p.purok_id
-                LEFT JOIN users u ON r.resident_id = u.user_id
+                LEFT JOIN users u ON r.resident_id = u.id
                 WHERE r.id = :id
             ");
             $db->bind(':id', $report_id);
@@ -1122,12 +1122,12 @@ class AdminController extends Controller {
         $db->query("
             SELECT r.id, r.resident_id, r.reporter_type, r.guest_phone, r.guest_email, r.guest_name, 
                    r.tracking_number, r.location, rs.status_name as status,
-                   wc.category_name, p.purok_name, u.email as resident_email, u.full_name as resident_name
+                   wc.category_name, p.purok_name, u.email as resident_email, u.name as resident_name
             FROM reports r
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN puroks p ON r.purok_id = p.purok_id
-            LEFT JOIN users u ON r.resident_id = u.user_id
+            LEFT JOIN users u ON r.resident_id = u.id
             WHERE r.id = :id
         ");
         $db->bind(':id', $report_id);
@@ -3206,7 +3206,7 @@ private function generateCalendarData($month, $year, $schedules) {
                     $remark,
                     $extraDetails
                 );
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[AdminController] Status Email dispatch failed: ' . $e->getMessage());
             }
         }
@@ -3217,7 +3217,7 @@ private function generateCalendarData($month, $year, $schedules) {
             require_once __DIR__ . '/../Models/Helpers/SmsHelper.php';
             try {
                 SmsHelper::sendStatusUpdate($phone, $trackingNumber, $newStatusKey, $recipientName);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[AdminController] Status SMS dispatch failed: ' . $e->getMessage());
             }
         }

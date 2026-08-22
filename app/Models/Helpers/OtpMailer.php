@@ -70,8 +70,6 @@ class OtpMailer
      */
     public static function sendReportStatusEmail($toEmail, $trackingNumber, $statusKey, $guestName = '', $remark = '', $details = [])
     {
-        $baseUrl = self::getBaseUrl();
-        $trackingUrl = $baseUrl . '/index.php?url=guest/track&ref=' . urlencode($trackingNumber);
         $displayName = !empty($guestName) ? $guestName : 'Citizen';
 
         $statusKey = strtolower(trim($statusKey));
@@ -192,13 +190,6 @@ class OtpMailer
                     </div>
 
                     {$remarkHtml}
-
-                    <!-- CTA Button -->
-                    <div style='margin-top: 28px; text-align: center;'>
-                        <a href='{$trackingUrl}' style='display: inline-block; padding: 12px 28px; background-color: #0B2E22; color: #FFFFFF; text-decoration: none; font-size: 13px; font-weight: 700; border-radius: 10px; box-shadow: 0 2px 6px rgba(11,46,34,0.3);'>
-                            View Report Timeline Online &rarr;
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Footer -->
@@ -211,7 +202,7 @@ class OtpMailer
         </html>
         ";
 
-        $altBody = "Hello {$displayName},\n\nUpdate on Waste Report #{$trackingNumber}: {$cfg['title']}.\n{$cfg['headline']}\n\nLocation: {$locationStr}\nTracking Code: {$trackingNumber}\nView details at: {$trackingUrl}\n\n- Barangay Dulong Bayan";
+        $altBody = "Hello {$displayName},\n\nUpdate on Waste Report #{$trackingNumber}: {$cfg['title']}.\n{$cfg['headline']}\n\nLocation: {$locationStr}\nTracking Code: {$trackingNumber}\n\n- Barangay Dulong Bayan";
 
         return self::sendMail($toEmail, $cfg['subject'], $htmlBody, $altBody, $displayName);
     }

@@ -106,7 +106,7 @@
     </div>
 
     <!-- Form Card -->
-    <form action="<?php echo app_url('guest/review'); ?>" method="POST" enctype="multipart/form-data" onsubmit="return validateReportForm()" class="space-y-5">
+    <form action="<?php echo app_url('index.php?url=guest/review'); ?>" method="POST" enctype="multipart/form-data" onsubmit="return validateReportForm()" class="space-y-5">
 
         <!-- Description -->
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
@@ -156,17 +156,6 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-            </div>
-
-            <!-- Purok -->
-            <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Purok / Area</label>
-                <select name="purok_id" class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10">
-                    <option value="">Not sure / Unknown</option>
-                    <?php foreach ($data['puroks'] as $p): ?>
-                    <option value="<?php echo $p['purok_id']; ?>"><?php echo htmlspecialchars($p['purok_name']); ?></option>
-                    <?php endforeach; ?>
-                </select>
             </div>
 
             <?php 
@@ -233,7 +222,7 @@
             <div class="flex items-center justify-between">
                 <h2 class="text-sm font-bold text-slate-800">Waste Location <span class="text-red-500">*</span></h2>
                 <button type="button" onclick="getGpsLocation()" id="gpsBtn"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition">
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
                     Use My Location
                 </button>
@@ -241,6 +230,35 @@
             <p class="text-xs text-slate-500">Click on the map or use GPS to mark where the waste is located.</p>
 
             <div id="mapContainer" class="h-64 w-full rounded-xl border border-slate-200 overflow-hidden relative"></div>
+
+            <!-- Auto-Detected Purok Card with Change Option -->
+            <div id="detectedPurokCard" class="hidden p-3.5 rounded-xl bg-white border border-emerald-200 text-slate-800 text-xs shadow-xs space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Assigned Sector / Area</span>
+                            <span id="detectedPurokName" class="font-extrabold text-slate-900 text-sm">Purok 1</span>
+                        </div>
+                    </div>
+                    <span id="purokBadge" class="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Auto-Detected
+                    </span>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
+                    <span class="text-slate-500 text-[11px]">Incorrect area? Change:</span>
+                    <select id="purok_id_select" onchange="manualPurokChange(this)" class="h-8 px-2.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-800 text-xs font-semibold outline-none focus:border-emerald-600 cursor-pointer">
+                        <?php foreach ($data['puroks'] as $p): ?>
+                        <option value="<?php echo $p['purok_id']; ?>" data-name="<?php echo htmlspecialchars($p['purok_name']); ?>"><?php echo htmlspecialchars($p['purok_name']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" id="purok_id" name="purok_id" value="">
 
             <!-- Warning Alerts -->
             <div id="guestJurisdictionWarning" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-start gap-2.5">
@@ -335,6 +353,29 @@
         }
     }
 
+    // Render Purok Boundaries on Map
+    const rawPuroksData = <?php echo json_encode($data['puroks'] ?? []); ?>;
+    const purokBorderColors = ['#059669', '#2563EB', '#7C3AED', '#D97706', '#DB2777', '#0891B2', '#65A30D'];
+    
+    if (rawPuroksData && rawPuroksData.length) {
+        rawPuroksData.forEach((p, idx) => {
+            if (!p.polygon_geometry) return;
+            try {
+                const geo = (typeof p.polygon_geometry === 'string') ? JSON.parse(p.polygon_geometry) : p.polygon_geometry;
+                const col = purokBorderColors[idx % purokBorderColors.length];
+                L.geoJSON(geo, {
+                    style: {
+                        color: col,
+                        weight: 1.5,
+                        fillColor: col,
+                        fillOpacity: 0.06,
+                        dashArray: '4, 4'
+                    }
+                }).bindTooltip(p.purok_name, { permanent: false, direction: 'center', className: 'text-[11px] font-bold text-slate-800' }).addTo(map);
+            } catch(e) {}
+        });
+    }
+
     let marker = null;
     let userGpsMarker = null;
     let userLat = null;
@@ -387,6 +428,81 @@
         }
     }
 
+    function pointToSegmentDist(px, py, x1, y1, x2, y2) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        if (dx === 0 && dy === 0) {
+            return Math.hypot(px - x1, py - y1);
+        }
+        const t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy)));
+        const projX = x1 + t * dx;
+        const projY = y1 + t * dy;
+        return Math.hypot(px - projX, py - projY);
+    }
+
+    function pointToPolyDist(lng, lat, polyCoords) {
+        let minDist = Infinity;
+        const n = polyCoords.length;
+        for (let i = 0, j = n - 1; i < n; j = i++) {
+            const x1 = polyCoords[j][0], y1 = polyCoords[j][1];
+            const x2 = polyCoords[i][0], y2 = polyCoords[i][1];
+            const d = pointToSegmentDist(lng, lat, x1, y1, x2, y2);
+            if (d < minDist) minDist = d;
+        }
+        return minDist;
+    }
+
+    function detectPurokClient(lat, lng) {
+        if (!rawPuroksData || !rawPuroksData.length) return null;
+        
+        let closestPurok = null;
+        let minDistance = Infinity;
+
+        for (const p of rawPuroksData) {
+            if (!p.polygon_geometry) continue;
+            try {
+                const geo = (typeof p.polygon_geometry === 'string') ? JSON.parse(p.polygon_geometry) : p.polygon_geometry;
+                const poly = geo.coordinates ? geo.coordinates[0] : null;
+                if (!poly || !poly.length) continue;
+                
+                // 1. Strict point in polygon check
+                let inside = false;
+                for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                    const xi = poly[i][0], yi = poly[i][1];
+                    const xj = poly[j][0], yj = poly[j][1];
+                    const intersect = ((yi > lat) !== (yj > lat)) && (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+                    if (intersect) inside = !inside;
+                }
+                if (inside) {
+                    return p;
+                }
+
+                // 2. Compute minimum distance to boundary for gap/border points
+                const dist = pointToPolyDist(lng, lat, poly);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    closestPurok = p;
+                }
+            } catch(e) {}
+        }
+        return closestPurok;
+    }
+
+    function manualPurokChange(sel) {
+        const selectedOpt = sel.options[sel.selectedIndex];
+        const purokName = selectedOpt.getAttribute('data-name') || selectedOpt.text;
+        const purokId = sel.value;
+
+        document.getElementById('purok_id').value = purokId;
+        document.getElementById('detectedPurokName').textContent = purokName;
+
+        const badge = document.getElementById('purokBadge');
+        if (badge) {
+            badge.className = "inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 border border-blue-200";
+            badge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Custom Selected`;
+        }
+    }
+
     function placeMarker(lat, lng, label) {
         const isInside = isInsideBoundary(lat, lng);
         const jWarn = document.getElementById('guestJurisdictionWarning');
@@ -401,6 +517,25 @@
         document.getElementById('longitude').value = lng.toFixed(8);
         document.getElementById('location').value  = label || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
         document.getElementById('location-error').classList.add('hidden');
+
+        // Auto-detect and display Purok with highest precision
+        const detected = detectPurokClient(lat, lng);
+        const pCard = document.getElementById('detectedPurokCard');
+        const pName = document.getElementById('detectedPurokName');
+        const pInput = document.getElementById('purok_id');
+        const pSelect = document.getElementById('purok_id_select');
+        const badge = document.getElementById('purokBadge');
+
+        if (detected) {
+            if (pCard) pCard.classList.remove('hidden');
+            if (pName) pName.textContent = detected.purok_name;
+            if (pInput) pInput.value = detected.purok_id;
+            if (pSelect) pSelect.value = detected.purok_id;
+            if (badge) {
+                badge.className = "inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200";
+                badge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Auto-Detected`;
+            }
+        }
 
         // Distance check vs User GPS
         const dWarn = document.getElementById('distanceWarning');

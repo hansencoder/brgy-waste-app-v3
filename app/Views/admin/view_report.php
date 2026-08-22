@@ -414,7 +414,13 @@ $reporterEmail = $isGuest ? ($report['guest_email'] ?: (filter_var($report['gues
                                     </form>
 
                                     <?php elseif ($report['status'] === 'Verified'): ?>
-                                                Start Collection Progress
+                                        <form action="<?php echo app_url('admin/updateReportStatus'); ?>" method="POST" class="w-full">
+                                            <input type="hidden" name="report_id" value="<?php echo $report['id']; ?>">
+                                            <input type="hidden" name="action" value="in_progress">
+                                            <input type="hidden" name="remark" value="">
+                                            <button type="submit" class="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm shadow-xs transition flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                                <span>Start Collection Progress</span>
                                             </button>
                                         </form>
 

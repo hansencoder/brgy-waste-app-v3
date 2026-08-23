@@ -255,6 +255,15 @@ class User {
         return $attempts;
     }
 
+    public function hasActiveMfaToken($user_id) {
+        $this->db->query('SELECT id FROM two_factor_tokens 
+                          WHERE user_id = :user_id AND expires_at >= NOW() AND is_used = 0 
+                          ORDER BY created_at DESC LIMIT 1');
+        $this->db->bind(':user_id', $user_id);
+        $row = $this->db->single();
+        return !empty($row);
+    }
+
     // ============================================================
     // EMAIL OTP METHODS
     // ============================================================

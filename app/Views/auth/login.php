@@ -159,6 +159,7 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
             <!-- Submit Button -->
             <button 
                 type="submit" 
+                id="loginSubmitBtn"
                 class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
             >
                 <span>Sign in to account</span>
@@ -202,7 +203,10 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
         }
     }
 
+    let isSubmitting = false;
     function validateLoginForm() {
+        if (isSubmitting) return false;
+
         const email = document.getElementById('email');
         const password = document.getElementById('password');
         let isValid = true;
@@ -219,6 +223,22 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
             isValid = false;
         } else {
             password.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
+        }
+
+        if (isValid) {
+            isSubmitting = true;
+            const btn = document.getElementById('loginSubmitBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add('opacity-80', 'cursor-not-allowed');
+                btn.innerHTML = `
+                    <svg class="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Signing in...</span>
+                `;
+            }
         }
 
         return isValid;

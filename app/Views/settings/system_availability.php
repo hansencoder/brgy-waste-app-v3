@@ -12,33 +12,17 @@
 
 <?php
 $status      = $data['status']  ?? [];
+$liveStatus  = $data['liveStatus'] ?? (new SystemMaintenance())->getLiveStatusInfo();
 $history     = $data['history'] ?? [];
-$isActive    = (bool)($status['maintenance_mode'] ?? 0);
-$isEmergency = $isActive && ($status['maintenance_type'] ?? '') === 'emergency';
+$isActive    = (bool)$liveStatus['is_active'];
+$isEmergency = (bool)$liveStatus['is_emergency'];
 
-// Status styling configuration
-if ($isEmergency) {
-    $statusColor  = 'text-red-700';
-    $statusBg     = 'bg-red-50 border-red-200';
-    $statusDot    = 'bg-red-500';
-    $statusLabel  = 'Emergency Lockdown';
-    $heroBorder   = 'border-red-300';
-    $heroBg       = 'bg-gradient-to-r from-red-50 via-rose-50/70 to-white';
-} elseif ($isActive) {
-    $statusColor  = 'text-amber-700';
-    $statusBg     = 'bg-amber-50 border-amber-200';
-    $statusDot    = 'bg-amber-500';
-    $statusLabel  = 'Maintenance Active';
-    $heroBorder   = 'border-amber-300';
-    $heroBg       = 'bg-gradient-to-r from-amber-50 via-yellow-50/70 to-white';
-} else {
-    $statusColor  = 'text-emerald-700';
-    $statusBg     = 'bg-emerald-50 border-emerald-200';
-    $statusDot    = 'bg-emerald-500';
-    $statusLabel  = 'Operational';
-    $heroBorder   = 'border-slate-200';
-    $heroBg       = 'bg-gradient-to-r from-emerald-50/80 via-teal-50/50 to-white';
-}
+$statusColor  = ($isEmergency ? 'text-red-700' : ($isActive ? 'text-amber-700' : 'text-emerald-700'));
+$statusBg     = $liveStatus['badge_class'];
+$statusDot    = $liveStatus['dot_class'];
+$statusLabel  = $liveStatus['state_label'];
+$heroBorder   = $liveStatus['hero_border'];
+$heroBg       = $liveStatus['hero_bg'];
 
 $savedMessage = htmlspecialchars($status['maintenance_message'] ?? 'The system is currently undergoing scheduled maintenance. We apologize for any inconvenience and will be back shortly.');
 $savedType    = $status['maintenance_type'] ?? 'scheduled';

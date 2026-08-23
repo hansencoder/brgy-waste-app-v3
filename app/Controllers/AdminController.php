@@ -282,7 +282,7 @@ class AdminController extends Controller {
         $activeAnnounce = $db->single();
         $data['active_announcements'] = (int)($activeAnnounce['count'] ?? 0);
 
-        // ---- Recent 10 Reports (Including Guest Reports) ----
+        // ---- Recent 5 Reports (Including Guest Reports) ----
         $db->query("
             SELECT r.id, r.description, r.submission_date, r.reporter_type, r.guest_name, r.guest_phone,
                     COALESCE(u.name, r.guest_name, 'Guest') as resident_name,
@@ -296,7 +296,7 @@ class AdminController extends Controller {
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN puroks p ON r.purok_id = p.purok_id
             ORDER BY r.submission_date DESC
-            LIMIT 10
+            LIMIT 5
         ");
         $data['recent_reports'] = $db->resultSet();
 
@@ -373,16 +373,21 @@ class AdminController extends Controller {
 
         $db = new Database();
 
+        // Get heatmap settings
+        $heatmapModel = $this->model('HeatmapSetting');
+        $data['heatmap_settings'] = $heatmapModel->getConfig();
+        $minHotspotReports = (int)($data['heatmap_settings']['low_min'] ?? $data['heatmap_settings']['minimum_reports'] ?? 3);
+
         // Get all reports with coordinates
         $db->query("
             SELECT r.*, 
-                   u.name as resident_name,
+                   COALESCE(u.name, r.guest_name, 'Guest') as resident_name,
                    rs.status_name as status,
                    rs.color_code as status_color,
                    wc.category_name as waste_category,
                    p.purok_name as purok
             FROM reports r
-            JOIN users u ON r.resident_id = u.id
+            LEFT JOIN users u ON r.resident_id = u.id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN puroks p ON r.purok_id = p.purok_id
@@ -405,7 +410,7 @@ class AdminController extends Controller {
         $totalMapped = $db->single();
         $data['total_mapped'] = (int)($totalMapped['count'] ?? 0);
 
-        // Get active hotspots (puroks with ≥3 reports in last 30 days)
+        // Get active hotspots (puroks meeting or exceeding configured low density minimum in last 30 days)
         $db->query("
             SELECT p.purok_name, COUNT(*) as report_count, wc.category_name as dominant_category
             FROM reports r
@@ -413,9 +418,10 @@ class AdminController extends Controller {
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             WHERE r.submission_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY r.purok_id
-            HAVING COUNT(*) >= 3
+            HAVING COUNT(*) >= :min_reports
             ORDER BY report_count DESC
         ");
+        $db->bind(':min_reports', $minHotspotReports);
         $data['active_hotspots'] = $db->resultSet();
         $data['active_hotspots_count'] = $db->rowCount();
 
@@ -438,10 +444,6 @@ class AdminController extends Controller {
         // Get puroks for filter
         $db->query("SELECT * FROM puroks WHERE is_active = 1 ORDER BY purok_name");
         $data['puroks'] = $db->resultSet();
-
-        // Get heatmap settings
-        $heatmapModel = $this->model('HeatmapSetting');
-        $data['heatmap_settings'] = $heatmapModel->getConfig();
 
         // Get report statuses for filter
         $db->query("SELECT * FROM report_statuses ORDER BY status_id");
@@ -485,13 +487,13 @@ class AdminController extends Controller {
         
         $query = "
             SELECT r.*, 
-                   u.name as resident_name,
+                   COALESCE(u.name, r.guest_name, 'Guest') as resident_name,
                    rs.status_name as status,
                    rs.color_code as status_color,
                    wc.category_name as waste_category,
                    p.purok_name as purok
             FROM reports r
-            JOIN users u ON r.resident_id = u.id
+            LEFT JOIN users u ON r.resident_id = u.id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN puroks p ON r.purok_id = p.purok_id
@@ -2318,7 +2320,7 @@ private function generateCalendarData($month, $year, $schedules) {
                 return [
                     'id' => $r['id'],
                     'submission_date' => $r['submission_date'],
-                    'reporter' => $r['name'],
+                    'reporter' => $r['reporter_formatted'] ?? ($r['name'] ?? 'Unknown (Guest)'),
                     'category' => $r['waste_category'] ?? 'N/A',
                     'purok' => $r['purok'] ?? 'N/A',
                     'status' => $r['status'],
@@ -2326,6 +2328,8 @@ private function generateCalendarData($month, $year, $schedules) {
                 ];
             }, $analytics['filtered_reports']),
             'stats' => $analytics['kpis'],
+            'category_data' => $analytics['category_data'],
+            'purok_data' => $analytics['purok_data'],
             'dateFrom' => $filters['date_from'],
             'dateTo' => $filters['date_to'],
             'category' => $filters['category'],
@@ -2437,62 +2441,10 @@ private function generateCalendarData($month, $year, $schedules) {
     }
 
     // ============================================================
-    // EXPORT REPORT SUMMARY - PDF
+    // EXPORT REPORT SUMMARY - PDF (Routes to Formal Analytics Print View)
     // ============================================================
     public function exportReportSummaryPDF() {
-        $filters = $this->parseAnalyticsFilters($_GET);
-        $analytics = $this->buildAnalyticsData($filters);
-        $reports = $analytics['filtered_reports'];
-        $dateFrom = $filters['date_from'];
-        $dateTo = $filters['date_to'];
-
-        $html = "
-        <html>
-        <head>
-            <title>Waste Report Summary</title>
-            <style>
-                body { font-family: Arial, sans-serif; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                th { background-color: #4CAF50; color: white; }
-            </style>
-        </head>
-        <body>
-            <h1>Waste Report Summary</h1>
-            <p>Report Period: $dateFrom to $dateTo</p>
-            <p>Total Reports: " . count($reports) . "</p>
-            <table>
-                <tr>
-                    <th>Report ID</th>
-                    <th>Resident</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                </tr>";
-
-        foreach ($reports as $report) {
-            $html .= "<tr>
-                <td>{$report['id']}</td>
-                <td>" . htmlspecialchars($report['name']) . "</td>
-                <td>" . htmlspecialchars($report['description']) . "</td>
-                <td>{$report['status']}</td>
-                <td>" . date('m/d/Y', strtotime($report['submission_date'])) . "</td>
-            </tr>";
-        }
-
-        $html .= "
-            </table>
-            <br>
-            <button onclick=\"window.print()\" style=\"padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;\">Print / Save as PDF</button>
-            <p style=\"font-size: 12px; color: #666;\">Note: In the print dialog, select 'Save as PDF' as the destination.</p>
-        </body>
-        </html>";
-
-        $this->logReportExport('report_summary_' . date('Y-m-d_H-i-s'), 'pdf', count($reports), $filters);
-        $this->auditModel->logAction($_SESSION['user_id'], 'Report Generated', 'Report Summary', 'Format: pdf', 'success');
-        header('Content-Type: text/html; charset=utf-8');
-        echo $html;
-        exit;
+        return $this->exportAnalyticsPDF();
     }
 
     // ============================================================
@@ -3083,12 +3035,13 @@ private function generateCalendarData($month, $year, $schedules) {
         // Filtered report list for table
         $db->query("
             SELECT r.id, r.description, r.submission_date, r.support_count,
+                   r.resident_id, r.reporter_type, r.guest_name,
                    u.name, u.email, r.latitude, r.longitude,
                    rs.status_name as status,
                    wc.category_name as waste_category,
                    p.purok_name as purok
             FROM reports r
-            JOIN users u ON r.resident_id = u.id
+            LEFT JOIN users u ON r.resident_id = u.id
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
             LEFT JOIN puroks p ON r.purok_id = p.purok_id
@@ -3099,6 +3052,17 @@ private function generateCalendarData($month, $year, $schedules) {
         $filteredReports = $db->resultSet() ?: [];
 
         foreach ($filteredReports as $key => $report) {
+            $rawName = !empty($report['name']) ? $report['name'] : (!empty($report['guest_name']) ? $report['guest_name'] : '');
+            $isResident = !empty($report['resident_id']) || (($report['reporter_type'] ?? '') === 'resident');
+            if (!empty($rawName)) {
+                $titleName = mb_convert_case(trim($rawName), MB_CASE_TITLE, 'UTF-8');
+                $filteredReports[$key]['name'] = $titleName;
+                $filteredReports[$key]['reporter_formatted'] = $isResident ? "{$titleName} (Resident)" : "{$titleName} (Guest)";
+            } else {
+                $filteredReports[$key]['name'] = $isResident ? 'Resident' : 'Unknown (Guest)';
+                $filteredReports[$key]['reporter_formatted'] = $isResident ? 'Resident' : 'Unknown (Guest)';
+            }
+
             $filteredReports[$key]['location'] = !empty($report['purok']) 
                 ? $report['purok'] . ', Barangay Dulong Bayan' 
                 : ((!empty($report['latitude']) && !empty($report['longitude'])) ? 'Lat: ' . round($report['latitude'], 4) . ', Lng: ' . round($report['longitude'], 4) : 'Barangay Dulong Bayan');

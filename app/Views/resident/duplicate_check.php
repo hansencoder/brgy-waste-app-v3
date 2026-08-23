@@ -68,8 +68,8 @@ $lng    = $data['lng'] ?? 120.803;
                         </div>
                         <form action="<?php echo app_url('resident/support_report'); ?>" method="POST" class="shrink-0">
                             <input type="hidden" name="report_id" value="<?php echo (int)$rep['id']; ?>">
-                            <button type="submit" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
-                                Support This
+                            <button type="submit" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition cursor-pointer">
+                                <span>👍 Support This (+1 Upvote)</span>
                             </button>
                         </form>
                     </div>
@@ -80,11 +80,11 @@ $lng    = $data['lng'] ?? 120.803;
             <!-- Action Buttons -->
             <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
                 <a href="<?php echo app_url('resident/submit'); ?>" class="py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs text-center transition">
-                    Cancel
+                    Cancel &amp; Re-edit
                 </a>
                 <form action="<?php echo app_url('resident/continue_report'); ?>" method="POST">
                     <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#0B2E22] hover:bg-[#083528] text-white font-bold text-xs transition cursor-pointer">
-                        Continue Report
+                        Submit Anyway
                     </button>
                 </form>
             </div>

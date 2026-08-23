@@ -345,6 +345,17 @@ class AuthController extends Controller {
                 $can = $this->userModel->canSendEmailOtp($contactTarget, $ip);
                 if (!$can['ok']) {
                     if ($can['reason'] === 'cooldown') {
+                        // If user spammed the login button or entered credentials while a valid OTP is active:
+                        // Forward them directly to the MFA verification page so they can enter the code they received!
+                        if ($this->userModel->hasActiveMfaToken($user['id'])) {
+                            $_SESSION['mfa_user_id'] = $user['id'];
+                            $_SESSION['mfa_email'] = $contactTarget;
+                            $_SESSION['mfa_type'] = $sendViaSms ? 'phone' : 'email';
+                            $_SESSION['mfa_notice'] = 'A verification code was already sent. Please enter the 6-digit code sent to your ' . ($sendViaSms ? 'phone' : 'email') . '.';
+                            header('Location: ' . app_url('index.php?url=' . urlencode('auth/mfa')));
+                            exit;
+                        }
+
                         $wait = isset($can['retry_after']) ? $can['retry_after'] : 60;
                         $timeLabel = $this->formatRetryTime((int) $wait);
                         return $this->view('auth/login', ['error' => "Please wait {$timeLabel} before requesting a new code."]);
@@ -407,7 +418,12 @@ class AuthController extends Controller {
             exit;
         }
 
-        $data = ['error' => '', 'success' => ''];
+        $data = ['error' => '', 'success' => '', 'info' => ''];
+
+        if (!empty($_SESSION['mfa_notice'])) {
+            $data['info'] = $_SESSION['mfa_notice'];
+            unset($_SESSION['mfa_notice']);
+        }
 
         $email = $_SESSION['mfa_email'] ?? null;
         if ($email) {
@@ -566,9 +582,18 @@ class AuthController extends Controller {
     // REGISTRATION
     // ============================================================
     public function register() {
+        $db = new Database();
+        try {
+            $db->query("SELECT * FROM puroks WHERE is_active = 1 ORDER BY sort_order ASC, purok_id ASC");
+            $puroks = $db->resultSet() ?: [];
+        } catch (\Throwable $e) {
+            $puroks = [];
+        }
+
         $data = [
             'error' => '',
-            'success' => ''
+            'success' => '',
+            'puroks' => $puroks
         ];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -654,10 +679,20 @@ class AuthController extends Controller {
                 $account_type = 'resident';
             }
 
+            // Validate full name
+            $rawName = trim($post['name'] ?? '');
+            if (empty($rawName) || mb_strlen($rawName) < 2 || mb_strlen($rawName) > 50) {
+                $data['error'] = "Full Name must be between 2 and 50 characters.";
+                $data['field_error'] = 'name';
+                $data['field_error_message'] = 'Name must be between 2 and 50 characters.';
+                return $this->view('auth/register', $data);
+            }
+            $formattedName = mb_convert_case($rawName, MB_CASE_TITLE, "UTF-8");
+
             $hashed = password_hash($password, PASSWORD_BCRYPT);
 
             $regData = [
-                'name' => trim($post['name']),
+                'name' => $formattedName,
                 'username' => $username,
                 'account_type' => $account_type,
                 'address' => trim($post['address'] ?? ''),

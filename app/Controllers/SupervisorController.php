@@ -875,11 +875,11 @@ public function exportAnalyticsPDF() {
 
     // Get report data
     $db->query("
-        SELECT r.id, r.description, r.submission_date, u.name as reporter,
-                rs.status_name as status, wc.category_name as category,
+        SELECT r.id, r.description, r.submission_date, r.resident_id, r.reporter_type, r.guest_name,
+                u.name as user_name, rs.status_name as status, wc.category_name as category,
                 p.purok_name as purok, r.support_count
         FROM reports r
-        JOIN users u ON r.resident_id = u.id
+        LEFT JOIN users u ON r.resident_id = u.id
         JOIN report_statuses rs ON r.status_id = rs.status_id
         LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
         LEFT JOIN puroks p ON r.purok_id = p.purok_id
@@ -889,7 +889,19 @@ public function exportAnalyticsPDF() {
     foreach ($params as $key => $val) {
         $db->bind($key, $val);
     }
-    $reports = $db->resultSet();
+    $rawReports = $db->resultSet() ?: [];
+    $reports = [];
+    foreach ($rawReports as $r) {
+        $rawName = !empty($r['user_name']) ? $r['user_name'] : (!empty($r['guest_name']) ? $r['guest_name'] : '');
+        $isResident = !empty($r['resident_id']) || (($r['reporter_type'] ?? '') === 'resident');
+        if (!empty($rawName)) {
+            $titleName = mb_convert_case(trim($rawName), MB_CASE_TITLE, 'UTF-8');
+            $r['reporter'] = $isResident ? "{$titleName} (Resident)" : "{$titleName} (Guest)";
+        } else {
+            $r['reporter'] = $isResident ? 'Resident' : 'Unknown (Guest)';
+        }
+        $reports[] = $r;
+    }
     
     // Get summary stats
     $db->query("
@@ -907,18 +919,48 @@ public function exportAnalyticsPDF() {
         $db->bind($key, $val);
     }
     $stats = $db->single();
+
+    // Category Distribution Stats
+    $db->query("
+        SELECT wc.category_name, COUNT(r.id) as count
+        FROM reports r
+        JOIN waste_categories wc ON r.category_id = wc.category_id
+        $where
+        GROUP BY wc.category_id, wc.category_name
+        ORDER BY count DESC
+    ");
+    foreach ($params as $key => $val) {
+        $db->bind($key, $val);
+    }
+    $categoryData = $db->resultSet() ?: [];
+
+    // Purok Distribution Stats
+    $db->query("
+        SELECT p.purok_name, COUNT(r.id) as total_reports
+        FROM reports r
+        JOIN puroks p ON r.purok_id = p.purok_id
+        $where
+        GROUP BY p.purok_id, p.purok_name
+        ORDER BY total_reports DESC
+    ");
+    foreach ($params as $key => $val) {
+        $db->bind($key, $val);
+    }
+    $purokData = $db->resultSet() ?: [];
     
     // Prepare data for view
     $data = [
         'reports' => $reports,
         'stats' => $stats,
+        'category_data' => $categoryData,
+        'purok_data' => $purokData,
         'dateFrom' => $dateFrom,
         'dateTo' => $dateTo,
         'category' => $category,
         'purok' => $purok,
         'status' => $status,
-        'category_name' => $categoryName,   // <-- added
-        'purok_name' => $purokName,         // <-- added
+        'category_name' => $categoryName,
+        'purok_name' => $purokName,
         'user_name' => $_SESSION['user_name'] ?? 'Supervisor'
     ];
     

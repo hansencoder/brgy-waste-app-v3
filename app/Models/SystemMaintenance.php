@@ -45,6 +45,69 @@ class SystemMaintenance {
     }
 
     /**
+     * Get live synchronized status information for badges, cards, and guards.
+     */
+    public function getLiveStatusInfo() {
+        $this->autoDeactivateIfExpired();
+        $status = $this->getStatus();
+        
+        $mode = (int)($status['maintenance_mode'] ?? 0);
+        $type = strtolower($status['maintenance_type'] ?? 'scheduled');
+        $startAt = !empty($status['start_at']) ? strtotime($status['start_at']) : null;
+        $endAt = !empty($status['end_at']) ? strtotime($status['end_at']) : null;
+        $now = time();
+
+        $stateKey = 'operational';
+        $stateLabel = 'Operational';
+        $subLabel = 'Public & Resident Portals Online';
+        $badgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+        $dotClass = 'bg-emerald-500';
+        $heroBorder = 'border-slate-200';
+        $heroBg = 'bg-gradient-to-r from-emerald-50/80 via-teal-50/50 to-white';
+
+        if ($mode === 1) {
+            if ($type === 'emergency') {
+                $stateKey = 'emergency';
+                $stateLabel = 'Emergency Lockdown';
+                $subLabel = 'System access restricted to authorized personnel';
+                $badgeClass = 'bg-red-50 text-red-800 border-red-200';
+                $dotClass = 'bg-red-500';
+                $heroBorder = 'border-red-300';
+                $heroBg = 'bg-gradient-to-r from-red-50 via-rose-50/70 to-white';
+            } elseif ($type === 'scheduled' && $startAt && $startAt > $now) {
+                $stateKey = 'scheduled';
+                $stateLabel = 'Maintenance Scheduled';
+                $subLabel = 'Scheduled to begin ' . date('M d, Y h:i A', $startAt);
+                $badgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
+                $dotClass = 'bg-blue-500';
+                $heroBorder = 'border-blue-300';
+                $heroBg = 'bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-white';
+            } else {
+                $stateKey = 'maintenance';
+                $stateLabel = 'Maintenance Active';
+                $subLabel = 'Public access paused for maintenance';
+                $badgeClass = 'bg-amber-50 text-amber-800 border-amber-200';
+                $dotClass = 'bg-amber-500';
+                $heroBorder = 'border-amber-300';
+                $heroBg = 'bg-gradient-to-r from-amber-50 via-yellow-50/70 to-white';
+            }
+        }
+
+        return [
+            'raw' => $status,
+            'is_active' => ($stateKey === 'emergency' || $stateKey === 'maintenance'),
+            'is_emergency' => ($stateKey === 'emergency'),
+            'state_key' => $stateKey,
+            'state_label' => $stateLabel,
+            'sub_label' => $subLabel,
+            'badge_class' => $badgeClass,
+            'dot_class' => $dotClass,
+            'hero_border' => $heroBorder,
+            'hero_bg' => $heroBg
+        ];
+    }
+
+    /**
      * Returns true if the system is currently in maintenance mode.
      * For scheduled type: only active if NOW() >= start_at (or start_at is null).
      * Also calls autoDeactivateIfExpired() to handle past end_at.

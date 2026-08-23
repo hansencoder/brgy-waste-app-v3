@@ -21,13 +21,19 @@ $statusColors = [
     'Rejected'    => '#DC2626'
 ];
 
-function getPriorityBadge($count) {
-    if ($count >= 9) {
-        return ['label' => 'HIGH DENSITY (HOTSPOT)', 'bg' => 'bg-red-50 text-red-900 border-red-200'];
-    } elseif ($count >= 4) {
-        return ['label' => 'MEDIUM DENSITY (VERIFIED)', 'bg' => 'bg-amber-50 text-amber-900 border-amber-200'];
+function getPriorityBadge($count, $settings = []) {
+    $lowMin = (int)($settings['low_min'] ?? $settings['minimum_reports'] ?? 3);
+    $modMin = (int)($settings['moderate_min'] ?? 6);
+    $sevMin = (int)($settings['severe_min'] ?? 11);
+
+    if ($count >= $sevMin) {
+        return ['label' => 'CRITICAL DENSITY', 'bg' => 'bg-red-100 text-red-950 border-red-300'];
+    } elseif ($count >= $modMin) {
+        return ['label' => 'MODERATE DENSITY', 'bg' => 'bg-amber-100 text-amber-950 border-amber-300'];
+    } elseif ($count >= $lowMin) {
+        return ['label' => 'LOW DENSITY', 'bg' => 'bg-yellow-100 text-yellow-950 border-yellow-300'];
     }
-    return ['label' => 'LOW DENSITY (PENDING)', 'bg' => 'bg-emerald-50 text-emerald-900 border-emerald-200'];
+    return ['label' => 'SUB-THRESHOLD', 'bg' => 'bg-slate-100 text-slate-700 border-slate-300'];
 }
 ?>
 
@@ -343,20 +349,52 @@ function getPriorityBadge($count) {
                                     </div>
                                 </div>
 
-                                <!-- Floating Status Legend -->
-                                <div class="absolute bottom-4 left-4 z-[400] bg-white/95 backdrop-blur-md rounded-xl p-3.5 shadow-md border border-slate-200 text-xs max-w-[210px] hidden sm:block">
+                                <!-- Floating Combined Status & Heatmap Legend -->
+                                <div class="absolute bottom-4 left-4 z-[400] bg-white/95 backdrop-blur-md rounded-xl p-3 shadow-md border border-slate-200 text-xs max-w-[240px] hidden sm:block">
                                     <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-100">
-                                        <p class="font-extrabold text-slate-900 text-[11px] uppercase tracking-wider">Report Status Legend</p>
+                                        <p class="font-extrabold text-slate-900 text-[10px] uppercase tracking-wider">GIS Map Legend</p>
+                                        <span class="text-[9px] font-bold text-slate-400"><?php echo (int)($heatmap_settings['radius_meters'] ?? 50); ?>m radius</span>
                                     </div>
-                                    <div class="space-y-1.5">
-                                        <?php foreach ($statusColors as $label => $color): ?>
-                                            <div class="flex items-center justify-between gap-2">
-                                                <div class="flex items-center gap-2">
-                                                    <span class="w-3 h-3 rounded-full border-2 border-white shadow-2xs shrink-0" style="background: <?php echo $color; ?>;"></span>
-                                                    <span class="text-slate-700 font-bold text-[11px]"><?php echo $label; ?></span>
-                                                </div>
+                                    
+                                    <!-- Heatmap Thermal Tiers (from Settings) -->
+                                    <div class="mb-2 pb-2 border-b border-slate-100">
+                                        <p class="font-bold text-slate-500 text-[9px] uppercase tracking-wider mb-1">Thermal Density Tiers</p>
+                                        <div class="space-y-1">
+                                            <div class="flex items-center justify-between text-[10px]">
+                                                <span class="flex items-center gap-1.5">
+                                                    <span class="w-2.5 h-2.5 rounded-full border border-slate-300 shrink-0" style="background: <?php echo htmlspecialchars($heatmap_settings['low_density_color'] ?? '#FDE68A'); ?>;"></span>
+                                                    <span class="font-bold text-slate-700">Low Tier</span>
+                                                </span>
+                                                <span class="font-mono text-slate-500 font-bold"><?php echo (int)($heatmap_settings['low_min'] ?? 3); ?>–<?php echo (int)($heatmap_settings['low_max'] ?? 5); ?> pts</span>
                                             </div>
-                                        <?php endforeach; ?>
+                                            <div class="flex items-center justify-between text-[10px]">
+                                                <span class="flex items-center gap-1.5">
+                                                    <span class="w-2.5 h-2.5 rounded-full border border-slate-300 shrink-0" style="background: <?php echo htmlspecialchars($heatmap_settings['medium_density_color'] ?? '#F97316'); ?>;"></span>
+                                                    <span class="font-bold text-slate-700">Moderate Tier</span>
+                                                </span>
+                                                <span class="font-mono text-slate-500 font-bold"><?php echo (int)($heatmap_settings['moderate_min'] ?? 6); ?>–<?php echo (int)($heatmap_settings['moderate_max'] ?? 10); ?> pts</span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-[10px]">
+                                                <span class="flex items-center gap-1.5">
+                                                    <span class="w-2.5 h-2.5 rounded-full border border-slate-300 shrink-0" style="background: <?php echo htmlspecialchars($heatmap_settings['high_density_color'] ?? '#EF4444'); ?>;"></span>
+                                                    <span class="font-bold text-slate-700">Critical / Severe</span>
+                                                </span>
+                                                <span class="font-mono text-slate-500 font-bold">&ge; <?php echo (int)($heatmap_settings['severe_min'] ?? 11); ?> pts</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Status Pin Markers -->
+                                    <div>
+                                        <p class="font-bold text-slate-500 text-[9px] uppercase tracking-wider mb-1">Status Pin Markers</p>
+                                        <div class="grid grid-cols-2 gap-x-2 gap-y-1">
+                                            <?php foreach ($statusColors as $label => $color): ?>
+                                                <div class="flex items-center gap-1.5 text-[10px]">
+                                                    <span class="w-2.5 h-2.5 rounded-full border border-white shadow-2xs shrink-0" style="background: <?php echo $color; ?>;"></span>
+                                                    <span class="text-slate-700 font-bold truncate"><?php echo $label; ?></span>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -398,7 +436,7 @@ function getPriorityBadge($count) {
 
                                     <?php if (!empty($active_hotspots)): ?>
                                         <?php $hRank = 1; foreach ($active_hotspots as $hotspot): 
-                                            $priority = getPriorityBadge($hotspot['report_count']);
+                                            $priority = getPriorityBadge($hotspot['report_count'], $heatmap_settings);
                                         ?>
                                             <div onclick="flyToPurokName('<?php echo htmlspecialchars($hotspot['purok_name'], ENT_QUOTES); ?>')" 
                                                  class="p-3.5 rounded-xl bg-slate-50 hover:bg-emerald-50/60 border border-slate-200 hover:border-emerald-300 transition-all cursor-pointer group shadow-2xs">
@@ -588,26 +626,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const percent = total > 0 ? Math.round((maxCatCount / total) * 100) : 0;
 
-        // Density Rules:
-        // <= 3 reports: Low Density (Pending/Initial)
-        // 4 to 8 reports: Medium Density (Verified Clusters)
-        // >= 9 reports: High Density (Active Hotspots)
-        let densityLabel = 'Low Density (Pending)';
-        let densityBadgeClass = 'bg-emerald-100 text-emerald-950 border border-emerald-300';
+        // Density Rules from Heatmap Settings:
+        const lowMin = <?php echo (int)($heatmap_settings['low_min'] ?? $heatmap_settings['minimum_reports'] ?? 3); ?>;
+        const lowMax = <?php echo (int)($heatmap_settings['low_max'] ?? 5); ?>;
+        const modMin = <?php echo (int)($heatmap_settings['moderate_min'] ?? 6); ?>;
+        const modMax = <?php echo (int)($heatmap_settings['moderate_max'] ?? 10); ?>;
+        const sevMin = <?php echo (int)($heatmap_settings['severe_min'] ?? 11); ?>;
+
+        let densityLabel = `Low Density (${lowMin}–${lowMax} Reports)`;
+        let densityBadgeClass = 'bg-yellow-100 text-yellow-950 border border-yellow-300';
         let recommendation = '';
 
-        if (total >= 9) {
-            densityLabel = 'High Density (Hotspot)';
+        if (total >= sevMin) {
+            densityLabel = `Critical Density (${sevMin}+ Reports)`;
             densityBadgeClass = 'bg-red-100 text-red-950 border border-red-300';
-            recommendation = `Critical Intervention: High incident concentration (${total} reports, ${dominantCat} dominant at ${percent}%). Immediate dispatch of compactor truck & sanitation sweep required within 12h. Conduct purok segregation audit.`;
-        } else if (total >= 4) {
-            densityLabel = 'Medium Density (Verified)';
+            recommendation = `Critical Intervention: Severe incident concentration (${total} reports, ${dominantCat} dominant at ${percent}%). Immediate dispatch of compactor truck & sanitation sweep required within 12h. Conduct purok segregation audit.`;
+        } else if (total >= modMin) {
+            densityLabel = `Moderate Density (${modMin}–${modMax} Reports)`;
             densityBadgeClass = 'bg-amber-100 text-amber-950 border border-amber-300';
-            recommendation = `Medium Priority: Active recurring waste accumulation (${total} reports, mostly ${dominantCat}). Schedule dedicated collection run within 24h and inspect purok collection points.`;
-        } else if (total > 0) {
-            densityLabel = 'Low Density (Pending)';
-            densityBadgeClass = 'bg-emerald-100 text-emerald-950 border border-emerald-300';
+            recommendation = `Moderate Priority: Active recurring waste accumulation (${total} reports, mostly ${dominantCat}). Schedule dedicated collection run within 24h and inspect purok collection points.`;
+        } else if (total >= lowMin) {
+            densityLabel = `Low Density (${lowMin}–${lowMax} Reports)`;
+            densityBadgeClass = 'bg-yellow-100 text-yellow-950 border border-yellow-300';
             recommendation = `Low Activity: ${total} reported incident(s) of ${dominantCat}. Standard routine collection schedule adequate. Verify any pending citizen reports.`;
+        } else if (total > 0) {
+            densityLabel = `Sub-Threshold (${total}/${lowMin} Reports)`;
+            densityBadgeClass = 'bg-slate-100 text-slate-800 border border-slate-300';
+            recommendation = `Isolated Submissions: ${total} reported incident(s). Does not meet the ${lowMin}-report threshold for thermal heatmap clustering. Monitor for further resident reports.`;
         } else {
             densityLabel = 'Clean / Monitored';
             densityBadgeClass = 'bg-slate-100 text-slate-700 border border-slate-300';
@@ -770,11 +815,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 ${r.description ? `<p style="font-size:11px; color:#64748b; margin:0 0 8px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${r.description}</p>` : ''}
                 <div style="display:flex; align-items:center; justify-content:space-between; padding-top:8px; border-top:1px solid #f1f5f9; margin-top:6px;">
                     <span style="font-size:10px; color:#94a3b8; font-weight:600;">${dateStr}</span>
-                    <a href="<?php echo app_url('admin/viewReport/${r.id}'); ?>" target="_blank" 
+                    <a href="<?php echo app_url('admin/viewReport/${r.id}'); ?>" 
                        style="font-size:11px; font-weight:800; color:#059669; text-decoration:none;">View Full Report &rarr;</a>
                 </div>
             </div>
         `;
+    }
+
+    function getDistanceMeters(lat1, lng1, lat2, lng2) {
+        const R = 6371000; // Radius of Earth in meters
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
     function renderIncidentLayer(reportList) {
@@ -789,20 +845,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const streamContainer = document.getElementById('incidentsStreamList');
         if (streamContainer) streamContainer.innerHTML = '';
 
-        // Calculate purok report counts for dynamic weighting
-        const purokCountMap = {};
-        reportList.forEach(r => {
-            if (r.purok) {
-                purokCountMap[r.purok.toLowerCase()] = (purokCountMap[r.purok.toLowerCase()] || 0) + 1;
-            }
-        });
+        const radiusMeters = <?php echo (int)($heatmap_settings['radius_meters'] ?? 50); ?>;
+        const heatmapLowMin = <?php echo (int)($heatmap_settings['low_min'] ?? $heatmap_settings['minimum_reports'] ?? 3); ?>;
+        const heatmapLowMax = <?php echo (int)($heatmap_settings['low_max'] ?? 5); ?>;
+        const heatmapModMin = <?php echo (int)($heatmap_settings['moderate_min'] ?? 6); ?>;
+        const heatmapModMax = <?php echo (int)($heatmap_settings['moderate_max'] ?? 10); ?>;
+        const heatmapSevMin = <?php echo (int)($heatmap_settings['severe_min'] ?? 11); ?>;
 
         reportList.forEach(r => {
             const lat = parseFloat(r.latitude);
             const lng = parseFloat(r.longitude);
 
             if (!isNaN(lat) && !isNaN(lng)) {
-                // Pin Marker
+                // Pin Marker (always rendered)
                 const marker = L.marker([lat, lng], { icon: getPinIcon(r.status) })
                     .bindPopup(buildIncidentPopup(r));
 
@@ -820,19 +875,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 markersLayerGroup.addLayer(marker);
                 markerIdMap[r.id] = { marker, lat, lng };
 
-                // Heat Density Weighting based on configured thresholds:
-                // If local report count is below low_min threshold, suppress heatmap blob to prevent false alarms
-                const heatmapLowMin = <?php echo (int)($heatmap_settings['low_min'] ?? $heatmap_settings['minimum_reports'] ?? 3); ?>;
-                const heatmapModMin = <?php echo (int)($heatmap_settings['moderate_min'] ?? 6); ?>;
-                const heatmapSevMin = <?php echo (int)($heatmap_settings['severe_min'] ?? 11); ?>;
+                // Calculate actual geographic reports count clustered within configured radiusMeters
+                let clusterCount = 0;
+                reportList.forEach(other => {
+                    const oLat = parseFloat(other.latitude);
+                    const oLng = parseFloat(other.longitude);
+                    if (!isNaN(oLat) && !isNaN(oLng)) {
+                        const dist = getDistanceMeters(lat, lng, oLat, oLng);
+                        if (dist <= radiusMeters) {
+                            clusterCount++;
+                        }
+                    }
+                });
 
-                const pCount = r.purok ? (purokCountMap[r.purok.toLowerCase()] || 1) : 1;
-                if (pCount >= heatmapLowMin) {
+                // Spatial Threshold Enforcement:
+                // If the number of nearby reports in the radius is below the minimum threshold (low_min),
+                // do NOT add to heatmap layer (it will show nothing around the report, just the pin).
+                if (clusterCount >= heatmapLowMin) {
                     let weight = 0.35;
-                    if (pCount >= heatmapSevMin) {
+                    if (clusterCount >= heatmapSevMin) {
                         weight = 1.0;
-                    } else if (pCount >= heatmapModMin) {
-                        weight = 0.70;
+                    } else if (clusterCount >= heatmapModMin) {
+                        weight = 0.65;
+                    } else {
+                        weight = 0.35;
                     }
                     if (r.status === 'Pending') {
                         weight = Math.min(weight, 0.45);
@@ -843,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Stream List Item
                 if (streamContainer) {
                     const cfg = statusBadgeColors[r.status] || { bg: '#F1F5F9', text: '#475569' };
-                    const dateFormatted = r.submission_date ? new Date(r.submission_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+                    const dateFormatted = r.submission_date ? new Date(r.submission_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
                     
                     const item = document.createElement('div');
                     item.className = 'p-3 rounded-xl bg-slate-50 hover:bg-emerald-50/50 border border-slate-200 hover:border-emerald-300 transition cursor-pointer group shadow-2xs';
@@ -877,17 +943,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (kpiCount) kpiCount.textContent = reportList.length;
         if (streamCount) streamCount.textContent = `${reportList.length} Loaded`;
 
-        // Render Heat Layer using settings colors
+        // Render Heat Layer using dynamic database settings colors and radius
         if (heatData.length > 0) {
             const lowC = '<?php echo htmlspecialchars($heatmap_settings['low_density_color'] ?? '#FDE68A'); ?>';
             const medC = '<?php echo htmlspecialchars($heatmap_settings['medium_density_color'] ?? '#F97316'); ?>';
             const highC = '<?php echo htmlspecialchars($heatmap_settings['high_density_color'] ?? '#EF4444'); ?>';
 
             heatLayer = L.heatLayer(heatData, {
-                radius: <?php echo (int)($heatmap_settings['radius_meters'] ?? 40); ?>,
-                blur: 18,
-                maxZoom: 16,
-                gradient: { 0.0: lowC, 0.5: medC, 1.0: highC }
+                radius: radiusMeters,
+                blur: Math.round(radiusMeters * 0.45),
+                maxZoom: 17,
+                minOpacity: 0.35,
+                gradient: { 0.2: lowC, 0.6: medC, 1.0: highC }
             });
             if (document.getElementById('toggleHeatmap').classList.contains('active')) {
                 heatLayer.addTo(map);

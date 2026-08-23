@@ -12,7 +12,7 @@ $channel        = $data['channel'] ?? 'phone';
 $resendCooldown = (int)($data['resend_cooldown_seconds'] ?? 0);
 $expiresIn      = (int)($data['expires_in_seconds'] ?? 300);
 
-$destinationType = ($channel === 'email') ? 'inbox' : 'phone';
+$destinationType = ($channel === 'email') ? 'Email' : 'Phone Number';
 $destinationLabel = ($channel === 'email') ? 'email address' : 'mobile number';
 ?>
 <!DOCTYPE html>
@@ -28,210 +28,229 @@ $destinationLabel = ($channel === 'email') ? 'email address' : 'mobile number';
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body, * { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; }
-        .otp-box::-webkit-outer-spin-button,
-        .otp-box::-webkit-inner-spin-button {
+        .otp-input::-webkit-outer-spin-button,
+        .otp-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-        .otp-box {
+        .otp-input {
             -moz-appearance: textfield;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-center items-center px-4 py-8 sm:py-12 selection:bg-emerald-500 selection:text-white">
+<body class="bg-[#F8FAFC] text-slate-800 antialiased min-h-screen flex flex-col justify-center items-center px-4 py-8 sm:py-12 selection:bg-emerald-500 selection:text-white">
 
-    <div class="w-full max-w-[460px] space-y-5">
-
-        <!-- Top Branding -->
-        <div class="flex flex-col items-center text-center space-y-2">
-            <a href="<?php echo app_url(''); ?>" class="inline-flex items-center gap-2.5 group transition" title="Home">
+    <!-- Centered Card -->
+    <div class="w-full max-w-[440px] bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs">
+        
+        <!-- Brand Header -->
+        <div class="flex flex-col items-center text-center mb-5">
+            <a href="<?php echo app_url(''); ?>" class="inline-block transition hover:opacity-90 mb-3" title="Home">
                 <?php if (!empty($activeLogo)): ?>
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden group-hover:scale-105 transition">
-                        <img src="<?php echo htmlspecialchars($activeLogo); ?>" alt="Logo" class="w-full h-full rounded-full object-cover">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden">
+                        <img src="<?php echo htmlspecialchars($activeLogo); ?>" class="w-full h-full rounded-full object-cover" alt="Logo">
                     </div>
                 <?php else: ?>
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-emerald-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-emerald-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                 <?php endif; ?>
-                <div class="text-left">
-                    <span class="text-sm font-bold text-slate-900 tracking-tight block leading-tight group-hover:text-emerald-800 transition">
-                        <?php echo htmlspecialchars($shortName); ?>
-                    </span>
-                    <span class="text-[11px] text-slate-500 block font-medium">
-                        Barangay <?php echo htmlspecialchars($brgyName); ?>
-                    </span>
-                </div>
             </a>
+            <h1 class="text-lg font-bold text-slate-900 tracking-tight">Verify Your <?php echo $destinationType; ?></h1>
+            <p class="text-xs text-slate-500 mt-0.5 max-w-xs">
+                We sent a 6-digit verification code to your <?php echo $destinationLabel; ?>:
+            </p>
+            <?php if (!empty($contact)): ?>
+                <span class="mt-1.5 inline-block text-xs font-mono font-bold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-full">
+                    <?php echo htmlspecialchars($contact, ENT_QUOTES, 'UTF-8'); ?>
+                </span>
+            <?php endif; ?>
         </div>
 
-        <!-- Error Alert -->
+        <!-- Error/Success Alerts -->
         <?php if (!empty($data['error'])): ?>
-        <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-start gap-2.5 shadow-2xs">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span><?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?></span>
-        </div>
-        <?php endif; ?>
-
-        <!-- Success Alert -->
-        <?php if (!empty($data['success'])): ?>
-        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium flex items-start gap-2.5 shadow-2xs">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-            <span><?php echo htmlspecialchars($data['success'], ENT_QUOTES, 'UTF-8'); ?></span>
-        </div>
-        <?php endif; ?>
-
-        <!-- Main Card -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-4">
-            
-            <!-- Title & Subtitle -->
-            <div class="space-y-1">
-                <h1 class="text-xl font-bold text-slate-900 tracking-tight">Check your <?php echo $destinationType; ?></h1>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                    We sent a 6-digit verification code to <span class="font-bold text-slate-800 font-mono"><?php echo htmlspecialchars($contact); ?></span>.
-                </p>
+            <div class="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200/80 text-red-700 text-xs flex items-start gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <div class="flex-1 font-medium"><?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?></div>
             </div>
+        <?php endif; ?>
 
-            <!-- OTP Form -->
-            <form id="otpForm" action="<?php echo app_url('index.php?url=guest/verifyOtp'); ?>" method="POST" class="space-y-4" onsubmit="return submitOtpForm()">
-                
-                <!-- Master Hidden OTP input -->
-                <input type="hidden" id="otp" name="otp" value="">
+        <?php if (!empty($data['success'])): ?>
+            <div class="mb-5 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs flex items-start gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <div class="flex-1 font-medium"><?php echo htmlspecialchars($data['success'], ENT_QUOTES, 'UTF-8'); ?></div>
+            </div>
+        <?php endif; ?>
 
-                <!-- 6-Digit Individual PIN Inputs -->
-                <div class="grid grid-cols-6 gap-2 sm:gap-2.5">
-                    <?php for ($i = 1; $i <= 6; $i++): ?>
-                    <input type="tel" 
-                           id="otp_<?php echo $i; ?>" 
-                           maxlength="1" 
-                           pattern="[0-9]" 
-                           inputmode="numeric" 
-                           autocomplete="one-time-code"
-                           class="otp-box w-full aspect-square sm:h-13 rounded-xl border border-slate-200 bg-white text-slate-900 text-lg sm:text-xl font-bold text-center outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
-                           data-index="<?php echo $i; ?>">
+        <!-- Form -->
+        <form id="otpForm" action="<?php echo app_url('index.php?url=guest/verifyOtp'); ?>" method="POST" class="space-y-5">
+            <input type="hidden" id="otp" name="otp" value="">
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 text-center mb-2">Enter 6-Digit OTP</label>
+                <div class="flex gap-2 justify-center">
+                    <?php for($i = 0; $i < 6; $i++): ?>
+                    <input type="tel" maxlength="1" id="box-<?php echo $i; ?>" data-index="<?php echo $i; ?>" 
+                        class="otp-input w-11 h-12 text-center text-lg font-mono font-bold rounded-xl border border-slate-200 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all bg-white placeholder:text-slate-300" 
+                        placeholder="•" autocomplete="one-time-code" inputmode="numeric" <?php echo $i === 0 ? 'autofocus' : ''; ?>>
                     <?php endfor; ?>
                 </div>
-                <p id="otp-error" class="text-red-500 text-xs text-center hidden">Please enter all 6 digits of the code.</p>
+            </div>
+            
+            <button type="submit" id="verifyBtn" class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                <span>Verify Code</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+        </form>
 
-                <!-- Resend Pill / Timer Box -->
-                <div id="resendContainer" class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100 text-slate-600 text-xs flex items-center justify-center text-center">
-                    <?php if ($resendCooldown > 0): ?>
-                        <span id="cooldownLabel" class="text-slate-600">
-                            Resend code in <strong id="cooldownTimer" class="font-semibold text-slate-900 font-mono"><?php echo $resendCooldown; ?>s</strong>
-                        </span>
-                    <?php else: ?>
-                        <span class="text-slate-600">
-                            Didn't get the code? 
-                            <a href="<?php echo app_url('index.php?url=guest/resendOtp'); ?>" class="font-semibold text-emerald-800 hover:text-emerald-950 hover:underline ml-1">Resend code</a>
-                        </span>
-                    <?php endif; ?>
-                </div>
-
-                <!-- CTA Button -->
-                <div class="pt-1">
-                    <button type="submit" id="verifyBtn"
-                        class="w-full py-3 bg-[#0B2E22] hover:bg-[#07281E] text-white font-semibold rounded-xl shadow-xs hover:shadow transition-all flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-[0.99] cursor-pointer">
-                        <span>Verify &amp; Continue</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m9 18 6-6-6-6"/>
-                        </svg>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Change Contact Link -->
-        <div class="text-center">
-            <a href="<?php echo app_url('index.php?url=guest/phone'); ?>" 
-               class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition py-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
-                </svg>
-                <span>Change mobile number or email</span>
-            </a>
+        <!-- Footer Resend & Change Contact -->
+        <div class="mt-5 text-center space-y-2">
+            <p class="text-xs text-slate-500 font-normal">
+                Didn't receive the code? 
+                <a id="resendLink" href="<?php echo app_url('index.php?url=guest/resendOtp'); ?>" class="font-semibold text-emerald-700 hover:underline">Resend code</a>
+                <span id="resendCountdown" class="ml-1 text-xs text-slate-400 font-mono font-medium"></span>
+            </p>
+            <div>
+                <a href="<?php echo app_url('index.php?url=guest/phone'); ?>" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
+                    <span>Change mobile number or email</span>
+                </a>
+            </div>
         </div>
 
     </div>
 
     <script>
-        const boxes = Array.from({length: 6}, (_, i) => document.getElementById(`otp_${i + 1}`));
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.otp-input');
         const hiddenOtp = document.getElementById('otp');
-        const otpError = document.getElementById('otp-error');
+        const form = document.getElementById('otpForm');
+        const verifyBtn = document.getElementById('verifyBtn');
 
-        boxes[0]?.focus();
+        function syncOtp() {
+            let otpVal = '';
+            inputs.forEach(inp => otpVal += inp.value);
+            hiddenOtp.value = otpVal;
+            return otpVal;
+        }
 
-        boxes.forEach((box, idx) => {
-            box.addEventListener('input', (e) => {
-                const val = e.target.value.replace(/[^0-9]/g, '');
-                e.target.value = val ? val.slice(-1) : '';
-
-                if (val && idx < 5) {
-                    boxes[idx + 1].focus();
+        inputs.forEach((input, index) => {
+            input.addEventListener('keyup', function(e) {
+                const val = this.value;
+                if (val && !/^\d$/.test(val)) {
+                    this.value = '';
+                    return;
                 }
-                syncOtp();
+                if (val && index < 5) {
+                    inputs[index + 1].focus();
+                }
+                const otpVal = syncOtp();
+                if (otpVal.length === 6) {
+                    form.submit();
+                }
             });
 
-            box.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !box.value && idx > 0) {
-                    boxes[idx - 1].focus();
-                }
-            });
-
-            box.addEventListener('paste', (e) => {
-                e.preventDefault();
-                const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
-                if (paste.length >= 6) {
-                    for (let i = 0; i < 6; i++) {
-                        if (boxes[i]) boxes[i].value = paste[i];
-                    }
-                    boxes[5]?.focus();
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    inputs[index - 1].focus();
+                    inputs[index - 1].value = '';
                     syncOtp();
+                }
+            });
+
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text');
+                const clean = paste.replace(/\D/g, '').slice(0, 6);
+                if (clean.length > 0) {
+                    for (let i = 0; i < 6; i++) {
+                        inputs[i].value = clean[i] || '';
+                    }
+                    const otpVal = syncOtp();
+                    if (clean.length >= 6) {
+                        inputs[5].focus();
+                        form.submit();
+                    } else {
+                        inputs[clean.length].focus();
+                    }
                 }
             });
         });
 
-        function syncOtp() {
-            const combined = boxes.map(b => b.value).join('');
-            hiddenOtp.value = combined;
-            if (combined.length === 6) {
-                otpError.classList.add('hidden');
-                boxes.forEach(b => b.classList.remove('border-red-500'));
-            }
-        }
-
-        function submitOtpForm() {
-            syncOtp();
-            if (hiddenOtp.value.length !== 6) {
-                otpError.classList.remove('hidden');
-                boxes.forEach(b => { if (!b.value) b.classList.add('border-red-500'); });
+        form.addEventListener('submit', function(e) {
+            const otpVal = syncOtp();
+            if (otpVal.length < 6) {
+                e.preventDefault();
+                alert('Please enter all 6 digits of the code.');
                 return false;
             }
-            return true;
+
+            if (verifyBtn) {
+                verifyBtn.disabled = true;
+                verifyBtn.classList.add('opacity-80', 'cursor-not-allowed');
+                verifyBtn.innerHTML = `
+                    <svg class="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Verifying...</span>
+                `;
+            }
+        });
+
+        // 60-Second Resend Cooldown Timer
+        const resendLink = document.getElementById('resendLink');
+        const resendCountdown = document.getElementById('resendCountdown');
+        const STORAGE_KEY = 'waste_guest_otp_expiry';
+
+        let serverCooldown = <?php echo (int)($resendCooldown ?? 0); ?>;
+        let stored = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10);
+        let endTime;
+
+        if (serverCooldown > 0) {
+            endTime = Date.now() + (serverCooldown * 1000);
+            sessionStorage.setItem(STORAGE_KEY, endTime.toString());
+        } else if (stored > Date.now()) {
+            endTime = stored;
+        } else {
+            endTime = Date.now() + 60000;
+            sessionStorage.setItem(STORAGE_KEY, endTime.toString());
         }
 
-        // Countdown timer for Resend
-        let cooldownSecs = <?php echo $resendCooldown; ?>;
-        if (cooldownSecs > 0) {
-            const timerEl = document.getElementById('cooldownTimer');
-            const interval = setInterval(() => {
-                cooldownSecs--;
-                if (timerEl) timerEl.textContent = `${cooldownSecs}s`;
-                if (cooldownSecs <= 0) {
-                    clearInterval(interval);
-                    const container = document.getElementById('resendContainer');
-                    if (container) {
-                        container.innerHTML = `
-                            <span class="text-slate-600">
-                                Didn't get the code? 
-                                <a href="<?php echo app_url('index.php?url=guest/resendOtp'); ?>" class="font-semibold text-emerald-800 hover:text-emerald-950 hover:underline ml-1">Resend code</a>
-                            </span>
-                        `;
-                    }
-                }
-            }, 1000);
+        function formatTime(s){
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            if (m > 0) return sec > 0 ? m + ':' + String(sec).padStart(2, '0') : m + 'm';
+            return sec + 's';
         }
+
+        function updateTimer(){
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((endTime - now) / 1000));
+            if (diff <= 0) {
+                resendCountdown.textContent = '';
+                resendLink.style.pointerEvents = '';
+                resendLink.style.opacity = '';
+                sessionStorage.removeItem(STORAGE_KEY);
+                return;
+            }
+            resendCountdown.textContent = 'in (' + formatTime(diff) + ')';
+            resendLink.style.pointerEvents = 'none';
+            resendLink.style.opacity = '0.5';
+            setTimeout(updateTimer, 1000);
+        }
+
+        resendLink.addEventListener('click', function(e) {
+            const diff = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+            if (diff > 0) {
+                e.preventDefault();
+            } else {
+                sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
+            }
+        });
+
+        updateTimer();
+    });
     </script>
 </body>
 </html>

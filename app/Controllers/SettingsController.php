@@ -287,72 +287,78 @@ class SettingsController extends Controller {
     // ============================================================
 
     public function heatmap() {
-        $db = new Database();
+        $heatmapModel = $this->model('HeatmapSetting');
         $data = ['error' => '', 'success' => ''];
 
-        $db->query("SELECT * FROM heatmap_settings LIMIT 1");
-        $settings = $db->single();
-        if (!$settings) {
-            $db->query("INSERT INTO heatmap_settings (radius_meters, minimum_reports, low_density_color, medium_density_color, high_density_color) 
-                        VALUES (50, 3, '#FDE68A', '#F97316', '#EF4444')");
-            $db->execute();
-            $db->query("SELECT * FROM heatmap_settings LIMIT 1");
-            $settings = $db->single();
+        if (!empty($_SESSION['flash_success'])) {
+            $data['success'] = $_SESSION['flash_success'];
+            unset($_SESSION['flash_success']);
         }
+        if (!empty($_SESSION['flash_error'])) {
+            $data['error'] = $_SESSION['flash_error'];
+            unset($_SESSION['flash_error']);
+        }
+
+        $settings = $heatmapModel->getConfig();
         $data['settings'] = $settings;
 
         // Get official barangay boundary and map center
-        $barangayModel = $this->model('Barangay');
-        $mapConfig = $barangayModel->getMapConfig();
-        $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
-        $data['map_center'] = $mapConfig['center'];
+        try {
+            $barangayModel = $this->model('Barangay');
+            $mapConfig = $barangayModel->getMapConfig();
+            $data['barangay_boundary'] = $mapConfig['boundary_geojson'] ?? null;
+            $data['map_center'] = $mapConfig['center'] ?? ['lat' => 15.558, 'lng' => 120.803, 'zoom' => 15];
+        } catch (\Throwable $be) {
+            $data['barangay_boundary'] = null;
+            $data['map_center'] = ['lat' => 15.558, 'lng' => 120.803, 'zoom' => 15];
+        }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $radius = (int)($_POST['radius_meters'] ?? 50);
-            $min_reports = (int)($_POST['minimum_reports'] ?? 3);
-            $low = trim($_POST['low_density_color'] ?? '#FDE68A');
-            $medium = trim($_POST['medium_density_color'] ?? '#F97316');
-            $high = trim($_POST['high_density_color'] ?? '#EF4444');
-            $low_min = (int)($_POST['low_min'] ?? 3);
-            $low_max = (int)($_POST['low_max'] ?? 5);
-            $moderate_min = (int)($_POST['moderate_min'] ?? 6);
-            $moderate_max = (int)($_POST['moderate_max'] ?? 10);
-            $severe_min = (int)($_POST['severe_min'] ?? 11);
+            try {
+                $radius = (int)($_POST['radius_meters'] ?? 50);
+                $min_reports = (int)($_POST['minimum_reports'] ?? 3);
+                $low = trim($_POST['low_density_color'] ?? '#FDE68A');
+                $medium = trim($_POST['medium_density_color'] ?? '#F97316');
+                $high = trim($_POST['high_density_color'] ?? '#EF4444');
+                $low_min = (int)($_POST['low_min'] ?? 3);
+                $low_max = (int)($_POST['low_max'] ?? 5);
+                $moderate_min = (int)($_POST['moderate_min'] ?? 6);
+                $moderate_max = (int)($_POST['moderate_max'] ?? 10);
+                $severe_min = (int)($_POST['severe_min'] ?? 11);
 
-            $db->query("UPDATE heatmap_settings SET 
-                radius_meters = :radius,
-                minimum_reports = :min_reports,
-                low_density_color = :low,
-                medium_density_color = :medium,
-                high_density_color = :high,
-                low_min = :low_min,
-                low_max = :low_max,
-                moderate_min = :moderate_min,
-                moderate_max = :moderate_max,
-                severe_min = :severe_min,
-                updated_by = :updated_by,
-                updated_at = NOW()
-                WHERE setting_id = :id
-            ");
-            $db->bind(':radius', $radius);
-            $db->bind(':min_reports', $low_min);
-            $db->bind(':low', $low);
-            $db->bind(':medium', $medium);
-            $db->bind(':high', $high);
-            $db->bind(':low_min', $low_min);
-            $db->bind(':low_max', $low_max);
-            $db->bind(':moderate_min', $moderate_min);
-            $db->bind(':moderate_max', $moderate_max);
-            $db->bind(':severe_min', $severe_min);
-            $db->bind(':updated_by', $_SESSION['user_id']);
-            $db->bind(':id', $settings['setting_id']);
-            if ($db->execute()) {
-                $data['success'] = 'Heatmap settings updated successfully.';
-                $this->auditModel->logAction($_SESSION['user_id'], 'Update Heatmap Settings', 'Settings', 'Updated heatmap settings & intervals', 'success');
-                $db->query("SELECT * FROM heatmap_settings LIMIT 1");
-                $data['settings'] = $db->single();
-            } else {
-                $data['error'] = 'Failed to update heatmap settings.';
+                $updateData = [
+                    'radius_meters' => $radius,
+                    'minimum_reports' => $low_min,
+                    'low_density_color' => $low,
+                    'medium_density_color' => $medium,
+                    'high_density_color' => $high,
+                    'low_min' => $low_min,
+                    'low_max' => $low_max,
+                    'moderate_min' => $moderate_min,
+                    'moderate_max' => $moderate_max,
+                    'severe_min' => $severe_min,
+                    'updated_by' => $_SESSION['user_id'] ?? null,
+                    'setting_id' => $settings['setting_id'] ?? 1
+                ];
+
+                if ($heatmapModel->updateConfig($updateData)) {
+                    if (!empty($this->auditModel) && !empty($_SESSION['user_id'])) {
+                        try {
+                            $this->auditModel->logAction($_SESSION['user_id'], 'Update Heatmap Settings', 'Settings', 'Updated heatmap settings & intervals', 'success');
+                        } catch (\Throwable $ae) {}
+                    }
+                    $_SESSION['flash_success'] = 'Heatmap settings updated successfully.';
+                    header('Location: ' . app_url('settings/heatmap'));
+                    exit;
+                } else {
+                    $_SESSION['flash_error'] = 'Failed to update heatmap settings.';
+                    header('Location: ' . app_url('settings/heatmap'));
+                    exit;
+                }
+            } catch (\Throwable $e) {
+                $_SESSION['flash_error'] = 'Error updating settings: ' . $e->getMessage();
+                header('Location: ' . app_url('settings/heatmap'));
+                exit;
             }
         }
 
@@ -1221,7 +1227,11 @@ class SettingsController extends Controller {
                     $data['new_status'] = $prevMode;
                     $maintenanceModel->logHistory('UPDATE_MAINTENANCE_SETTINGS', $data, $userId, $ip);
                     $this->auditModel->logAction($userId, 'Update Maintenance Settings', 'SystemMaintenance', "Updated maintenance settings (type: $type)", 'success');
-                    echo json_encode(['success' => true, 'message' => 'Maintenance settings saved successfully.']);
+                    echo json_encode([
+                        'success' => true, 
+                        'message' => 'Maintenance settings saved successfully.',
+                        'live_status' => $maintenanceModel->getLiveStatusInfo()
+                    ]);
                     break;
 
                 // ── Activate maintenance mode ────────────────────────────
@@ -1230,7 +1240,11 @@ class SettingsController extends Controller {
                     $maintenanceModel->activate($data, $userId);
                     $maintenanceModel->logHistory('ENABLE_MAINTENANCE_MODE', $data, $userId, $ip);
                     $this->auditModel->logAction($userId, 'Enable Maintenance Mode', 'SystemMaintenance', "Maintenance mode activated (type: $type). Reason: $reason", 'success');
-                    echo json_encode(['success' => true, 'message' => 'Maintenance mode has been activated. Non-admin users are now blocked.']);
+                    echo json_encode([
+                        'success' => true, 
+                        'message' => 'Maintenance mode has been activated. Non-admin users are now blocked.',
+                        'live_status' => $maintenanceModel->getLiveStatusInfo()
+                    ]);
                     break;
 
                 // ── Deactivate maintenance mode ──────────────────────────
@@ -1239,7 +1253,11 @@ class SettingsController extends Controller {
                     $maintenanceModel->deactivate($userId);
                     $maintenanceModel->logHistory('DISABLE_MAINTENANCE_MODE', $data, $userId, $ip);
                     $this->auditModel->logAction($userId, 'Disable Maintenance Mode', 'SystemMaintenance', 'Maintenance mode deactivated. System restored to operational.', 'success');
-                    echo json_encode(['success' => true, 'message' => 'System is now operational. All users can access the system.']);
+                    echo json_encode([
+                        'success' => true, 
+                        'message' => 'System is now operational. All users can access the system.',
+                        'live_status' => $maintenanceModel->getLiveStatusInfo()
+                    ]);
                     break;
 
                 // ── Emergency lockdown ───────────────────────────────────
@@ -1254,7 +1272,11 @@ class SettingsController extends Controller {
                     $maintenanceModel->activate($data, $userId);
                     $maintenanceModel->logHistory('ENABLE_EMERGENCY_LOCKDOWN', $data, $userId, $ip);
                     $this->auditModel->logAction($userId, 'Enable Emergency Lockdown', 'SystemMaintenance', "EMERGENCY LOCKDOWN activated. Reason: $reason", 'success');
-                    echo json_encode(['success' => true, 'message' => 'EMERGENCY LOCKDOWN is now active. All non-admin access is immediately blocked.']);
+                    echo json_encode([
+                        'success' => true, 
+                        'message' => 'EMERGENCY LOCKDOWN is now active. All non-admin access is immediately blocked.',
+                        'live_status' => $maintenanceModel->getLiveStatusInfo()
+                    ]);
                     break;
 
                 // ── Deactivate emergency lockdown ────────────────────────
@@ -1263,7 +1285,11 @@ class SettingsController extends Controller {
                     $maintenanceModel->deactivate($userId);
                     $maintenanceModel->logHistory('DISABLE_EMERGENCY_LOCKDOWN', $data, $userId, $ip);
                     $this->auditModel->logAction($userId, 'Disable Emergency Lockdown', 'SystemMaintenance', 'Emergency lockdown deactivated. System restored to operational.', 'success');
-                    echo json_encode(['success' => true, 'message' => 'Emergency lockdown lifted. System is now operational.']);
+                    echo json_encode([
+                        'success' => true, 
+                        'message' => 'Emergency lockdown lifted. System is now operational.',
+                        'live_status' => $maintenanceModel->getLiveStatusInfo()
+                    ]);
                     break;
 
                 default:
@@ -1274,12 +1300,14 @@ class SettingsController extends Controller {
         }
 
         // GET — render the settings view
-        $status  = $maintenanceModel->getStatus();
-        $history = $maintenanceModel->getHistory(50);
+        $status     = $maintenanceModel->getStatus();
+        $liveStatus = $maintenanceModel->getLiveStatusInfo();
+        $history    = $maintenanceModel->getHistory(50);
 
         $data = [
-            'status'  => $status,
-            'history' => $history,
+            'status'     => $status,
+            'liveStatus' => $liveStatus,
+            'history'    => $history,
         ];
         $this->view('settings/system_availability', $data);
     }

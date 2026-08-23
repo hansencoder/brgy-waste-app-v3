@@ -216,7 +216,7 @@ if (!isset($data) || !is_array($data)) {
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <label class="block text-xs font-bold text-slate-800 tracking-tight">System Access Role <span class="text-red-500">*</span></label>
-                                        <a href="<?php echo app_url('settings/role_management'); ?>" target="_blank" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1">
+                                        <a href="<?php echo app_url('settings/role_management'); ?>" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1">
                                             <span>Manage Roles</span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                                         </a>

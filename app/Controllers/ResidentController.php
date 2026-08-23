@@ -190,6 +190,20 @@ class ResidentController extends Controller {
         $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
         $data['map_center'] = $mapConfig['center'];
 
+        // Query recent existing community reports to show as reference pins on map picker
+        $db = new Database();
+        $db->query("
+            SELECT r.id, r.latitude, r.longitude, r.category_id, wc.category_name,
+                   r.status_id, rs.status_name, rs.color_code, r.description, r.submission_date
+            FROM reports r
+            JOIN report_statuses rs ON r.status_id = rs.status_id
+            LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
+            WHERE r.status_id != 5 AND r.submission_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            ORDER BY r.submission_date DESC
+            LIMIT 50
+        ");
+        $data['existing_pins'] = $db->resultSet() ?: [];
+
         if (isset($_GET['resume']) && isset($_SESSION['pending_report'])) {
             $pending = $_SESSION['pending_report'];
             $data['resume_data'] = $pending;

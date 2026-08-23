@@ -50,6 +50,64 @@ $conditionValues = array_column($conditionData, 'count');
 $purokLabels = array_column($purokData, 'purok_name');
 $purokValues = array_column($purokData, 'total_reports');
 
+// Calculate pattern-based 1-sentence takeaways for key charts
+$totalReportsCount = (int)($kpis['total'] ?? count($filteredReports));
+
+// 1. Trend Line Takeaway
+$maxTrendVal = !empty($trendValues) ? max($trendValues) : 0;
+$maxTrendIdx = !empty($trendValues) ? array_search($maxTrendVal, $trendValues) : 0;
+$maxTrendLabel = $trendLabels[$maxTrendIdx] ?? 'Peak Period';
+$trendIsUp = !empty($decisionSupport['trend_increasing']);
+$trendDirectionText = $trendIsUp ? 'an upward trend' : 'a stable or decreasing trend';
+$trendInterpretation = !empty($trendValues) && array_sum($trendValues) > 0 
+    ? "Incident volume peaked during {$maxTrendLabel} ({$maxTrendVal} reports), showing {$trendDirectionText} over the period."
+    : "No incident reports logged within the selected timeframe.";
+
+// 2. Category Takeaway
+$topCatName = !empty($categoryLabels) ? $categoryLabels[0] : 'General Waste';
+$topCatCount = !empty($categoryValues) ? (int)$categoryValues[0] : 0;
+$totalCatSum = array_sum($categoryValues) ?: 1;
+$topCatPct = round(($topCatCount / $totalCatSum) * 100);
+$categoryInterpretation = $topCatCount > 0
+    ? "{$topCatName} represents the largest proportion ({$topCatCount} reports, {$topCatPct}%), identifying it as the primary waste type requiring collection capacity."
+    : "No categorical waste data available for the active filters.";
+
+// 3. Status Takeaway
+$resolvedCount = (int)($kpis['resolved'] ?? 0);
+$pendingCount = (int)($kpis['pending'] ?? 0);
+$resolutionRateVal = (float)($kpis['resolution_rate'] ?? 0);
+$statusInterpretation = $totalReportsCount > 0
+    ? "{$resolutionRateVal}% of reports have been resolved, with {$pendingCount} case(s) currently awaiting verification."
+    : "No active report lifecycle records to evaluate.";
+
+// 4. Participation Takeaway
+$participationInterpretation = $totalReportsCount > 0
+    ? "Registered residents submitted {$residentPct}% of incidents ({$residentCount} reports), demonstrating strong resident platform adoption over anonymous reports."
+    : "No participation records available.";
+
+// 5. Condition Takeaway
+$topCondName = !empty($conditionLabels) ? $conditionLabels[0] : 'Standard';
+$topCondCount = !empty($conditionValues) ? (int)$conditionValues[0] : 0;
+$totalCondSum = array_sum($conditionValues) ?: 1;
+$topCondPct = round(($topCondCount / $totalCondSum) * 100);
+$conditionInterpretation = $topCondCount > 0
+    ? "{$topCondName} is the most common physical state ({$topCondPct}% of reports), highlighting key containment priorities on site."
+    : "No waste condition classifications logged.";
+
+// 6. Purok Distribution Takeaway
+$topPurokName = !empty($purokLabels) ? $purokLabels[0] : 'Purok 1';
+$topPurokCount = !empty($purokValues) ? (int)$purokValues[0] : 0;
+$totalPurokSum = array_sum($purokValues) ?: 1;
+$topPurokPct = round(($topPurokCount / $totalPurokSum) * 100);
+$purokInterpretation = $topPurokCount > 0
+    ? "{$topPurokName} recorded the highest incident volume ({$topPurokCount} reports, {$topPurokPct}%), designating it as the prime collection sector."
+    : "No localized purok reports recorded.";
+
+// 7. Stacked Purok Takeaway
+$stackedInterpretation = $topPurokCount > 0
+    ? "{$topCatName} constitutes the dominant waste type across primary sectors including {$topPurokName}."
+    : "No sector distribution data available.";
+
 $exportQuery = http_build_query([
     'date_from' => $dateFrom,
     'date_to' => $dateTo,
@@ -171,7 +229,6 @@ if (!function_exists('statusBadgeConfig')) {
                             <!-- Header Action Buttons -->
                             <div class="flex flex-wrap items-center gap-3 shrink-0">
                                 <a href="<?php echo app_url('admin/exportAnalyticsPDF?' . ($exportQuery)); ?>"
-                                   target="_blank"
                                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 shadow-xs backdrop-blur-md transition-all active:scale-[0.98]">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                     Print Report View
@@ -444,8 +501,13 @@ if (!function_exists('statusBadgeConfig')) {
                                 </span>
                             </div>
                         </div>
-                        <div class="chart-container" style="height:280px;">
+                        <div class="chart-container" style="height:260px;">
                             <canvas id="trendChart"></canvas>
+                        </div>
+                        <!-- 1-Sentence Interpretation -->
+                        <div class="p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-100 flex items-start gap-2.5 text-xs text-emerald-950">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <p class="font-semibold leading-relaxed" id="trendSummaryText"><?php echo htmlspecialchars($trendInterpretation); ?></p>
                         </div>
                     </div>
 
@@ -454,7 +516,7 @@ if (!function_exists('statusBadgeConfig')) {
                     <!-- ============================================================== -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- Waste Classification -->
-                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                             <div class="pb-3 border-b border-slate-100">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-base font-bold text-slate-900">Waste Classification</h3>
@@ -462,13 +524,17 @@ if (!function_exists('statusBadgeConfig')) {
                                 </div>
                                 <p class="text-xs font-medium text-slate-500 mt-0.5">Volume by waste category</p>
                             </div>
-                            <div class="chart-container mt-4" style="height:220px;">
+                            <div class="chart-container" style="height:200px;">
                                 <canvas id="categoryChart"></canvas>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2 text-[11px] text-slate-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <p class="font-semibold leading-relaxed" id="categorySummaryText"><?php echo htmlspecialchars($categoryInterpretation); ?></p>
                             </div>
                         </div>
 
                         <!-- Status Distribution -->
-                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                             <div class="pb-3 border-b border-slate-100">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-base font-bold text-slate-900">Status Distribution</h3>
@@ -476,7 +542,7 @@ if (!function_exists('statusBadgeConfig')) {
                                 </div>
                                 <p class="text-xs font-medium text-slate-500 mt-0.5">Current stage of reported cases</p>
                             </div>
-                            <div class="flex justify-center items-center py-3">
+                            <div class="flex justify-center items-center py-1">
                                 <div class="donut-container">
                                     <canvas id="statusChart"></canvas>
                                     <div class="donut-center-text">
@@ -485,10 +551,14 @@ if (!function_exists('statusBadgeConfig')) {
                                     </div>
                                 </div>
                             </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2 text-[11px] text-slate-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <p class="font-semibold leading-relaxed" id="statusSummaryText"><?php echo htmlspecialchars($statusInterpretation); ?></p>
+                            </div>
                         </div>
 
                         <!-- Resident vs Guest Participation -->
-                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                             <div class="pb-3 border-b border-slate-100">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-base font-bold text-slate-900">Participation</h3>
@@ -496,7 +566,7 @@ if (!function_exists('statusBadgeConfig')) {
                                 </div>
                                 <p class="text-xs font-medium text-slate-500 mt-0.5">Verified Residents vs Guests</p>
                             </div>
-                            <div class="flex justify-center items-center py-3">
+                            <div class="flex justify-center items-center py-1">
                                 <div class="donut-container">
                                     <canvas id="participationChart"></canvas>
                                     <div class="donut-center-text">
@@ -515,10 +585,14 @@ if (!function_exists('statusBadgeConfig')) {
                                     Guest: <?php echo $guestCount; ?> (<?php echo $guestPct; ?>%)
                                 </span>
                             </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2 text-[11px] text-slate-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <p class="font-semibold leading-relaxed" id="participationSummaryText"><?php echo htmlspecialchars($participationInterpretation); ?></p>
+                            </div>
                         </div>
 
                         <!-- Waste Condition Severity -->
-                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                             <div class="pb-3 border-b border-slate-100">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-base font-bold text-slate-900">Condition Severity</h3>
@@ -526,8 +600,12 @@ if (!function_exists('statusBadgeConfig')) {
                                 </div>
                                 <p class="text-xs font-medium text-slate-500 mt-0.5">Scattered, bagged, or hazardous</p>
                             </div>
-                            <div class="chart-container mt-4" style="height:220px;">
+                            <div class="chart-container" style="height:200px;">
                                 <canvas id="conditionChart"></canvas>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2 text-[11px] text-slate-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <p class="font-semibold leading-relaxed" id="conditionSummaryText"><?php echo htmlspecialchars($conditionInterpretation); ?></p>
                             </div>
                         </div>
                     </div>
@@ -536,23 +614,31 @@ if (!function_exists('statusBadgeConfig')) {
                     <!-- 6. PUROK SPATIAL ANALYSIS                                      -->
                     <!-- ============================================================== -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                             <div class="pb-3 border-b border-slate-100">
                                 <h2 class="text-lg font-bold text-slate-900 tracking-tight">Reports by Purok Zone</h2>
                                 <p class="text-xs font-medium text-slate-500 mt-0.5">Incident density ranking across community puroks</p>
                             </div>
-                            <div class="chart-container mt-4" style="height:250px;">
+                            <div class="chart-container" style="height:240px;">
                                 <canvas id="purokChart"></canvas>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2 text-xs text-slate-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <p class="font-semibold leading-relaxed" id="purokSummaryText"><?php echo htmlspecialchars($purokInterpretation); ?></p>
                             </div>
                         </div>
 
-                        <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                             <div class="pb-3 border-b border-slate-100">
                                 <h2 class="text-lg font-bold text-slate-900 tracking-tight">Waste Breakdown per Purok</h2>
                                 <p class="text-xs font-medium text-slate-500 mt-0.5">Stacked distribution of categories by sector</p>
                             </div>
-                            <div class="chart-container mt-4" style="height:250px;">
+                            <div class="chart-container" style="height:240px;">
                                 <canvas id="purokStackedChart"></canvas>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2 text-xs text-slate-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <p class="font-semibold leading-relaxed" id="purokStackedSummaryText"><?php echo htmlspecialchars($stackedInterpretation); ?></p>
                             </div>
                         </div>
                     </div>
@@ -693,7 +779,17 @@ if (!function_exists('statusBadgeConfig')) {
                                             </div>
                                             <div>
                                                 <p class="font-bold text-white">Critical Cluster Focus</p>
-                                                <p class="text-emerald-100/80 font-medium mt-0.5"><?php echo htmlspecialchars($decisionSupport['highest_hotspot']['purok_name']); ?> is leading with <strong class="text-white"><?php echo $decisionSupport['highest_hotspot']['report_count']; ?> incidents</strong>.</p>
+                                                <p class="text-emerald-100/80 font-medium mt-0.5"><?php echo htmlspecialchars($decisionSupport['highest_hotspot']['purok_name']); ?> leads with <strong class="text-white"><?php echo $decisionSupport['highest_hotspot']['report_count']; ?> incidents</strong> (Dominant: <?php echo htmlspecialchars($topCatName); ?>).</p>
+                                            </div>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 flex items-start gap-3">
+                                            <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 flex items-center justify-center shrink-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-white">Even Distribution</p>
+                                                <p class="text-emerald-100/80 font-medium mt-0.5">No acute spatial clusters identified. Standard patrol routes remain effective.</p>
                                             </div>
                                         </div>
                                     <?php endif; ?>
@@ -705,8 +801,28 @@ if (!function_exists('statusBadgeConfig')) {
                                         <div>
                                             <p class="font-bold text-white">Trend Trajectory</p>
                                             <p class="text-emerald-100/80 font-medium mt-0.5">
-                                                Incident frequency is <?php echo ($decisionSupport['trend_increasing'] ?? false) ? '<strong class="text-rose-300 font-bold">trending upward</strong>' : '<strong class="text-emerald-300 font-bold">stable or decreasing</strong>'; ?> vs previous period.
+                                                Incident frequency is <?php echo ($decisionSupport['trend_increasing'] ?? false) ? '<strong class="text-rose-300 font-bold">trending upward</strong> — deploy additional collection frequency.' : '<strong class="text-emerald-300 font-bold">stable or decreasing</strong> — maintain existing schedule.'; ?>
                                             </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 flex items-start gap-3">
+                                        <div class="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-400/30 text-amber-300 flex items-center justify-center shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-white">Resource Allocation</p>
+                                            <p class="text-emerald-100/80 font-medium mt-0.5">Prioritize dedicated vehicles for <strong class="text-white"><?php echo htmlspecialchars($topCatName); ?></strong> handling in <strong class="text-white"><?php echo htmlspecialchars($topPurokName); ?></strong>.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 flex items-start gap-3">
+                                        <div class="w-7 h-7 rounded-lg bg-sky-500/20 border border-sky-400/30 text-sky-300 flex items-center justify-center shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-white">Community Action</p>
+                                            <p class="text-emerald-100/80 font-medium mt-0.5"><strong class="text-white"><?php echo $resolutionRateVal; ?>%</strong> resolution rate; resident engagement at <strong class="text-white"><?php echo $residentPct; ?>%</strong>.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -743,7 +859,6 @@ if (!function_exists('statusBadgeConfig')) {
                                     CSV
                                 </a>
                                 <a href="<?php echo app_url('admin/exportReportSummaryPDF?' . ($exportQuery)); ?>"
-                                   target="_blank"
                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-xs shadow-xs transition active:scale-[0.98]">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                     PDF

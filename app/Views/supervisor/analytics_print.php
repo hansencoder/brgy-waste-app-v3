@@ -236,38 +236,92 @@ $pBrgyLogo = format_asset_url($pBranding['barangay_logo'] ?? '');
         </div>
     </div>
 
+    <!-- Statistical Distribution Breakdowns -->
+    <?php 
+    $categoryData = $data['category_data'] ?? [];
+    $purokData = $data['purok_data'] ?? [];
+    if (!empty($categoryData) || !empty($purokData)): 
+        $catTotal = array_sum(array_column($categoryData, 'count')) ?: 1;
+        $purokTotal = array_sum(array_column($purokData, 'total_reports')) ?: 1;
+    ?>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+        <?php if (!empty($categoryData)): ?>
+        <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #f8fafc;">
+            <div style="font-weight: 800; font-size: 10px; text-transform: uppercase; color: #475569; margin-bottom: 8px;">Top Waste Classifications</div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <?php foreach (array_slice($categoryData, 0, 5) as $cat): 
+                    $cCnt = (int)($cat['count'] ?? 0);
+                    $cPct = round(($cCnt / $catTotal) * 100);
+                ?>
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
+                        <span style="font-weight: 700; color: #1e293b;"><?php echo htmlspecialchars($cat['category_name']); ?></span>
+                        <span style="font-family: monospace; font-weight: 700; color: #475569;"><?php echo $cCnt; ?> (<?php echo $cPct; ?>%)</span>
+                    </div>
+                    <div style="height: 5px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                        <div style="height: 100%; width: <?php echo $cPct; ?>%; background: #059669; border-radius: 3px;"></div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($purokData)): ?>
+        <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #f8fafc;">
+            <div style="font-weight: 800; font-size: 10px; text-transform: uppercase; color: #475569; margin-bottom: 8px;">Purok Zone Concentrations</div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <?php foreach (array_slice($purokData, 0, 5) as $pk): 
+                    $pCnt = (int)($pk['total_reports'] ?? 0);
+                    $pPct = round(($pCnt / $purokTotal) * 100);
+                ?>
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
+                        <span style="font-weight: 700; color: #1e293b;"><?php echo htmlspecialchars($pk['purok_name']); ?></span>
+                        <span style="font-family: monospace; font-weight: 700; color: #475569;"><?php echo $pCnt; ?> (<?php echo $pPct; ?>%)</span>
+                    </div>
+                    <div style="height: 5px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                        <div style="height: 100%; width: <?php echo $pPct; ?>%; background: #2563eb; border-radius: 3px;"></div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
     <!-- Data Table -->
     <table>
         <thead>
             <tr>
-                <th>Report ID</th>
-                <th>Date Logged</th>
-                <th>Reporter Name</th>
-                <th>Waste Category</th>
-                <th>Purok Zone</th>
-                <th>Status</th>
-                <th>Supports</th>
+                <th style="width: 12%;">Report ID</th>
+                <th style="width: 16%;">Date Logged</th>
+                <th style="width: 26%;">Reporter Name</th>
+                <th style="width: 18%;">Waste Category</th>
+                <th style="width: 14%;">Purok Zone</th>
+                <th style="width: 14%; text-align: center;">Status</th>
             </tr>
         </thead>
         <tbody>
             <?php if (!empty($reports)): ?>
                 <?php foreach ($reports as $r): 
                     $st = $r['status'] ?? 'Pending';
-                    $cls = $st === 'Resolved' ? 'badge-resolved' : ($st === 'Pending' ? 'badge-pending' : ($st === 'Verified' ? 'badge-verified' : ($st === 'In Progress' ? 'badge-inprogress' : 'badge-rejected')));
                 ?>
                 <tr>
-                    <td style="font-family:monospace;font-weight:bold;">WR-<?php echo str_pad($r['id'], 5, '0', STR_PAD_LEFT); ?></td>
+                    <td style="font-family:monospace;font-weight:bold;">WR-<?php echo str_pad($r['id'], 6, '0', STR_PAD_LEFT); ?></td>
                     <td><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></td>
-                    <td><?php echo htmlspecialchars($r['reporter'] ?? 'Guest Resident'); ?></td>
+                    <td><strong><?php echo htmlspecialchars($r['reporter'] ?? 'Unknown (Guest)'); ?></strong></td>
                     <td><?php echo htmlspecialchars($r['category'] ?? 'General Waste'); ?></td>
                     <td><?php echo htmlspecialchars($r['purok'] ?? 'Barangay Area'); ?></td>
-                    <td><span class="badge <?php echo $cls; ?>"><?php echo htmlspecialchars($st); ?></span></td>
-                    <td style="font-family:monospace;font-weight:bold;"><?php echo (int)($r['support_count'] ?? 0); ?></td>
+                    <td style="text-align: center; font-weight: 700; color: #0f172a; text-transform: capitalize;">
+                        <?php echo htmlspecialchars(ucwords(strtolower($st))); ?>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="7" style="text-align:center;padding:20px;color:#94a3b8;">No incident records found for this period.</td>
+                    <td colspan="6" style="text-align:center;padding:20px;color:#94a3b8;">No incident records found for this period.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

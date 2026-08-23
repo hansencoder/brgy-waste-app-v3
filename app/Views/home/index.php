@@ -14,6 +14,10 @@ $barangayEmail = $barangay['official_email'] ?? 'brgy.dulongbayan@gmail.com';
 $sysLogo = format_asset_url($barangay['system_logo'] ?? '');
 $sysShortName = $barangay['system_short_name'] ?? 'WasteWatch';
 $sysMotto = $barangay['system_motto'] ?? 'SMART WASTE SOLUTIONS';
+$collectionNotes = $data['collectionNotes'] ?? [];
+$penaltyRules = $data['penaltyRules'] ?? [];
+$prohibitedActions = $data['prohibitedActions'] ?? [];
+$penalties = $data['penalties'] ?? [];
 
 $wasteTypeColors = [
     'General' => ['bg' => 'bg-slate-100 text-slate-700', 'accent' => 'border-l-slate-400', 'badge' => 'bg-slate-100 text-slate-700'],

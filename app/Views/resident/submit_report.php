@@ -154,8 +154,12 @@ $resume_description = $resume_data['description'] ?? '';
                                 </button>
                             </div>
 
-                            <div class="rounded-xl border border-slate-200 bg-slate-50 p-2 sm:p-3">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50 p-2 sm:p-3 space-y-2">
                                 <div id="mapContainer" class="map-box border border-slate-200"></div>
+                                <div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500 pt-1 px-1">
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 border border-white inline-block"></span> Selected Incident Pin</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 border border-white inline-block"></span> Existing Reports (Reference)</span>
+                                </div>
                             </div>
 
                             <input type="hidden" id="latitude" name="latitude" required>
@@ -269,33 +273,8 @@ $resume_description = $resume_data['description'] ?? '';
 
                     </div>
 
-                    <!-- Right Column (1 col): Duplicate Scanner & Information -->
+                    <!-- Right Column (1 col): Process & Information -->
                     <div class="space-y-6">
-
-                        <!-- Duplicate Check Box -->
-                        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-3">
-                            <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-sm font-extrabold text-slate-900">Duplicate Scanner</h3>
-                                    <p class="text-[11px] font-semibold text-slate-400">Scans 50m radius around pin</p>
-                                </div>
-                            </div>
-
-                            <div id="dupCheckResult" class="hidden p-3.5 rounded-xl border bg-slate-50 text-xs">
-                                <div id="dupCheckContent"></div>
-                            </div>
-
-                            <div id="dupCheckIdle" class="p-6 text-center border-2 border-dashed border-slate-200 rounded-xl text-slate-400 text-xs space-y-1">
-                                <p class="font-bold flex items-center justify-center gap-1.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    <span>Waiting for Location Pin</span>
-                                </p>
-                                <p class="text-[11px] text-slate-400">Pin a location on the map to automatically scan for nearby existing reports.</p>
-                            </div>
-                        </div>
 
                         <!-- Response Process Card -->
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-3.5">
@@ -581,6 +560,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Render Existing Community Reports on Map Picker
+    const existingPins = <?php echo json_encode($data['existing_pins'] ?? []); ?>;
+    existingPins.forEach(ep => {
+        if (!ep.latitude || !ep.longitude) return;
+        const pinIcon = L.divIcon({
+            html: `<div style="background:#f59e0b;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.35);"></div>`,
+            className: '', iconSize: [12,12], iconAnchor: [6,6]
+        });
+        const dateFormatted = ep.submission_date ? new Date(ep.submission_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+        const popup = `<div style="font-size:11px;font-family:'Miranda Sans',sans-serif;width:165px;">
+            <div style="font-weight:800;color:#0f172a;margin-bottom:2px;">${ep.category_name || 'Existing Report'}</div>
+            <div style="color:#64748b;font-size:10px;">Status: <strong style="color:#0f172a;">${ep.status_name || 'Active'}</strong></div>
+            <div style="color:#94a3b8;font-size:10px;margin-top:2px;">Logged: ${dateFormatted}</div>
+        </div>`;
+        L.marker([parseFloat(ep.latitude), parseFloat(ep.longitude)], { icon: pinIcon }).addTo(map).bindPopup(popup);
+    });
+
     let marker = null;
 
     function isInsideBoundary(lat, lng) {
@@ -743,10 +739,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Character Counter
     const desc = document.getElementById('description');
     const charCounter = document.getElementById('descCharCount');
-    desc.addEventListener('input', function() {
-        charCounter.textContent = `${this.value.length}/500`;
-    });
-    charCounter.textContent = `${desc.value.length}/500`;
+    function updateDescCounter() {
+        const len = desc.value.length;
+        charCounter.textContent = `${len}/500`;
+        if (len > 500) {
+            charCounter.className = 'text-xs font-mono font-bold text-red-600 animate-pulse';
+        } else if (len >= 450) {
+            charCounter.className = 'text-xs font-mono font-bold text-amber-600';
+        } else {
+            charCounter.className = 'text-xs font-mono font-bold text-slate-400';
+        }
+    }
+    desc.addEventListener('input', updateDescCounter);
+    updateDescCounter();
 
     setTimeout(() => map.invalidateSize(), 250);
 });
@@ -783,6 +788,11 @@ function openReviewModal() {
     }
     if (desc.length < 10) {
         showModalAlert('Please provide a brief description with at least 10 characters detailing the waste issue.', 'Description Required', 'warning');
+        document.getElementById('description').focus();
+        return;
+    }
+    if (desc.length > 500) {
+        showModalAlert(`Your description exceeds the 500-character maximum (${desc.length}/500). Please shorten it before submitting.`, 'Description Too Long', 'warning');
         document.getElementById('description').focus();
         return;
     }

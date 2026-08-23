@@ -283,14 +283,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function getDistanceMeters(lat1, lng1, lat2, lng2) {
+        const R = 6371000;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
     if (currentView === 'heatmap') {
-        const heatPoints = reports.map(r => [r.lat, r.lng, 0.8]);
+        const radiusMeters = <?php echo (int)($heatmap_settings['radius_meters'] ?? 50); ?>;
+        const heatmapLowMin = <?php echo (int)($heatmap_settings['low_min'] ?? $heatmap_settings['minimum_reports'] ?? 3); ?>;
+        const heatmapModMin = <?php echo (int)($heatmap_settings['moderate_min'] ?? 6); ?>;
+        const heatmapSevMin = <?php echo (int)($heatmap_settings['severe_min'] ?? 11); ?>;
+
+        const heatPoints = [];
+        reports.forEach(r => {
+            let clusterCount = 0;
+            reports.forEach(other => {
+                const dist = getDistanceMeters(r.lat, r.lng, other.lat, other.lng);
+                if (dist <= radiusMeters) {
+                    clusterCount++;
+                }
+            });
+
+            // Suppress heatmap blob if below low_min threshold
+            if (clusterCount >= heatmapLowMin) {
+                let weight = 0.35;
+                if (clusterCount >= heatmapSevMin) {
+                    weight = 1.0;
+                } else if (clusterCount >= heatmapModMin) {
+                    weight = 0.65;
+                }
+                heatPoints.push([r.lat, r.lng, weight]);
+            }
+        });
+
         if (heatPoints.length > 0) {
+            const lowC = '<?php echo htmlspecialchars($heatmap_settings['low_density_color'] ?? '#FDE68A'); ?>';
+            const medC = '<?php echo htmlspecialchars($heatmap_settings['medium_density_color'] ?? '#F97316'); ?>';
+            const highC = '<?php echo htmlspecialchars($heatmap_settings['high_density_color'] ?? '#EF4444'); ?>';
             L.heatLayer(heatPoints, {
-                radius: 35,
-                blur: 20,
+                radius: radiusMeters,
+                blur: Math.round(radiusMeters * 0.45),
                 maxZoom: 18,
-                gradient: { 0.2: '#3B82F6', 0.4: '#10B981', 0.6: '#F59E0B', 0.8: '#EF4444' }
+                minOpacity: 0.35,
+                gradient: { 0.2: lowC, 0.6: medC, 1.0: highC }
             }).addTo(map);
         }
     } else {

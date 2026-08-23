@@ -384,7 +384,10 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const mapPins = <?php echo json_encode($data['map_pins'] ?? []); ?>;
+    const pinGroup = L.featureGroup();
+
     mapPins.forEach(pin => {
+        if (!pin.latitude || !pin.longitude) return;
         const cfg = statusColors[pin.status_id] || { color: '#9ca3af', bg: '#f3f4f6', txt: '#4b5563', label: 'Unknown' };
         const icon = L.divIcon({
             html: `<div style="background:${cfg.color};width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>`,
@@ -392,6 +395,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         const viewUrl = '<?php echo app_url('resident/view_report/'); ?>' + pin.id;
         const supportBadge = (pin.support_count > 0) ? `<span style="display:inline-block;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:700;background:#ccfbf1;color:#0f766e;margin-left:4px;">👍 ${pin.support_count}</span>` : '';
+        const rawDesc = pin.description || 'No description provided';
+        const shortDesc = rawDesc.length > 55 ? rawDesc.substring(0, 55) + '...' : rawDesc;
         const popup = `<div style="font-family:'Miranda Sans',sans-serif;font-size:12px;width:190px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
                 <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;background:${cfg.bg};color:${cfg.txt};">${cfg.label}</span>
@@ -401,13 +406,24 @@ document.addEventListener('DOMContentLoaded', function() {
             <p style="color:#64748b;font-size:11px;margin:0 0 6px;">${shortDesc}</p>
             <a href="${viewUrl}" style="display:block;text-align:center;background:#0B2E22;color:white;padding:5px 0;border-radius:8px;font-weight:700;text-decoration:none;font-size:11px;">View Report →</a>
         </div>`;
-        L.marker([pin.latitude, pin.longitude], { icon }).addTo(map).bindPopup(popup);
+        const marker = L.marker([parseFloat(pin.latitude), parseFloat(pin.longitude)], { icon }).bindPopup(popup);
+        marker.addTo(map);
+        pinGroup.addLayer(marker);
     });
 
     try {
-        const bounds = L.geoJSON(barangayGeoJSON).getBounds();
-        map.fitBounds(bounds, { padding: [16, 16] });
-    } catch(e) { map.setView(mapCenter, 15); }
+        if (pinGroup.getLayers().length > 0) {
+            map.fitBounds(pinGroup.getBounds().pad(0.1));
+        } else if (rawBrgyBoundary) {
+            const brgyGeoObj = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            const bounds = L.geoJSON(brgyGeoObj).getBounds();
+            map.fitBounds(bounds, { padding: [16, 16] });
+        } else {
+            map.setView(defaultCenter, defaultZoom);
+        }
+    } catch(e) { 
+        map.setView(defaultCenter, defaultZoom); 
+    }
 
     setTimeout(() => map.invalidateSize(), 200);
 

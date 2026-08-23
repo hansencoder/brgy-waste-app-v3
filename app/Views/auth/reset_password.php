@@ -65,7 +65,7 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
                 </div>
             </div>
             
-            <button type="submit" class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+            <button type="submit" id="submitBtn" class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
                 <span>Verify Code</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
@@ -91,6 +91,15 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
 document.addEventListener('DOMContentLoaded', function() {
     const inputs = document.querySelectorAll('.otp-input');
     const hiddenOtp = document.getElementById('otp');
+    const form = document.querySelector('form');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function syncOtp() {
+        let otpVal = '';
+        inputs.forEach(inp => otpVal += inp.value);
+        hiddenOtp.value = otpVal;
+        return otpVal;
+    }
 
     inputs.forEach((input, index) => {
         input.addEventListener('keyup', function(e) {
@@ -102,45 +111,61 @@ document.addEventListener('DOMContentLoaded', function() {
             if (val && index < 5) {
                 inputs[index + 1].focus();
             }
-            let otpVal = '';
-            inputs.forEach(inp => otpVal += inp.value);
-            hiddenOtp.value = otpVal;
+            const otpVal = syncOtp();
+            if (otpVal.length === 6) {
+                form.submit();
+            }
         });
 
         input.addEventListener('keydown', function(e) {
             if (e.key === 'Backspace' && !this.value && index > 0) {
                 inputs[index - 1].focus();
                 inputs[index - 1].value = '';
-                let otpVal = '';
-                inputs.forEach(inp => otpVal += inp.value);
-                hiddenOtp.value = otpVal;
+                syncOtp();
             }
         });
 
         input.addEventListener('paste', function(e) {
             e.preventDefault();
             const paste = (e.clipboardData || window.clipboardData).getData('text');
-            if (paste && /^\d{6}$/.test(paste)) {
-                let i = 0;
-                inputs.forEach(inp => {
-                    inp.value = paste[i];
-                    i++;
-                });
-                let otpVal = '';
-                inputs.forEach(inp => otpVal += inp.value);
-                hiddenOtp.value = otpVal;
-                inputs[5].focus();
+            const clean = paste.replace(/\D/g, '').slice(0, 6);
+            if (clean.length > 0) {
+                for (let i = 0; i < 6; i++) {
+                    inputs[i].value = clean[i] || '';
+                }
+                const otpVal = syncOtp();
+                if (clean.length >= 6) {
+                    inputs[5].focus();
+                    form.submit();
+                } else {
+                    inputs[clean.length].focus();
+                }
             }
         });
     });
 
-    document.querySelector('form')?.addEventListener('submit', function(e) {
-        let otpVal = '';
-        inputs.forEach(inp => otpVal += inp.value);
-        hiddenOtp.value = otpVal;
+    form?.addEventListener('submit', function(e) {
+        const otpVal = syncOtp();
         if (otpVal.length < 6) {
             e.preventDefault();
-            showModalAlert('Please enter the full 6-digit verification code.', 'Verification Code Required', 'warning');
+            if (typeof showModalAlert === 'function') {
+                showModalAlert('Please enter the full 6-digit verification code.', 'Verification Code Required', 'warning');
+            } else {
+                alert('Please enter the full 6-digit verification code.');
+            }
+            return false;
+        }
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+            submitBtn.innerHTML = `
+                <svg class="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Verifying...</span>
+            `;
         }
     });
 

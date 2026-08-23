@@ -80,26 +80,34 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
 
             <!-- Full Name -->
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
-                <input type="text" id="name" name="name" required placeholder="Juan Dela Cruz"
+                <div class="flex items-center justify-between mb-1">
+                    <label class="block text-xs font-semibold text-slate-700">Full Name</label>
+                    <span id="nameCharCount" class="text-[10px] font-mono text-slate-400 font-semibold">0/50</span>
+                </div>
+                <input type="text" id="name" name="name" required placeholder="Juan Dela Cruz" maxlength="50"
                     value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8') : ''; ?>"
                     class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
-                    oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s\-.]/g, ''); validateInput(this)">
+                    oninput="handleNameInput(this); validateInput(this)">
+                <p id="nameError" class="text-rose-600 text-xs font-semibold mt-1 hidden"></p>
             </div>
 
             <!-- Username -->
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Username</label>
-                <input type="text" id="username" name="username" required placeholder="juandc"
+                <div class="flex items-center justify-between mb-1">
+                    <label class="block text-xs font-semibold text-slate-700">Username</label>
+                    <span id="usernameCharCount" class="text-[10px] font-mono text-slate-400 font-semibold">0/30</span>
+                </div>
+                <input type="text" id="username" name="username" required placeholder="juandc" maxlength="30" minlength="3"
                     value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8') : ''; ?>"
                     class="w-full h-10 px-3.5 rounded-xl border <?php echo (($data['field_error'] ?? '') === 'username') ? 'border-rose-500 ring-2 ring-rose-500/10' : 'border-slate-200'; ?> bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10"
-                    oninput="this.value = this.value.replace(/[^a-zA-Z0-9_]/g, ''); validateInput(this)">
+                    oninput="handleUsernameInput(this); validateInput(this)">
                 <?php if (($data['field_error'] ?? '') === 'username' && !empty($data['field_error_message'])): ?>
                     <p class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         <span><?php echo htmlspecialchars($data['field_error_message'], ENT_QUOTES, 'UTF-8'); ?></span>
                     </p>
                 <?php endif; ?>
+                <p id="usernameError" class="text-rose-600 text-xs font-semibold mt-1 hidden"></p>
             </div>
 
             <!-- Contact Information Switcher -->
@@ -160,7 +168,7 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
                             </option>
                         <?php endforeach; 
                     else: 
-                        for ($i = 1; $i <= 7; $i++): ?>
+                        for ($i = 1; $i <= 5; $i++): ?>
                             <option value="<?php echo $i; ?>" <?php echo $selPurok == $i ? 'selected' : ''; ?>>Purok <?php echo $i; ?></option>
                         <?php endfor;
                     endif; ?>
@@ -232,7 +240,7 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
             <div class="flex items-start gap-2.5 pt-1">
                 <input type="checkbox" id="terms" name="terms" required class="w-4 h-4 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600/20 cursor-pointer">
                 <label for="terms" class="text-xs text-slate-600 font-normal cursor-pointer leading-snug">
-                    I agree to the <a href="#" class="text-emerald-700 hover:underline font-semibold">Terms of Service</a> and <a href="#" class="text-emerald-700 hover:underline font-semibold">Privacy Policy</a>.
+                    I agree to the <button type="button" onclick="openTermsModal()" class="text-emerald-700 hover:underline font-semibold cursor-pointer">Terms of Service</button> and <button type="button" onclick="openPrivacyModal()" class="text-emerald-700 hover:underline font-semibold cursor-pointer">Privacy Policy</button>.
                 </label>
             </div>
 
@@ -357,6 +365,62 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
         }
     }
 
+    function toTitleCase(str) {
+        return str.toLowerCase().replace(/(?:^|\s|-|\.)[a-z]/g, function(match) {
+            return match.toUpperCase();
+        });
+    }
+
+    function handleNameInput(el) {
+        // Clean characters
+        let clean = el.value.replace(/[^a-zA-Z\s\-.]/g, '');
+        if (clean.length > 50) {
+            clean = clean.substring(0, 50);
+        }
+        el.value = clean;
+        const counter = document.getElementById('nameCharCount');
+        if (counter) {
+            counter.textContent = `${clean.length}/50`;
+            if (clean.length >= 50) {
+                counter.className = 'text-[10px] font-mono text-amber-600 font-bold';
+            } else {
+                counter.className = 'text-[10px] font-mono text-slate-400 font-semibold';
+            }
+        }
+    }
+
+    function handleUsernameInput(el) {
+        let clean = el.value.replace(/[^a-zA-Z0-9_]/g, '');
+        if (clean.length > 30) {
+            clean = clean.substring(0, 30);
+        }
+        el.value = clean;
+        const counter = document.getElementById('usernameCharCount');
+        if (counter) {
+            counter.textContent = `${clean.length}/30`;
+            if (clean.length >= 30) {
+                counter.className = 'text-[10px] font-mono text-amber-600 font-bold';
+            } else {
+                counter.className = 'text-[10px] font-mono text-slate-400 font-semibold';
+            }
+        }
+    }
+
+    // Auto-capitalize name on blur
+    document.addEventListener('DOMContentLoaded', function() {
+        const nameInput = document.getElementById('name');
+        if (nameInput) {
+            handleNameInput(nameInput);
+            nameInput.addEventListener('blur', function() {
+                this.value = toTitleCase(this.value.trim());
+            });
+        }
+        const usernameInput = document.getElementById('username');
+        if (usernameInput) {
+            handleUsernameInput(usernameInput);
+        }
+    });
+
     function validateInput(el) {
         if (el.checkValidity() && el.value.trim() !== '') {
             el.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
@@ -368,6 +432,11 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
         const requiredIds = ['name', 'username', 'password', 'confirm_password', 'purok_id'];
         let valid = true;
 
+        const nameInput = document.getElementById('name');
+        if (nameInput) {
+            nameInput.value = toTitleCase(nameInput.value.trim());
+        }
+
         requiredIds.forEach(id => {
             const el = document.getElementById(id);
             if (!el || !el.checkValidity() || el.value.trim() === '') {
@@ -377,6 +446,12 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
                 el.classList.remove('border-red-500', 'ring-2', 'ring-red-500/10');
             }
         });
+
+        const nameVal = nameInput ? nameInput.value.trim() : '';
+        if (nameVal.length < 2 || nameVal.length > 50) {
+            nameInput.classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
+            valid = false;
+        }
 
         const emailInput = document.getElementById('email');
         const phoneInput = document.getElementById('phone_number');
@@ -404,7 +479,7 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
         }
 
         const username = document.getElementById('username').value;
-        if (username && !/^[a-zA-Z0-9_]{3,30}$/.test(username)) {
+        if (!username || !/^[a-zA-Z0-9_]{3,30}$/.test(username)) {
             document.getElementById('username').classList.add('border-red-500', 'ring-2', 'ring-red-500/10');
             valid = false;
         }
@@ -419,6 +494,20 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
         return valid;
     }
 
+    // Interactive Modals
+    function openTermsModal() {
+        document.getElementById('termsModal').classList.remove('hidden');
+    }
+    function closeTermsModal() {
+        document.getElementById('termsModal').classList.add('hidden');
+    }
+    function openPrivacyModal() {
+        document.getElementById('privacyModal').classList.remove('hidden');
+    }
+    function closePrivacyModal() {
+        document.getElementById('privacyModal').classList.add('hidden');
+    }
+
     <?php if ((($data['field_error'] ?? '') === 'phone_number') || (isset($_POST['contact_type']) && $_POST['contact_type'] === 'phone') || (!empty($_POST['phone_number']) && empty($_POST['email']))): ?>
     document.addEventListener('DOMContentLoaded', function() {
         switchContactType('phone');
@@ -429,5 +518,97 @@ $sysLogo = !empty($authBranding['system_logo']) ? format_asset_url($authBranding
     });
     <?php endif; ?>
 </script>
+
+<!-- TERMS OF SERVICE MODAL -->
+<div id="termsModal" class="fixed inset-0 z-[9999] bg-slate-950/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full max-h-[85vh] flex flex-col border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-emerald-950 text-white rounded-t-2xl">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-800 flex items-center justify-center text-emerald-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <h3 class="text-sm sm:text-base font-bold">Barangay Dulong Bayan – Terms of Service</h3>
+            </div>
+            <button type="button" onclick="closeTermsModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-emerald-900 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p class="font-bold text-slate-900">Welcome to the Barangay Dulong Bayan Waste Management &amp; Incident Reporting Portal.</p>
+            <p>By creating an account or using this system, you agree to the following terms and guidelines:</p>
+            
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-900">1. Resident Responsibilities</h4>
+                <p>All registered residents agree to submit genuine, verifiable waste incident reports. Providing intentionally false, malicious, or prank reports is strictly prohibited under Republic Act No. 9003 and Barangay Ordinance provisions.</p>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-900">2. Account Security &amp; Usage</h4>
+                <p>You are responsible for maintaining the confidentiality of your username and password. Do not share your credentials with others. Any report or activity logged under your credentials will be attributed to your resident account.</p>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-900">3. Waste Disposal Regulations</h4>
+                <p>Residents must adhere to designated collection schedules and waste segregation rules (Biodegradable, Non-Biodegradable, Recyclable, Hazardous). Improper dumping outside scheduled collection is subject to municipal fines.</p>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-900">4. Community Moderation</h4>
+                <p>The Barangay Administration reserves the right to verify, prioritize, reclassify, or dismiss duplicate reports as part of public service operations.</p>
+            </div>
+        </div>
+        <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 rounded-b-2xl flex justify-end">
+            <button type="button" onclick="closeTermsModal()" class="px-4 py-2 rounded-xl bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs font-bold transition">
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacyModal" class="fixed inset-0 z-[9999] bg-slate-950/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full max-h-[85vh] flex flex-col border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-emerald-950 text-white rounded-t-2xl">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-800 flex items-center justify-center text-emerald-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3 class="text-sm sm:text-base font-bold">Barangay Dulong Bayan – Privacy Policy</h3>
+            </div>
+            <button type="button" onclick="closePrivacyModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-emerald-900 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p class="font-bold text-slate-900">Data Privacy &amp; Protection Notice (RA 10173 - Data Privacy Act of 2012)</p>
+            <p>The Barangay Dulong Bayan Administration is committed to safeguarding your personal data and ensuring your information is handled with confidentiality.</p>
+            
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-900">1. Information We Collect</h4>
+                <p>We collect your full name, username, contact information (email or mobile phone number), Purok residency, and GPS location coordinates attached to submitted waste incident reports.</p>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-900">2. Purpose of Collection</h4>
+                <p>Your information is used exclusively for verifying resident identity, dispatching waste collection teams, sending emergency alerts, and tracking incident resolution within the barangay.</p>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-900">3. Information Sharing</h4>
+                <p>Personal resident information is never sold, leased, or distributed to third-party commercial entities. It is only accessible to authorized barangay officials and municipal sanitation supervisors.</p>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="font-bold text-slate-900">4. Your Rights</h4>
+                <p>Residents have the right to review, update, or request deactivation of their account profile by contacting the Barangay Dulong Bayan administrative office.</p>
+            </div>
+        </div>
+        <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 rounded-b-2xl flex justify-end">
+            <button type="button" onclick="closePrivacyModal()" class="px-4 py-2 rounded-xl bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs font-bold transition">
+                Close &amp; Accept
+            </button>
+        </div>
+    </div>
+</div>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

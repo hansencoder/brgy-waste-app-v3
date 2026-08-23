@@ -559,6 +559,65 @@ $logoRight = format_asset_url(!empty($repSettings['header_logo_right']) ? $repSe
         </div>
         <?php endif; ?>
 
+        <!-- 6. Statistical Distribution Breakdowns -->
+        <?php 
+        $categoryData = $data['category_data'] ?? [];
+        $purokData = $data['purok_data'] ?? [];
+        if (!empty($categoryData) || !empty($purokData)): 
+            $catTotal = array_sum(array_column($categoryData, 'count')) ?: 1;
+            $purokTotal = array_sum(array_column($purokData, 'total_reports')) ?: 1;
+        ?>
+        <div class="section-header">
+            <span class="section-title">Statistical Distribution &amp; Classification Breakdown</span>
+            <span class="section-badge">Volume Composition</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px;">
+            <?php if (!empty($categoryData)): ?>
+            <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #fff;">
+                <div style="font-weight: 800; font-size: 10px; text-transform: uppercase; color: #475569; margin-bottom: 8px;">Top Waste Classifications</div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <?php foreach (array_slice($categoryData, 0, 5) as $cat): 
+                        $cCnt = (int)($cat['count'] ?? 0);
+                        $cPct = round(($cCnt / $catTotal) * 100);
+                    ?>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
+                            <span style="font-weight: 700; color: #1e293b;"><?php echo htmlspecialchars($cat['category_name']); ?></span>
+                            <span style="font-family: monospace; font-weight: 700; color: #475569;"><?php echo $cCnt; ?> (<?php echo $cPct; ?>%)</span>
+                        </div>
+                        <div style="height: 5px; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
+                            <div style="height: 100%; width: <?php echo $cPct; ?>%; background: #059669; border-radius: 3px;"></div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if (!empty($purokData)): ?>
+            <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #fff;">
+                <div style="font-weight: 800; font-size: 10px; text-transform: uppercase; color: #475569; margin-bottom: 8px;">Purok Zone Concentrations</div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <?php foreach (array_slice($purokData, 0, 5) as $pk): 
+                        $pCnt = (int)($pk['total_reports'] ?? 0);
+                        $pPct = round(($pCnt / $purokTotal) * 100);
+                    ?>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
+                            <span style="font-weight: 700; color: #1e293b;"><?php echo htmlspecialchars($pk['purok_name']); ?></span>
+                            <span style="font-family: monospace; font-weight: 700; color: #475569;"><?php echo $pCnt; ?> (<?php echo $pPct; ?>%)</span>
+                        </div>
+                        <div style="height: 5px; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
+                            <div style="height: 100%; width: <?php echo $pPct; ?>%; background: #2563eb; border-radius: 3px;"></div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
         <!-- 7. Comprehensive Incident List -->
         <div class="section-header">
             <span class="section-title">Filtered Incident Record Log</span>
@@ -569,33 +628,27 @@ $logoRight = format_asset_url(!empty($repSettings['header_logo_right']) ? $repSe
                 <tr>
                     <th style="width: 12%;">Report ID</th>
                     <th style="width: 18%;">Submission Date</th>
-                    <th style="width: 22%;">Reporter Name</th>
+                    <th style="width: 26%;">Reporter Name</th>
                     <th style="width: 18%;">Category</th>
-                    <th style="width: 15%;">Purok</th>
-                    <th style="width: 15%; text-align: center;">Status</th>
+                    <th style="width: 14%;">Purok</th>
+                    <th style="width: 12%; text-align: center;">Status</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!empty($reports)): ?>
                     <?php foreach ($reports as $r): 
-                        $badgeClass = 'pill-pending';
-                        $st = strtolower($r['status'] ?? '');
-                        if ($st === 'verified') $badgeClass = 'pill-verified';
-                        elseif ($st === 'in progress' || $st === 'in_progress') $badgeClass = 'pill-in-progress';
-                        elseif ($st === 'resolved') $badgeClass = 'pill-resolved';
-                        elseif ($st === 'rejected') $badgeClass = 'pill-rejected';
+                        $st = $r['status'] ?? 'Pending';
                         $reportId = 'WR-' . str_pad($r['id'], 6, '0', STR_PAD_LEFT);
+                        $reporterRaw = $r['reporter'] ?? 'Unknown (Guest)';
                     ?>
                     <tr>
                         <td style="font-family: monospace; font-weight: 800; color: #0f172a;"><?php echo htmlspecialchars($reportId); ?></td>
                         <td><?php echo date('M d, Y · g:i A', strtotime($r['submission_date'])); ?></td>
-                        <td><strong><?php echo htmlspecialchars($r['reporter'] ?? 'Guest / Resident'); ?></strong></td>
+                        <td><strong><?php echo htmlspecialchars($reporterRaw); ?></strong></td>
                         <td><?php echo htmlspecialchars($r['category'] ?? 'N/A'); ?></td>
                         <td><?php echo htmlspecialchars($r['purok'] ?? 'N/A'); ?></td>
-                        <td style="text-align: center;">
-                            <span class="pill-badge <?php echo $badgeClass; ?>">
-                                <?php echo htmlspecialchars($r['status']); ?>
-                            </span>
+                        <td style="text-align: center; font-weight: 700; color: #0f172a; text-transform: capitalize;">
+                            <?php echo htmlspecialchars(ucwords(strtolower($st))); ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

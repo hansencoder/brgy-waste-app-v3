@@ -14,6 +14,63 @@ $verified = (int)($stats['verified'] ?? 0);
 $inProgress = (int)($stats['in_progress'] ?? 0);
 $resolutionRate = $total > 0 ? round(($resolved / $total) * 100) : 0;
 
+$categoryData = $data['category_data'] ?? [];
+$purokData = $data['purok_data'] ?? [];
+$statusData = $data['status_data'] ?? [];
+$conditionData = $data['condition_data'] ?? [];
+$trendData = $data['trend_data'] ?? [];
+$residentCount = (int)($data['resident_count'] ?? 0);
+$guestCount = (int)($data['guest_count'] ?? 0);
+$residentPct = (float)($data['resident_pct'] ?? 0);
+$guestPct = (float)($data['guest_pct'] ?? 0);
+
+$categoryLabels = array_column($categoryData, 'category_name');
+$categoryValues = array_column($categoryData, 'count');
+$statusLabels = array_column($statusData, 'status_name');
+$statusValues = array_column($statusData, 'count');
+$statusColors = array_column($statusData, 'color_code');
+$conditionLabels = array_column($conditionData, 'condition_name');
+$conditionValues = array_column($conditionData, 'count');
+$purokLabels = array_column($purokData, 'purok_name');
+$purokValues = array_column($purokData, 'total_reports');
+
+// 1. Category Takeaway
+$topCatName = !empty($categoryLabels) ? $categoryLabels[0] : 'General Waste';
+$topCatCount = !empty($categoryValues) ? (int)$categoryValues[0] : 0;
+$totalCatSum = array_sum($categoryValues) ?: 1;
+$topCatPct = round(($topCatCount / $totalCatSum) * 100);
+$categoryInterpretation = $topCatCount > 0
+    ? "{$topCatName} represents the largest proportion ({$topCatCount} reports, {$topCatPct}%), identifying it as the primary waste type requiring collection capacity."
+    : "No categorical waste data available for the active filters.";
+
+// 2. Status Takeaway
+$statusInterpretation = $total > 0
+    ? "{$resolutionRate}% of reports have been resolved, with {$pending} case(s) currently awaiting verification."
+    : "No active report lifecycle records to evaluate.";
+
+// 3. Participation Takeaway
+$participationInterpretation = $total > 0
+    ? "Registered residents submitted {$residentPct}% of incidents ({$residentCount} reports), demonstrating strong resident platform adoption over anonymous reports."
+    : "No participation records available.";
+
+// 4. Condition Takeaway
+$topCondName = !empty($conditionLabels) ? $conditionLabels[0] : 'Standard';
+$topCondCount = !empty($conditionValues) ? (int)$conditionValues[0] : 0;
+$totalCondSum = array_sum($conditionValues) ?: 1;
+$topCondPct = round(($topCondCount / $totalCondSum) * 100);
+$conditionInterpretation = $topCondCount > 0
+    ? "{$topCondName} is the most common physical state ({$topCondPct}% of reports), highlighting key containment priorities on site."
+    : "No waste condition classifications logged.";
+
+// 5. Purok Takeaway
+$topPurokName = !empty($purokLabels) ? $purokLabels[0] : 'Purok 1';
+$topPurokCount = !empty($purokValues) ? (int)$purokValues[0] : 0;
+$totalPurokSum = array_sum($purokValues) ?: 1;
+$topPurokPct = round(($topPurokCount / $totalPurokSum) * 100);
+$purokInterpretation = $topPurokCount > 0
+    ? "{$topPurokName} recorded the highest incident volume ({$topPurokCount} reports, {$topPurokPct}%), designating it as the prime collection sector."
+    : "No localized purok reports recorded.";
+
 $repSettings = $data['report_settings'] ?? [];
 $brgy = $data['barangay'] ?? [];
 
@@ -29,6 +86,7 @@ $logoRight = format_asset_url(!empty($repSettings['header_logo_right']) ? $repSe
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Miranda+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { 
             margin: 0; 
@@ -370,8 +428,65 @@ $logoRight = format_asset_url(!empty($repSettings['header_logo_right']) ? $repSe
             font-size: 12px;
             transition: all 0.2s ease;
         }
-        .btn-close:hover {
+        /* Statistical Distribution Charts & Print Visuals */
+        .charts-print-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .chart-print-card {
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 14px;
+            background: #ffffff;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .chart-print-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 8px;
+        }
+        .chart-print-title {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .chart-print-tag {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
             background: #f1f5f9;
+            color: #475569;
+            text-transform: uppercase;
+        }
+        .chart-print-container {
+            position: relative;
+            height: 180px;
+            width: 100%;
+            margin: 4px 0;
+        }
+        .chart-print-insight {
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-size: 10px;
+            color: #334155;
+            line-height: 1.4;
+            margin-top: 8px;
+        }
+        .chart-print-insight strong {
+            color: #0f172a;
         }
     </style>
 </head>
@@ -559,62 +674,98 @@ $logoRight = format_asset_url(!empty($repSettings['header_logo_right']) ? $repSe
         </div>
         <?php endif; ?>
 
-        <!-- 6. Statistical Distribution Breakdowns -->
-        <?php 
-        $categoryData = $data['category_data'] ?? [];
-        $purokData = $data['purok_data'] ?? [];
-        if (!empty($categoryData) || !empty($purokData)): 
-            $catTotal = array_sum(array_column($categoryData, 'count')) ?: 1;
-            $purokTotal = array_sum(array_column($purokData, 'total_reports')) ?: 1;
-        ?>
+        <!-- 6. Statistical Distribution & Chart Visuals -->
         <div class="section-header">
-            <span class="section-title">Statistical Distribution &amp; Classification Breakdown</span>
-            <span class="section-badge">Volume Composition</span>
+            <span class="section-title">Statistical Distribution &amp; Visual Analytics</span>
+            <span class="section-badge">Volume Composition &amp; Demographics</span>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px;">
-            <?php if (!empty($categoryData)): ?>
-            <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #fff;">
-                <div style="font-weight: 800; font-size: 10px; text-transform: uppercase; color: #475569; margin-bottom: 8px;">Top Waste Classifications</div>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <?php foreach (array_slice($categoryData, 0, 5) as $cat): 
-                        $cCnt = (int)($cat['count'] ?? 0);
-                        $cPct = round(($cCnt / $catTotal) * 100);
-                    ?>
-                    <div>
-                        <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
-                            <span style="font-weight: 700; color: #1e293b;"><?php echo htmlspecialchars($cat['category_name']); ?></span>
-                            <span style="font-family: monospace; font-weight: 700; color: #475569;"><?php echo $cCnt; ?> (<?php echo $cPct; ?>%)</span>
-                        </div>
-                        <div style="height: 5px; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
-                            <div style="height: 100%; width: <?php echo $cPct; ?>%; background: #059669; border-radius: 3px;"></div>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            <?php endif; ?>
 
-            <?php if (!empty($purokData)): ?>
-            <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #fff;">
-                <div style="font-weight: 800; font-size: 10px; text-transform: uppercase; color: #475569; margin-bottom: 8px;">Purok Zone Concentrations</div>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <?php foreach (array_slice($purokData, 0, 5) as $pk): 
-                        $pCnt = (int)($pk['total_reports'] ?? 0);
-                        $pPct = round(($pCnt / $purokTotal) * 100);
-                    ?>
+        <div class="charts-print-grid">
+            <!-- 1. Waste Classification Bar Chart -->
+            <div class="chart-print-card">
+                <div class="chart-print-header">
                     <div>
-                        <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
-                            <span style="font-weight: 700; color: #1e293b;"><?php echo htmlspecialchars($pk['purok_name']); ?></span>
-                            <span style="font-family: monospace; font-weight: 700; color: #475569;"><?php echo $pCnt; ?> (<?php echo $pPct; ?>%)</span>
-                        </div>
-                        <div style="height: 5px; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
-                            <div style="height: 100%; width: <?php echo $pPct; ?>%; background: #2563eb; border-radius: 3px;"></div>
-                        </div>
+                        <div class="chart-print-title">Waste Classification</div>
+                        <div style="font-size: 9.5px; color: #64748b;">Volume by waste category</div>
                     </div>
-                    <?php endforeach; ?>
+                    <span class="chart-print-tag">Category</span>
+                </div>
+                <div class="chart-print-container">
+                    <canvas id="printCategoryChart"></canvas>
+                </div>
+                <div class="chart-print-insight">
+                    <strong style="color: #065f46;">Takeaway:</strong> <?php echo htmlspecialchars($categoryInterpretation); ?>
                 </div>
             </div>
-            <?php endif; ?>
+
+            <!-- 2. Status Distribution Donut Chart -->
+            <div class="chart-print-card">
+                <div class="chart-print-header">
+                    <div>
+                        <div class="chart-print-title">Lifecycle Status Distribution</div>
+                        <div style="font-size: 9.5px; color: #64748b;">Stage of reported cases</div>
+                    </div>
+                    <span class="chart-print-tag">Lifecycle</span>
+                </div>
+                <div class="chart-print-container">
+                    <canvas id="printStatusChart"></canvas>
+                </div>
+                <div class="chart-print-insight">
+                    <strong style="color: #065f46;">Takeaway:</strong> <?php echo htmlspecialchars($statusInterpretation); ?>
+                </div>
+            </div>
+
+            <!-- 3. Demographics Participation Donut Chart -->
+            <div class="chart-print-card">
+                <div class="chart-print-header">
+                    <div>
+                        <div class="chart-print-title">Participation Demographics</div>
+                        <div style="font-size: 9.5px; color: #64748b;">Verified Residents vs Guests</div>
+                    </div>
+                    <span class="chart-print-tag" style="background:#d1fae5; color:#065f46;">Demographics</span>
+                </div>
+                <div class="chart-print-container">
+                    <canvas id="printParticipationChart"></canvas>
+                </div>
+                <div class="chart-print-insight">
+                    <strong style="color: #065f46;">Takeaway:</strong> <?php echo htmlspecialchars($participationInterpretation); ?>
+                </div>
+            </div>
+
+            <!-- 4. Condition Severity Bar Chart -->
+            <div class="chart-print-card">
+                <div class="chart-print-header">
+                    <div>
+                        <div class="chart-print-title">Waste Condition Severity</div>
+                        <div style="font-size: 9.5px; color: #64748b;">Physical containment state</div>
+                    </div>
+                    <span class="chart-print-tag">Physical State</span>
+                </div>
+                <div class="chart-print-container">
+                    <canvas id="printConditionChart"></canvas>
+                </div>
+                <div class="chart-print-insight">
+                    <strong style="color: #065f46;">Takeaway:</strong> <?php echo htmlspecialchars($conditionInterpretation); ?>
+                </div>
+            </div>
+        </div>
+
+        <?php if (!empty($purokData)): ?>
+        <!-- 5. Purok Zone Concentrations -->
+        <div class="chart-print-card" style="margin-bottom: 20px;">
+            <div class="chart-print-header">
+                <div>
+                    <div class="chart-print-title">Reports by Purok Zone</div>
+                    <div style="font-size: 9.5px; color: #64748b;">Incident density ranking across community puroks</div>
+                </div>
+                <span class="chart-print-tag">Spatial Sectors</span>
+            </div>
+            <div class="chart-print-container" style="height: 190px;">
+                <canvas id="printPurokChart"></canvas>
+            </div>
+            <div class="chart-print-insight">
+                <strong style="color: #065f46;">Takeaway:</strong> <?php echo htmlspecialchars($purokInterpretation); ?>
+            </div>
         </div>
         <?php endif; ?>
 
@@ -691,6 +842,150 @@ $logoRight = format_asset_url(!empty($repSettings['header_logo_right']) ? $repSe
         </div>
 
     </div>
+
+    <!-- Chart.js Instant Canvas Print Renderer -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Global Print Defaults for crisp canvas rendering
+        Chart.defaults.font.family = "'Miranda Sans', sans-serif";
+        Chart.defaults.font.size = 10;
+        Chart.defaults.color = '#475569';
+        Chart.defaults.animation = false;
+
+        // 1. Waste Classification Bar Chart
+        const catCanvas = document.getElementById('printCategoryChart');
+        if (catCanvas) {
+            new Chart(catCanvas, {
+                type: 'bar',
+                data: {
+                    labels: <?php echo json_encode(array_slice($categoryLabels, 0, 6)); ?>,
+                    datasets: [{
+                        label: 'Reports',
+                        data: <?php echo json_encode(array_slice($categoryValues, 0, 6)); ?>,
+                        backgroundColor: '#059669',
+                        borderRadius: 4,
+                        borderSkipped: false,
+                        maxBarThickness: 28
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+        }
+
+        // 2. Status Lifecycle Donut Chart
+        const statusCanvas = document.getElementById('printStatusChart');
+        if (statusCanvas) {
+            new Chart(statusCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: <?php echo json_encode($statusLabels ?: ['Pending', 'Verified', 'In Progress', 'Resolved']); ?>,
+                    datasets: [{
+                        data: <?php echo json_encode($statusValues ?: [$pending, $verified, $inProgress, $resolved]); ?>,
+                        backgroundColor: <?php echo json_encode($statusColors ?: ['#F59E0B', '#0284C7', '#8B5CF6', '#059669']); ?>,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 10, padding: 6, font: { size: 9, weight: 'bold' } } }
+                    }
+                }
+            });
+        }
+
+        // 3. Demographics Participation Donut Chart
+        const partCanvas = document.getElementById('printParticipationChart');
+        if (partCanvas) {
+            new Chart(partCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Residents (Verified)', 'Guests / Public'],
+                    datasets: [{
+                        data: [<?php echo $residentCount; ?>, <?php echo $guestCount; ?>],
+                        backgroundColor: ['#059669', '#94A3B8'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 10, padding: 6, font: { size: 9, weight: 'bold' } } }
+                    }
+                }
+            });
+        }
+
+        // 4. Condition Severity Bar Chart
+        const condCanvas = document.getElementById('printConditionChart');
+        if (condCanvas) {
+            new Chart(condCanvas, {
+                type: 'bar',
+                data: {
+                    labels: <?php echo json_encode(array_slice($conditionLabels, 0, 5)); ?>,
+                    datasets: [{
+                        label: 'Cases',
+                        data: <?php echo json_encode(array_slice($conditionValues, 0, 5)); ?>,
+                        backgroundColor: '#D97706',
+                        borderRadius: 4,
+                        maxBarThickness: 24
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // 5. Purok Zone Concentrations
+        const purokCanvas = document.getElementById('printPurokChart');
+        if (purokCanvas) {
+            new Chart(purokCanvas, {
+                type: 'bar',
+                data: {
+                    labels: <?php echo json_encode(array_slice($purokLabels, 0, 7)); ?>,
+                    datasets: [{
+                        label: 'Total Incidents',
+                        data: <?php echo json_encode(array_slice($purokValues, 0, 7)); ?>,
+                        backgroundColor: '#2563EB',
+                        borderRadius: 4,
+                        maxBarThickness: 28
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+        }
+    });
+    </script>
 
 </body>
 </html>

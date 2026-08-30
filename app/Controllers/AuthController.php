@@ -231,6 +231,14 @@ class AuthController extends Controller {
             'success' => '',
             'warning' => ''
         ];
+
+        // Check if lockout is currently active on page load
+        $lockoutSec = $this->getLockoutSeconds();
+        if ($lockoutSec > 0) {
+            $data['error'] = 'Account temporarily locked due to multiple failed attempts.';
+            $data['lockout_seconds'] = $lockoutSec;
+        }
+
         if (!empty($_SESSION['flash_success'])) {
             $data['success'] = $_SESSION['flash_success'];
             unset($_SESSION['flash_success']);
@@ -254,16 +262,17 @@ class AuthController extends Controller {
                 return $this->view('auth/login', ['error' => 'Please fill in all fields.']);
             }
 
-            // Lockout check (same as before)
-            if (isset($_SESSION['login_attempts']) && $_SESSION['login_attempts'] >= 50) {
+            // Lockout check
+            if (isset($_SESSION['login_attempts']) && $_SESSION['login_attempts'] >= 5) {
                 if (isset($_SESSION['lockout_time']) && time() < $_SESSION['lockout_time']) {
                     $data = [
-                        'error' => 'Account temporarily locked. Try again later.',
+                        'error' => 'Account temporarily locked due to multiple failed attempts.',
                         'lockout_seconds' => $this->getLockoutSeconds()
                     ];
                     return $this->view('auth/login', $data);
                 } else {
                     $_SESSION['login_attempts'] = 0;
+                    unset($_SESSION['lockout_time']);
                 }
             }
 

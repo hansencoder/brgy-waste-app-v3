@@ -947,6 +947,39 @@ public function exportAnalyticsPDF() {
         $db->bind($key, $val);
     }
     $purokData = $db->resultSet() ?: [];
+
+    // Status Distribution Stats
+    $db->query("
+        SELECT rs.status_name, rs.color_code, COUNT(r.id) as count
+        FROM reports r
+        JOIN report_statuses rs ON r.status_id = rs.status_id
+        $where
+        GROUP BY rs.status_id, rs.status_name, rs.color_code
+        ORDER BY count DESC
+    ");
+    foreach ($params as $key => $val) {
+        $db->bind($key, $val);
+    }
+    $statusData = $db->resultSet() ?: [];
+
+    // Condition Distribution Stats
+    $db->query("
+        SELECT wcnd.condition_name, COUNT(r.id) as count
+        FROM reports r
+        JOIN waste_conditions wcnd ON r.condition_id = wcnd.condition_id
+        $where
+        GROUP BY wcnd.condition_id, wcnd.condition_name
+        ORDER BY count DESC
+    ");
+    foreach ($params as $key => $val) {
+        $db->bind($key, $val);
+    }
+    $conditionData = $db->resultSet() ?: [];
+
+    $db->query("SELECT * FROM report_generation_settings LIMIT 1");
+    $reportSettings = $db->single() ?: [];
+    $db->query("SELECT * FROM barangays LIMIT 1");
+    $barangay = $db->single() ?: [];
     
     // Prepare data for view
     $data = [
@@ -954,6 +987,10 @@ public function exportAnalyticsPDF() {
         'stats' => $stats,
         'category_data' => $categoryData,
         'purok_data' => $purokData,
+        'status_data' => $statusData,
+        'condition_data' => $conditionData,
+        'report_settings' => $reportSettings,
+        'barangay' => $barangay,
         'dateFrom' => $dateFrom,
         'dateTo' => $dateTo,
         'category' => $category,

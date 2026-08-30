@@ -302,11 +302,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const heatPoints = [];
         reports.forEach(r => {
+            const rStatus = (r.status || '').toLowerCase();
+            if (rStatus === 'pending' || rStatus === 'rejected') {
+                return; // Exclude pending and rejected reports
+            }
+
             let clusterCount = 0;
             reports.forEach(other => {
-                const dist = getDistanceMeters(r.lat, r.lng, other.lat, other.lng);
-                if (dist <= radiusMeters) {
-                    clusterCount++;
+                const oStatus = (other.status || '').toLowerCase();
+                if (oStatus !== 'pending' && oStatus !== 'rejected') {
+                    const dist = getDistanceMeters(r.lat, r.lng, other.lat, other.lng);
+                    if (dist <= radiusMeters) {
+                        clusterCount++;
+                    }
                 }
             });
 

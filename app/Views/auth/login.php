@@ -246,21 +246,41 @@ $sysLogo         = format_asset_url($authBranding['system_logo'] ?? '');
 
     <?php if (isset($data['lockout_seconds']) && $data['lockout_seconds'] > 0): ?>
     (function() {
-        let seconds = <?php echo (int)$data['lockout_seconds']; ?>;
+        const lockoutDurationMs = <?php echo (int)$data['lockout_seconds']; ?> * 1000;
+        const targetEndTime = Date.now() + lockoutDurationMs;
         const countdownEl = document.getElementById('loginCountdown');
-        if (!countdownEl) return;
+        const submitBtn = document.getElementById('loginSubmitBtn');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        if (submitBtn) submitBtn.disabled = true;
+        if (emailInput) emailInput.disabled = true;
+        if (passwordInput) passwordInput.disabled = true;
 
         function updateCountdown() {
-            if (seconds <= 0) {
-                countdownEl.textContent = '';
+            const now = Date.now();
+            const remainingMs = targetEndTime - now;
+            const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
+
+            if (remainingSec <= 0) {
+                if (countdownEl) countdownEl.textContent = '';
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+                    submitBtn.innerHTML = `<span>Sign In</span><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`;
+                }
+                if (emailInput) emailInput.disabled = false;
+                if (passwordInput) passwordInput.disabled = false;
                 window.location.reload();
                 return;
             }
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            countdownEl.textContent = `(${mins > 0 ? mins + 'm ' : ''}${secs}s remaining)`;
-            seconds--;
-            setTimeout(updateCountdown, 1000);
+
+            const mins = Math.floor(remainingSec / 60);
+            const secs = remainingSec % 60;
+            if (countdownEl) {
+                countdownEl.textContent = `(${mins > 0 ? mins + 'm ' : ''}${secs}s remaining)`;
+            }
+            setTimeout(updateCountdown, 500);
         }
         updateCountdown();
     })();

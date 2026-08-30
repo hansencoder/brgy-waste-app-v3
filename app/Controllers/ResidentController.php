@@ -407,12 +407,17 @@ class ResidentController extends Controller {
     // VIEW SINGLE REPORT
     // ============================================================
     public function view_report($id) {
-        $data['report'] = $this->reportModel->getReportById($id, $_SESSION['user_id']);
+        $data['report'] = $this->reportModel->getReportById($id);
 
         if (!$data['report']) {
             header('Location: ' . app_url('index.php?url=' . urlencode('resident/my_report')));
             exit;
         }
+
+        // Ownership and Support Checks
+        $userId = $_SESSION['user_id'] ?? 0;
+        $data['is_owner'] = ($userId > 0 && (int)($data['report']['resident_id'] ?? 0) === (int)$userId);
+        $data['has_supported'] = $userId > 0 ? $this->reportModel->hasUserSupported($id, $userId) : false;
 
         // Get all attached photos (1 to 3)
         $data['photos'] = $this->reportModel->getReportPhotos($id);
@@ -958,7 +963,12 @@ class ResidentController extends Controller {
             $_SESSION['flash_warning'] = "You have already supported this report previously.";
         }
 
-        header('Location: ' . app_url('resident/dashboard'));
+        $redirectTo = trim($_POST['redirect_to'] ?? '');
+        if ($redirectTo === 'view_report') {
+            header('Location: ' . app_url('resident/view_report/' . $reportId));
+        } else {
+            header('Location: ' . app_url('resident/dashboard'));
+        }
         exit;
     }
 

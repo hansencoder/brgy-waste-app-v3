@@ -478,10 +478,14 @@ class AdminController extends Controller {
     // ============================================================
     // API: GET GIS DATA (AJAX)
     // ============================================================
+    // GIS DATA ENDPOINT
+    // ============================================================
     public function getGisData() {
         $category = isset($_GET['category']) ? (int)$_GET['category'] : 0;
         $purok = isset($_GET['purok']) ? (int)$_GET['purok'] : 0;
-        $status = isset($_GET['status']) ? $_GET['status'] : '';
+        $status = isset($_GET['status']) ? trim($_GET['status']) : '';
+        $dateFrom = isset($_GET['date_from']) ? trim($_GET['date_from']) : '';
+        $dateTo = isset($_GET['date_to']) ? trim($_GET['date_to']) : '';
 
         $db = new Database();
         
@@ -509,6 +513,12 @@ class AdminController extends Controller {
         if (!empty($status)) {
             $query .= " AND rs.status_name = :status";
         }
+        if (!empty($dateFrom)) {
+            $query .= " AND DATE(r.submission_date) >= :date_from";
+        }
+        if (!empty($dateTo)) {
+            $query .= " AND DATE(r.submission_date) <= :date_to";
+        }
 
         $query .= " ORDER BY r.submission_date DESC";
 
@@ -521,6 +531,12 @@ class AdminController extends Controller {
         }
         if (!empty($status)) {
             $db->bind(':status', $status);
+        }
+        if (!empty($dateFrom)) {
+            $db->bind(':date_from', $dateFrom);
+        }
+        if (!empty($dateTo)) {
+            $db->bind(':date_to', $dateTo);
         }
 
         $reports = $db->resultSet();
@@ -2330,6 +2346,13 @@ private function generateCalendarData($month, $year, $schedules) {
             'stats' => $analytics['kpis'],
             'category_data' => $analytics['category_data'],
             'purok_data' => $analytics['purok_data'],
+            'status_data' => $analytics['status_data'],
+            'condition_data' => $analytics['condition_data'],
+            'trend_data' => $analytics['trend_data'],
+            'resident_count' => $analytics['resident_count'],
+            'guest_count' => $analytics['guest_count'],
+            'resident_pct' => $analytics['resident_pct'],
+            'guest_pct' => $analytics['guest_pct'],
             'dateFrom' => $filters['date_from'],
             'dateTo' => $filters['date_to'],
             'category' => $filters['category'],

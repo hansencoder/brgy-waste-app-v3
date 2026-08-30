@@ -117,13 +117,39 @@ if (!empty($timeline)) {
                         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Report Forensic Summary</h1>
                         <p class="text-xs sm:text-sm text-slate-500 font-medium">Logged on <?php echo date('F d, Y \a\t h:i A', strtotime($report['submission_date'])); ?> · Purok <?php echo htmlspecialchars($report['purok'] ?? 'Not specified'); ?></p>
                     </div>
-                    
+                    <?php
+                    $isOwner = $data['is_owner'] ?? false;
+                    $hasSupported = $data['has_supported'] ?? false;
+                    $supportCount = (int)($report['support_count'] ?? 0);
+                    ?>
                     <div class="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
                         <?php if ($rawStatus === 'pending'): ?>
-                        <button type="button" onclick="openEditModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs shadow-xs transition cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                            <span>Edit Details</span>
-                        </button>
+                            <?php if ($isOwner): ?>
+                                <button type="button" onclick="openEditModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs shadow-xs transition cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                                    <span>Edit Details</span>
+                                </button>
+                            <?php else: ?>
+                                <?php if ($hasSupported): ?>
+                                    <div class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 text-teal-800 border border-teal-200 font-extrabold text-xs shadow-2xs">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        <span>You Supported This Report</span>
+                                        <span class="px-2 py-0.5 rounded-full bg-teal-100 text-teal-900 font-mono text-[10px]"><?php echo $supportCount; ?></span>
+                                    </div>
+                                <?php else: ?>
+                                    <form action="<?php echo app_url('resident/support_report'); ?>" method="POST" class="inline-flex m-0">
+                                        <input type="hidden" name="report_id" value="<?php echo (int)$report['id']; ?>">
+                                        <input type="hidden" name="redirect_to" value="view_report">
+                                        <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0B2E22] hover:bg-[#084232] text-white font-extrabold text-xs shadow-xs transition cursor-pointer active:scale-95">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-teal-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+                                            <span>Support Report (+1 Upvote)</span>
+                                            <?php if ($supportCount > 0): ?>
+                                                <span class="px-1.5 py-0.2 rounded-md bg-teal-800 text-[10px] font-mono text-teal-200"><?php echo $supportCount; ?></span>
+                                            <?php endif; ?>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -132,6 +158,13 @@ if (!empty($timeline)) {
                     <div class="rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-xs sm:text-sm font-bold text-emerald-800 flex items-center gap-3 shadow-xs">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                         <span><?php echo htmlspecialchars($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['flash_warning'])): ?>
+                    <div class="rounded-xl bg-amber-50 border border-amber-200 p-4 text-xs sm:text-sm font-bold text-amber-800 flex items-center gap-3 shadow-xs">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span><?php echo htmlspecialchars($_SESSION['flash_warning']); unset($_SESSION['flash_warning']); ?></span>
                     </div>
                 <?php endif; ?>
 
@@ -275,6 +308,13 @@ if (!empty($timeline)) {
                             <div class="flex justify-between items-center py-1 border-b border-slate-50">
                                 <span class="text-slate-500">Waste Condition</span>
                                 <span class="font-bold text-slate-900"><?php echo htmlspecialchars($report['waste_condition'] ?? 'N/A'); ?></span>
+                            </div>
+                            <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                                <span class="text-slate-500">Community Support</span>
+                                <span class="inline-flex items-center gap-1.5 font-extrabold text-teal-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+                                    <span><?php echo (int)($report['support_count'] ?? 0); ?> Support<?php echo ((int)($report['support_count'] ?? 0) === 1) ? '' : 's'; ?></span>
+                                </span>
                             </div>
                             <div class="flex justify-between items-center py-1">
                                 <span class="text-slate-500">Jurisdiction</span>

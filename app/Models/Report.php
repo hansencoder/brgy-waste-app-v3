@@ -386,28 +386,51 @@ class Report {
     }
 
     // ============================================================
-    // REPORT SUPPORT (for future implementation)
+    // REPORT SUPPORT (+1 UPVOTE)
     // ============================================================
+    public function hasUserSupported($reportId, $userId) {
+        if (!$reportId || !$userId) return false;
+        $db = new Database();
+        $db->query("SELECT id FROM report_supports WHERE report_id = :report_id AND user_id = :user_id LIMIT 1");
+        $db->bind(':report_id', $reportId);
+        $db->bind(':user_id', $userId);
+        return (bool)$db->single();
+    }
+
     public function supportReport($reportId, $userId) {
-    $db = new Database();
-    // Check if already supported
-    $db->query("SELECT * FROM report_supports WHERE report_id = :report_id AND user_id = :user_id");
-    $db->bind(':report_id', $reportId);
-    $db->bind(':user_id', $userId);
-    if ($db->single()) {
-        return false;
-    }
-    // Insert support
-    $db->query("INSERT INTO report_supports (report_id, user_id) VALUES (:report_id, :user_id)");
-    $db->bind(':report_id', $reportId);
-    $db->bind(':user_id', $userId);
-    if (!$db->execute()) {
-        return false;
-    }
-    // Increment support_count on report
-    $db->query("UPDATE reports SET support_count = support_count + 1 WHERE id = :id");
-    $db->bind(':id', $reportId);
-    return $db->execute();
+        $db = new Database();
+
+        // ONLY PENDING reports can be supported
+        $db->query("SELECT r.id, r.status_id, rs.status_name 
+                    FROM reports r 
+                    JOIN report_statuses rs ON r.status_id = rs.status_id 
+                    WHERE r.id = :id LIMIT 1");
+        $db->bind(':id', $reportId);
+        $rep = $db->single();
+        if (!$rep || strtolower($rep['status_name']) !== 'pending') {
+            return false;
+        }
+
+        // Check if already supported
+        $db->query("SELECT id FROM report_supports WHERE report_id = :report_id AND user_id = :user_id");
+        $db->bind(':report_id', $reportId);
+        $db->bind(':user_id', $userId);
+        if ($db->single()) {
+            return false;
+        }
+
+        // Insert support
+        $db->query("INSERT INTO report_supports (report_id, user_id) VALUES (:report_id, :user_id)");
+        $db->bind(':report_id', $reportId);
+        $db->bind(':user_id', $userId);
+        if (!$db->execute()) {
+            return false;
+        }
+
+        // Increment support_count on report
+        $db->query("UPDATE reports SET support_count = support_count + 1 WHERE id = :id");
+        $db->bind(':id', $reportId);
+        return $db->execute();
     }
 
     // ============================================================

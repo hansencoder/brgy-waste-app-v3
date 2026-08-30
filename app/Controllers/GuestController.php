@@ -251,6 +251,22 @@ class GuestController extends Controller {
         $can = $this->canSendOtp($contact, $ip);
         if (!$can['ok']) {
             if ($can['reason'] === 'cooldown') {
+                // If there is already an active, unexpired, unused token for this contact, forward directly to OTP verification
+                $this->db->query('SELECT token FROM guest_otp_tokens 
+                                  WHERE phone = :contact AND is_used = 0 AND expires_at > NOW() 
+                                  ORDER BY created_at DESC LIMIT 1');
+                $this->db->bind(':contact', $contact);
+                $activeToken = $this->db->single();
+
+                if ($activeToken) {
+                    $_SESSION['guest_contact'] = $contact;
+                    $_SESSION['guest_channel'] = $channel;
+                    $_SESSION['guest_phone']   = $contact;
+                    $_SESSION['guest_name']    = $name;
+                    header('Location: ' . app_url('index.php?url=guest/verifyOtp'));
+                    exit;
+                }
+
                 $wait = $can['retry_after'];
                 $this->view('guest/phone', [
                     'barangay'                 => $barangay,

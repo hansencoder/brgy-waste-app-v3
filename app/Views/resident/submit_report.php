@@ -211,9 +211,12 @@ $resume_description = $resume_data['description'] ?? '';
                             
                             <!-- Quantity -->
                             <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-3">
-                                <div class="pb-2 border-b border-slate-100">
-                                    <h3 class="text-sm font-extrabold text-slate-900">Estimated Volume</h3>
-                                    <p class="text-[11px] text-slate-400">Approximate size of waste</p>
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                    <div>
+                                        <h3 class="text-sm font-extrabold text-slate-900">Estimated Volume</h3>
+                                        <p class="text-[11px] text-slate-400">Approximate size of waste</p>
+                                    </div>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Required</span>
                                 </div>
                                 <div class="space-y-2">
                                     <?php foreach ($quantities as $qty): ?>
@@ -230,9 +233,12 @@ $resume_description = $resume_data['description'] ?? '';
 
                             <!-- Condition -->
                             <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-3">
-                                <div class="pb-2 border-b border-slate-100">
-                                    <h3 class="text-sm font-extrabold text-slate-900">Waste Condition</h3>
-                                    <p class="text-[11px] text-slate-400">Current state of the pile</p>
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                    <div>
+                                        <h3 class="text-sm font-extrabold text-slate-900">Waste Condition</h3>
+                                        <p class="text-[11px] text-slate-400">Current state of the pile</p>
+                                    </div>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Required</span>
                                 </div>
                                 <div class="space-y-2">
                                     <?php foreach ($conditions as $cond): ?>

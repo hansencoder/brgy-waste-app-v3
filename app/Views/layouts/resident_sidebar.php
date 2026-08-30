@@ -138,7 +138,7 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
             <p class="sidebar-section-title px-3 text-[10px] font-black uppercase tracking-wider text-slate-400">Core</p>
 
             <!-- Dashboard Link -->
-            <?php $activeDash = $isActive('/resident') && !$isActive('/resident/submit') && !$isActive('/resident/my_report') && !$isActive('/resident/profile') && !$isActive('/resident/announcements') && !$isActive('/resident/collection_schedule') && !$isActive('/resident/notification'); ?>
+            <?php $activeDash = $isActive('/resident') && !$isActive('/resident/submit') && !$isActive('/resident/my_report') && !$isActive('/resident/profile') && !$isActive('/resident/announcements') && !$isActive('/resident/collection_schedule'); ?>
             <a href="<?php echo app_url('resident'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeDash ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
                 <?php if ($activeDash): ?>
                     <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
@@ -223,19 +223,6 @@ $sysLogo = format_asset_url($brgyBranding['system_logo'] ?? '');
                 </svg>
                 <span class="sidebar-text">Resident Profile</span>
                 <span class="sidebar-tooltip">Resident Profile</span>
-            </a>
-
-            <!-- Notifications Link -->
-            <?php $activeNotif = $isActive('/resident/notification'); ?>
-            <a href="<?php echo app_url('resident/notification'); ?>" class="sidebar-link relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition <?php echo $activeNotif ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'; ?>">
-                <?php if ($activeNotif): ?>
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#10B981] rounded-r-full shadow-xs"></span>
-                <?php endif; ?>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 <?php echo $activeNotif ? 'text-emerald-600' : 'text-slate-400'; ?>" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-                </svg>
-                <span class="sidebar-text">Notifications</span>
-                <span class="sidebar-tooltip">Notifications</span>
             </a>
         </div>
 

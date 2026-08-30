@@ -205,18 +205,26 @@ if ($userId) {
     }
 
     function getRelativeTime(dateStr) {
+        if (!dateStr) return '';
         try {
-            const d = new Date(dateStr);
+            let normalized = String(dateStr).trim();
+            // Handle SQL format "YYYY-MM-DD HH:mm:ss" without offset by normalizing to Asia/Manila (+08:00)
+            if (!normalized.includes('T') && !normalized.includes('Z') && !/[+-]\d{2}:\d{2}$/.test(normalized)) {
+                normalized = normalized.replace(' ', 'T') + '+08:00';
+            }
+            const d = new Date(normalized);
             const now = new Date();
-            const diffMs = now - d;
-            const diffSec = Math.floor(diffMs / 1000);
+            const diffMs = now.getTime() - d.getTime();
+            if (isNaN(diffMs)) return dateStr;
+            const diffSec = Math.max(0, Math.floor(diffMs / 1000));
             const diffMin = Math.floor(diffSec / 60);
             const diffHour = Math.floor(diffMin / 60);
             const diffDay = Math.floor(diffHour / 24);
 
-            if (diffSec < 60) return 'Just now';
+            if (diffSec < 45) return 'Just now';
             if (diffMin < 60) return `${diffMin}m ago`;
             if (diffHour < 24) return `${diffHour}h ago`;
+            if (diffDay === 1) return 'Yesterday';
             if (diffDay < 7) return `${diffDay}d ago`;
             return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         } catch (e) {

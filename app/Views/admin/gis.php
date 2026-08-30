@@ -202,17 +202,17 @@ function getPriorityBadge($count, $settings = []) {
                     <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
                         
                         <!-- Top Row: Live Search & Dropdowns -->
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 flex-wrap">
                             
                             <!-- Search Input -->
-                            <div class="relative flex-1 min-w-[220px]">
-                                <input type="text" id="gisSearchInput" placeholder="Search by resident name, location keyword, or ID..." 
+                            <div class="relative flex-1 min-w-[200px]">
+                                <input type="text" id="gisSearchInput" placeholder="Search by resident name, location, or ID..." 
                                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                             </div>
 
                             <!-- Purok Selector -->
-                            <div class="w-full sm:w-48">
+                            <div class="w-full sm:w-44">
                                 <select id="purokFilter" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none transition cursor-pointer">
                                     <option value="0">All Purok Sectors</option>
                                     <?php foreach ($puroks as $p): ?>
@@ -222,13 +222,20 @@ function getPriorityBadge($count, $settings = []) {
                             </div>
 
                             <!-- Status Selector -->
-                            <div class="w-full sm:w-44">
+                            <div class="w-full sm:w-40">
                                 <select id="statusFilter" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none transition cursor-pointer">
                                     <option value="">All Statuses</option>
                                     <?php foreach ($statuses as $s): ?>
                                         <option value="<?php echo htmlspecialchars($s['status_name']); ?>"><?php echo htmlspecialchars($s['status_name']); ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                            </div>
+
+                            <!-- Date Range Filter -->
+                            <div class="flex items-center gap-1.5 w-full sm:w-auto">
+                                <input type="date" id="dateFromFilter" title="Date From" class="px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:border-emerald-500 outline-none">
+                                <span class="text-xs font-bold text-slate-400">to</span>
+                                <input type="date" id="dateToFilter" title="Date To" class="px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:border-emerald-500 outline-none">
                             </div>
 
                             <!-- Reset Filters -->
@@ -875,35 +882,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 markersLayerGroup.addLayer(marker);
                 markerIdMap[r.id] = { marker, lat, lng };
 
-                // Calculate actual geographic reports count clustered within configured radiusMeters
-                let clusterCount = 0;
-                reportList.forEach(other => {
-                    const oLat = parseFloat(other.latitude);
-                    const oLng = parseFloat(other.longitude);
-                    if (!isNaN(oLat) && !isNaN(oLng)) {
-                        const dist = getDistanceMeters(lat, lng, oLat, oLng);
-                        if (dist <= radiusMeters) {
-                            clusterCount++;
-                        }
-                    }
-                });
+                // Spatial Heatmap Enforcement:
+                // Only verified/in-progress/resolved reports can generate heatmap thermal intensity
+                const rStatus = (r.status || '').toLowerCase();
+                const isHeatEligible = (rStatus !== 'pending' && rStatus !== 'rejected');
 
-                // Spatial Threshold Enforcement:
-                // If the number of nearby reports in the radius is below the minimum threshold (low_min),
-                // do NOT add to heatmap layer (it will show nothing around the report, just the pin).
-                if (clusterCount >= heatmapLowMin) {
-                    let weight = 0.35;
-                    if (clusterCount >= heatmapSevMin) {
-                        weight = 1.0;
-                    } else if (clusterCount >= heatmapModMin) {
-                        weight = 0.65;
-                    } else {
-                        weight = 0.35;
+                if (isHeatEligible) {
+                    // Calculate actual geographic verified reports count clustered within configured radiusMeters
+                    let clusterCount = 0;
+                    reportList.forEach(other => {
+                        const oStatus = (other.status || '').toLowerCase();
+                        if (oStatus !== 'pending' && oStatus !== 'rejected') {
+                            const oLat = parseFloat(other.latitude);
+                            const oLng = parseFloat(other.longitude);
+                            if (!isNaN(oLat) && !isNaN(oLng)) {
+                                const dist = getDistanceMeters(lat, lng, oLat, oLng);
+                                if (dist <= radiusMeters) {
+                                    clusterCount++;
+                                }
+                            }
+                        }
+                    });
+
+                    // Spatial Threshold Enforcement:
+                    // If clusterCount is >= heatmapLowMin, add to heatmap layer
+                    if (clusterCount >= heatmapLowMin) {
+                        let weight = 0.35;
+                        if (clusterCount >= heatmapSevMin) {
+                            weight = 1.0;
+                        } else if (clusterCount >= heatmapModMin) {
+                            weight = 0.65;
+                        } else {
+                            weight = 0.35;
+                        }
+                        heatData.push([lat, lng, weight]);
                     }
-                    if (r.status === 'Pending') {
-                        weight = Math.min(weight, 0.45);
-                    }
-                    heatData.push([lat, lng, weight]);
                 }
 
                 // Stream List Item
@@ -988,11 +1001,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const purokVal = document.getElementById('purokFilter').value;
         const statusVal = document.getElementById('statusFilter').value;
         const searchVal = document.getElementById('gisSearchInput').value.trim().toLowerCase();
+        const dateFromVal = document.getElementById('dateFromFilter')?.value || '';
+        const dateToVal = document.getElementById('dateToFilter')?.value || '';
 
         let url = '<?php echo app_url('admin/getGisData?'); ?>';
         if (currentCategoryId > 0) url += `category=${currentCategoryId}&`;
         if (purokVal > 0) url += `purok=${purokVal}&`;
         if (statusVal) url += `status=${encodeURIComponent(statusVal)}&`;
+        if (dateFromVal) url += `date_from=${encodeURIComponent(dateFromVal)}&`;
+        if (dateToVal) url += `date_to=${encodeURIComponent(dateToVal)}&`;
 
         fetch(url)
             .then(res => res.json())
@@ -1016,6 +1033,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('purokFilter')?.addEventListener('change', applyFilters);
     document.getElementById('statusFilter')?.addEventListener('change', applyFilters);
+    document.getElementById('dateFromFilter')?.addEventListener('change', applyFilters);
+    document.getElementById('dateToFilter')?.addEventListener('change', applyFilters);
     
     // Live Search with Debounce
     let searchDebounce = null;
@@ -1029,6 +1048,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('gisSearchInput').value = '';
         document.getElementById('purokFilter').value = '0';
         document.getElementById('statusFilter').value = '';
+        if (document.getElementById('dateFromFilter')) document.getElementById('dateFromFilter').value = '';
+        if (document.getElementById('dateToFilter')) document.getElementById('dateToFilter').value = '';
         filterCategory(0);
     });
 

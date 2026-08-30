@@ -78,6 +78,11 @@ class Database {
 
         try {
             $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
+            try {
+                $this->dbh->exec("SET time_zone = '+08:00'");
+            } catch (Exception $tzEx) {
+                // Ignore if server lacks timezone tables
+            }
         } catch(PDOException $e) {
             $this->error = $e->getMessage();
             die("

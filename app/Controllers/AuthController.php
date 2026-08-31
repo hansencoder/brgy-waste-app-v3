@@ -321,8 +321,8 @@ class AuthController extends Controller {
                 require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
                 require_once dirname(__DIR__) . '/Models/Helpers/SmsHelper.php';
 
-                $email = $user['email'] ?? '';
-                $phone = $user['phone_number'] ?? '';
+                $email = trim(strtolower($user['email'] ?? ''));
+                $phone = trim($user['phone_number'] ?? '');
 
                 $isInputEmail = filter_var($input, FILTER_VALIDATE_EMAIL);
                 $isInputPhone = preg_match('/^[0-9+\s()-]{7,20}$/', $input);
@@ -334,13 +334,13 @@ class AuthController extends Controller {
                     $sendViaSms = false;
                     $contactTarget = $email;
                 } else {
-                    // Fallback for username login: prefer phone if available, else email
-                    if (!empty($phone)) {
-                        $sendViaSms = true;
-                        $contactTarget = $phone;
-                    } elseif (!empty($email)) {
+                    // For username logins, prefer Email for reliable OTP delivery
+                    if (!empty($email)) {
                         $sendViaSms = false;
                         $contactTarget = $email;
+                    } elseif (!empty($phone)) {
+                        $sendViaSms = true;
+                        $contactTarget = $phone;
                     } else {
                         $contactTarget = '';
                     }
@@ -354,13 +354,12 @@ class AuthController extends Controller {
                 $can = $this->userModel->canSendEmailOtp($contactTarget, $ip);
                 if (!$can['ok']) {
                     if ($can['reason'] === 'cooldown') {
-                        // If user spammed the login button or entered credentials while a valid OTP is active:
+                        // If user entered credentials while a valid active OTP exists:
                         // Forward them directly to the MFA verification page so they can enter the code they received!
                         if ($this->userModel->hasActiveMfaToken($user['id'])) {
                             $_SESSION['mfa_user_id'] = $user['id'];
                             $_SESSION['mfa_email'] = $contactTarget;
                             $_SESSION['mfa_type'] = $sendViaSms ? 'phone' : 'email';
-                            $_SESSION['mfa_notice'] = 'A verification code was already sent. Please enter the 6-digit code sent to your ' . ($sendViaSms ? 'phone' : 'email') . '.';
                             header('Location: ' . app_url('index.php?url=' . urlencode('auth/mfa')));
                             exit;
                         }
@@ -427,12 +426,7 @@ class AuthController extends Controller {
             exit;
         }
 
-        $data = ['error' => '', 'success' => '', 'info' => ''];
-
-        if (!empty($_SESSION['mfa_notice'])) {
-            $data['info'] = $_SESSION['mfa_notice'];
-            unset($_SESSION['mfa_notice']);
-        }
+        $data = ['error' => '', 'success' => ''];
 
         $email = $_SESSION['mfa_email'] ?? null;
         if ($email) {

@@ -46,18 +46,11 @@ $contact = $_SESSION['reg_email'] ?? '';
             <?php endif; ?>
         </div>
 
-        <!-- Error/Success/Info Alerts -->
+        <!-- Error/Success Alerts -->
         <?php if (!empty($data['error'])): ?>
             <div class="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200/80 text-red-700 text-xs flex items-start gap-2.5">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-500 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <div class="flex-1 font-medium"><?php echo htmlspecialchars($data['error'], ENT_QUOTES, 'UTF-8'); ?></div>
-            </div>
-        <?php endif; ?>
-        
-        <?php if (!empty($data['info'])): ?>
-            <div class="mb-5 p-3.5 rounded-xl bg-blue-50 border border-blue-200/80 text-blue-800 text-xs flex items-start gap-2.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-blue-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <div class="flex-1 font-medium"><?php echo htmlspecialchars($data['info'], ENT_QUOTES, 'UTF-8'); ?></div>
             </div>
         <?php endif; ?>
 
@@ -111,16 +104,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const hiddenOtp = document.getElementById('otp');
     const form = document.getElementById('verifyRegForm');
     const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
 
     function syncOtp() {
         let otpVal = '';
-        inputs.forEach(inp => otpVal += inp.value);
+        inputs.forEach(inp => otpVal += (inp.value || '').trim());
         hiddenOtp.value = otpVal;
         return otpVal;
     }
 
+    function triggerFormSubmit() {
+        if (isSubmitting) return;
+        const otpVal = syncOtp();
+        if (otpVal.length === 6) {
+            isSubmitting = true;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Activating Account...</span>
+                `;
+            }
+            form.submit();
+        }
+    }
+
     inputs.forEach((input, index) => {
-        input.addEventListener('keyup', function(e) {
+        input.addEventListener('input', function(e) {
             const val = this.value;
             if (val && !/^\d$/.test(val)) {
                 this.value = '';
@@ -131,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             const otpVal = syncOtp();
             if (otpVal.length === 6) {
-                form.submit();
+                triggerFormSubmit();
             }
         });
 
@@ -140,6 +154,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 inputs[index - 1].focus();
                 inputs[index - 1].value = '';
                 syncOtp();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                triggerFormSubmit();
             }
         });
 
@@ -154,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const otpVal = syncOtp();
                 if (clean.length >= 6) {
                     inputs[5].focus();
-                    form.submit();
+                    triggerFormSubmit();
                 } else {
                     inputs[clean.length].focus();
                 }
@@ -163,6 +180,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
         const otpVal = syncOtp();
         if (otpVal.length < 6) {
             e.preventDefault();
@@ -174,6 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
 
+        isSubmitting = true;
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
@@ -182,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Activating...</span>
+                <span>Activating Account...</span>
             `;
         }
     });
@@ -229,13 +251,18 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(updateTimer, 1000);
     }
 
+    let isResending = false;
     resendLink.addEventListener('click', function(e) {
         const diff = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
-        if (diff > 0) {
+        if (diff > 0 || isResending) {
             e.preventDefault();
-        } else {
-            sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
+            return false;
         }
+        isResending = true;
+        resendLink.style.pointerEvents = 'none';
+        resendLink.style.opacity = '0.5';
+        resendLink.textContent = 'Sending code...';
+        sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
     });
 
     updateTimer();

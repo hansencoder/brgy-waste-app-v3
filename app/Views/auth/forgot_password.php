@@ -50,7 +50,7 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
             </div>
         <?php endif; ?>
 
-        <form action="<?php echo app_url('index.php?url=auth/sendResetOtp'); ?>" method="POST" class="space-y-4">
+        <form id="forgotForm" action="<?php echo app_url('index.php?url=auth/sendResetOtp'); ?>" method="POST" class="space-y-4" onsubmit="return handleForgotSubmit()">
             <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') : bin2hex(random_bytes(32)); ?>">
             
             <div>
@@ -59,7 +59,7 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
                     class="w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 outline-none transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10">
             </div>
             
-            <button type="submit" class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+            <button type="submit" id="submitBtn" class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
                 <span>Send reset link</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
@@ -73,5 +73,32 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
         </div>
     </div>
 </div>
+
+<script>
+let isSubmitting = false;
+function handleForgotSubmit() {
+    if (isSubmitting) {
+        return false;
+    }
+    const emailInput = document.getElementById('email');
+    if (!emailInput || !emailInput.checkValidity() || !emailInput.value.trim()) {
+        return true;
+    }
+    isSubmitting = true;
+    const btn = document.getElementById('submitBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-80', 'cursor-not-allowed', 'pointer-events-none');
+        btn.innerHTML = `
+            <svg class="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Sending reset code...</span>
+        `;
+    }
+    return true;
+}
+</script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

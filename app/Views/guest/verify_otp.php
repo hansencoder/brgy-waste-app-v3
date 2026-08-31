@@ -240,13 +240,18 @@ $destinationLabel = ($channel === 'email') ? 'email address' : 'mobile number';
             setTimeout(updateTimer, 1000);
         }
 
+        let isResending = false;
         resendLink.addEventListener('click', function(e) {
             const diff = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
-            if (diff > 0) {
+            if (diff > 0 || isResending) {
                 e.preventDefault();
-            } else {
-                sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
+                return false;
             }
+            isResending = true;
+            resendLink.style.pointerEvents = 'none';
+            resendLink.style.opacity = '0.5';
+            resendLink.textContent = 'Sending code...';
+            sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
         });
 
         updateTimer();

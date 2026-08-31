@@ -62,16 +62,18 @@ class SupervisorController extends Controller {
         }
 
         $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expiresAt = date('Y-m-d H:i:s', time() + (10 * 60)); // 10 minutes
         
         $db->query("DELETE FROM two_factor_tokens WHERE user_id = :user_id AND purpose = 'profile_change' AND is_used = 0");
         $db->bind(':user_id', $userId);
         $db->execute();
 
         $db->query("INSERT INTO two_factor_tokens (user_id, email, token, expires_at, purpose) 
-                    VALUES (:user_id, :email, :token, DATE_ADD(NOW(), INTERVAL 10 MINUTE), 'profile_change')");
+                    VALUES (:user_id, :email, :token, :expires_at, 'profile_change')");
         $db->bind(':user_id', $userId);
         $db->bind(':email', $user['email']);
         $db->bind(':token', $token);
+        $db->bind(':expires_at', $expiresAt);
         $db->execute();
 
         require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
@@ -92,12 +94,14 @@ class SupervisorController extends Controller {
 
         $otp = trim($_POST['otp'] ?? '');
         $userId = $_SESSION['user_id'];
+        $now = date('Y-m-d H:i:s');
         $db = new Database();
 
         $db->query("SELECT * FROM two_factor_tokens 
-                    WHERE user_id = :user_id AND purpose = 'profile_change' AND is_used = 0 AND expires_at >= NOW() 
-                    ORDER BY created_at DESC LIMIT 1");
+                    WHERE user_id = :user_id AND purpose = 'profile_change' AND is_used = 0 AND expires_at >= :now 
+                    ORDER BY id DESC LIMIT 1");
         $db->bind(':user_id', $userId);
+        $db->bind(':now', $now);
         $tokenRecord = $db->single();
 
         if (!$tokenRecord) {

@@ -105,7 +105,7 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
 
             <p id="matchError" class="text-red-500 text-xs font-medium hidden">Passwords do not match.</p>
 
-            <button type="submit" class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+            <button type="submit" id="submitBtn" class="w-full h-10 bg-[#0B2E22] hover:bg-[#07281E] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
                 <span>Save New Password</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
@@ -121,6 +121,8 @@ $sysLogo         = !empty($authBranding['system_logo']) ? format_asset_url($auth
 </div>
 
 <script>
+let isSubmitting = false;
+
 function togglePasswordVisibility(inputId, btn) {
     const input = document.getElementById(inputId);
     const eyeOpen = btn.querySelector('.eye-open');
@@ -191,12 +193,31 @@ function validateMatch() {
 }
 
 function validateForm() {
+    if (isSubmitting) {
+        return false;
+    }
     const p1 = document.getElementById('password').value;
     if (p1.length < 8) {
         showModalAlert('Password must be at least 8 characters long.', 'Password Too Short', 'warning');
         return false;
     }
-    return validateMatch();
+    const isMatch = validateMatch();
+    if (!isMatch) return false;
+
+    isSubmitting = true;
+    const btn = document.getElementById('submitBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-80', 'cursor-not-allowed', 'pointer-events-none');
+        btn.innerHTML = `
+            <svg class="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Saving new password...</span>
+        `;
+    }
+    return true;
 }
 </script>
 

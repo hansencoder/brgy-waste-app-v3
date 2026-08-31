@@ -42,24 +42,27 @@ class GuestController extends Controller {
     // HELPER: OTP Rate Limit & Cooldown Check
     // ============================================================
     private function canSendOtp($contact, $ip) {
-        // 60-second cooldown on last unused token using database timestamp
-        $this->db->query('SELECT TIMESTAMPDIFF(SECOND, created_at, NOW()) as elapsed 
+        // 60-second cooldown on last unused token using PHP time calculation
+        $this->db->query('SELECT id, created_at, expires_at 
                           FROM guest_otp_tokens
                           WHERE phone = :contact AND is_used = 0
-                          ORDER BY created_at DESC LIMIT 1');
+                          ORDER BY id DESC LIMIT 1');
         $this->db->bind(':contact', $contact);
         $row = $this->db->single();
-        if ($row && isset($row['elapsed'])) {
-            $elapsed = (int)$row['elapsed'];
+        if ($row && !empty($row['created_at'])) {
+            $created = strtotime($row['created_at']);
+            $elapsed = time() - $created;
             if ($elapsed >= 0 && $elapsed < 60) {
                 return ['ok' => false, 'reason' => 'cooldown', 'retry_after' => (60 - $elapsed)];
             }
         }
 
         // Hourly limit: max 10 per contact per hour
+        $oneHourAgo = date('Y-m-d H:i:s', time() - 3600);
         $this->db->query('SELECT SUM(send_count) as cnt FROM guest_sms_rate_limits
-                          WHERE phone = :contact AND window_start >= DATE_SUB(NOW(), INTERVAL 1 HOUR)');
+                          WHERE phone = :contact AND window_start >= :one_hour_ago');
         $this->db->bind(':contact', $contact);
+        $this->db->bind(':one_hour_ago', $oneHourAgo);
         $r = $this->db->single();
         if ($r && (int)$r['cnt'] >= 10) {
             return ['ok' => false, 'reason' => 'hourly_limit'];
@@ -67,8 +70,9 @@ class GuestController extends Controller {
 
         // IP hourly limit: max 30 per IP per hour
         $this->db->query('SELECT SUM(send_count) as cnt FROM guest_sms_rate_limits
-                          WHERE ip = :ip AND window_start >= DATE_SUB(NOW(), INTERVAL 1 HOUR)');
+                          WHERE ip = :ip AND window_start >= :one_hour_ago');
         $this->db->bind(':ip', $ip);
+        $this->db->bind(':one_hour_ago', $oneHourAgo);
         $r2 = $this->db->single();
         if ($r2 && (int)$r2['cnt'] >= 30) {
             return ['ok' => false, 'reason' => 'hourly_limit'];
@@ -251,11 +255,13 @@ class GuestController extends Controller {
         $can = $this->canSendOtp($contact, $ip);
         if (!$can['ok']) {
             if ($can['reason'] === 'cooldown') {
+                $now = date('Y-m-d H:i:s');
                 // If there is already an active, unexpired, unused token for this contact, forward directly to OTP verification
                 $this->db->query('SELECT token FROM guest_otp_tokens 
-                                  WHERE phone = :contact AND is_used = 0 AND expires_at > NOW() 
-                                  ORDER BY created_at DESC LIMIT 1');
+                                  WHERE phone = :contact AND is_used = 0 AND expires_at > :now 
+                                  ORDER BY id DESC LIMIT 1');
                 $this->db->bind(':contact', $contact);
+                $this->db->bind(':now', $now);
                 $activeToken = $this->db->single();
 
                 if ($activeToken) {
@@ -296,10 +302,12 @@ class GuestController extends Controller {
 
         // Generate & save OTP
         $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expiresAt = date('Y-m-d H:i:s', time() + (5 * 60)); // 5 minutes
         $this->db->query('INSERT INTO guest_otp_tokens (phone, token, expires_at, ip)
-                          VALUES (:contact, :token, DATE_ADD(NOW(), INTERVAL 5 MINUTE), :ip)');
+                          VALUES (:contact, :token, :expires_at, :ip)');
         $this->db->bind(':contact', $contact);
         $this->db->bind(':token', $otp);
+        $this->db->bind(':expires_at', $expiresAt);
         $this->db->bind(':ip', $ip);
         $this->db->execute();
 
@@ -378,14 +386,16 @@ class GuestController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $otp = trim($_POST['otp'] ?? '');
+            $now = date('Y-m-d H:i:s');
 
             // Validate OTP
             $this->db->query('SELECT * FROM guest_otp_tokens
                               WHERE phone = :contact AND token = :token
-                                AND is_used = 0 AND expires_at >= NOW()
-                              ORDER BY created_at DESC LIMIT 1');
+                                AND is_used = 0 AND expires_at >= :now
+                              ORDER BY id DESC LIMIT 1');
             $this->db->bind(':contact', $contact);
             $this->db->bind(':token', $otp);
+            $this->db->bind(':now', $now);
             $tokenRow = $this->db->single();
 
             if ($tokenRow) {

@@ -92,6 +92,24 @@ if (!empty($timeline)) {
     .leaflet-top, .leaflet-bottom {
         z-index: 5 !important;
     }
+    .purok-target-tooltip {
+        background: #064e3b !important;
+        color: #ecfdf5 !important;
+        border: 1px solid #10b981 !important;
+        font-weight: 800 !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+        padding: 3px 8px !important;
+    }
+    .purok-ref-tooltip {
+        background: rgba(15, 23, 42, 0.75) !important;
+        color: #f1f5f9 !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        font-size: 10px !important;
+        border-radius: 4px !important;
+        padding: 2px 6px !important;
+    }
 </style>
 
 <div class="flex h-screen bg-slate-50 overflow-hidden w-full">
@@ -106,7 +124,12 @@ if (!empty($timeline)) {
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
                     <div class="space-y-1">
                         <div class="flex items-center gap-2 text-xs font-bold text-slate-500 flex-wrap">
-                            <a href="<?php echo app_url('resident/my_report'); ?>" class="text-emerald-700 hover:underline">My Reports</a>
+                            <button type="button" onclick="handleGoBack()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200 shadow-2xs transition cursor-pointer active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+                                <span>Back</span>
+                            </button>
+                            <span class="text-slate-300">/</span>
+                            <a href="javascript:void(0)" onclick="handleGoBack()" class="text-emerald-700 hover:underline"><?php echo (!empty($_GET['from']) && $_GET['from'] === 'dashboard') ? 'Dashboard' : ((!empty($_GET['from']) && $_GET['from'] === 'my_report') ? 'My Reports' : 'Reports'); ?></a>
                             <span>/</span>
                             <span class="font-mono text-slate-700 font-extrabold"><?php echo htmlspecialchars($reportId); ?></span>
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] border <?php echo $cfg['bg']; ?>">
@@ -286,11 +309,20 @@ if (!empty($timeline)) {
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
                             <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
                                 <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Incident Coordinates</h3>
-                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">GIS Located</span>
+                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span><?php echo htmlspecialchars($data['purok_name'] ?? 'Purok Jurisdiction'); ?></span>
+                                </span>
                             </div>
                             <div id="viewReportMap" class="h-64 w-full border-b border-slate-100"></div>
-                            <div class="p-4 bg-slate-50 text-xs space-y-1">
-                                <p class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Pinned Coordinates</p>
+                            <div class="p-4 bg-slate-50 text-xs space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Pinned Coordinates</p>
+                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                        <span><?php echo htmlspecialchars($data['purok_name'] ?? 'Purok Area'); ?> Boundary</span>
+                                    </span>
+                                </div>
                                 <p id="gpsCoords" class="font-mono font-bold text-slate-800"><?php echo htmlspecialchars($report['latitude'] . ', ' . $report['longitude']); ?></p>
                             </div>
                         </div>
@@ -380,22 +412,113 @@ document.addEventListener('DOMContentLoaded', function() {
     const labelsMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 19
     });
+    const streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap', maxZoom: 19
+    });
+
     satelliteMap.addTo(map);
     labelsMap.addTo(map);
 
+    L.control.layers({
+        "Satellite": L.layerGroup([satelliteMap, labelsMap]),
+        "Street Map": streetMap
+    }, null, { position: 'topright' }).addTo(map);
+
+    // 1. Render Outer Barangay Boundary
+    const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
+    if (rawBrgyBoundary) {
+        try {
+            const brgyGeoObj = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
+            L.geoJSON(brgyGeoObj, {
+                style: {
+                    color: '#059669',
+                    weight: 1.5,
+                    fillColor: 'transparent',
+                    dashArray: '6, 6'
+                }
+            }).addTo(map);
+        } catch(e) {
+            console.error('Error rendering barangay boundary:', e);
+        }
+    }
+
+    // 2. Render All Purok Boundaries with Target Incident Purok Highlighted
+    const allPuroks = <?php echo json_encode($data['all_puroks_boundaries'] ?? []); ?>;
+    const targetPurokId = <?php echo (int)($report['purok_id'] ?? 0); ?>;
+    const targetPurokName = <?php echo json_encode($data['purok_name'] ?? 'Purok Jurisdiction'); ?>;
+    let targetPurokLayer = null;
+
+    if (Array.isArray(allPuroks) && allPuroks.length > 0) {
+        allPuroks.forEach(p => {
+            if (!p.polygon_geometry) return;
+            try {
+                const geo = (typeof p.polygon_geometry === 'string') ? JSON.parse(p.polygon_geometry) : p.polygon_geometry;
+                const isTarget = (parseInt(p.purok_id) === targetPurokId);
+                const layer = L.geoJSON(geo, {
+                    style: {
+                        color: isTarget ? '#10b981' : '#94a3b8',
+                        weight: isTarget ? 3.5 : 1.5,
+                        fillColor: isTarget ? '#10b981' : '#64748b',
+                        fillOpacity: isTarget ? 0.28 : 0.05,
+                        dashArray: isTarget ? '0' : '4, 4'
+                    }
+                }).addTo(map);
+
+                layer.bindTooltip(`<strong>${p.purok_name}</strong>${isTarget ? ' (Incident Purok)' : ''}`, {
+                    permanent: isTarget,
+                    direction: 'center',
+                    className: isTarget ? 'purok-target-tooltip' : 'purok-ref-tooltip'
+                });
+
+                if (isTarget) {
+                    targetPurokLayer = layer;
+                }
+            } catch(e) {
+                console.error('Error rendering purok boundary:', e);
+            }
+        });
+    }
+
+    // 3. Incident Location Pin
     const customIcon = L.divIcon({
-        html: '<div style="background-color:#10b981;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>',
+        html: '<div style="background-color:#10b981;width:20px;height:20px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 3px rgba(16,185,129,0.4), 0 4px 10px rgba(0,0,0,0.4);"></div>',
         className: '',
-        iconSize: [18, 18],
-        iconAnchor: [9, 9]
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
     });
 
-    L.marker([lat, lng], { icon: customIcon }).addTo(map)
-        .bindPopup('<b>Report Location</b><br><?php echo htmlspecialchars($report['waste_category'] ?? 'Waste Incident'); ?>')
+    const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map)
+        .bindPopup(`<b>Report Location</b><br><?php echo htmlspecialchars($report['waste_category'] ?? 'Waste Incident'); ?><br><span style="font-size:11px;color:#059669;font-weight:800;">📍 ${targetPurokName}</span>`)
         .openPopup();
+
+    if (targetPurokLayer) {
+        try {
+            const bounds = targetPurokLayer.getBounds().extend(marker.getLatLng());
+            map.fitBounds(bounds, { padding: [24, 24] });
+        } catch(e) {
+            map.setView([lat, lng], 16);
+        }
+    } else {
+        map.setView([lat, lng], 16);
+    }
 
     setTimeout(() => map.invalidateSize(), 250);
 });
+
+function handleGoBack() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromParam = urlParams.get('from');
+
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1 && !document.referrer.includes('support_report') && document.referrer !== window.location.href) {
+        window.history.back();
+    } else if (fromParam === 'dashboard') {
+        window.location.href = '<?php echo app_url('resident/dashboard'); ?>';
+    } else if (fromParam === 'my_report') {
+        window.location.href = '<?php echo app_url('resident/my_report'); ?>';
+    } else {
+        window.location.href = '<?php echo app_url('resident/dashboard'); ?>';
+    }
+}
 
 function openEditModal() {
     const modal = document.getElementById('editModal');

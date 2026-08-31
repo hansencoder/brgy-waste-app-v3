@@ -17,7 +17,7 @@ $resume_description = $resume_data['description'] ?? '';
     body, * { font-family: 'Miranda Sans', sans-serif !important; font-optical-sizing: auto; }
     
     #mapContainer {
-        height: 340px;
+        height: 360px;
         border-radius: 0.75rem;
         overflow: hidden;
         position: relative !important;
@@ -34,16 +34,17 @@ $resume_description = $resume_data['description'] ?? '';
     }
     
     .custom-pin-marker {
-        background: #10B981;
-        width: 30px;
-        height: 30px;
+        background: #059669;
+        width: 32px;
+        height: 32px;
         border-radius: 50% 50% 50% 0;
         transform: rotate(-45deg);
         border: 3px solid white;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        box-shadow: 0 4px 14px rgba(5, 150, 105, 0.45);
         display: flex;
         align-items: center;
         justify-content: center;
+        animation: pinBounce 0.3s ease-out;
     }
     .custom-pin-marker::after {
         content: '';
@@ -52,6 +53,20 @@ $resume_description = $resume_data['description'] ?? '';
         background: white;
         border-radius: 50%;
         transform: rotate(45deg);
+    }
+    @keyframes pinBounce {
+        0% { transform: translateY(-12px) rotate(-45deg); opacity: 0; }
+        100% { transform: translateY(0) rotate(-45deg); opacity: 1; }
+    }
+    .purok-submit-tooltip {
+        background: rgba(15, 23, 42, 0.85) !important;
+        color: #f8fafc !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+        font-weight: 700 !important;
+        font-size: 10.5px !important;
+        border-radius: 6px !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+        padding: 2px 7px !important;
     }
 </style>
 
@@ -145,20 +160,53 @@ $resume_description = $resume_data['description'] ?? '';
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-7 space-y-4">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                                 <div>
-                                    <h2 class="text-base font-extrabold text-slate-900">Incident Location</h2>
-                                    <p class="text-xs text-slate-500 mt-0.5">Pin location on map or use GPS auto-detect.</p>
+                                    <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                                        <span>Incident Location</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">Required</span>
+                                    </h2>
+                                    <p class="text-xs text-slate-500 mt-0.5">Click on the map, drag your pin, or use auto-detect GPS.</p>
                                 </div>
-                                <button type="button" onclick="detectGPS()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                                    <span>Auto-Detect GPS</span>
-                                </button>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <button type="button" onclick="resetMapCenter()" title="Center Barangay" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs border border-slate-200 transition cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
+                                        <span>Center Map</span>
+                                    </button>
+                                    <button type="button" onclick="detectGPS()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition cursor-pointer shadow-xs">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                                        <span>Auto-Detect GPS</span>
+                                    </button>
+                                </div>
                             </div>
 
-                            <div class="rounded-xl border border-slate-200 bg-slate-50 p-2 sm:p-3 space-y-2">
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-2.5 sm:p-3 space-y-2.5">
                                 <div id="mapContainer" class="map-box border border-slate-200"></div>
-                                <div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500 pt-1 px-1">
-                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 border border-white inline-block"></span> Selected Incident Pin</span>
-                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 border border-white inline-block"></span> Existing Reports (Reference)</span>
+                                
+                                <!-- Enhanced Color Legend -->
+                                <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[11px] font-bold text-slate-600 pt-1 px-1">
+                                    <span class="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 border border-white inline-block"></span>
+                                        <span class="text-slate-800">Selected Pin</span>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 bg-amber-50/80 px-2.5 py-1 rounded-lg border border-amber-200/80 text-amber-900">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b] inline-block"></span>
+                                        <span>Pending</span>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 bg-blue-50/80 px-2.5 py-1 rounded-lg border border-blue-200/80 text-blue-900">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-[#3b82f6] inline-block"></span>
+                                        <span>Verified</span>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 bg-purple-50/80 px-2.5 py-1 rounded-lg border border-purple-200/80 text-purple-900">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-[#8b5cf6] inline-block"></span>
+                                        <span>In Progress</span>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 bg-emerald-50/80 px-2.5 py-1 rounded-lg border border-emerald-200/80 text-emerald-900">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-[#10b981] inline-block"></span>
+                                        <span>Resolved</span>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 text-[10px]">
+                                        <span class="w-3 h-0.5 border-t border-dashed border-teal-500 inline-block"></span>
+                                        <span>Purok Boundaries</span>
+                                    </span>
                                 </div>
                             </div>
 
@@ -174,12 +222,12 @@ $resume_description = $resume_data['description'] ?? '';
                                 </div>
                             </div>
 
-                            <div class="flex items-center justify-between text-xs pt-1">
-                                <span id="locStatus" class="font-bold text-emerald-700 hidden flex items-center gap-1.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                    <span>Location pinned</span>
+                            <div class="flex items-center justify-between text-xs pt-1 flex-wrap gap-2">
+                                <span id="locStatus" class="font-bold text-emerald-800 hidden flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 shadow-2xs">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span id="locStatusText">Location pinned</span>
                                 </span>
-                                <span class="text-slate-400 font-mono text-[11px]" id="coordsDisplay">Coordinates: Not set</span>
+                                <span class="text-slate-500 font-mono text-[11px] font-bold" id="coordsDisplay">Coordinates: Not set</span>
                             </div>
                         </div>
 
@@ -547,18 +595,21 @@ document.addEventListener('DOMContentLoaded', function() {
         "Street Map": streetMap
     }, null, { position: 'topright' }).addTo(map);
 
-    // Render Official Barangay Boundary
+    window.resetMapCenter = function() {
+        map.setView(defaultCenter, defaultZoom);
+    };
+
+    // Render Official Barangay Boundary (Outer)
     const rawBrgyBoundary = <?php echo json_encode($data['barangay_boundary'] ?? null); ?>;
     if (rawBrgyBoundary) {
         try {
             const brgyGeoObj = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
             L.geoJSON(brgyGeoObj, {
                 style: {
-                    color: '#10b981',
+                    color: '#059669',
                     weight: 2,
-                    fillColor: '#d1fae5',
-                    fillOpacity: 0.08,
-                    dashArray: '5, 5'
+                    fillColor: 'transparent',
+                    dashArray: '6, 6'
                 }
             }).addTo(map);
         } catch(e) {
@@ -566,20 +617,79 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Render Existing Community Reports on Map Picker
+    // Render Purok Boundaries on Map
+    const rawPuroks = <?php echo json_encode($data['puroks_boundaries'] ?? []); ?>;
+    const purokLayers = [];
+
+    if (Array.isArray(rawPuroks) && rawPuroks.length > 0) {
+        rawPuroks.forEach(p => {
+            if (!p.polygon_geometry) return;
+            try {
+                const geo = (typeof p.polygon_geometry === 'string') ? JSON.parse(p.polygon_geometry) : p.polygon_geometry;
+                const pLayer = L.geoJSON(geo, {
+                    style: {
+                        color: '#0d9488',
+                        weight: 1.5,
+                        fillColor: '#14b8a6',
+                        fillOpacity: 0.08,
+                        dashArray: '4, 4'
+                    }
+                }).addTo(map);
+
+                pLayer.bindTooltip(`<strong>${p.purok_name}</strong>`, {
+                    permanent: false,
+                    direction: 'center',
+                    className: 'purok-submit-tooltip'
+                });
+
+                purokLayers.push({ id: p.purok_id, name: p.purok_name, geo: geo, layer: pLayer });
+            } catch(e) {
+                console.error('Error rendering purok boundary on submit map:', e);
+            }
+        });
+    }
+
+    // Status Config Palette for Existing Community Reference Pins
+    const statusPalette = {
+        1: { color: '#f59e0b', bg: '#fef3c7', txt: '#92400e', label: 'Pending' },
+        2: { color: '#3b82f6', bg: '#dbeafe', txt: '#1e40af', label: 'Verified' },
+        3: { color: '#8b5cf6', bg: '#f3e8ff', txt: '#6b21a8', label: 'In Progress' },
+        4: { color: '#10b981', bg: '#d1fae5', txt: '#065f46', label: 'Resolved' },
+        5: { color: '#ef4444', bg: '#fee2e2', txt: '#991b1b', label: 'Rejected' },
+        'default': { color: '#f59e0b', bg: '#fef3c7', txt: '#92400e', label: 'Pending' }
+    };
+
+    // Render Existing Community Reports on Map Picker with Enhanced Status Colors
     const existingPins = <?php echo json_encode($data['existing_pins'] ?? []); ?>;
     existingPins.forEach(ep => {
         if (!ep.latitude || !ep.longitude) return;
+        const stId = parseInt(ep.status_id) || 1;
+        const stCfg = statusPalette[stId] || statusPalette['default'];
+
         const pinIcon = L.divIcon({
-            html: `<div style="background:#f59e0b;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.35);"></div>`,
-            className: '', iconSize: [12,12], iconAnchor: [6,6]
+            html: `<div style="background:${stCfg.color};width:13px;height:13px;border-radius:50%;border:2px solid white;box-shadow:0 2px 5px rgba(0,0,0,0.35);"></div>`,
+            className: '', iconSize: [13,13], iconAnchor: [6.5,6.5]
         });
+
         const dateFormatted = ep.submission_date ? new Date(ep.submission_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
-        const popup = `<div style="font-size:11px;font-family:'Miranda Sans',sans-serif;width:165px;">
-            <div style="font-weight:800;color:#0f172a;margin-bottom:2px;">${ep.category_name || 'Existing Report'}</div>
-            <div style="color:#64748b;font-size:10px;">Status: <strong style="color:#0f172a;">${ep.status_name || 'Active'}</strong></div>
-            <div style="color:#94a3b8;font-size:10px;margin-top:2px;">Logged: ${dateFormatted}</div>
+        const supportBadge = (ep.support_count > 0) ? `<span style="display:inline-block;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:800;background:#ccfbf1;color:#0f766e;">👍 ${ep.support_count}</span>` : '';
+        const rawDesc = ep.description || 'No additional details provided';
+        const shortDesc = rawDesc.length > 55 ? rawDesc.substring(0, 55) + '...' : rawDesc;
+        const purokText = ep.purok_name ? `<span style="color:#0f766e;font-size:10px;font-weight:700;">📍 ${ep.purok_name}</span>` : '';
+
+        const popup = `<div style="font-size:11px;font-family:'Miranda Sans',sans-serif;width:180px;line-height:1.4;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <span style="display:inline-block;padding:2px 7px;border-radius:99px;font-size:10px;font-weight:800;background:${stCfg.bg};color:${stCfg.txt};">${ep.status_name || stCfg.label}</span>
+                ${supportBadge}
+            </div>
+            <div style="font-weight:800;color:#0f172a;margin-bottom:2px;font-size:12px;">${ep.category_name || 'Existing Waste Issue'}</div>
+            <p style="color:#64748b;font-size:10.5px;margin:0 0 4px;">${shortDesc}</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f1f5f9;padding-top:4px;color:#94a3b8;font-size:9.5px;">
+                <span>${dateFormatted}</span>
+                ${purokText}
+            </div>
         </div>`;
+
         L.marker([parseFloat(ep.latitude), parseFloat(ep.longitude)], { icon: pinIcon }).addTo(map).bindPopup(popup);
     });
 
@@ -589,33 +699,38 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!rawBrgyBoundary) return true;
         try {
             const geo = (typeof rawBrgyBoundary === 'string') ? JSON.parse(rawBrgyBoundary) : rawBrgyBoundary;
-            const pt = [lng, lat];
-            let coords = null;
-            if (geo.type === 'Feature' && geo.geometry) coords = geo.geometry.coordinates;
-            else if (geo.type === 'Polygon' || geo.type === 'MultiPolygon') coords = geo.coordinates;
-            if (!coords) return true;
-
-            function insidePoly(point, poly) {
-                let inside = false;
-                for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-                    const xi = poly[i][0], yi = poly[i][1];
-                    const xj = poly[j][0], yj = poly[j][1];
-                    const intersect = ((yi > point[1]) !== (yj > point[1])) && (point[0] < (xj - xi) * (point[1] - yi) / (yj - yi) + xi);
-                    if (intersect) inside = !inside;
-                }
-                return inside;
-            }
-
-            if (geo.type === 'MultiPolygon' || (geo.geometry && geo.geometry.type === 'MultiPolygon')) {
-                for (let poly of coords) {
-                    if (insidePoly(pt, poly[0])) return true;
-                }
-                return false;
-            } else {
-                return insidePoly(pt, coords[0]);
-            }
+            return isPointInGeoJSON(lat, lng, geo);
         } catch(e) {
             return true;
+        }
+    }
+
+    function isPointInGeoJSON(lat, lng, geo) {
+        if (!geo) return false;
+        const pt = [lng, lat];
+        let coords = null;
+        if (geo.type === 'Feature' && geo.geometry) coords = geo.geometry.coordinates;
+        else if (geo.type === 'Polygon' || geo.type === 'MultiPolygon') coords = geo.coordinates;
+        if (!coords) return false;
+
+        function insidePoly(point, poly) {
+            let inside = false;
+            for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                const xi = poly[i][0], yi = poly[i][1];
+                const xj = poly[j][0], yj = poly[j][1];
+                const intersect = ((yi > point[1]) !== (yj > point[1])) && (point[0] < (xj - xi) * (point[1] - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+
+        if (geo.type === 'MultiPolygon' || (geo.geometry && geo.geometry.type === 'MultiPolygon')) {
+            for (let poly of coords) {
+                if (insidePoly(pt, poly[0])) return true;
+            }
+            return false;
+        } else {
+            return insidePoly(pt, coords[0]);
         }
     }
 
@@ -626,8 +741,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const customIcon = L.divIcon({
                 className: '',
                 html: '<div class="custom-pin-marker"></div>',
-                iconSize: [30, 30],
-                iconAnchor: [15, 30]
+                iconSize: [32, 32],
+                iconAnchor: [16, 32]
             });
             marker = L.marker([lat, lng], { icon: customIcon, draggable: true }).addTo(map);
             marker.on('dragend', function(e) {
@@ -640,6 +755,20 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('longitude').value = lng.toFixed(7);
         document.getElementById('coordsDisplay').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
         document.getElementById('locStatus').classList.remove('hidden');
+
+        // Detect which Purok the coordinates fall into
+        let detectedPurokName = '';
+        for (let p of purokLayers) {
+            if (isPointInGeoJSON(lat, lng, p.geo)) {
+                detectedPurokName = p.name;
+                break;
+            }
+        }
+        const statusText = detectedPurokName ? `Location pinned in ${detectedPurokName}` : 'Location pinned';
+        const locStatusText = document.getElementById('locStatusText');
+        if (locStatusText) {
+            locStatusText.textContent = statusText;
+        }
 
         const inBounds = isInsideBoundary(lat, lng);
         const warn = document.getElementById('jurisdictionWarning');

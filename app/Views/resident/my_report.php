@@ -125,6 +125,13 @@ function getReportBadge($status) {
                                     <option value="<?php echo htmlspecialchars(strtolower($cat)); ?>"><?php echo htmlspecialchars($cat); ?></option>
                                 <?php endforeach; ?>
                             </select>
+
+                            <select id="perPageFilter" onchange="changePerPage(this.value)" class="px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-700 outline-none cursor-pointer focus:border-emerald-500">
+                                <option value="10" selected>10 per page</option>
+                                <option value="25">25 per page</option>
+                                <option value="50">50 per page</option>
+                                <option value="all">All reports</option>
+                            </select>
                         </div>
                     </div>
 
@@ -156,7 +163,7 @@ function getReportBadge($status) {
                                         data-category="<?php echo $catSlug; ?>"
                                         data-desc="<?php echo htmlspecialchars($desc); ?>">
                                         <td class="py-4 px-6 font-mono font-bold text-slate-900">
-                                            <a href="<?php echo app_url('resident/view_report/' . ($r['id'])); ?>" class="hover:text-emerald-700">
+                                            <a href="<?php echo app_url('resident/view_report/' . ($r['id']) . '?from=my_report'); ?>" class="hover:text-emerald-700">
                                                 <?php echo $reportId; ?>
                                             </a>
                                         </td>
@@ -175,7 +182,7 @@ function getReportBadge($status) {
                                             </span>
                                         </td>
                                         <td class="py-4 px-6 text-right">
-                                            <a href="<?php echo app_url('resident/view_report/' . ($r['id'])); ?>"
+                                            <a href="<?php echo app_url('resident/view_report/' . ($r['id']) . '?from=my_report'); ?>"
                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition">
                                                 <span>Track</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -183,6 +190,11 @@ function getReportBadge($status) {
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>
+                                    <tr id="noFilterResultsRow" class="hidden">
+                                        <td colspan="6" class="py-12 text-center text-slate-400 font-medium">
+                                            No waste reports match your search criteria.
+                                        </td>
+                                    </tr>
                                 <?php else: ?>
                                     <tr id="emptyTableRow">
                                         <td colspan="6" class="py-12 text-center text-slate-400 font-medium">
@@ -221,15 +233,29 @@ function getReportBadge($status) {
                                 <?php endif; ?>
                                 <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
                                     <span><?php echo date('M d, Y', strtotime($r['submission_date'])); ?></span>
-                                    <a href="<?php echo app_url('resident/view_report/' . ($r['id'])); ?>" class="font-bold text-emerald-700">
+                                    <a href="<?php echo app_url('resident/view_report/' . ($r['id']) . '?from=my_report'); ?>" class="font-bold text-emerald-700">
                                         Track Status →
                                     </a>
                                 </div>
                             </div>
                             <?php endforeach; ?>
+                            <div id="noFilterResultsCard" class="p-8 text-center text-slate-400 font-medium hidden">
+                                No waste reports match your search criteria.
+                            </div>
                         <?php else: ?>
                             <div class="p-8 text-center text-slate-400 font-medium">No reports found.</div>
                         <?php endif; ?>
+                    </div>
+
+                    <!-- Pagination Footer Bar -->
+                    <div id="paginationBar" class="p-4 bg-slate-50/90 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                        <div class="text-slate-600 font-semibold" id="paginationInfo">
+                            Showing <span id="pageStart" class="font-bold text-slate-900">0</span> to <span id="pageEnd" class="font-bold text-slate-900">0</span> of <span id="pageTotal" class="font-bold text-slate-900">0</span> reports
+                        </div>
+                        
+                        <div class="flex items-center gap-1" id="paginationControls">
+                            <!-- Dynamic pagination buttons -->
+                        </div>
                     </div>
 
                 </div>
@@ -240,40 +266,152 @@ function getReportBadge($status) {
 </div>
 
 <script>
-    const searchInput = document.getElementById('reportSearch');
-    const statusFilter = document.getElementById('statusFilter');
-    const categoryFilter = document.getElementById('categoryFilter');
+    let currentPage = 1;
+    let perPage = 10;
 
-    function filterReports() {
-        const query = searchInput.value.toLowerCase().trim();
-        const statusVal = statusFilter.value.toLowerCase();
-        const catVal = categoryFilter.value.toLowerCase();
-
-        const rows = document.querySelectorAll('.report-row, .report-card');
-        let visibleCount = 0;
-
-        rows.forEach(el => {
-            const id = el.getAttribute('data-id') || '';
-            const st = el.getAttribute('data-status') || '';
-            const cat = el.getAttribute('data-category') || '';
-            const desc = el.getAttribute('data-desc') || '';
-
-            const matchQuery = !query || id.includes(query) || cat.includes(query) || desc.includes(query);
-            const matchStatus = statusVal === 'all' || st === statusVal;
-            const matchCategory = catVal === 'all' || cat === catVal;
-
-            if (matchQuery && matchStatus && matchCategory) {
-                el.style.display = '';
-                visibleCount++;
-            } else {
-                el.style.display = 'none';
-            }
-        });
+    function changePerPage(val) {
+        perPage = (val === 'all') ? 999999 : parseInt(val, 10);
+        currentPage = 1;
+        applyPagination();
     }
 
-    searchInput?.addEventListener('input', filterReports);
-    statusFilter?.addEventListener('change', filterReports);
-    categoryFilter?.addEventListener('change', filterReports);
+    function goToPage(p) {
+        currentPage = p;
+        applyPagination();
+        document.querySelector('#reportTableBody')?.closest('.bg-white')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function applyPagination() {
+        const query = (document.getElementById('reportSearch')?.value || '').toLowerCase().trim();
+        const statusVal = (document.getElementById('statusFilter')?.value || 'all').toLowerCase();
+        const catVal = (document.getElementById('categoryFilter')?.value || 'all').toLowerCase();
+
+        const desktopRows = Array.from(document.querySelectorAll('.report-row'));
+        const mobileCards = Array.from(document.querySelectorAll('.report-card'));
+
+        const matchedDesktop = [];
+        const matchedMobile = [];
+
+        desktopRows.forEach((row, idx) => {
+            const id = (row.getAttribute('data-id') || '').toLowerCase();
+            const st = (row.getAttribute('data-status') || '').toLowerCase();
+            const cat = (row.getAttribute('data-category') || '').toLowerCase();
+            const desc = (row.getAttribute('data-desc') || '').toLowerCase();
+
+            const matchQuery = !query || id.includes(query) || cat.includes(query) || desc.includes(query);
+            const matchStatus = (statusVal === 'all') || (st === statusVal);
+            const matchCategory = (catVal === 'all') || (cat === catVal);
+
+            if (matchQuery && matchStatus && matchCategory) {
+                matchedDesktop.push(row);
+                if (mobileCards[idx]) matchedMobile.push(mobileCards[idx]);
+            } else {
+                row.style.display = 'none';
+                if (mobileCards[idx]) mobileCards[idx].style.display = 'none';
+            }
+        });
+
+        const total = matchedDesktop.length;
+        const totalPages = Math.max(1, Math.ceil(total / perPage));
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIdx = (currentPage - 1) * perPage;
+        const endIdx = Math.min(startIdx + perPage, total);
+
+        matchedDesktop.forEach((row, idx) => {
+            row.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+        matchedMobile.forEach((card, idx) => {
+            card.style.display = (idx >= startIdx && idx < endIdx) ? '' : 'none';
+        });
+
+        const pStart = document.getElementById('pageStart');
+        const pEnd = document.getElementById('pageEnd');
+        const pTotal = document.getElementById('pageTotal');
+
+        if (pStart) pStart.textContent = total > 0 ? (startIdx + 1) : 0;
+        if (pEnd) pEnd.textContent = endIdx;
+        if (pTotal) pTotal.textContent = total;
+
+        const noResultsRow = document.getElementById('noFilterResultsRow');
+        const noResultsCard = document.getElementById('noFilterResultsCard');
+        if (total === 0 && desktopRows.length > 0) {
+            if (noResultsRow) noResultsRow.classList.remove('hidden');
+            if (noResultsCard) noResultsCard.classList.remove('hidden');
+        } else {
+            if (noResultsRow) noResultsRow.classList.add('hidden');
+            if (noResultsCard) noResultsCard.classList.add('hidden');
+        }
+
+        renderPaginationControls(totalPages, total);
+    }
+
+    function renderPaginationControls(totalPages, total) {
+        const container = document.getElementById('paginationControls');
+        if (!container) return;
+
+        if (total === 0 || (totalPages <= 1 && perPage >= 999999)) {
+            container.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+
+        const prevDisabled = (currentPage <= 1);
+        html += `
+            <button type="button" onclick="goToPage(${currentPage - 1})" ${prevDisabled ? 'disabled' : ''} 
+                    class="px-2.5 py-1.5 rounded-lg border text-xs font-bold transition flex items-center gap-1 ${prevDisabled ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50' : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-100 cursor-pointer active:scale-95'}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="hidden sm:inline">Prev</span>
+            </button>
+        `;
+
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        if (startPage > 1) {
+            html += `<button type="button" onclick="goToPage(1)" class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer">1</button>`;
+            if (startPage > 2) html += `<span class="px-1 text-slate-400 font-bold">...</span>`;
+        }
+
+        for (let p = startPage; p <= endPage; p++) {
+            const isActive = (p === currentPage);
+            html += `
+                <button type="button" onclick="goToPage(${p})" 
+                        class="w-8 h-8 rounded-lg text-xs font-bold transition cursor-pointer ${isActive ? 'bg-[#0B2E22] text-white shadow-xs' : 'border border-slate-200 bg-white hover:bg-slate-100 text-slate-700'}">
+                    ${p}
+                </button>
+            `;
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) html += `<span class="px-1 text-slate-400 font-bold">...</span>`;
+            html += `<button type="button" onclick="goToPage(${totalPages})" class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer">${totalPages}</button>`;
+        }
+
+        const nextDisabled = (currentPage >= totalPages);
+        html += `
+            <button type="button" onclick="goToPage(${currentPage + 1})" ${nextDisabled ? 'disabled' : ''} 
+                    class="px-2.5 py-1.5 rounded-lg border text-xs font-bold transition flex items-center gap-1 ${nextDisabled ? 'border-slate-200 text-slate-300 cursor-not-allowed bg-slate-50' : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-100 cursor-pointer active:scale-95'}">
+                <span class="hidden sm:inline">Next</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('reportSearch')?.addEventListener('input', () => { currentPage = 1; applyPagination(); });
+        document.getElementById('statusFilter')?.addEventListener('change', () => { currentPage = 1; applyPagination(); });
+        document.getElementById('categoryFilter')?.addEventListener('change', () => { currentPage = 1; applyPagination(); });
+        applyPagination();
+    });
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

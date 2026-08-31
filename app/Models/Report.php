@@ -391,7 +391,7 @@ class Report {
     public function hasUserSupported($reportId, $userId) {
         if (!$reportId || !$userId) return false;
         $db = new Database();
-        $db->query("SELECT id FROM report_supports WHERE report_id = :report_id AND user_id = :user_id LIMIT 1");
+        $db->query("SELECT support_id FROM report_supports WHERE report_id = :report_id AND user_id = :user_id LIMIT 1");
         $db->bind(':report_id', $reportId);
         $db->bind(':user_id', $userId);
         return (bool)$db->single();
@@ -412,7 +412,7 @@ class Report {
         }
 
         // Check if already supported
-        $db->query("SELECT id FROM report_supports WHERE report_id = :report_id AND user_id = :user_id");
+        $db->query("SELECT support_id FROM report_supports WHERE report_id = :report_id AND user_id = :user_id LIMIT 1");
         $db->bind(':report_id', $reportId);
         $db->bind(':user_id', $userId);
         if ($db->single()) {

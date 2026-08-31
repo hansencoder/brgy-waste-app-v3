@@ -184,7 +184,7 @@ function getResidentReportBadge($status) {
                                                     </span>
                                                 </td>
                                                 <td class="py-3.5 px-6 text-right">
-                                                    <a href="<?php echo app_url('resident/view_report/' . ($report['id'])); ?>"
+                                                    <a href="<?php echo app_url('resident/view_report/' . ($report['id']) . '?from=dashboard'); ?>"
                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition">
                                                         <span>View</span>
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -221,7 +221,7 @@ function getResidentReportBadge($status) {
                                             <p class="font-semibold text-slate-800"><?php echo htmlspecialchars($report['waste_category'] ?? 'General Waste'); ?></p>
                                             <p class="text-[10px] text-slate-400 font-mono mt-0.5"><?php echo date('M d, Y - h:i A', strtotime($report['submission_date'])); ?></p>
                                         </div>
-                                        <a href="<?php echo app_url('resident/view_report/' . ($report['id'])); ?>" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 shrink-0">
+                                        <a href="<?php echo app_url('resident/view_report/' . ($report['id']) . '?from=dashboard'); ?>" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 shrink-0">
                                             View
                                         </a>
                                     </div>
@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
             html: `<div style="background:${cfg.color};width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>`,
             className: '', iconSize: [14,14], iconAnchor: [7,7]
         });
-        const viewUrl = '<?php echo app_url('resident/view_report/'); ?>' + pin.id;
+        const viewUrl = '<?php echo app_url('resident/view_report/'); ?>' + pin.id + '?from=dashboard';
         const supportBadge = (pin.support_count > 0) ? `<span style="display:inline-block;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:700;background:#ccfbf1;color:#0f766e;margin-left:4px;">👍 ${pin.support_count}</span>` : '';
         const rawDesc = pin.description || 'No description provided';
         const shortDesc = rawDesc.length > 55 ? rawDesc.substring(0, 55) + '...' : rawDesc;

@@ -194,15 +194,18 @@ class ResidentController extends Controller {
         $db = new Database();
         $db->query("
             SELECT r.id, r.latitude, r.longitude, r.category_id, wc.category_name,
-                   r.status_id, rs.status_name, rs.color_code, r.description, r.submission_date
+                   r.status_id, rs.status_name, rs.color_code, r.description, r.submission_date,
+                   r.support_count, p.purok_name
             FROM reports r
             JOIN report_statuses rs ON r.status_id = rs.status_id
             LEFT JOIN waste_categories wc ON r.category_id = wc.category_id
-            WHERE r.status_id != 5 AND r.submission_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            LEFT JOIN puroks p ON r.purok_id = p.purok_id
+            WHERE r.status_id != 5 AND r.submission_date >= DATE_SUB(NOW(), INTERVAL 60 DAY)
             ORDER BY r.submission_date DESC
-            LIMIT 50
+            LIMIT 100
         ");
         $data['existing_pins'] = $db->resultSet() ?: [];
+        $data['puroks_boundaries'] = $mapConfig['puroks'] ?? [];
 
         if (isset($_GET['resume']) && isset($_SESSION['pending_report'])) {
             $pending = $_SESSION['pending_report'];
@@ -455,6 +458,27 @@ class ResidentController extends Controller {
         $mapConfig = $barangayModel->getMapConfig();
         $data['barangay_boundary'] = $mapConfig['boundary_geojson'];
         $data['map_center'] = $mapConfig['center'];
+        $data['all_puroks_boundaries'] = $mapConfig['puroks'] ?? [];
+
+        // Load specific Purok boundary for this report
+        $purokId = (int)($data['report']['purok_id'] ?? 0);
+        $data['purok_boundary'] = null;
+        $data['purok_name'] = $data['report']['purok'] ?? 'Barangay Purok';
+        if ($purokId > 0) {
+            $db = new Database();
+            $db->query("SELECT p.purok_id, p.purok_name, ST_AsGeoJSON(pb.polygon_geometry) AS polygon_geometry 
+                        FROM puroks p 
+                        LEFT JOIN purok_boundaries pb ON p.purok_id = pb.purok_id 
+                        WHERE p.purok_id = :purok_id LIMIT 1");
+            $db->bind(':purok_id', $purokId);
+            $pRow = $db->single();
+            if ($pRow && !empty($pRow['polygon_geometry'])) {
+                $data['purok_boundary'] = $pRow['polygon_geometry'];
+                if (!empty($pRow['purok_name'])) {
+                    $data['purok_name'] = $pRow['purok_name'];
+                }
+            }
+        }
 
         $this->view('resident/view_report', $data);
     }
@@ -714,16 +738,18 @@ class ResidentController extends Controller {
         }
 
         $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expiresAt = date('Y-m-d H:i:s', time() + (10 * 60)); // 10 minutes
         
         $db->query("DELETE FROM two_factor_tokens WHERE user_id = :user_id AND is_used = 0");
         $db->bind(':user_id', $userId);
         $db->execute();
 
         $db->query("INSERT INTO two_factor_tokens (user_id, email, token, expires_at) 
-                    VALUES (:user_id, :email, :token, DATE_ADD(NOW(), INTERVAL 10 MINUTE))");
+                    VALUES (:user_id, :email, :token, :expires_at)");
         $db->bind(':user_id', $userId);
         $db->bind(':email', $user['email']);
         $db->bind(':token', $token);
+        $db->bind(':expires_at', $expiresAt);
         $db->execute();
 
         require_once dirname(__DIR__) . '/Models/Helpers/OtpMailer.php';
@@ -749,10 +775,12 @@ class ResidentController extends Controller {
 
         $otp = trim($_POST['otp'] ?? '');
         $userId = $_SESSION['user_id'];
+        $now = date('Y-m-d H:i:s');
         $db = new Database();
 
-        $db->query("SELECT * FROM two_factor_tokens WHERE user_id = :user_id AND is_used = 0 AND expires_at >= NOW() ORDER BY created_at DESC LIMIT 1");
+        $db->query("SELECT * FROM two_factor_tokens WHERE user_id = :user_id AND is_used = 0 AND expires_at >= :now ORDER BY id DESC LIMIT 1");
         $db->bind(':user_id', $userId);
+        $db->bind(':now', $now);
         $tokenRecord = $db->single();
 
         if (!$tokenRecord) {

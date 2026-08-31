@@ -93,16 +93,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const hiddenOtp = document.getElementById('otp');
     const form = document.querySelector('form');
     const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
 
     function syncOtp() {
         let otpVal = '';
-        inputs.forEach(inp => otpVal += inp.value);
+        inputs.forEach(inp => otpVal += (inp.value || '').trim());
         hiddenOtp.value = otpVal;
         return otpVal;
     }
 
+    function triggerFormSubmit() {
+        if (isSubmitting) return;
+        const otpVal = syncOtp();
+        if (otpVal.length === 6) {
+            isSubmitting = true;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Verifying Code...</span>
+                `;
+            }
+            form.submit();
+        }
+    }
+
     inputs.forEach((input, index) => {
-        input.addEventListener('keyup', function(e) {
+        input.addEventListener('input', function(e) {
             const val = this.value;
             if (val && !/^\d$/.test(val)) {
                 this.value = '';
@@ -113,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             const otpVal = syncOtp();
             if (otpVal.length === 6) {
-                form.submit();
+                triggerFormSubmit();
             }
         });
 
@@ -122,6 +143,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 inputs[index - 1].focus();
                 inputs[index - 1].value = '';
                 syncOtp();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                triggerFormSubmit();
             }
         });
 
@@ -136,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const otpVal = syncOtp();
                 if (clean.length >= 6) {
                     inputs[5].focus();
-                    form.submit();
+                    triggerFormSubmit();
                 } else {
                     inputs[clean.length].focus();
                 }
@@ -145,6 +169,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     form?.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
         const otpVal = syncOtp();
         if (otpVal.length < 6) {
             e.preventDefault();
@@ -156,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
 
+        isSubmitting = true;
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
@@ -164,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Verifying...</span>
+                <span>Verifying Code...</span>
             `;
         }
     });
@@ -207,14 +236,20 @@ document.addEventListener('DOMContentLoaded', function() {
         startCooldown(60);
     }
 
+    let isResending = false;
     resendLink.addEventListener('click', function(e) {
         let expiry = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10);
-        if (expiry > Date.now()) {
+        if (expiry > Date.now() || isResending) {
             e.preventDefault();
-        } else {
-            // Set cooldown for next load
-            sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
+            return false;
         }
+        isResending = true;
+        resendLink.style.pointerEvents = 'none';
+        resendLink.classList.add('opacity-50', 'cursor-not-allowed', 'text-slate-400');
+        resendLink.classList.remove('text-emerald-700', 'hover:underline');
+        resendLink.textContent = 'Sending code...';
+        // Set cooldown for next load
+        sessionStorage.setItem(STORAGE_KEY, (Date.now() + 60000).toString());
     });
 });
 </script>
